@@ -1,0 +1,150 @@
+<!-- 
+-->
+
+<html>
+	<head>
+		<script>
+var PEER = "{{ session.peer }}";
+var ADDRESS = "{{ session.data['address'] }}";
+var EXPLORER = "{{ session.explorer }}";
+var BEGIN = "{{ session.begin }}";
+var NUMBER = 15;
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        autoAppend();
+    }
+};
+
+function getTransactions(offset, number) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", PEER+"/api/transactions?recipientId="+ADDRESS+"&senderId="+ADDRESS+"&offset="+offset+"&orderBy=timestamp:desc", false);
+	xhttp.setRequestHeader("Content-type", "application/json");
+	xhttp.send();
+	return JSON.parse(xhttp.responseText).transactions;
+}
+
+function autoAppend(){
+	var table = document.getElementById("txList");
+	var offset = table.getElementsByTagName("tr").length;
+	var transactions = getTransactions(offset, NUMBER);
+
+	for (var n=0; n<transactions.length; n++){
+		var tx = transactions[n];
+		var receiver = tx["recipientId"] == ADDRESS
+		var row = table.insertRow(-1);
+
+		var date = row.insertCell(-1);
+		date.className = "input";
+		date.innerHTML = new Date(tx["timestamp"]*1000 + BEGIN*1000).toLocaleString("en-US").replace(/ /g, "&nbsp;");
+
+		var amount = row.insertCell(-1);
+		amount.innerHTML = tx["amount"]/100000000;
+		amount.className = "input value";
+
+		var type = row.insertCell(-1);
+		type.className = "input";
+		switch(tx["type"]) {
+			case 0:
+				type.innerHTML = receiver ? "received&nbsp;from" : "sent&nbsp;to";
+				type.className =  receiver ? "input credit" : "input debit";
+				break;
+			case 1:
+				type.innerHTML = "securized&nbsp;with&nbsp;second&nbsp;passphrase";
+				type.className = "input secure";
+				type.colSpan = "2";
+				break;
+			case 2:
+				type.innerHTML = "delegate&nbsp;registration";
+				type.className = "input register";
+				type.colSpan = "2";
+				break;
+			case 3:
+				type.innerHTML = "vote";
+				type.className = "input stake";
+				type.colSpan = "2";
+				break;
+			default:
+				type.innerHTML = tx["type"];
+		}		
+
+		if (! [1,2,3].includes(tx["type"])){ 
+			var from_to = row.insertCell(-1);
+			from_to.innerHTML = tx["recipientId"] == ADDRESS ? tx["senderId"] : tx["recipientId"];
+			from_to.className = "input";
+		}
+
+		var fees = row.insertCell(-1);
+		fees.innerHTML = tx["fee"]/100000000;
+		fees.className = "input fees value";
+
+		var id = row.insertCell(-1);
+		id.innerHTML = "<a target='_blank' href='"+EXPLORER+"/transaction/"+tx["id"]+"'>"+tx["id"].slice(0,5)+"..."+tx["id"].slice(-6,-1)+"</a>";
+		id.className = "input";
+	}
+}
+		</script>
+		<style>
+body {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	margin:0px;
+}
+
+table {
+	padding:2px;
+	margin: 0px auto 0px auto;
+}
+
+table a {
+	text-decoration:none;
+}
+
+.input {
+	border-radius:3px;
+	border:1px solid grey;
+	padding:0px 5px 0px 5px;
+	background:lightblue;
+	margin:1px 2px 1px 2px;
+	text-align: center;
+	font-size:13px;
+	font-family:consolas;
+}
+
+.value {
+	text-align: right;
+}
+
+.credit {
+	background:green;
+}
+
+.debit {
+	background:red;
+}
+
+.fees {
+	background:orange;
+}
+
+.register {
+	background:steelblue;	
+}
+
+.secure {
+	background:rgb(166, 255, 0);
+}
+
+.stake {
+	background:lightgreen;	
+}
+
+.id {
+	text-decoration:none;	
+}
+		</style>
+	</head>
+	<body onload="autoAppend();" id="listbody">
+	<table cellspacing="5px" id="txList">
+	</table>
+	</body>
+</html>

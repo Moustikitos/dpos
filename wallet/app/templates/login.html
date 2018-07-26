@@ -1,0 +1,11 @@
+{% extends "start.html" %}
+	{% block content -%}
+	<div class="element">
+		<h2>Log to a wallet</h2>
+		<form name="sendForm" action="{{ url_for('login') }}" method="post">
+			<p><label>Wallet address&nbsp;</label><input type="text" name="address" autocomplete="on" required></p>
+			<p><label>Secret&nbsp;</label><input type="password" size="70" name="secret" autocomplete="on" required></p>
+			<p><input style="margin:20px 0px 0px 0px;" type="submit"></p>
+		</form>
+	</div>
+	{% endblock content -%}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<script type="text/javascript" src="{{ url_for('static', filename='code.js') }}"></script>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+	</head>
+	<body>
+
+	<div class="element">
+		{% if session.data -%}
+		<center><h2>{{ session.data['address'] }}</h2></center>
+		<a href="{{ url_for('logout') }}">logout</a>
+		<a href="{{ url_for('send') }}">send</a>
+		<a href="{{ url_for('history') }}">history</a>
+		<a href="{{ url_for('account') }}">account</a>
+		{% else -%}
+		<center><h2>No wallet logged</h2></center>
+		{% endif -%}
+	</div>
+
+	{% with messages = get_flashed_messages(True) -%}
+		{% for cat,msg in messages -%}
+	<p class="element {{ cat }}">{{ msg }}</p>
+		{% endfor -%}
+	{% endwith -%}
+
+	{% block content -%}
+	{% endblock content -%}
+
+	</body>
+
+</html>
