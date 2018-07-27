@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% set symbol = session["symbol"]|safe %}
 <html>
 	<head>
 		<script type="text/javascript" src="{{ url_for('static', filename='code.js') }}"></script>
@@ -11,7 +11,7 @@
 		{% if session.data %}
 		<center><h2>{{ session.data['address'] }}</h2></center>
 		<a href="{{ url_for('logout') }}">logout</a>
-		<a href="{{ url_for('send') }}">send</a>
+		<a href="{{ url_for('send') }}">send {{ symbol }}</a>
 		<a href="{{ url_for('history') }}">history</a>
 		<a href="{{ url_for('account') }}">account</a>
 		{% else %}
@@ -21,7 +21,7 @@
 
 	{% with messages = get_flashed_messages(True) %}
 		{% for cat,msg in messages %}
-	<p class="element {{ cat }}">{{ msg }}</p>
+	<p class="element {{ cat }}">{{ msg|safe }}</p>
 		{% endfor %}
 	{% endwith %}
 

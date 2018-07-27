@@ -7,7 +7,7 @@ body {
 
 h1, h2 {
 	padding: 0px;
-	margin: 10px 0px 10px 0px;
+	margin: 10px 2px 10px 2px;
 }
 
 div a, div td {
@@ -77,6 +77,13 @@ form input[type="text"]:hover, form input[type="password"]:hover, form input[typ
 	margin:10px auto 10px auto;
 	padding: 10px;
 	background: steelblue;
+}
+
+.span {
+	border-radius: 4px;
+	box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	padding: 3px 10px 3px 10px;
+	background: white;
 }
 
 .error {

@@ -1,17 +1,50 @@
 {% extends "start.html" %}
+{% set symbol = session["symbol"]|safe %}
 {% if not tx %}
 {% set tx = {} %}
 {% endif %}
+{% set type = tx.get("type", -1) %}
+
 	{% block content %}
 	<div class="element">
-        <h2 style="text-align:center;">Transaction details</h2>
-        <table style="margin:auto;" cellspacing="5px">
-        {% for key,value in tx.items() %}
-            {% if "sign" not in key %}
-            <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
-            {% endif %}
-        {% endfor %}
-        </table>
+		{% if type == 0 %}
+			<center>
+				<p>
+					<span class="span error">Send {{ symbol }}{{ tx["amount"]|float / 100000000 }}</span>
+				{%- if tx["vendorField"] -%}
+					&#128279;<span class="span">{{ tx["vendorField"] }}</span>
+				{% endif %}
+				</p>
+				<p>to</p>
+				<p><span class="span success">{{ tx["recipientId"] }}</span></p>
+				<p>cost</p>
+				<p><span class="span warning">{{ symbol }}{{ tx["fee"]|float / 100000000 }}</span></p>
+			</center>
+		{% elif type == 1 %}
+			<center>
+				<p><span class="span success">Add second signature</span></p>
+				<p>cost</p>
+				<p><span class="span warning">{{ symbol }}{{ tx["fee"]|float / 100000000 }}</span></p>
+			</center>
+		{% elif type == 2 %}
+			<center>
+				<p><span class="span success">Register as delegate</span><span class="span"></span>{{ tx["asset"]["delegate"]["username"]}}</span></p>
+				<p>cost</p>
+				<p><span class="span warning">{{ symbol }}{{ tx["fee"]|float / 100000000 }}</span></p>
+			</center>
+		{% elif type == 3 %}
+		{% else %}
+			<table style="margin:auto;" cellspacing="5px">
+			{% for key,value in tx.items() %}
+				{% if "sign" not in key %}
+				<tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+				{% endif %}
+			{% endfor %}
+			</table>
+		{% endif %}
 	</div>
-    <div class="element warning"><input type="Button" value="Validate"/>&nbsp;<input type="button" value="Cancel"/></div>
+	<div class="element" style="background:white;text-align:right;">
+		<p><a class="span warning" href="{{ url_for('confirm') }}">Validate</a>
+		<a class="span warning" href="{{ url_for('cancel') }}">Cancel</a></p>
+	</div>
 	{% endblock content %}

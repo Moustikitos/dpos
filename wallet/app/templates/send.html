@@ -1,13 +1,14 @@
 {% extends "start.html" %}
+{% set symbol = session["symbol"]|safe %}
 	{% block content %}
 	{% if not session.secondPublicKey %}
 	<div class="element">
-		<h2>Send {{ g.token }}</h2>
+		<h2>Send {{ symbol }}</h2>
 		<form name="sendTransaction" method="post">
-			<p><label>Recipient&nbsp;address&nbsp;</label><input type="text" size="100%" name="recipientId" required></p>
-			<p><label>Transaction&nbsp;amount&nbsp;</label><input type="number" name="amount" required></p>
-			<p><label>Optional&nbsp;message&nbsp;</label><input type="text" name="vendorField" maxlength="256"></p>
-			<p><input style="margin:20px 0px 0px 0px;" type="submit" name="transaction"></p>
+			<p><label>Recipient&nbsp;address</label><input type="text" size="100%" name="recipientId" required></p>
+			<p><label>Transaction&nbsp;amount&nbsp;({{ symbol }})</label><input type="number" name="amount" step="0.00000001" required></p>
+			<p><label>Optional&nbsp;message</label><input type="text" name="vendorField" maxlength="256"></p>
+			<p><input style="margin:20px 0px 0px 0px;" type="submit"></p>
 		</form>
 	</div>
 	{% endif %}

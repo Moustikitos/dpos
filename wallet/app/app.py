@@ -32,6 +32,8 @@ TX_GENESIS = {}
 CURRENT_TX = {}
 LOGGED = False
 
+_registry_path = lambda: os.path.join(ROOT, ".registry", options.network, KEYS["publicKey"])
+
 # create the application instance 
 app = flask.Flask("DPOS wallet [%s]" % options.network) 
 app.config.update(
@@ -75,7 +77,7 @@ def register(tx):
 	"""Write transaction in a registry"""
 	spk = tx["senderPublicKey"]
 	id_ = tx["id"]
-	pathfile = os.path.join(ROOT, ".registry", spk)
+	pathfile = _registry_path()
 	registry = loadJson(pathfile)
 	registry[id_] = tx
 	dumpJson(registry, pathfile)
@@ -100,7 +102,6 @@ def login():
 	if LOGGED:
 		flask.flash("Session expired !", category="warning")
 		KEYS.clear()
-		flask.session.clear()
 		LOGGED = False
 	
 	# 
@@ -114,8 +115,10 @@ def login():
 		account["voted"] = rest.GET.api.accounts.delegates(address=address).get("delegates", [])
 		account["address"] = address
 
+		flask.session.clear()
 		flask.flash('You are now logged to %s wallet...' % address, category="success")
 		flask.session["secondPublicKey"] = account.get("secondPublicKey", False)
+		flask.session["symbol"] = cfg.symbol
 		flask.session["data"] = account
 		LOGGED = True
 
@@ -130,11 +133,12 @@ def login():
 
 @app.route("/logout")
 def logout():
+	"""Clean up all global variables and reset session cookies"""
 	global KEYS, LOGGED, CURRENT_TX, TX_GENESIS
 	KEYS.clear()
+	LOGGED = False
 	CURRENT_TX.clear()
 	TX_GENESIS.clear()
-	LOGGED = False
 	flask.session.clear()
 	return flask.render_template("login.html")
 
@@ -167,8 +171,7 @@ def account():
 	if not flask.session.get("data", False):
 		return flask.redirect(flask.url_for("login"))
 	else:
-		pathfile = os.path.join(ROOT, ".registry", KEYS["publicKey"])
-		return flask.render_template("account.html", registry=loadJson(pathfile))
+		return flask.render_template("account.html", registry=loadJson(_registry_path()))
 
 
 @app.route("/account/unlock", methods=["GET", "POST"])
@@ -218,7 +221,6 @@ def create():
 	global TX_GENESIS, CURRENT_TX
 	try:
 		CURRENT_TX = arky.core.bakeTransaction(**TX_GENESIS)
-		flask.flash("Check transaction details...", category="warning")
 		return flask.render_template("check.html", tx=CURRENT_TX)
 	except Exception as e:
 		flask.flash("API error: %s" % e.message, category="error")
@@ -230,7 +232,7 @@ def cancel():
 	global TX_GENESIS, CURRENT_TX
 	TX_GENESIS.clear()
 	CURRENT_TX.clear()
-	flask.flash("Transaction(s) Cancelled", category="warning")
+	flask.flash("Transaction Cancelled...", category="warning")
 	return flask.redirect(flask.url_for("account"))
 
 
@@ -243,7 +245,7 @@ def confirm():
 	except Exception as e:
 		result = {"messages": ["API error: %s" % e.message]}
 	if len(result.get('transactions', [])):
-		flask.flash('Transaction(s) successfully sent:<br/>%s' % "<br/>".join(result["transaction"]), category="success")
+		flask.flash('Transaction successfully sent:<br/>%s' % "<br/>".join(result["transactions"]), category="success")
 	else:
 		flask.flash("<br/>".join(result.get("messages", ["Error occured !"])), category="error")
 	return flask.redirect(flask.url_for("account"))

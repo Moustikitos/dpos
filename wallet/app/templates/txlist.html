@@ -6,6 +6,7 @@
 		<script>
 var PEER = "{{ session.peer }}";
 var BEGIN = "{{ session.begin }}";
+var SYMBOL = "{{ session.symbol|safe }}";
 var ADDRESS = "{{ session.data['address'] }}";
 var EXPLORER = "{{ session.explorer }}";
 var NUMBER = 15;
@@ -39,7 +40,7 @@ function autoAppend(){
 		date.innerHTML = new Date(tx["timestamp"]*1000 + BEGIN*1000).toLocaleString("en-US").replace(/ /g, "&nbsp;");
 
 		var amount = row.insertCell(-1);
-		amount.innerHTML = tx["amount"]/100000000;
+		amount.innerHTML = SYMBOL + tx["amount"]/100000000;
 		amount.className = "input value";
 
 		var type = row.insertCell(-1);
@@ -75,7 +76,7 @@ function autoAppend(){
 		}
 
 		var fees = row.insertCell(-1);
-		fees.innerHTML = tx["fee"]/100000000;
+		fees.innerHTML = SYMBOL + tx["fee"]/100000000;
 		fees.className = "input fees value";
 
 		var id = row.insertCell(-1);
