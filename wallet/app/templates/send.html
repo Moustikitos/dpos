@@ -1,22 +1,14 @@
 {% extends "start.html" %}
-	{% block content -%}
-	{% if session.secondPublicKey -%}
-	<div class="element" style="background:orange;">
-		<h2>Second secret needed</h2>
-		<form name="send2ndSecret" method="post">
-			<p><label>Second secret&nbsp;</label><input type="password" size="70" name="secondSecret" autocomplete="off" required></p>
-			<p><input style="margin:20px 0px 0px 0px;" type="submit", name="2ndSecret"></p>
-		</form>
-	</div>
-	{% else -%}
+	{% block content %}
+	{% if not session.secondPublicKey %}
 	<div class="element">
 		<h2>Send {{ g.token }}</h2>
 		<form name="sendTransaction" method="post">
-			<p><label>Recipient address&nbsp;</label><input type="text" size="70" name="recipientId" required></p>
-			<p><label>Transaction amount&nbsp;</label><input type="number" name="amount" required></p>
-			<p><label>Optional message&nbsp;</label><input type="text" name="vendorField" maxlength="256"></p>
+			<p><label>Recipient&nbsp;address&nbsp;</label><input type="text" size="100%" name="recipientId" required></p>
+			<p><label>Transaction&nbsp;amount&nbsp;</label><input type="number" name="amount" required></p>
+			<p><label>Optional&nbsp;message&nbsp;</label><input type="text" name="vendorField" maxlength="256"></p>
 			<p><input style="margin:20px 0px 0px 0px;" type="submit" name="transaction"></p>
 		</form>
 	</div>
-	{% endif -%}
-	{% endblock content -%}
+	{% endif %}
+	{% endblock content %}

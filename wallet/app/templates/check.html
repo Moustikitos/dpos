@@ -1,0 +1,17 @@
+{% extends "start.html" %}
+{% if not tx %}
+{% set tx = {} %}
+{% endif %}
+	{% block content %}
+	<div class="element">
+        <h2 style="text-align:center;">Transaction details</h2>
+        <table style="margin:auto;" cellspacing="5px">
+        {% for key,value in tx.items() %}
+            {% if "sign" not in key %}
+            <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+            {% endif %}
+        {% endfor %}
+        </table>
+	</div>
+    <div class="element warning"><input type="Button" value="Validate"/>&nbsp;<input type="button" value="Cancel"/></div>
+	{% endblock content %}

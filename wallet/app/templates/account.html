@@ -1,25 +1,32 @@
 {% extends "start.html" %}
-	{% block content -%}
+{% if not registry %}
+{% set registry = {} %}
+{% endif %}
+	{% block content %}
 	<div class="element">
 		<h2 style="text-align:center;">Info</h2>
 		<table style="margin:auto;" cellspacing="5px">
+			{% if not session.data["publicKey"] %}
+			<tr><td colspan="2">Cold wallet</td></tr>
+			{% else %}
 			<tr><td>Public key</td><td>{{ session.data['publicKey'] }}</td></tr>
-			{%- if session.data["secondPublicKey"] %}
+			{% endif %}
+			{% if session.data["secondPublicKey"] %}
 			<tr><td>Second public key</td><td>{{ session.data['secondPublicKey'] }}</td></tr>
-			{%- endif %}
-			<tr><td>Balance</td><td>{{ session.data['balance']|float / 100000000 }} token</td></tr>
-			{%- if session.data["voted"] != [] %}
+			{% endif %}
+			<tr><td>Balance</td><td>{{ session.data.get('balance', 0)|float / 100000000 }} token</td></tr>
+			{% if session.data["voted"] != [] %}
 			<tr>
 				<td>Vote</td>
 				<td>
-				{%- for delegate in session.data["voted"] %}
+				{% for delegate in session.data["voted"] %}
 					{{ session.data['voted']|join('<br/>', attribute='username') }}
-				{%- endfor %}
+				{% endfor %}
 				</td>
 			</tr>
-			{%- endif %}
+			{% endif %}
 		</table>
-		{%- if session.data.get("username", False) %}
+		{% if session.data.get("username", False) %}
 		<h2 style="text-align:center;">Delegate</h2>
 		<table style="margin:auto;" cellspacing="5px">
 			<tr><td>Username</td><td>{{ session.data['username'] }}</td></tr>
@@ -29,6 +36,6 @@
 			<tr><td>Vote</td><td>{{ session.data['vote']|float / 100000000 }} token</td></tr>
 			<tr><td>Rate</td><td>{{ session.data['rate'] }}</td></tr>
 		</table>
-		{%- endif %}
+		{% endif %}
 	</div>
-	{% endblock content -%}
+	{% endblock content %}

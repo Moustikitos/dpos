@@ -8,25 +8,25 @@
 	<body>
 
 	<div class="element">
-		{% if session.data -%}
+		{% if session.data %}
 		<center><h2>{{ session.data['address'] }}</h2></center>
 		<a href="{{ url_for('logout') }}">logout</a>
 		<a href="{{ url_for('send') }}">send</a>
 		<a href="{{ url_for('history') }}">history</a>
 		<a href="{{ url_for('account') }}">account</a>
-		{% else -%}
+		{% else %}
 		<center><h2>No wallet logged</h2></center>
-		{% endif -%}
+		{% endif %}
 	</div>
 
-	{% with messages = get_flashed_messages(True) -%}
-		{% for cat,msg in messages -%}
+	{% with messages = get_flashed_messages(True) %}
+		{% for cat,msg in messages %}
 	<p class="element {{ cat }}">{{ msg }}</p>
-		{% endfor -%}
-	{% endwith -%}
+		{% endfor %}
+	{% endwith %}
 
-	{% block content -%}
-	{% endblock content -%}
+	{% block content %}
+	{% endblock content %}
 
 	</body>
 
