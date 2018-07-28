@@ -10,7 +10,7 @@
 			{% if not session.data["publicKey"] %}
 			<tr><td colspan="2">Cold wallet</td></tr>
 			{% else %}
-			<tr><td>Public key</td><td>{{ session.data['publicKey'] }}</td></tr>
+			<tr><td>Public&nbsp;key</td><td>{{ session.data['publicKey'] }}</td></tr>
 			{% endif %}
 			{% if session.data["secondPublicKey"] %}
 			<tr><td>Second public key</td><td>{{ session.data['secondPublicKey'] }}</td></tr>
@@ -20,9 +20,7 @@
 			<tr>
 				<td>Vote</td>
 				<td>
-				{% for delegate in session.data["voted"] %}
-					{{ session.data['voted']|join('<br/>', attribute='username') }}
-				{% endfor %}
+					{{ session.data['voted']|join(", ") }}
 				</td>
 			</tr>
 			{% endif %}

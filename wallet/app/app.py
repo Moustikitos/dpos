@@ -88,9 +88,10 @@ def update_session():
 	"""Update wallet data if a wallet is logged in"""
 	if flask.session.get("data", False):
 		address = flask.session["data"]["address"]
+		publicKey = flask.session["data"]["publicKey"]
 		flask.session["data"].update(**rest.GET.api.accounts(address=address).get("account", {}))
-		flask.session["data"].update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
-		flask.session["data"]["voted"] = rest.GET.api.accounts.delegates(address=address).get("delegates", [])
+		flask.session["data"].update(**rest.GET.api.delegates.get(publicKey=publicKey).get("delegate", {}))
+		flask.session["data"]["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -112,7 +113,7 @@ def login():
 		# get info from address and public key
 		account = rest.GET.api.accounts(address=address).get("account", {})
 		account.update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
-		account["voted"] = rest.GET.api.accounts.delegates(address=address).get("delegates", [])
+		account["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 		account["address"] = address
 
 		flask.session.clear()
