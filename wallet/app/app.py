@@ -208,48 +208,26 @@ def txlist():
 	return flask.render_template("txlist.html")
 
 
-
-# @app.route("/send", methods=["POST", "GET"])
-# def send():
-# 	global KEYS, TX_GENESIS
-
-# 	if flask.session.get("secondPublicKey", False):
-# 		return flask.redirect(flask.url_for("unlock"))
-
-# 	if flask.request.method == "POST":
-# 		TX_GENESIS = dict(
-# 			recipientId=flask.request.form["recipientId"],
-# 			amount=float(flask.request.form["amount"])*100000000,
-# 			vendorField=flask.request.form["vendorField"],
-# 			publicKey=KEYS.get("publicKey", None),
-# 			privateKey=KEYS.get("privateKey", None),
-# 			secondPrivateKey=KEYS.get("secondPrivateKey", None)
-# 		)
-# 		return flask.redirect(flask.url_for("create"))
-# 	else:
-# 		if not flask.session.get("data", False):
-# 			return flask.redirect(flask.url_for("login"))
-# 		return flask.render_template("send.html")
+@app.route("/vote")
+def vote():
+	if not flask.session.get("data", False):
+		return flask.redirect(flask.url_for("login"))
+	else:
+		flask.session["peer"] = random.choice(cfg.peers)
+		return flask.render_template("vote.html")
+@app.route("/delegates")
+def vtlist():
+	return flask.render_template("vtlist.html")
 
 
-
-
-# @app.route("/vote", methods=["GET", "POST"])
-# def vote():
-# 	if not flask.session.get("data", False):
-# 		return flask.redirect(flask.url_for("login"))
-# 	else:
-# 		if flask.request.method == "POST":
-# 			return flask.request.form["votelist"]
-# 		else:
-# 			flask.session["peer"] = random.choice(cfg.peers)
-# 			return flask.render_template("vote.html")
-
-
-# @app.route("/delegates")
-# def vtlist():
-# 	return flask.render_template("vtlist.html")
-
+@app.route("/send")
+def send():
+	if flask.session.get("secondPublicKey", False):
+		return flask.redirect(flask.url_for("unlock"))
+	else:
+		if not flask.session.get("data", False):
+			return flask.redirect(flask.url_for("login"))
+		return flask.render_template("send.html")
 
 
 # @app.route("/tx/init")
