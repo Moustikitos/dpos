@@ -1,2 +1,3 @@
-graft app/templates
-graft app/static
+graft wallet/app/templates
+graft wallet/app/static
+graft lib/net

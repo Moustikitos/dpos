@@ -1,0 +1,39 @@
+{
+	"timeout": 5,
+	"begintime": [2018, 2, 1, 0],
+	"endpoints": "ark",
+	"familly": "ark",
+	"maxlimit": 50,
+	"maxvotepertx": 1,
+	"maxvote": 1,
+
+	"compressed": true,
+	"wif": "50",
+	"marker": "37",
+	"slip44": "1",
+	"bip32": {
+		"private": 70615956,
+		"public": 70617039
+	},
+
+	"headers": {
+		"Content-Type": "application/json; charset=utf-8",
+		"port": "4102"
+	},
+
+	"port": 4102,
+	"peers": [
+		"89.40.7.63",
+		"192.99.54.32",
+		"45.77.180.23",
+		"5.135.75.77" 
+	],
+	"broadcast": 5,
+
+	"explorer": "http://explorer.persona.im",
+	"token": "prs",
+	"symbol": "PRS",
+	"delegate": 51,
+	"blocktime": 8,
+	"blockreward": 8
+}

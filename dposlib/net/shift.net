@@ -1,0 +1,26 @@
+{
+	"timeout": 5,
+	"begintime": [2016, 5, 24, 17],
+	"endpoints": "lsk",
+	"familly": "lisk",
+	"maxlimit": 1000,
+	"maxvotepertx": 25,
+	"maxvote": 101,
+	"marker": "S",
+
+	"headers": {
+		"Content-Type": "application/json; charset=utf-8",
+		"port": "9305"
+	},
+
+	"seeds": [
+		"https://wallet.shiftnrg.org"
+	],
+
+	"explorer": "https://explorer.shiftnrg.org",
+	"token": "shift",
+	"symbol": "SHIFT",
+	"delegate": 101,
+	"blocktime": 10,
+	"blockreward": 4
+}

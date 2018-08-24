@@ -1,0 +1,45 @@
+{
+	"timeout": 5,
+	"begintime": [2017, 3, 21, 13],
+	"endpoints": "ark",
+	"familly": "ark.v2",
+	"maxlimit": 50,
+	"maxvotepertx": 1,
+	"maxvote": 1,
+
+	"compressed": true,
+	"wif": "aa",
+	"marker": "17",
+	"slip44": "111",
+	"bip32": {
+		"private": 76066276,
+		"public": 76067358
+	},
+
+	"headers": {
+		"Content-Type": "application/json; charset=utf-8",
+		"port": "4001"
+	},
+
+	"port": 4001,
+	"peers": [
+		"5.39.9.240",
+		"5.39.9.241",
+		"5.39.9.242",
+		"5.39.9.243",
+		"5.39.9.244",
+		"5.39.9.250",
+		"5.39.9.251",
+		"5.39.9.252",
+		"5.39.9.253",
+		"5.39.9.254",
+		"5.39.9.255"
+	],
+	"broadcast": 10,
+	
+	"explorer": "https://explorer.ark.io",
+	"token": "ARK",
+	"symbol": "Ѧ",
+	"delegate": 51,
+	"blocktime": 8
+}

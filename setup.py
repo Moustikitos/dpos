@@ -23,7 +23,7 @@ kw = {
 	"include_package_data": True,
 	"description": "light wallet compatible with all ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
-	"packages": ["wallet", "wallet.app"],
+	"packages": ["wallet", "wallet.app", "lib"],
 	"install_requires": ["arky>=1.4", "flask", "six"],
 	"scripts": [
 		"bin/wsgi.py"

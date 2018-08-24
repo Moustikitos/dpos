@@ -1,0 +1,37 @@
+{
+	"timeout": 5,
+	"begintime": [2017, 3, 21, 13],
+	"endpoints": "ark",
+	"familly": "ark",
+	"maxlimit": 50,
+	"maxvotepertx": 1,
+	"maxvote": 1,
+
+	"compressed": true,
+	"wif": "6f",
+	"marker": "2d",
+	"slip44": "111",
+	"bip32": {
+		"private": 46089520,
+		"public": 46090600
+	},
+
+	"headers": {
+		"Content-Type": "application/json; charset=utf-8",
+		"port": "9700",
+		"version": "1.0.4"
+	},
+
+	"port": 9700,
+	"peers": [
+		"144.202.85.158"
+	],
+	"broadcast": 10,
+	
+	"explorer": "https://explorer.kapu.one",
+	"token": "kapu",
+	"symbol": "ʞ",
+	"delegate": 51,
+	"blocktime": 8,
+	"blockreward": 2
+}
