@@ -1,10 +1,10 @@
 {% extends "start.html" %}
-	{% block content %}
-	<div class="element">
-		<h2>Log to a wallet</h2>
-		<form name="sendForm" action="{{ url_for('login') }}" method="post">
-			<p><label>Secret</label><input type="password" size="100%" name="secret" autocomplete="off" required></p>
-			<p><input style="margin:20px 0px 0px 0px;" type="submit"></p>
+	{%- block content %}
+	<div>
+		<h2>Enter wallet passphrase</h2>
+		<form name="sendForm" method="post">
+			<p><input type="password" size="100%" name="secret" autocomplete="off" required></p>
+			<p><input type="submit"></p>
 		</form>
 	</div>
-	{% endblock content %}
+	{%- endblock content %}

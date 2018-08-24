@@ -10,9 +10,11 @@ import logging
 import optparse
 import datetime
 
+from . import PY3
+
 import pytz
 import arky
-from six import PY3
+
 from arky import rest
 from arky import cfg
 
@@ -27,9 +29,9 @@ rest.use(options.network)
 
 # needed global var
 ROOT = os.path.abspath(os.path.dirname(__file__))
+# private and public keys of linked account
 KEYS = {}
-TX_GENESIS = {}
-CURRENT_TX = {}
+TX_GENESIS = []
 LOGGED = False
 
 _registry_path = lambda: os.path.join(ROOT, ".registry", options.network, KEYS["publicKey"])
@@ -75,36 +77,56 @@ def dumpJson(data, path):
 
 def register(tx):
 	"""Write transaction in a registry"""
-	spk = tx["senderPublicKey"]
 	id_ = tx["id"]
 	pathfile = _registry_path()
 	registry = loadJson(pathfile)
-	registry[id_] = tx
+	registry[tx["id"]] = tx
 	dumpJson(registry, pathfile)
+
+###
+@app.context_processor
+def override_url_for():
+	return dict(url_for=dated_url_for)
+
+
+def dated_url_for(endpoint, **values):
+	if endpoint == 'static':
+		filename = values.get('filename', None)
+		if filename:
+			file_path = os.path.join(app.root_path, endpoint, filename)
+			values['q'] = int(os.stat(file_path).st_mtime)
+	return flask.url_for(endpoint, **values)
 
 
 @app.before_request
 def update_session():
 	"""Update wallet data if a wallet is logged in"""
+	flask.session.modified = True
 	if flask.session.get("data", False):
+		# if session has data, address is in data
 		address = flask.session["data"]["address"]
-		publicKey = flask.session["data"]["publicKey"]
+		# if wallet is a cold wallet, publicKey is not defined
+		publicKey = flask.session["data"].get("publicKey", False)
+		# use arky.rest API to get information about account and update the session cookie
 		flask.session["data"].update(**rest.GET.api.accounts(address=address).get("account", {}))
 		flask.session["data"].update(**rest.GET.api.delegates.get(publicKey=publicKey).get("delegate", {}))
-		flask.session["data"]["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
+		if publicKey:
+			flask.session["data"]["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 
-
+###
 @app.route("/", methods=["GET", "POST"])
 def login():
 	global KEYS, LOGGED
 	flask.session["permanent"] = True
 
-	# if LOGGED true and login called --> session expired
 	if LOGGED:
-		flask.flash("Session expired !", category="warning")
-		KEYS.clear()
-		LOGGED = False
-	
+		if not flask.session.get("data", False):
+			flask.flash("Session expired !", category="warning")
+			KEYS.clear()
+			LOGGED = False
+		else:
+			flask.redirect(flask.url_for("account"))
+
 	# 
 	if flask.request.method == "POST":
 		secret = flask.request.form["secret"]
@@ -114,13 +136,18 @@ def login():
 		account = rest.GET.api.accounts(address=address).get("account", {})
 		account.update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
 		account["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
-		account["address"] = address
+		account["address"]= address
 
 		flask.session.clear()
-		flask.flash('You are now logged to %s wallet...' % address, category="success")
-		flask.session["secondPublicKey"] = account.get("secondPublicKey", False)
-		flask.session["symbol"] = cfg.symbol
 		flask.session["data"] = account
+		flask.session["secondPublicKey"] = account.get("secondPublicKey", False)
+		flask.session["begin"] = (cfg.begintime - datetime.datetime(1970,1,1, tzinfo=pytz.UTC)).total_seconds()
+		flask.session["explorer"] = cfg.explorer
+		flask.session["symbol"] = cfg.symbol
+		flask.session["dlgtnum"] = cfg.delegate
+		flask.session["maxvote"] = cfg.maxvote
+		#
+		flask.flash('You are now logged to %s wallet...' % address, category="success")
 		LOGGED = True
 
 	# if data is set to session --> login successfull
@@ -136,35 +163,11 @@ def login():
 def logout():
 	"""Clean up all global variables and reset session cookies"""
 	global KEYS, LOGGED, CURRENT_TX, TX_GENESIS
-	KEYS.clear()
-	LOGGED = False
-	CURRENT_TX.clear()
-	TX_GENESIS.clear()
 	flask.session.clear()
-	return flask.render_template("login.html")
-
-
-@app.route("/send", methods=["POST", "GET"])
-def send():
-	global KEYS, TX_GENESIS
-
-	if flask.session.get("secondPublicKey", False):
-		return flask.redirect(flask.url_for("unlock"))
-
-	if flask.request.method == "POST":
-		TX_GENESIS = dict(
-			recipientId=flask.request.form["recipientId"],
-			amount=float(flask.request.form["amount"])*100000000,
-			vendorField=flask.request.form["vendorField"],
-			publicKey=KEYS.get("publicKey", None),
-			privateKey=KEYS.get("privateKey", None),
-			secondPrivateKey=KEYS.get("secondPrivateKey", None)
-		)
-		return flask.redirect(flask.url_for("create"))
-	else:
-		if not flask.session.get("data", False):
-			return flask.redirect(flask.url_for("login"))
-		return flask.render_template("send.html")
+	KEYS.clear()
+	TX_GENESIS = []
+	LOGGED = False
+	return flask.redirect(flask.url_for("login"))
 
 
 @app.route("/account")
@@ -172,7 +175,7 @@ def account():
 	if not flask.session.get("data", False):
 		return flask.redirect(flask.url_for("login"))
 	else:
-		return flask.render_template("account.html", registry=loadJson(_registry_path()))
+		return flask.render_template("account.html")
 
 
 @app.route("/account/unlock", methods=["GET", "POST"])
@@ -184,7 +187,7 @@ def unlock():
 			KEYS["secondPublicKey"] = keys["publicKey"]
 			KEYS["secondPrivateKey"] = keys["privateKey"]
 			flask.session["secondPublicKey"] = False
-			flask.flash('Second public key set !', category="success")
+			flask.flash('Account unlocked !', category="success")
 			return flask.redirect(flask.url_for("account"))
 		else:
 			flask.flash('Second public key does not match !', category="error")
@@ -192,76 +195,95 @@ def unlock():
 	else:
 		return flask.render_template("unlock.html")
 
-		
+
 @app.route("/history")
 def history():
 	if not flask.session.get("data", False):
 		return flask.redirect(flask.url_for("login"))
 	else:
 		flask.session["peer"] = random.choice(cfg.peers)
-		flask.session["explorer"] = cfg.explorer
-		flask.session["begin"] = (cfg.begintime - datetime.datetime(1970,1,1, tzinfo=pytz.UTC)).total_seconds()
 		return flask.render_template("history.html")
-
-
-@app.route("/vote")
-def vote():
-	if not flask.session.get("data", False):
-		return flask.redirect(flask.url_for("login"))
-	else:
-		return flask.render_template("vote.html")
-
-
 @app.route("/transactions")
 def txlist():
 	return flask.render_template("txlist.html")
 
 
-@app.route("/tx/init")
-def create():
-	global TX_GENESIS, CURRENT_TX
-	try:
-		CURRENT_TX = arky.core.bakeTransaction(**TX_GENESIS)
-		return flask.render_template("check.html", tx=CURRENT_TX)
-	except Exception as e:
-		flask.flash("API error: %s" % e.message, category="error")
-		return flask.render_template("send.html")
+
+# @app.route("/send", methods=["POST", "GET"])
+# def send():
+# 	global KEYS, TX_GENESIS
+
+# 	if flask.session.get("secondPublicKey", False):
+# 		return flask.redirect(flask.url_for("unlock"))
+
+# 	if flask.request.method == "POST":
+# 		TX_GENESIS = dict(
+# 			recipientId=flask.request.form["recipientId"],
+# 			amount=float(flask.request.form["amount"])*100000000,
+# 			vendorField=flask.request.form["vendorField"],
+# 			publicKey=KEYS.get("publicKey", None),
+# 			privateKey=KEYS.get("privateKey", None),
+# 			secondPrivateKey=KEYS.get("secondPrivateKey", None)
+# 		)
+# 		return flask.redirect(flask.url_for("create"))
+# 	else:
+# 		if not flask.session.get("data", False):
+# 			return flask.redirect(flask.url_for("login"))
+# 		return flask.render_template("send.html")
 
 
-@app.route("/tx/cancel")
-def cancel():
-	global TX_GENESIS, CURRENT_TX
-	TX_GENESIS.clear()
-	CURRENT_TX.clear()
-	flask.flash("Transaction Cancelled...", category="warning")
-	return flask.redirect(flask.url_for("account"))
 
 
-@app.route("/tx/confirm")
-def confirm():
-	global CURRENT_TX
-	register(CURRENT_TX)
-	try:
-		result = arky.core.sendPayload(CURRENT_TX)
-	except Exception as e:
-		result = {"messages": ["API error: %s" % e.message]}
-	if len(result.get('transactions', [])):
-		flask.flash('Transaction successfully sent:<br/>%s' % "<br/>".join(result["transactions"]), category="success")
-	else:
-		flask.flash("<br/>".join(result.get("messages", ["Error occured !"])), category="error")
-	return flask.redirect(flask.url_for("account"))
+# @app.route("/vote", methods=["GET", "POST"])
+# def vote():
+# 	if not flask.session.get("data", False):
+# 		return flask.redirect(flask.url_for("login"))
+# 	else:
+# 		if flask.request.method == "POST":
+# 			return flask.request.form["votelist"]
+# 		else:
+# 			flask.session["peer"] = random.choice(cfg.peers)
+# 			return flask.render_template("vote.html")
 
 
-###
-@app.context_processor
-def override_url_for():
-	return dict(url_for=dated_url_for)
+# @app.route("/delegates")
+# def vtlist():
+# 	return flask.render_template("vtlist.html")
 
 
-def dated_url_for(endpoint, **values):
-	if endpoint == 'static':
-		filename = values.get('filename', None)
-		if filename:
-			file_path = os.path.join(app.root_path, endpoint, filename)
-			values['q'] = int(os.stat(file_path).st_mtime)
-	return flask.url_for(endpoint, **values)
+
+# @app.route("/tx/init")
+# def create():
+# 	global TX_GENESIS, CURRENT_TX
+# 	try:
+# 		CURRENT_TX = arky.core.bakeTransaction(**TX_GENESIS)
+# 		return flask.render_template("check.html", tx=CURRENT_TX)
+# 	except Exception as e:
+# 		flask.flash("API error: %s" % e.message, category="error")
+# 		return flask.render_template("send.html")
+
+
+# @app.route("/tx/cancel")
+# def cancel():
+# 	global TX_GENESIS, CURRENT_TX
+# 	TX_GENESIS.clear()
+# 	CURRENT_TX.clear()
+# 	flask.flash("Transaction Cancelled...", category="warning")
+# 	return flask.redirect(flask.url_for("account"))
+
+
+# @app.route("/tx/confirm")
+# def confirm():
+# 	global CURRENT_TX
+# 	register(CURRENT_TX)
+# 	try:
+# 		result = arky.core.sendPayload(CURRENT_TX)
+# 	except Exception as e:
+# 		result = {"messages": ["API error: %s" % e.message]}
+# 	if len(result.get('transactions', [])):
+# 		flask.flash('Transaction successfully sent:<br/>%s' % "<br/>".join(result["transactions"]), category="success")
+# 	else:
+# 		flask.flash("<br/>".join(result.get("messages", ["Error occured !"])), category="error")
+# 	return flask.redirect(flask.url_for("account"))
+
+

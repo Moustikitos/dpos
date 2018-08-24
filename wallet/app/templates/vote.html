@@ -1,0 +1,30 @@
+{% extends "start.html" %}
+	{% block content %}
+	<div class="element">
+		<h2 class="span">{{ session.maxvote }} vote{{ "s" if session.maxvote > 1 else ""}} maximum allowed [current:{{ session.data["voted"]|length }} - shown:<span id="votecount"></span>]</h2>
+		<iframe style="resize:vertical;width:100%;min-height:200px;padding:0;border:0;"
+				name="dlgtlist" id="dlgtlist" src="{{ url_for('vtlist') }}"></iframe>
+		<p><input type="submit" action="javascript:postVoteList();"></p>
+	</div>
+	<!-- <div class="element" style="background:white;text-align:right;">
+		<p><a class="span warning" href="#" onclick="postVoteList();">Validate</a>
+		<a class="span warning" href="{{ url_for('account') }}">Cancel</a></p>
+	</div> -->
+
+	<script type="text/javascript">
+var iframe = document.getElementById("dlgtlist");
+document.getElementById('dlgtlist').style.height = getCookie('dlgtlistHeight');
+function timedCount() {
+	setCookie('dlgtlistHeight', document.getElementById('dlgtlist').style.height, 7);
+	document.getElementById("votecount").innerText = iframe.contentWindow.document.querySelectorAll(".voted").length;
+    setTimeout(timedCount, 1000);
+}
+timedCount();
+
+function postVoteList() {
+	var result = [];
+	iframe.contentWindow.document.querySelectorAll(".voted").forEach(function(element){result.push(element.innerText);});
+	post("{{ url_for('vote') }}", {"votelist":result});
+}
+	</script>
+	{% endblock content %}

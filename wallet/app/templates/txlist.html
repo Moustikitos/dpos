@@ -1,9 +1,6 @@
-<!-- 
--->
-
 <html>
 	<head>
-		<script>
+		<script type="text/javascript">
 var PEER = "{{ session.peer }}";
 var BEGIN = "{{ session.begin }}";
 var SYMBOL = "{{ session.symbol|safe }}";
@@ -147,5 +144,12 @@ table a {
 	<body onload="autoAppend();" id="listbody">
 	<table cellspacing="5px" id="txList">
 	</table>
+	<script>
+window.onscroll = function(ev) {
+	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		autoAppend();
+	}
+};
+	</script>
 	</body>
 </html>

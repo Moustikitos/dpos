@@ -43,8 +43,11 @@
 			</table>
 		{% endif %}
 	</div>
+	{% endblock content %}
+
+	{% block validate %}
 	<div class="element" style="background:white;text-align:right;">
 		<p><a class="span warning" href="{{ url_for('confirm') }}">Validate</a>
 		<a class="span warning" href="{{ url_for('cancel') }}">Cancel</a></p>
 	</div>
-	{% endblock content %}
+	{% endblock validate %}
