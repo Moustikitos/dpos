@@ -2,5 +2,5 @@
 # © Toons
 
 """
-This module stores the blockchain parameters.
+This module stores blockchain parameters.
 """

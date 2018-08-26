@@ -4,17 +4,16 @@
 """
 """
 
+from dposlib.blockchain import cfg
 from datetime import datetime, timedelta
 
 import pytz
-
-from dposlib import cfg
 
 
 def getTimestamp(**kw):
 	"""
 	return blockchain timestamp from datetime keyword arument.
-	>>> getTimestamp(day=6, hours=4, minutes=20)
+	>>> getTimestamp(days=6, hours=4, minutes=20)
 	"""
 	delta = datetime.timedelta(**kw)
 	return getTime(datetime.now(pytz.UTC) - delta)

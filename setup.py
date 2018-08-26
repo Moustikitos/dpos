@@ -12,8 +12,8 @@ with open("VERSION") as f1, open("README.md") as f2:
 
 kw = {
 	"version": VERSION,
-	"name": "wallet",
-	"keywords": ["lite", "wallet", "dpos", "blockchain"],
+	"name": "dposlib",
+	"keywords": ["cli", "wallet", "dpos", "blockchain"],
 	"author": "Toons",
 	"author_email": "moustikitos@gmail.com",
 	"maintainer": "Toons",
@@ -24,10 +24,10 @@ kw = {
 	"description": "light wallet compatible with all ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
 	"packages": ["wallet", "wallet.app", "lib"],
-	"install_requires": ["arky>=1.4", "flask", "six"],
-	"scripts": [
-		"bin/wsgi.py"
-	],
+	# "install_requires": ["arky>=1.4", "flask", "six"],
+	# "scripts": [
+	# 	"bin/wsgi.py"
+	# ],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
 		"Development Status :: 4 - Beta",

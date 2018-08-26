@@ -10,13 +10,11 @@ import logging
 import optparse
 import datetime
 
-from . import PY3
-
 import pytz
-import arky
+import dposlib
 
-from arky import rest
-from arky import cfg
+from dposlib import PY3, rest
+from dposlib.blockchain import cfg
 
 # add a parser to catch the network on startup
 parser = optparse.OptionParser()
@@ -107,7 +105,7 @@ def update_session():
 		address = flask.session["data"]["address"]
 		# if wallet is a cold wallet, publicKey is not defined
 		publicKey = flask.session["data"].get("publicKey", False)
-		# use arky.rest API to get information about account and update the session cookie
+		# use dposlib.rest API to get information about account and update the session cookie
 		flask.session["data"].update(**rest.GET.api.accounts(address=address).get("account", {}))
 		flask.session["data"].update(**rest.GET.api.delegates.get(publicKey=publicKey).get("delegate", {}))
 		if publicKey:
@@ -130,8 +128,8 @@ def login():
 	# 
 	if flask.request.method == "POST":
 		secret = flask.request.form["secret"]
-		KEYS = arky.core.crypto.getKeys(secret)
-		address = arky.core.crypto.getAddress(KEYS["publicKey"])
+		KEYS = dposlib.core.crypto.getKeys(secret)
+		address = dposlib.core.crypto.getAddress(KEYS["publicKey"])
 		# get info from address and public key
 		account = rest.GET.api.accounts(address=address).get("account", {})
 		account.update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
@@ -182,7 +180,7 @@ def account():
 def unlock():
 	if flask.request.method == "POST":
 		secondSecret = flask.request.form["secondSecret"]
-		keys = arky.core.crypto.getKeys(secondSecret)
+		keys = dposlib.core.crypto.getKeys(secondSecret)
 		if keys["publicKey"] == flask.session["secondPublicKey"]:
 			KEYS["secondPublicKey"] = keys["publicKey"]
 			KEYS["secondPrivateKey"] = keys["privateKey"]
@@ -234,7 +232,7 @@ def send():
 # def create():
 # 	global TX_GENESIS, CURRENT_TX
 # 	try:
-# 		CURRENT_TX = arky.core.bakeTransaction(**TX_GENESIS)
+# 		CURRENT_TX = dposlib.core.bakeTransaction(**TX_GENESIS)
 # 		return flask.render_template("check.html", tx=CURRENT_TX)
 # 	except Exception as e:
 # 		flask.flash("API error: %s" % e.message, category="error")
@@ -255,7 +253,7 @@ def send():
 # 	global CURRENT_TX
 # 	register(CURRENT_TX)
 # 	try:
-# 		result = arky.core.sendPayload(CURRENT_TX)
+# 		result = dposlib.core.sendPayload(CURRENT_TX)
 # 	except Exception as e:
 # 		result = {"messages": ["API error: %s" % e.message]}
 # 	if len(result.get('transactions', [])):

@@ -5,8 +5,8 @@ import os
 import re
 import sys
 import json
-import logging
 import random
+import logging
 
 from importlib import import_module
 from datetime import datetime
@@ -14,7 +14,8 @@ from datetime import datetime
 import pytz
 import requests
 
-from dposlib import FROZEN, ROOT, cfg
+from dposlib import FROZEN, ROOT
+from dposlib.blockchain import cfg
 
 
 LOG = logging.getLogger(__name__)
@@ -132,11 +133,11 @@ def load(family_name):
 	Loads a given blockchain package as `dposlib.core`
 	"""
 	# initialize blockchain familly package
-	try:
-		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
-		sys.modules[__package__].core.init()
-	except:
-		raise Exception("%s is not a valid blockchain package" % family_name)
+	# try:
+	sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
+	sys.modules[__package__].core.init()
+	# except:
+	# 	raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
 
 	# delete real package name loaded to keep namespace clear
 	try:
@@ -155,9 +156,9 @@ def use(network, **kwargs):
 	cfg.network = None
 	cfg.hotmode = False
 	
-	path = os.path.join(ROOT, "net", network + ".net")
+	path = os.path.join(ROOT, "network", network + ".net")
 	if os.path.exists(path):
-		with io.open(os.path.join(ROOT, "net", network + ".net")) as f:
+		with io.open(os.path.join(ROOT, "network", network + ".net")) as f:
 			data = json.load(f)
 	else:
 		raise Exception('"{}" blockchain parameters does not exist'.format(network))
@@ -183,8 +184,9 @@ def use(network, **kwargs):
 	if len(cfg.peers):
 		try:
 			load(cfg.familly)
-		except:
+		except Exception as e:
 			cfg.hotmode = False
+			sys.stdout.write("%s\n" % e)
 		else:
 			cfg.hotmode = True
 		finally:
