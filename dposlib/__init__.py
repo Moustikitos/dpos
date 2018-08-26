@@ -2,7 +2,7 @@
 # © Toons
 
 """
-dposlib is a package providing REST API, CLI and wallet to interact with 
+`dposlib` is a package providing REST API, CLI and wallet to interact with 
 major dpos blockchain environement.
 
 It is designed to run on boh python 2.x and 3.x exept for the wallet wich
