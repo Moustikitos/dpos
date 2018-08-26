@@ -1,3 +1,4 @@
-graft wallet/app/templates
-graft wallet/app/static
-graft networks
+recursive-include dposlib *.net
+recursive-include dposlib *.html
+recursive-include dposlib *.css
+recursive-include dposlib *.js

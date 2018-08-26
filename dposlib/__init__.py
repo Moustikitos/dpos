@@ -9,8 +9,6 @@ It is designed to run on boh python 2.x and 3.x exept for the wallet wich
 runs with python 2.x
 """
 
-__version__ = "0.1.0"
-
 import os
 import sys
 import imp
