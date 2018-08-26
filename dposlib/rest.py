@@ -1,5 +1,38 @@
 # -*- coding: utf-8 -*-
 # © Toons
+
+"""
+`rest` module It loads networks constants to `cfg` module and provides smart GET,
+PUT and POST endpoints classes.
+
+>>> from dposlib import rest
+>>> rest.use("ark")
+>>> # = 'http://explorer.ark.io:8443/api/delegates/get?username=arky'
+>>> rest.GET.api.delegates.get(username="arky")
+{'success': True, 'delegate': {'vote': '142348239372385', 'producedblocks': 107\
+856, 'productivity': 98.63, 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', 'r\
+ate': 42, 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
+110d60a15e9', 'approval': 1.05, 'username': 'arky', 'missedblocks': 1499}}
+
+If you know the content key of blockchain response you can ask it using
+`returnKey` keyword (satoshi values are converted to float values).
+>>> rest.GET.api.delegates.get(username="arky", returnKey="delegate")
+{'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15\
+e9', 'rate': 42, 'approval': 1.05, 'producedblocks': 107858, 'missedblocks': 14\
+96, 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', 'vote': 1423484.39372385, \
+'productivity': 98.63, 'username': 'arky'}
+
+`rest` also creates a `core` module to `dposlib` package containing transactions
+functions and `crypto` module. 
+
+>>> import dposlib
+>>> dposlib.core.crypto.getKeys("secret")
+{'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de9\
+33', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf52\
+7a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
+"""
+
+
 import io
 import os
 import re

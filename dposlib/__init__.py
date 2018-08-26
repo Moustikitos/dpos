@@ -15,7 +15,7 @@ import imp
 import logging
 
 # configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.CRITICAL)
 
 PY3 = True if sys.version_info[0] >= 3 else False
 
@@ -23,18 +23,14 @@ if PY3:
 	import io
 	BytesIO = io.BytesIO
 else:
-	# try:
-		from cStringIO import StringIO as BytesIO
-	# except ImportError
-	# 	from StringIO import StringIO as BytesIO
+	from cStringIO import StringIO as BytesIO
 
 # dposlib can be embeded in a frozen app
 FROZEN = hasattr(sys, "frozen") or hasattr(sys, "importers") or imp.is_frozen("__main__")
 
 if FROZEN:
 	# if frozen code, HOME and ROOT pathes are same
-	ROOT = os.path.normpath(os.path.abspath(os.path.dirname(sys.executable)))
-	HOME = ROOT
+	HOME = ROOT = os.path.normpath(os.path.abspath(os.path.dirname(sys.executable)))
 	LOGNAME = os.path.join(ROOT, __name__ + ".log")
 else:
 	ROOT = os.path.normpath(os.path.abspath(os.path.dirname(__file__)))

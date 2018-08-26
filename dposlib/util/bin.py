@@ -44,7 +44,6 @@ def pack_bytes(f, v):
 
 
 def hexlify(data):
-	print("%r"%data)
 	if PY3 and isinstance(data, str):
 		if HEX.match(data):
 			return data
