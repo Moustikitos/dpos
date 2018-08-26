@@ -23,11 +23,23 @@ kw = {
 	"include_package_data": True,
 	"description": "light wallet compatible with all ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
-	"packages": ["dposlib.wallet", "dposlib.wallet.app", "dposlib.ark", "dposlib.blockchain"],
-	"install_requires": ["flask"],
-	# "scripts": [
-	# 	"bin/wsgi.py"
-	# ],
+	"packages": [
+		"dposlib.util",
+		"dposlib.wallet",
+		"dposlib.wallet.app",
+		"dposlib.ark",
+		"dposlib.blockchain"
+	],
+	"install_requires": [
+		"requests",
+		"ecdsa",
+		# "pynacl",
+		"pytz",
+		"base58",
+		# "docopt",
+		"ledgerblue",
+		"flask"
+	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
 		"Development Status :: 4 - Beta",
