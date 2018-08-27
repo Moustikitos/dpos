@@ -6,7 +6,7 @@ import logging
 from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.blockchain import cfg, slots
-from dposlib.util.threading import setInterval
+from dposlib.util.asynch import setInterval
 
 log = logging.getLogger(__name__)
 DAEMON_PEERS = None
@@ -71,3 +71,8 @@ def init():
 	else:
 		log.error(response.get('error', '...'))
 		raise Exception("Initialization error with peer %s" % response.get("peer", "???"))
+
+
+def stop():
+	global DAEMON_PEERS
+	DAEMON_PEERS.set()

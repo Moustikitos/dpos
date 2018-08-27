@@ -36,6 +36,7 @@ class Transaction(dict):
 				Transaction.__privateKey = keys["privateKey"]
 			if secondSecret:
 				keys = dposlib.core.crypto.getKeys(secondSecret)
+				Transaction.__secondPublicKey = keys["publicKey"]
 				Transaction.__secondPrivateKey = keys["privateKey"]
 
 	@staticmethod
@@ -43,6 +44,7 @@ class Transaction(dict):
 		for attr in [
 			'_Transaction__privateKey',
 			'_Transaction__publicKey',
+			'_Transaction__secondPublicKey'
 			'_Transaction__secondPrivateKey'
 		]:
 			if hasattr(Transaction, attr):
@@ -74,7 +76,7 @@ class Transaction(dict):
 					5: "dapp"
 				}[self.get("type", 0)]
 			)
-		
+
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
 		if item in Transaction.typing.keys():

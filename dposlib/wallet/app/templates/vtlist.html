@@ -51,7 +51,7 @@ function autoAppend(){
 	for (var n=0; n<delegates.length; n++){
 		var dlgt = delegates[n];
 		var span = document.createElement("SPAN");
-		var tooltip = document.createElement("SPAN");
+		// var tooltip = document.createElement("SPAN");
 		span.className = dlgt["rate"] <= DLGTNUM ? "tooltip active" : "tooltip relay";
 		span.setAttribute("onclick", "swapVote(this)");
 		if (VOTED.includes(dlgt["username"])){

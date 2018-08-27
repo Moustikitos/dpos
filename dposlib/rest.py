@@ -51,7 +51,7 @@ from dposlib import FROZEN, ROOT
 from dposlib.blockchain import cfg
 
 
-LOG = logging.getLogger(__name__)
+logging.getLogger("requests").setLevel(logging.CRITICAL)
 
 
 def check_latency(peer):
@@ -165,12 +165,15 @@ def load(family_name):
 	"""
 	Loads a given blockchain package as `dposlib.core`
 	"""
+	if hasattr(sys.modules[__package__], "core"):
+		sys.modules[__package__].core.stop()
+
 	# initialize blockchain familly package
-	# try:
-	sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
-	sys.modules[__package__].core.init()
-	# except:
-	# 	raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
+	try:
+		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
+		sys.modules[__package__].core.init()
+	except:
+		raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
 
 	# delete real package name loaded to keep namespace clear
 	try:

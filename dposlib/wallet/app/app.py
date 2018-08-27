@@ -14,25 +14,27 @@ import pytz
 import dposlib
 
 from dposlib import PY3, rest
-from dposlib.blockchain import cfg
+from dposlib.blockchain import cfg, Transaction
+
+ROOT = os.path.abspath(os.path.dirname(__file__))
+TX_GENESIS = []
+LOGGED = False
+
 
 # add a parser to catch the network on startup
 parser = optparse.OptionParser()
 parser.add_option("-n", "--network", dest="network", type="string", default="ark", metavar="NETWORK", help="Network you want to connect with [curent : %default]")
 (options, args) = parser.parse_args()
 
-# connect to ripa network
-logging.getLogger("requests").setLevel(logging.CRITICAL)
+# connect to network
 rest.use(options.network)
 
-# needed global var
-ROOT = os.path.abspath(os.path.dirname(__file__))
-# private and public keys of linked account
-KEYS = {}
-TX_GENESIS = []
-LOGGED = False
+_publicKey = lambda: getattr(Transaction, "_Transaction__publicKey")
+_privateKey = lambda: getattr(Transaction, "_Transaction__privateKey")
+_secondPublicKey = lambda: getattr(Transaction, "_Transaction__secondPublicKey")
+_secondPrivateKey = lambda: getattr(Transaction, "_Transaction__secondPrivateKey")
+_registry_path = lambda: os.path.join(ROOT, ".registry", options.network, _publicKey)
 
-_registry_path = lambda: os.path.join(ROOT, ".registry", options.network, KEYS["publicKey"])
 
 # create the application instance 
 app = flask.Flask("DPOS wallet [%s]" % options.network) 
@@ -114,25 +116,26 @@ def update_session():
 ###
 @app.route("/", methods=["GET", "POST"])
 def login():
-	global KEYS, LOGGED
+	global LOGGED
 	flask.session["permanent"] = True
 
 	if LOGGED:
 		if not flask.session.get("data", False):
 			flask.flash("Session expired !", category="warning")
-			KEYS.clear()
+			Transaction.unlink()
 			LOGGED = False
 		else:
 			flask.redirect(flask.url_for("account"))
 
 	# 
 	if flask.request.method == "POST":
-		secret = flask.request.form["secret"]
-		KEYS = dposlib.core.crypto.getKeys(secret)
-		address = dposlib.core.crypto.getAddress(KEYS["publicKey"])
+		Transaction.link(flask.request.form["secret"])
+		publicKey = _publicKey()
+		address = dposlib.core.crypto.getAddress(publicKey)
 		# get info from address and public key
 		account = rest.GET.api.accounts(address=address).get("account", {})
-		account.update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
+		# account.update(**rest.GET.api.delegates.get(publicKey=KEYS["publicKey"]).get("delegate", {}))
+		account.update(**rest.GET.api.delegates.get(publicKey=publicKey).get("delegate", {}))
 		account["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 		account["address"]= address
 
@@ -152,7 +155,7 @@ def login():
 	if flask.session.get("data", False):
 		return flask.render_template("account.html")
 	else:
-		KEYS.clear()
+		Transaction.unlink()
 		LOGGED = False
 		return flask.render_template("login.html")
 
@@ -160,9 +163,9 @@ def login():
 @app.route("/logout")
 def logout():
 	"""Clean up all global variables and reset session cookies"""
-	global KEYS, LOGGED, CURRENT_TX, TX_GENESIS
+	global LOGGED, CURRENT_TX, TX_GENESIS
 	flask.session.clear()
-	KEYS.clear()
+	Transaction.unlink()
 	TX_GENESIS = []
 	LOGGED = False
 	return flask.redirect(flask.url_for("login"))
@@ -179,11 +182,8 @@ def account():
 @app.route("/account/unlock", methods=["GET", "POST"])
 def unlock():
 	if flask.request.method == "POST":
-		secondSecret = flask.request.form["secondSecret"]
-		keys = dposlib.core.crypto.getKeys(secondSecret)
-		if keys["publicKey"] == flask.session["secondPublicKey"]:
-			KEYS["secondPublicKey"] = keys["publicKey"]
-			KEYS["secondPrivateKey"] = keys["privateKey"]
+		Transaction.link(None, flask.request.form["secondSecret"])
+		if _secondPublicKey() == flask.session["secondPublicKey"]:
 			flask.session["secondPublicKey"] = False
 			flask.flash('Account unlocked !', category="success")
 			return flask.redirect(flask.url_for("account"))

@@ -14,8 +14,6 @@ import sys
 import imp
 import logging
 
-# configure logging
-logging.basicConfig(level=logging.CRITICAL)
 
 PY3 = True if sys.version_info[0] >= 3 else False
 
