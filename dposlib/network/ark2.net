@@ -19,6 +19,7 @@
 	"headers": {
 		"Content-Type": "application/json; charset=utf-8",
 		"port": "4001"
+		"API-Version": "2"
 	},
 
 	"port": 4001,

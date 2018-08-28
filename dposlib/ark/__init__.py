@@ -76,3 +76,29 @@ def init():
 def stop():
 	global DAEMON_PEERS
 	DAEMON_PEERS.set()
+
+
+##### INTERFACE ######
+
+def send(amount, address, vendorField=None):
+	pass
+
+
+def registerSecondSecret(secondSecret):
+	pass
+
+
+def registerSecondPublicKey(secondPublicKey):
+	pass
+
+
+def registerAsDelegate(username):
+	pass
+
+
+def upVote(*usernames):
+	pass
+
+
+def downVote(*usernames):
+	pass

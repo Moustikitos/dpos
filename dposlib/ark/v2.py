@@ -12,10 +12,11 @@ from dposlib.blockchain import Transaction, slots, cfg
 
 
 def computePayload(typ, **kwargs):
+	data = kwargs.get("asset", {})
 
 	if typ == 0:
 		try:
-			recipientId = crypto.base58.b58decode_check(kw["recipientId"])
+			recipientId = crypto.base58.b58decode_check(kwargs["recipientId"])
 		except:
 			raise Exception("no recipientId defined")
 		return struct.pack(
@@ -25,7 +26,42 @@ def computePayload(typ, **kwargs):
 			recipientId
 		)
 
-	return b""
+	elif typ == 1:
+		if "secondSecret" in data:
+			secondPublicKey = crypto.getKeys(data["secondSecret"])["publicKey"]
+		elif "secondPublicKey" in data:
+			secondPublicKey = data["secondPublicKey"]
+		else:
+			raise Exception("no secondSecret or secondPublicKey given")
+		return struct.pack("<33s", crypto.unhexlify(secondPublicKey))
+
+	elif typ == 2:
+		username = data.get("username", False)
+		if username:
+			length = len(username)
+			if 3 <= length <= 255:
+				return struct.pack("<B%ds" % length, length, username.encode())
+			else:
+				raise Exception("bad username length [3-255]: %s" % username)
+		else:
+			raise Exception("no username defined")
+
+	elif typ == 3:
+		delegatePublicKeys = data.get("delegatePublicKeys", False)
+		if delegatePublicKeys:
+			length = len(delegatePublicKeys)
+			payload = struct.pack("<%ds" % length, length)
+			for delegatePublicKey in delegatePublicKeys:
+				payload += struct.pack("<34s" % delegatePublicKey.encode())
+			return payload
+		else:
+			raise Exception("no up/down vote given")
+
+	elif typ == 8:
+		return b""
+
+	else:
+		raise Exception("Unknown transaction type %d" % typ)
 
 
 def getBytes(tx):
@@ -52,65 +88,38 @@ def getBytes(tx):
 
 	return header + payload
 
+
+##### INTERFACE ######
+
+def send(amount, address, vendorField=None):
+	pass
+
+
+def registerSecondSecret(secondSecret):
+	pass
+
+
+def registerSecondPublicKey(secondPublicKey):
+	pass
+
+
+def registerAsDelegate(username):
+	pass
+
+
+def upVote(*usernames):
+	pass
+
+
+def downVote(*usernames):
+	pass
+
+
+# erase old definitions
 crypto.getBytes = getBytes
-
-
-# class Payload(object):
-
-# 	C = 0.0001 * 100000000
-
-# 	@staticmethod
-# 	def setArkPerByteFees(value):
-# 		Payload.C = value
-
-# 	@staticmethod
-# 	def get(typ, **kw):
-# 		"""
-# 		Return a payload from keyword parameters.
-# 		"""
-# 		return crypto.hexlify(getattr(Payload, "type%d" % typ)(**kw))
-
-# 	@staticmethod
-# 	def type0(**kw):
-# 		try:
-# 			recipientId = crypto.base58.b58decode_check(kw["recipientId"])
-# 		except:
-# 			raise Exception("no recipientId defined")
-# 		return struct.pack(
-# 			"<QI21s",
-# 			int(kw.get("amount", 0)),
-# 			int(kw.get("expiration", 0)),
-# 			recipientId
-# 		)
-
-# 	@staticmethod
-# 	def type1(**kw):
-# 		if "secondSecret" in kw:
-# 			secondPublicKey = crypto.getKeys(kw["secondSecret"])["publicKey"]
-# 		elif "secondPublicKey" in kw:
-# 			secondPublicKey = kw["secondPublicKey"]
-# 		else:
-# 			raise Exception("no secondSecret or secondPublicKey given")
-# 		return struct.pack("<33s", crypto.unhexlify(secondPublicKey))
-
-# 	@staticmethod
-# 	def type2(**kw):
-# 		username = kw.get("username", False)
-# 		if username:
-# 			length = len(username)
-# 			if 3 <= length <= 255:
-# 				return struct.pack("<B%ds" % length, length, username.encode())
-# 			else:
-# 				raise Exception("bad username length [3-255]: %s" % username)
-# 		else:
-# 			raise Exception("no username defined")
-
-# 	@staticmethod
-# 	def type3(**kw):
-# 		delegatePublicKey = kw.get("delegatePublicKey", False)
-# 		if delegatePublicKey:
-# 			length = len(delegatePublicKey)
-# 			return struct.pack("<%ds" % length, delegatePublicKey.encode())
-# 		else:
-# 			raise Exception("no up/down vote given")
-
+dposlib.ark.send = send
+dposlib.ark.registerSecondSecret = registerSecondSecret
+dposlib.ark.registerSecondPublicKey = registerSecondPublicKey
+dposlib.ark.registerAsDelegate = registerAsDelegate
+dposlib.ark.upVote = upVote
+dposlib.ark.downVote = downVote
