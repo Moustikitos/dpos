@@ -20,19 +20,25 @@ ROOT = os.path.abspath(os.path.dirname(__file__))
 TX_GENESIS = []
 LOGGED = False
 
-# add a parser to catch the network on startup
-parser = optparse.OptionParser()
-parser.add_option("-n", "--network", dest="network", type="string", default="ark", metavar="NETWORK", help="Network you want to connect with [curent : %default]")
-(options, args) = parser.parse_args()
-
-# connect to network
-rest.use(options.network)
-
 _publicKey = lambda: getattr(Transaction, "_Transaction__publicKey")
 _privateKey = lambda: getattr(Transaction, "_Transaction__privateKey")
 _secondPublicKey = lambda: getattr(Transaction, "_Transaction__secondPublicKey")
 _secondPrivateKey = lambda: getattr(Transaction, "_Transaction__secondPrivateKey")
 _registry_path = lambda: os.path.join(ROOT, ".registry", options.network, _publicKey)
+
+
+# add a parser to catch the network on startup and connect to network
+parser = optparse.OptionParser()
+parser.add_option(
+	"-n", "--network", 
+	dest="network", 
+	type="string", 
+	default="ark", 
+	metavar="NETWORK", 
+	help="Network you want to connect with [curent : %default]"
+)
+(options, args) = parser.parse_args()
+rest.use(options.network)
 
 
 # create the application instance 
@@ -83,7 +89,7 @@ def register(tx):
 	registry[tx["id"]] = tx
 	dumpJson(registry, pathfile)
 
-###
+
 @app.context_processor
 def override_url_for():
 	return dict(url_for=dated_url_for)
@@ -120,9 +126,11 @@ def use(network):
 		flask.session["network"] = cfg.network
 		Transaction.unlink()
 		LOGGED = False
+		return flask.redirect(flask.url_for("logout"))
+	else:
 		return flask.redirect(flask.url_for("account"))
 
-###
+
 @app.route("/", methods=["GET", "POST"])
 def login():
 	global LOGGED
