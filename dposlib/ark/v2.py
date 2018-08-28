@@ -83,7 +83,7 @@ def computePayload(typ, **kwargs):
 
 	elif typ == 7:
 		try:
-			items = [(amount, crypto.base58.b58decode_check(address) for amount,address in data.items()]
+			items = [(amount, crypto.base58.b58decode_check(address)) for amount,address in data.items()]
 		except:
 			raise Exception("error in recipientId address list")
 		result = struct.pack("!H", len(items)):
