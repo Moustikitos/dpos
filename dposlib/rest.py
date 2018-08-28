@@ -167,13 +167,14 @@ def load(family_name):
 	"""
 	if hasattr(sys.modules[__package__], "core"):
 		sys.modules[__package__].core.stop()
+		del sys.modules[__package__].core
 
 	# initialize blockchain familly package
-	try:
-		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
-		sys.modules[__package__].core.init()
-	except:
-		raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
+	# try:
+	sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
+	sys.modules[__package__].core.init()
+	# except:
+	# 	raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
 
 	# delete real package name loaded to keep namespace clear
 	try:
@@ -208,7 +209,6 @@ def use(network, **kwargs):
 		for seed in cfg.seeds:
 			if check_latency(seed):
 				cfg.peers.append(seed)
-				del cfg.seeds
 				break
 	else:
 		for peer in data.get("peers", []):

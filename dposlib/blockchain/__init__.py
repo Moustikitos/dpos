@@ -20,7 +20,7 @@ class Transaction(dict):
 		"vendorField": str,
 
 		"asset": dict,
-		"payload": dict,
+		# "payload": dict,
 
 		"signature": str,
 		"signSignature": str,
