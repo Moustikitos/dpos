@@ -20,7 +20,6 @@ ROOT = os.path.abspath(os.path.dirname(__file__))
 TX_GENESIS = []
 LOGGED = False
 
-
 # add a parser to catch the network on startup
 parser = optparse.OptionParser()
 parser.add_option("-n", "--network", dest="network", type="string", default="ark", metavar="NETWORK", help="Network you want to connect with [curent : %default]")
@@ -55,6 +54,7 @@ app.config.update(
 	TEMPLATES_AUTO_RELOAD = True
 )
 
+
 def loadJson(path):
 	"""Load JSON data from path"""
 	if os.path.exists(path):
@@ -87,8 +87,6 @@ def register(tx):
 @app.context_processor
 def override_url_for():
 	return dict(url_for=dated_url_for)
-
-
 def dated_url_for(endpoint, **values):
 	if endpoint == 'static':
 		filename = values.get('filename', None)
@@ -113,10 +111,22 @@ def update_session():
 		if publicKey:
 			flask.session["data"]["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 
+
+@app.route("/<string:network>")
+def use(network):
+	global LOGGED
+	if network != flask.session.get("network", False):
+		rest.use(network)
+		flask.session["network"] = cfg.network
+		Transaction.unlink()
+		LOGGED = False
+		return flask.redirect(flask.url_for("account"))
+
 ###
 @app.route("/", methods=["GET", "POST"])
 def login():
 	global LOGGED
+
 	flask.session["permanent"] = True
 
 	if LOGGED:
@@ -125,7 +135,10 @@ def login():
 			Transaction.unlink()
 			LOGGED = False
 		else:
-			flask.redirect(flask.url_for("account"))
+			return flask.redirect(flask.url_for("account"))
+
+	elif not flask.session.get("network", False):
+		flask.session["network"] = cfg.network
 
 	# 
 	if flask.request.method == "POST":
@@ -147,6 +160,7 @@ def login():
 		flask.session["symbol"] = cfg.symbol
 		flask.session["dlgtnum"] = cfg.delegate
 		flask.session["maxvote"] = cfg.maxvote
+		flask.session["network"] = cfg.network
 		#
 		flask.flash('You are now logged to %s wallet...' % address, category="success")
 		LOGGED = True
@@ -166,8 +180,8 @@ def logout():
 	global LOGGED, CURRENT_TX, TX_GENESIS
 	flask.session.clear()
 	Transaction.unlink()
-	TX_GENESIS = []
 	LOGGED = False
+	TX_GENESIS = []
 	return flask.redirect(flask.url_for("login"))
 
 

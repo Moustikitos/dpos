@@ -6,8 +6,8 @@
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
 	</head>
 	<body>
-
 	<div class="header">
+		<center><p class="network"><img src="{{ url_for('static', filename=session['network']+'.png') }}" height="40px"></p></center>
 		{%- if session.data %}
 		<span class="element span">{{ session.data['address'] }}</span>
 		<a href="{{ url_for('logout') }}">logout</a>

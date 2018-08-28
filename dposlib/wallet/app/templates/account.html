@@ -1,8 +1,5 @@
 {%- extends "start.html" %}
 {%- set symbol = session["symbol"]|safe %}
-{%- if not registry %}
-{%- set registry = {} %}
-{%- endif %}
 	{%- block content %}
 	<div class="content">
 		<table style="margin:auto;" cellspacing="5px">
