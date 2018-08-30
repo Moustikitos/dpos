@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+import dposlib
 import struct
 
+from datetime import datetime
 from collections import OrderedDict
 
-from dposlib import PY3, rest
-from dposlib.ark import crypto, init, stop
-from dposlib.util.bin import unhexlify, hexlify
-from dposlib.blockchain import Transaction, slots, cfg
+import pytz
 
+from dposlib import PY3, rest
+from dposlib.ark import crypto
+from dposlib.blockchain import Transaction, slots, cfg
+from dposlib.util.bin import unhexlify, hexlify
+from dposlib.util.asynch import setInterval
+
+from dposlib.ark import stop as _stop
+	
 
 def computePayload(typ, **kwargs):
 
@@ -51,7 +58,7 @@ def computePayload(typ, **kwargs):
 		delegatePublicKeys = data.get("delegatePublicKeys", False)
 		if delegatePublicKeys:
 			length = len(delegatePublicKeys)
-			payload = struct.pack("!%ds" % length, length)
+			payload = struct.pack("!B", length)
 			for delegatePublicKey in delegatePublicKeys:
 				payload += struct.pack("!34s", delegatePublicKey.encode())
 			return payload
@@ -86,7 +93,7 @@ def computePayload(typ, **kwargs):
 			items = [(amount, crypto.base58.b58decode_check(address)) for amount,address in data.items()]
 		except:
 			raise Exception("error in recipientId address list")
-		result = struct.pack("!H", len(items)):
+		result = struct.pack("!H", len(items))
 		for amount,address in items:
 			result += struct.pack("!B21s", amount, address)
 		return result
@@ -97,6 +104,7 @@ def computePayload(typ, **kwargs):
 	else:
 		raise Exception("Unknown transaction type %d" % typ)
 
+_getBytes = crypto.getBytes
 
 def getBytes(tx):
 	typ_ = tx.get("type", 0)
@@ -105,16 +113,28 @@ def getBytes(tx):
 	lenVF = len(vendorField)
 	payload = computePayload(typ_, **tx)
 
-	tx["fee"] = (typ_ + 50 + lenVF + len(payload)) * Transaction.C
+	if "fee" not in tx:
+		T = cfg.fees[{
+			0: "transfer",
+			1: "delegateRegistration",
+			2: "secondSignature",
+			3: "vote",
+			4: "multiSignature",
+			5: "ipfs",
+			6: "timelockTransfer",
+			7: "multiPayment",
+			8: "delegateResignation",
+		}[tx.get("type", 0)]]
+		dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload)) * Transaction.FMULT)
 
 	header = struct.pack(
-		"!BBBBI33sQB%ss"%lenVF,
+		"!BBBBI33sQB%ss" % lenVF,
 		tx.get("head", 0xff),
 		tx.get("version", 0x02),
 		tx.get("network", int(cfg.marker, base=16)),
 		typ_,
 		tx.get("timestamp", slots.getTime()),
-		unhexlify(tx._Transaction__publicKey),
+		unhexlify(Transaction._publicKey),
 		tx["fee"],
 		lenVF,
 		vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
@@ -123,37 +143,94 @@ def getBytes(tx):
 	return header + payload
 
 
-##### INTERFACE ######
-
 def send(amount, address, vendorField=None):
-	pass
+	return Transaction(
+		type=0,
+		amount=amount*100000000,
+		recipientId=address,
+		vendorField=vendorField,
+	)
 
 
 def registerSecondSecret(secondSecret):
-	pass
-
+	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
 
 def registerSecondPublicKey(secondPublicKey):
-	pass
+	return Transaction(
+		type=1,
+		asset={"secondPublicKey":secondPublicKey},
+	)
 
 
 def registerAsDelegate(username):
-	pass
+	return Transaction(
+		type=2,
+		asset={
+			"username":username
+		},
+	)
 
 
 def upVote(*usernames):
-	pass
+	return Transaction(
+		type=3,
+		asset={
+			"delegatePublicKeys":["01"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+		},
+	)
 
 
 def downVote(*usernames):
-	pass
+	return Transaction(
+		type=3,
+		asset={
+			"delegatePublicKeys":["00"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+		},
+	)
 
 
-# erase old definitions
-crypto.getBytes = getBytes
-dposlib.ark.send = send
-dposlib.ark.registerSecondSecret = registerSecondSecret
-dposlib.ark.registerSecondPublicKey = registerSecondPublicKey
-dposlib.ark.registerAsDelegate = registerAsDelegate
-dposlib.ark.upVote = upVote
-dposlib.ark.downVote = downVote
+def select_peers():
+	peers = [
+		"http://%(ip)s:%(port)s" % {
+			"ip":p["ip"],
+			"port":cfg.ports["@arkecosystem/core-api"]
+		} for p in rest.GET.api.peers().get("data", [])][:cfg.broadcast]
+	if len(peers):
+		cfg.peers = peers
+
+
+@setInterval(30)
+def rotate_peers():
+	select_peers()
+
+
+def init():
+	global DAEMON_PEERS
+	Transaction.DFEES = True
+
+	data = rest.GET.api.node.configuration().get("data", {})
+
+	constants =  data["constants"]
+	cfg.blocktime = constants["blocktime"]
+	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:00.000Z"))
+	cfg.delegate = constants["activeDelegates"]
+
+	cfg.headers["nethash"] = data["nethash"]
+	# cfg.headers["version"] = data["version"]
+	cfg.fees = constants["dynamicOffsets"]
+	cfg.explorer = data["explorer"]
+	cfg.token = data["token"]
+	cfg.symbol = data["symbol"]
+	cfg.ports = data["ports"]
+
+	crypto.getBytes = getBytes
+
+	select_peers()
+	DAEMON_PEERS = rotate_peers()
+
+
+def stop():
+	global DAEMON_PEERS
+	Transaction.DFEES = False
+	crypto.getBytes = _getBytes
+	DAEMON_PEERS.set()

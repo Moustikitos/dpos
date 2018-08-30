@@ -1,0 +1,29 @@
+{
+	"timeout": 5,
+	"familly": "ark.v2",
+	"maxlimit": 50,
+	"maxvotepertx": 1,
+	"maxvote": 1,
+
+	"compressed": true,
+	"wif": "aa",
+	"marker": "1e",
+	"slip44": "111",
+
+	"bip32": {
+		"private": 46089520,
+		"public": 46090600
+	},
+
+	"headers": {
+		"Content-Type": "application/json; charset=utf-8",
+		"version": "2.0.0",
+		"API-Version": "2"
+	},
+
+	"seeds":[
+		"https://dexplorer.ark.io:8443"
+	],
+
+	"broadcast": 10
+}

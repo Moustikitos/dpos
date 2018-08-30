@@ -42,9 +42,7 @@ import random
 import logging
 
 from importlib import import_module
-from datetime import datetime
 
-import pytz
 import requests
 
 from dposlib import FROZEN, ROOT
@@ -91,7 +89,7 @@ class EndPoint(object):
 		except Exception as error:
 			data = {"success": False, "error": error, "peer": peer}
 		else:
-			if data.get("success") is True and return_key:
+			if return_key in data:
 				data = data.get(return_key, {})
 				if isinstance(data, dict):
 					for item in ["balance", "unconfirmedBalance", "vote"]:
@@ -146,8 +144,8 @@ class EndPoint(object):
 		else:
 			return object.__getattr__(self, attr)
 
-	def __call__(self, **kwargs):
-		return self.method(*self.chain(), **kwargs)
+	def __call__(self, *args, **kwargs):
+		return self.method(*self.chain()+list(args), **kwargs)
 
 	def chain(self):
 		return (self.parent.chain() + [self.elem]) if self.parent!=None else [""]
@@ -170,11 +168,11 @@ def load(family_name):
 		del sys.modules[__package__].core
 
 	# initialize blockchain familly package
-	# try:
-	sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
-	sys.modules[__package__].core.init()
-	# except:
-	# 	raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
+	try:
+		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
+		sys.modules[__package__].core.init()
+	except:
+		raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
 
 	# delete real package name loaded to keep namespace clear
 	try:
@@ -200,9 +198,9 @@ def use(network, **kwargs):
 	else:
 		raise Exception('"{}" blockchain parameters does not exist'.format(network))
 	data.update(**kwargs)
+
 	cfg.__dict__.update(data)
 	cfg.verify = os.path.join(os.path.dirname(sys.executable), 'cacert.pem') if FROZEN else True
-	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 
 	if data.get("seeds", False):
 		cfg.peers = []
@@ -222,7 +220,6 @@ def use(network, **kwargs):
 			load(cfg.familly)
 		except Exception as e:
 			cfg.hotmode = False
-			sys.stdout.write("%s\n" % e)
 		else:
 			cfg.hotmode = True
 		finally:

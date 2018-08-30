@@ -8,17 +8,16 @@
 	<body>
 
 	<div class="element" id="networks">
-		{%- for network in ['ark', 'kapu', 'ripa', 'prs', 'lisk', 'lwf', 'shift'] %}
+		{%- for network in ['ark', 'dark2', 'kapu', 'ripa', 'prs', 'lwf', 'shift'] %}
 			{%- if network == session['network'] %}
-		<a href="{{ url_for('use', network=network) }}"><img class="selected" align="middle" src="{{ url_for('static', filename='%s.png'%network) }}" height="40px" width="40px"></a>
+		<a href="{{ url_for('use', network=network) }}"><img class="selected" align="middle" src="{{ url_for('static', filename='%s.png'%network) }}" height="40px"></a>
 			{%- else %}
-		<a href="{{ url_for('use', network=network) }}"><img class="unselected" align="middle" src="{{ url_for('static', filename='%s.png'%network) }}" height="40px" width="40px"></a>
+		<a href="{{ url_for('use', network=network) }}"><img class="unselected" align="middle" src="{{ url_for('static', filename='%s.png'%network) }}" height="40px"></a>
 			{%- endif %}
 		{%- endfor %}
 	</div>
 
 	<div class="header">
-		<!-- <center><p class="network"><img src="{{ url_for('static', filename=session['network']+'.png') }}" height="40px"></p></center> -->
 		{%- if session.data %}
 		<span class="element span">{{ session.data['address'] }}</span>
 		<a href="{{ url_for('logout') }}">logout</a>

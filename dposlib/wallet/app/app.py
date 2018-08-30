@@ -1,4 +1,6 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
+# © Toons
+
 import os
 import io
 import sys
@@ -19,13 +21,6 @@ from dposlib.blockchain import cfg, Transaction
 ROOT = os.path.abspath(os.path.dirname(__file__))
 TX_GENESIS = []
 LOGGED = False
-
-_publicKey = lambda: getattr(Transaction, "_Transaction__publicKey")
-_privateKey = lambda: getattr(Transaction, "_Transaction__privateKey")
-_secondPublicKey = lambda: getattr(Transaction, "_Transaction__secondPublicKey")
-_secondPrivateKey = lambda: getattr(Transaction, "_Transaction__secondPrivateKey")
-_registry_path = lambda: os.path.join(ROOT, ".registry", options.network, _publicKey)
-
 
 # add a parser to catch the network on startup and connect to network
 parser = optparse.OptionParser()
@@ -61,35 +56,6 @@ app.config.update(
 )
 
 
-def loadJson(path):
-	"""Load JSON data from path"""
-	if os.path.exists(path):
-		with io.open(path) as in_:
-			data = json.load(in_)
-	else:
-		data = {}
-	return data
-
-
-def dumpJson(data, path):
-	"""Dump JSON data to path"""
-	try:
-		os.makedirs(os.path.dirname(path))
-	except:
-		pass
-	with io.open(path, "w" if PY3 else "wb") as out:
-		json.dump(data, out, indent=4)
-
-
-def register(tx):
-	"""Write transaction in a registry"""
-	id_ = tx["id"]
-	pathfile = _registry_path()
-	registry = loadJson(pathfile)
-	registry[tx["id"]] = tx
-	dumpJson(registry, pathfile)
-
-
 @app.context_processor
 def override_url_for():
 	return dict(url_for=dated_url_for)
@@ -118,7 +84,7 @@ def update_session():
 			flask.session["data"]["voted"] = [d["username"] for d in rest.GET.api.accounts.delegates(address=address).get("delegates", [])]
 
 
-@app.route("/<string:network>")
+@app.route("/use/<string:network>")
 def use(network):
 	global LOGGED
 	if network != flask.session.get("network", False):
@@ -151,7 +117,7 @@ def login():
 	# 
 	if flask.request.method == "POST":
 		Transaction.link(flask.request.form["secret"])
-		publicKey = _publicKey()
+		publicKey = Transaction._publicKey
 		address = dposlib.core.crypto.getAddress(publicKey)
 		# get info from address and public key
 		account = rest.GET.api.accounts(address=address).get("account", {})
@@ -205,7 +171,7 @@ def account():
 def unlock():
 	if flask.request.method == "POST":
 		Transaction.link(None, flask.request.form["secondSecret"])
-		if _secondPublicKey() == flask.session["secondPublicKey"]:
+		if Transaction._secondPublicKey == flask.session["secondPublicKey"]:
 			flask.session["secondPublicKey"] = False
 			flask.flash('Account unlocked !', category="success")
 			return flask.redirect(flask.url_for("account"))

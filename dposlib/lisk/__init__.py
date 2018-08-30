@@ -2,6 +2,9 @@
 # © Toons
 
 import sys
+import pytz
+
+from datetime import datetime
 
 from dposlib import rest
 from dposlib.lisk import crypto
@@ -28,8 +31,10 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
+	print(cfg.begintime)
+	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	resp = rest.GET.api.blocks.getNethash()
-	if resp["success"]:
+	if resp.get("success", False):
 		cfg.headers["version"] = str(rest.GET.api.peers.version(returnKey="version"))
 		cfg.headers["nethash"] = resp["nethash"]
 		cfg.fees = rest.GET.api.blocks.getFees()["fees"]

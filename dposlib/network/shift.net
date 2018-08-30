@@ -1,7 +1,6 @@
 {
 	"timeout": 5,
 	"begintime": [2016, 5, 24, 17],
-	"endpoints": "lsk",
 	"familly": "lisk",
 	"maxlimit": 1000,
 	"maxvotepertx": 25,

@@ -1,7 +1,6 @@
 {
 	"timeout": 5,
 	"begintime": [2016, 5, 24, 17],
-	"endpoints": "lsk",
 	"familly": "lisk",
 	"maxlimit": 1000,
 	"maxvotepertx": 33,
@@ -22,9 +21,6 @@
 		"https://lisk.multiwallet.online",
 		"https://lisknode.grumlin.com",
 		"https://liskwallet.punkrock.me",
-		"https://liskworld.info",
-		"https://login.lisk.com.au",
-		"https://login.lisk.io"
 	],
 
 	"explorer": "https://explorer.lisk.io",

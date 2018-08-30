@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+
+import pytz
 import logging
+
+from datetime import datetime
 
 from dposlib import rest
 from dposlib.ark import crypto
-from dposlib.blockchain import cfg, slots
+from dposlib.blockchain import cfg, slots, Transaction
 from dposlib.util.asynch import setInterval
 
 log = logging.getLogger(__name__)
@@ -56,6 +60,7 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
+	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	response = rest.GET.api.loader.autoconfigure()
 	if response["success"]:
 		network = response["network"]
@@ -78,27 +83,60 @@ def stop():
 	DAEMON_PEERS.set()
 
 
-##### INTERFACE ######
-
 def send(amount, address, vendorField=None):
-	pass
+	return Transaction(
+		type=0,
+		amount=amount*100000000,
+		recipientId=address,
+		vendorField=vendorField
+	)
 
 
 def registerSecondSecret(secondSecret):
-	pass
-
+	return registerSecondPublicKey(crypto.getKeys(secondsecret)["publicKey"])
 
 def registerSecondPublicKey(secondPublicKey):
-	pass
+	return Transaction(
+		type=1,
+		asset={
+			"signature":{
+				"publicKey":secondPublicKey
+			}
+		}
+	)
 
 
 def registerAsDelegate(username):
-	pass
+	return Transaction(
+		type=2,
+		asset={
+			"delegate":{
+				"username":username
+			}
+		}
+	)
 
 
 def upVote(*usernames):
-	pass
+	return Transaction(
+		type=3,
+		asset={
+			"votes":{
+				"username":["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			}
+		}
+	)
 
 
 def downVote(*usernames):
-	pass
+	return Transaction(
+		type=3,
+		asset={
+			"votes":{
+				"username":["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			}
+		}
+	)
+
+
+Transaction.DFEES = False

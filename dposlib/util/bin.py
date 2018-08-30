@@ -34,12 +34,12 @@ def pack(fmt, fileobj, value):
 
 def unpack_bytes(f, n):
 	# read bytes from buffer
-	return unpack("<" + "%ss" % n, f)[0]
+	return unpack("!%ss" % n, f)[0]
 
 
 def pack_bytes(f, v):
 	# write bytes into buffer
-	output = pack("!" + "%ss" % len(v), f, (v,))
+	output = pack("!%ss" % len(v), f, (v,))
 	return output
 
 
@@ -62,4 +62,4 @@ def unhexlify(data):
 	if len(data) % 2:
 		data = "0" + data
 	result = binascii.unhexlify(data)
-	return result if isinstance(result, bytes) else result.encode("utf-8")
+	return result if isinstance(result, bytes) else result.encode()

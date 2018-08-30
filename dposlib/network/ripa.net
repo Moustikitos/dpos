@@ -1,7 +1,6 @@
 {
 	"timeout": 5,
 	"begintime": [2017, 3, 21, 13],
-	"endpoints": "ark",
 	"familly": "ark",
 	"maxlimit": 25,
 	"maxvotepertx": 1,

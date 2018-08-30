@@ -191,7 +191,7 @@ def getBytes(tx):
 	"""
 	buf = BytesIO()
 	# write type and timestamp
-	pack("<bi", buf, (tx["type"], int(tx["timestamp"])))
+	pack("!bi", buf, (tx["type"], int(tx["timestamp"])))
 	# write senderPublicKey as bytes in buffer
 	if "senderPublicKey" in tx:
 		pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
@@ -213,7 +213,7 @@ def getBytes(tx):
 		vendorField = "\x00" * 64
 	pack_bytes(buf, vendorField.encode("utf-8"))
 	# write amount and fee value
-	pack("<QQ", buf, (int(tx["amount"]), int(tx["fee"])))
+	pack("!QQ", buf, (int(tx["amount"]), int(tx["fee"])))
 	# if there is asset data
 	if tx.get("asset", False):
 		asset = tx["asset"]
