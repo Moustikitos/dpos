@@ -14,23 +14,22 @@ from dposlib.ark import crypto
 from dposlib.blockchain import Transaction, slots, cfg
 from dposlib.util.bin import unhexlify, hexlify
 from dposlib.util.asynch import setInterval
-
-from dposlib.ark import stop as _stop
 	
 
-def computePayload(typ, **kwargs):
+def computePayload(typ, tx):
 
-	data = kwargs.get("asset", {})
+	data = tx.get("asset", {})
+	if data == {}: data = tx
 
 	if typ == 0:
 		try:
-			recipientId = crypto.base58.b58decode_check(kwargs["recipientId"])
+			recipientId = crypto.base58.b58decode_check(data["recipientId"])
 		except:
 			raise Exception("no recipientId defined")
 		return struct.pack(
-			"!QI21s",
-			int(kwargs.get("amount", 0)),
-			int(kwargs.get("expiration", 0)),
+			"<QI21s",
+			int(data.get("amount", 0)),
+			int(data.get("expiration", 0)),
 			recipientId
 		)
 
@@ -41,14 +40,14 @@ def computePayload(typ, **kwargs):
 			secondPublicKey = data["secondPublicKey"]
 		else:
 			raise Exception("no secondSecret or secondPublicKey given")
-		return struct.pack("!33s", crypto.unhexlify(secondPublicKey))
+		return struct.pack("<33s", crypto.unhexlify(secondPublicKey))
 
 	elif typ == 2:
 		username = data.get("username", False)
 		if username:
 			length = len(username)
 			if 3 <= length <= 255:
-				return struct.pack("!B%ds" % length, length, username.encode())
+				return struct.pack("<B%ds" % length, length, username.encode())
 			else:
 				raise Exception("bad username length [3-255]: %s" % username)
 		else:
@@ -58,22 +57,22 @@ def computePayload(typ, **kwargs):
 		delegatePublicKeys = data.get("delegatePublicKeys", False)
 		if delegatePublicKeys:
 			length = len(delegatePublicKeys)
-			payload = struct.pack("!B", length)
+			payload = struct.pack("<B", length)
 			for delegatePublicKey in delegatePublicKeys:
-				payload += struct.pack("!34s", delegatePublicKey.encode())
+				payload += struct.pack("<34s", delegatePublicKey.encode())
 			return payload
 		else:
 			raise Exception("no up/down vote given")
 
 	elif typ == 4:
-		result = struct.pack("!BBB", data.get("minimum", 2), data.get("number", 3), data.get("lifetime", 24))
+		result = struct.pack("<BBB", data.get("minimum", 2), data.get("number", 3), data.get("lifetime", 24))
 		for publicKey in data.get("publicKeys"):
-			result += struct.pack("!33s", publicKey.encode())
+			result += struct.pack("<33s", publicKey.encode())
 		return payload
 
 	elif typ == 5:
 		dag = dara["dag"]
-		return struct.pack("!B%ss" % len(dag), dag.encode())
+		return struct.pack("<B%ss" % len(dag), dag.encode())
 
 	elif typ == 6:
 		try:
@@ -81,7 +80,7 @@ def computePayload(typ, **kwargs):
 		except:
 			raise Exception("no recipientId defined")
 		return struct.pack(
-			"!QBI21s",
+			"<QBI21s",
 			int(kwargs.get("amount", 0)),
 			int(kwargs.get("type", 0)),
 			int(kwargs.get("timelock", 0)),
@@ -93,9 +92,9 @@ def computePayload(typ, **kwargs):
 			items = [(amount, crypto.base58.b58decode_check(address)) for amount,address in data.items()]
 		except:
 			raise Exception("error in recipientId address list")
-		result = struct.pack("!H", len(items))
+		result = struct.pack("<H", len(items))
 		for amount,address in items:
-			result += struct.pack("!B21s", amount, address)
+			result += struct.pack("<B21s", amount, address)
 		return result
 
 	elif typ == 8:
@@ -104,18 +103,15 @@ def computePayload(typ, **kwargs):
 	else:
 		raise Exception("Unknown transaction type %d" % typ)
 
-_getBytes = crypto.getBytes
 
-def getBytes(tx):
+def setDynamicFees(tx):
 	typ_ = tx.get("type", 0)
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
 	lenVF = len(vendorField)
-	payload = computePayload(typ_, **tx)
-
-	if "fee" not in tx:
-		T = cfg.fees[{
-			0: "transfer",
+	payload = computePayload(typ_, tx)
+	T = cfg.doffsets[
+		{	0: "transfer",
 			1: "delegateRegistration",
 			2: "secondSignature",
 			3: "vote",
@@ -124,23 +120,47 @@ def getBytes(tx):
 			6: "timelockTransfer",
 			7: "multiPayment",
 			8: "delegateResignation",
-		}[tx.get("type", 0)]]
-		dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload)) * Transaction.FMULT)
+		}[typ_]
+	]
+	dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload)) * Transaction.FMULT)
 
-	header = struct.pack(
-		"!BBBBI33sQB%ss" % lenVF,
-		tx.get("head", 0xff),
-		tx.get("version", 0x02),
-		tx.get("network", int(cfg.marker, base=16)),
-		typ_,
-		tx.get("timestamp", slots.getTime()),
-		unhexlify(Transaction._publicKey),
-		tx["fee"],
-		lenVF,
-		vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
-	)
 
-	return header + payload
+# _getBytes = crypto.getBytes
+# def getBytes(tx):
+# 	typ_ = tx.get("type", 0)
+# 	vendorField = tx.get("vendorField", "")
+# 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
+# 	lenVF = len(vendorField)
+
+# 	if not hasattr(tx, "_payload"):
+# 		tx._payload = computePayload(typ_, tx)
+# 		T = cfg.doffsets[
+# 			{
+# 				0: "transfer",
+# 				1: "delegateRegistration",
+# 				2: "secondSignature",
+# 				3: "vote",
+# 				4: "multiSignature",
+# 				5: "ipfs",
+# 				6: "timelockTransfer",
+# 				7: "multiPayment",
+# 				8: "delegateResignation",
+# 			}[typ_]
+# 		]
+# 		dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(tx._payload)) * Transaction.FMULT)
+
+# 	return struct.pack(
+# 		"<BBBBI33sQB%ss" % lenVF,
+# 		tx.get("head", 0xff),
+# 		tx.get("version", 0x02),
+# 		tx.get("network", int(cfg.marker, base=16)),
+# 		typ_,
+# 		tx.get("timestamp", slots.getTime()),
+# 		unhexlify(Transaction._publicKey),
+# 		tx["fee"],
+# 		lenVF,
+# 		vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
+# 	) + tx._payload
 
 
 def send(amount, address, vendorField=None):
@@ -148,7 +168,7 @@ def send(amount, address, vendorField=None):
 		type=0,
 		amount=amount*100000000,
 		recipientId=address,
-		vendorField=vendorField,
+		vendorField=vendorField
 	)
 
 
@@ -216,14 +236,15 @@ def init():
 	cfg.delegate = constants["activeDelegates"]
 
 	cfg.headers["nethash"] = data["nethash"]
-	# cfg.headers["version"] = data["version"]
-	cfg.fees = constants["dynamicOffsets"]
+	cfg.headers["version"] = data["version"]
+	cfg.fees = constants["fees"]
+	cfg.doffsets = constants["dynamicOffsets"]
 	cfg.explorer = data["explorer"]
 	cfg.token = data["token"]
 	cfg.symbol = data["symbol"]
 	cfg.ports = data["ports"]
 
-	crypto.getBytes = getBytes
+	# crypto.getBytes = getBytes
 
 	select_peers()
 	DAEMON_PEERS = rotate_peers()
@@ -232,5 +253,5 @@ def init():
 def stop():
 	global DAEMON_PEERS
 	Transaction.DFEES = False
-	crypto.getBytes = _getBytes
+	# crypto.getBytes = _getBytes
 	DAEMON_PEERS.set()

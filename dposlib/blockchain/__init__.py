@@ -7,6 +7,7 @@ import dposlib
 from dposlib import ROOT
 from dposlib.blockchain import slots, cfg
 from dposlib.util.data import loadJson, dumpJson
+from dposlib.util.bin import hexlify
 
 
 class Transaction(dict):
@@ -30,13 +31,18 @@ class Transaction(dict):
 
 	@staticmethod
 	def path():
+		"""Return current registry path."""
 		if hasattr(Transaction, "_publicKey"):
 			return os.path.join(ROOT, ".registry", cfg.network, Transaction._publicKey)
 		else:
-			raise Exception("Register Public key or set secret")
+			raise Exception("Register a public key or set secret")
 
 	@staticmethod
 	def link(secret=None, secondSecret=None):
+		"""
+		Save public and private keys derived from secrets. This is equivalent to
+		wallet login and limits number of secret keyboard entries.
+		"""
 		if hasattr(dposlib, "core"):
 			if secret:
 				keys = dposlib.core.crypto.getKeys(secret)
@@ -49,6 +55,10 @@ class Transaction(dict):
 
 	@staticmethod
 	def unlink():
+		"""
+		Remove public and private keys. This is equivalent to a wellet logout.
+		Once keys removed, no signature is possible.
+		"""
 		for attr in [
 			'_privateKey',
 			'_publicKey',
@@ -59,11 +69,16 @@ class Transaction(dict):
 				delattr(Transaction, attr)
 
 	@staticmethod
-	def setDynamicFee(value):
-		Transaction.FMULT = value
+	def setDynamicFee():
+		Transaction.DFEES = True
+
+	@staticmethod
+	def setStaticFee():
+		Transaction.DFEES = False
 
 	@staticmethod
 	def load(txid):
+		"""Loads the transaction identified by txid from current registry."""
 		pathfile = Transaction.path()
 		registry = loadJson(pathfile)
 		return Transaction(registry[txid])
@@ -80,25 +95,12 @@ class Transaction(dict):
 		for key,value in [(k,v) for k,v in dict(arg, **kwargs).items() if v != None]:
 			self[key] = value
 
-		if not Transaction.DFEES:
-			dict.__setitem__(self, "fee", cfg.fees.get(
-				{	0: "send",
-					1: "secondsignature",
-					2: "delegate",
-					3: "vote",
-					4: "multisignature",
-					5: "dapp"
-				}[self.get("type", 0)]
-			))
+		self.setFees()
 
-		if hasattr(Transaction, "_publicKey"):
-			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
-
-	def __getitem__(self, item):
-		if item in ["senderPublicKey", "publicKey"]:
-			return self._publicKey
-		else:
-			return dict.__getitem__(self, item)
+	def __setattr__(self, attr, value):
+		if attr == "_publicKey":
+			dict.__setitem__(self, "senderPublicKey", value)
+		dict.__setattr__(self, attr, value)
 
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
@@ -106,18 +108,15 @@ class Transaction(dict):
 			cast = Transaction.typing[item]
 			if not isinstance(value, cast):
 				value = cast(value)
-
 			dict.__setitem__(self, item, value)
-
 			if item not in ["signature", "signSignature", "id"]:
 				self.pop("signature", False)
 				self.pop("signSignature", False)
 				self.pop("id", False)
-		# set internal private keys (secret are not stored)
+		# set internal private keys (secrets are not stored)
 		elif hasattr(dposlib, "core"):
 			if item == "secret":
 				Transaction.link(value)
-				dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 			elif item == "secondSecret":
 				Transaction.link(None, value)
 			elif item == "privateKey":
@@ -125,9 +124,31 @@ class Transaction(dict):
 			elif item == "secondPrivateKey":
 				Transaction._secondPrivateKey = str(value)
 
+	def setFees(self):
+		if Transaction.DFEES:
+			dposlib.core.setDynamicFees(self)
+		else:
+			# ARKV1 and LISK compatibility
+			fee = cfg.fees.get(
+				{	0: "send",
+					1: "secondsignature",
+					2: "delegate",
+					3: "vote",
+					4: "multisignature",
+					5: "dapp"
+				}[self["type"]], False
+			)
+			if not fee:
+				# ARKV2 compability
+				fee = cfg.fees.get(
+					{	0: "transfer",
+						2: "delegateRegistration",
+					}[self["type"]], None
+				)
+			dict.__setitem__(self, "fee", fee)
+
 	def signFromSecret(self, secret):
 		keys = dposlib.core.crypto.getKeys(secret)
-		self["senderPublicKey"] = keys["publicKey"]
 		Transaction._publicKey = keys["publicKey"]
 		Transaction._privateKey = keys["privateKey"]
 		self.sign()
@@ -139,7 +160,6 @@ class Transaction(dict):
 		self.signSign()
 
 	def signFromKeys(self, publicKey, privateKey):
-		self["senderPublicKey"] = publicKey
 		Transaction._publicKey = publicKey
 		Transaction._privateKey = privateKey
 		self.sign()
@@ -173,11 +193,10 @@ class Transaction(dict):
 			raise Exception("Transaction not signed")
 
 	def dump(self):
-		"""Write transaction in a registry"""
+		"""Dumps transaction in current registry."""
 		if "id" in self:
 			id_ = self["id"]
 			pathfile = Transaction.path()
 			registry = loadJson(pathfile)
 			registry[self["id"]] = self
 			dumpJson(registry, pathfile)
-

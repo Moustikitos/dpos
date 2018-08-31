@@ -60,6 +60,8 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
+	Transaction.DFEES = False
+
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	response = rest.GET.api.loader.autoconfigure()
 	if response["success"]:
@@ -138,5 +140,3 @@ def downVote(*usernames):
 		}
 	)
 
-
-Transaction.DFEES = False

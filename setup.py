@@ -33,11 +33,10 @@ kw = {
 	"install_requires": [
 		"requests",
 		"ecdsa",
-		# "pynacl",
+		"pynacl",
 		"pytz",
 		"base58",
-		# "docopt",
-		"ledgerblue",
+		# "ledgerblue",
 		"flask"
 	],
 	"license": "Copyright 2018, MIT licence",

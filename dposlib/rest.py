@@ -216,13 +216,8 @@ def use(network, **kwargs):
 				break
 
 	if len(cfg.peers):
-		try:
-			load(cfg.familly)
-		except Exception as e:
-			cfg.hotmode = False
-		else:
-			cfg.hotmode = True
-		finally:
-			cfg.network = network
+		load(cfg.familly)
+		cfg.network = network
+		cfg.hotmode = True
 	else:
 		raise Exception("Error occurred during network setting...")

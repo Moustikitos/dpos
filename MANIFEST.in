@@ -1,4 +1,5 @@
 recursive-include dposlib *.net
 recursive-include dposlib *.html
+recursive-include dposlib *.png
 recursive-include dposlib *.css
 recursive-include dposlib *.js
