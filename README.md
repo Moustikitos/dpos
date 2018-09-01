@@ -41,10 +41,10 @@
 
 ## Available network
 
-  - [x] ARK
+  - [x] Ark
     * mainet : `ark`
     * devnet : `dark2`
-  - [x] KAPU : `kapu`
+  - [x] Kapu : `kapu`
   - [x] Local World Forwarder :
     * mainet : `lwf`
     * testnet : `tlwf`
@@ -56,9 +56,9 @@
 
 ## Version
 
-### 0.1.0 : first release
+### 0.1.0 : available on [PyPi](http://www.pypi.org)
 
-### 0.1.1
+### 0.1.1 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
  - [x] ARK packaging improvement (`v1` and `v2`)
  - [x] ARK dynamicFee implementation
