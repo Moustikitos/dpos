@@ -19,11 +19,11 @@ TRANSACTIONS = {
 	1: "delegateRegistration",
 	2: "secondSignature",
 	3: "vote",
-	4: "multiSignature",
-	5: "ipfs",
-	6: "timelockTransfer",
-	7: "multiPayment",
-	8: "delegateResignation",
+	# 4: "multiSignature",
+	# 5: "ipfs",
+	# 6: "timelockTransfer",
+	# 7: "multiPayment",
+	# 8: "delegateResignation",
 }
 TYPING = {
 	"timestamp": int,

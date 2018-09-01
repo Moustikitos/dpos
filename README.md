@@ -7,7 +7,7 @@
 **Import REST API**
 ```python
 >>> from dposlib import rest
->>> rest.use("dark2")
+>>> rest.use("dark")
 ```
 
 **Bake Transaction:**
@@ -43,7 +43,7 @@
 
   - [x] Ark
     * mainet : `ark`
-    * devnet : `dark2`
+    * devnet : `dark`
   - [x] Kapu : `kapu`
   - [x] Local World Forwarder :
     * mainet : `lwf`

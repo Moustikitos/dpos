@@ -1,25 +1,25 @@
 {
-  "timeout": 5,
-  "begintime": [2016, 5, 24, 17],
-  "familly": "lisk.v09",
-  "maxlimit": 1000,
-  "maxvotepertx": 25,
-  "maxvote": 101,
-  "marker": "S",
+	"timeout": 5,
+	"begintime": [2016, 5, 24, 17],
+	"familly": "lisk.v09",
+	"maxlimit": 1000,
+	"maxvotepertx": 25,
+	"maxvote": 101,
+	"marker": "S",
 
-  "headers": {
-    "Content-Type": "application/json; charset=utf-8",
-    "port": "9305"
-  },
+	"headers": {
+	"Content-Type": "application/json; charset=utf-8",
+	"port": "9305"
+	},
 
-  "seeds": [
-    "https://wallet.testnet.shiftnrg.org"
-  ],
+	"seeds": [
+	"https://wallet.testnet.shiftnrg.org"
+	],
 
-  "explorer": "https://explorer.testnet.shiftnrg.org",
-  "token": "tshift",
-  "symbol": "SHIFT",
-  "delegate": 101,
-  "blocktime": 10,
-  "blockreward": 4
+	"explorer": "https://explorer.testnet.shiftnrg.org",
+	"token": "tshift",
+	"symbol": "SHIFT",
+	"delegate": 101,
+	"blocktime": 10,
+	"blockreward": 4
 }
