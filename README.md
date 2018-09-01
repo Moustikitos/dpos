@@ -10,14 +10,14 @@
 >>> rest.use("dark2")
 ```
 
-**bake Transaction:**
+**Bake Transaction:**
 ```python
 >>> from dposlib.blockchain import Transaction
 >>> tx = Transaction(
 ... amount=100000000,
 ... recipientId="ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
 ... secret="secret",
-... secondSecret"secondSecret")
+... secondSecret="secondSecret")
 >>> tx.finalize()
 >>> tx
 {
