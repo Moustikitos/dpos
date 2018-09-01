@@ -15,7 +15,7 @@ def getTimestamp(**kw):
 	return blockchain timestamp from datetime keyword arument.
 	>>> getTimestamp(days=6, hours=4, minutes=20)
 	"""
-	delta = datetime.timedelta(**kw)
+	delta = timedelta(**kw)
 	return getTime(datetime.now(pytz.UTC) - delta)
 
 

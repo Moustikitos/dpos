@@ -97,14 +97,13 @@ def computePayload(typ, tx):
 		raise Exception("Unknown transaction type %d" % typ)
 
 
-def serialize(tx):
+def getBytes(tx):
 	typ = tx.get("type", 0)
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
-	lenVF = len(vendorField)
 
 	header = struct.pack(
-		"<BBBBI33sQB%ss" % lenVF,
+		"<BBBBI33sQB",
 		tx.get("head", 0xff),
 		tx.get("version", 0x02),
 		tx.get("network", int(cfg.marker, base=16)),
@@ -112,11 +111,9 @@ def serialize(tx):
 		tx.get("timestamp", slots.getTime()),
 		unhexlify(Transaction._publicKey),
 		tx["fee"],
-		lenVF,
-		vendorField
+		len(vendorField)
 	)
 	
 	payload = computePayload(typ, tx)
 
-	return hexlify(header + payload)
-
+	return header + vendorField + payload

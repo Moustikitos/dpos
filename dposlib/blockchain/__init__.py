@@ -94,7 +94,7 @@ class Transaction(dict):
 
 		if "type" not in self:
 			self["type"] = 0
-		if hasattr(cfg, "begintime") and "timestamp" not in self:
+		if "timestamp" not in self:
 			self["timestamp"] = slots.getTime()
 
 		for key,value in [(k,v) for k,v in dict(arg, **kwargs).items() if v != None]:
@@ -130,7 +130,7 @@ class Transaction(dict):
 		if Transaction.DFEES:
 			dposlib.core.setDynamicFees(self)
 		else:
-			fee = cfg.fees.get(TRANSACTIONS[self["type"]], False)
+			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]])
 			dict.__setitem__(self, "fee", fee)
 
 	def signWithSecret(self, secret):
@@ -153,8 +153,7 @@ class Transaction(dict):
 
 	def sign(self):
 		if hasattr(Transaction, "_privateKey"):
-			if "senderPublicKey" not in self:
-				dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:
 			raise Exception("Orphan transaction can not sign itsef")
@@ -174,7 +173,9 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
-	def finalize(self):
+	def finalize(self, secret=None, secondSecret=None):
+		Transaction.link(secret, secondSecret)
+		self.setFees()
 		if hasattr(Transaction, "_privateKey"):
 			self.sign()
 			if hasattr(Transaction, "_secondPrivateKey"):

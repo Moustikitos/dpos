@@ -159,6 +159,20 @@ def getIdFromBytes(data):
 	return hexlify(hashlib.sha256(data).digest())
 
 
+def verifySignature(value, publicKey, signature):
+	"""
+	Verify signature.
+
+	Arguments:
+	value (bytes) -- value as hex string in bytes
+	publicKey (str) -- a public key as hex string
+	signature (str) -- a signature as hex string
+
+	Return bool
+	"""
+	return verifySignatureFromBytes(unhexlify(value), publicKey, signature)
+
+
 def verifySignatureFromBytes(data, publicKey, signature):
 	"""
 	Verify signature.

@@ -12,7 +12,7 @@ from dposlib.ark import crypto
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 
-from dposlib.ark.v2.bin import computePayload
+from dposlib.ark.v2.mixin import computePayload
 
 log = logging.getLogger(__name__)
 DAEMON_PEERS = None

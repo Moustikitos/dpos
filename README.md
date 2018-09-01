@@ -56,7 +56,7 @@
 
 ## Version
 
-### 0.1.0 : available on [PyPi](http://www.pypi.org)
+### 0.1.0 : available on [PyPi](https://pypi.org/project/dposlib/)
 
 ### 0.1.1 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
@@ -66,6 +66,7 @@
 
 TODO
   - [ ] write `api` for each network package
+  - [ ] integrate LedgerBlue Nano S use
   - [ ] unittest
   - [ ] wallet
   - [ ] CLI
