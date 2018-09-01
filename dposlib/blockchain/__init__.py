@@ -2,7 +2,10 @@
 # © Toons
 
 import os
+import json
 import dposlib
+
+from collections import OrderedDict
 
 from dposlib import ROOT
 from dposlib.blockchain import slots, cfg
@@ -83,24 +86,23 @@ class Transaction(dict):
 		registry = loadJson(pathfile)
 		return Transaction(registry[txid])
 
+	def __repr__(self):
+		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
+
 	def __init__(self, arg={}, **kwargs):
 		dict.__init__(self)
 
 		if "type" not in self:
 			self["type"] = 0
-
 		if hasattr(cfg, "begintime") and "timestamp" not in self:
 			self["timestamp"] = slots.getTime()
 
 		for key,value in [(k,v) for k,v in dict(arg, **kwargs).items() if v != None]:
 			self[key] = value
+		if hasattr(Transaction, "_publicKey"):
+			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 
 		self.setFees()
-
-	def __setattr__(self, attr, value):
-		if attr == "_publicKey":
-			dict.__setitem__(self, "senderPublicKey", value)
-		dict.__setattr__(self, attr, value)
 
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
@@ -128,52 +130,32 @@ class Transaction(dict):
 		if Transaction.DFEES:
 			dposlib.core.setDynamicFees(self)
 		else:
-			# ARKV1 and LISK compatibility
-			fee = cfg.fees.get(
-				{	0: "send",
-					1: "secondsignature",
-					2: "delegate",
-					3: "vote",
-					4: "multisignature",
-					5: "dapp"
-				}[self["type"]], False
-			)
-			if not fee:
-				# ARKV2 compability
-				fee = cfg.fees.get(
-					{	0: "transfer",
-						2: "delegateRegistration",
-					}[self["type"]], None
-				)
+			fee = cfg.fees.get(TRANSACTIONS[self["type"]], False)
 			dict.__setitem__(self, "fee", fee)
 
-	def signFromSecret(self, secret):
-		keys = dposlib.core.crypto.getKeys(secret)
-		Transaction._publicKey = keys["publicKey"]
-		Transaction._privateKey = keys["privateKey"]
+	def signWithSecret(self, secret):
+		Transaction.link(secret)
 		self.sign()
 
-	def signSignFromSecondSecret(self, secondSecret):
-		keys = dposlib.core.crypto.getKeys(secondSecret)
-		Transaction._secondPublicKey = keys["publicKey"]
-		Transaction._secondPrivateKey = keys["privateKey"]
+	def signSignWithSecondSecret(self, secondSecret):
+		Transaction.link(None, secondSecret)
 		self.signSign()
 
-	def signFromKeys(self, publicKey, privateKey):
+	def signWithKeys(self, publicKey, privateKey):
+		dict.__setitem__(self, "senderPublicKey", publicKey)
 		Transaction._publicKey = publicKey
 		Transaction._privateKey = privateKey
 		self.sign()
 
-	def signSignFromKey(self, secondPrivateKey):
+	def signSignWithKey(self, secondPrivateKey):
 		Transaction._secondPrivateKey = secondPrivateKey
 		self.signSign()
 
 	def sign(self):
-		if "senderPublicKey" in self:
-			try:
-				self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
-			except AttributeError:
-				raise Exception("No private Key available")
+		if hasattr(Transaction, "_privateKey"):
+			if "senderPublicKey" not in self:
+				dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:
 			raise Exception("Orphan transaction can not sign itsef")
 
@@ -192,6 +174,15 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
+	def finalize(self):
+		if hasattr(Transaction, "_privateKey"):
+			self.sign()
+			if hasattr(Transaction, "_secondPrivateKey"):
+				self.signSign()
+			self.identify()
+		else:
+			raise Exception("Orphan transaction")
+			
 	def dump(self):
 		"""Dumps transaction in current registry."""
 		if "id" in self:

@@ -28,6 +28,9 @@ kw = {
 		"dposlib.wallet",
 		"dposlib.wallet.app",
 		"dposlib.ark",
+		"dposlib.ark.v1",
+		"dposlib.ark.v2",
+		"dposlib.lisk",
 		"dposlib.blockchain"
 	],
 	"install_requires": [

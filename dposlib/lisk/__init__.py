@@ -13,6 +13,14 @@ from dposlib.util.asynch import setInterval
 
 
 DAEMON_PEERS = None
+TRANSACTIONS = {
+	0: "send",
+	1: "secondsignature",
+	2: "delegate",
+	3: "vote",
+	4: "multisignature",
+}
+
 
 def select_peers():
 	selection = []
