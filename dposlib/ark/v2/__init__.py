@@ -3,7 +3,6 @@
 
 
 import pytz
-import logging
 
 from datetime import datetime
 
@@ -14,10 +13,7 @@ from dposlib.util.asynch import setInterval
 
 from dposlib.ark.v2.mixin import computePayload
 
-log = logging.getLogger(__name__)
 DAEMON_PEERS = None
-
-
 TRANSACTIONS = {
 	0: "transfer",
 	1: "delegateRegistration",
@@ -28,6 +24,19 @@ TRANSACTIONS = {
 	6: "timelockTransfer",
 	7: "multiPayment",
 	8: "delegateResignation",
+}
+TYPING = {
+	"timestamp": int,
+	"type": int,
+	"amount": int,
+	"senderPublicKey": str,
+	"recipientId": str,
+	"senderId": str,
+	"vendorField": str,
+	"asset": dict,
+	"signature": str,
+	"signSignature": str,
+	"id": str,
 }
 
 

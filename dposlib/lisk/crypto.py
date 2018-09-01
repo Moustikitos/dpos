@@ -43,7 +43,7 @@ def getBytes(tx):
 	buf = BytesIO()
 
 	# write type and timestamp
-	pack("<bi", buf, (tx["type"], int(tx["timestamp"])))
+	pack("<bi", buf, (tx["type"], tx["timestamp"]))
 	# write senderPublicKey as bytes in buffer
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
 	# if there is a requesterPublicKey
@@ -53,7 +53,7 @@ def getBytes(tx):
 	if "recipientId" in tx:
 		pack(">Q", buf, (int(tx["recipientId"][:-len(cfg.marker)]),))
 	else:
-		pack("<Q", buf, (0,))
+		pack(">Q", buf, (0,))
 	# write amount
 	pack("<Q", buf, (int(tx["amount"]),))
 	# if there is asset data

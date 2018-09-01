@@ -61,6 +61,7 @@
 ### 0.1.1 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
  - [x] ARK packaging improvement (`v1` and `v2`)
+ - [x] LISK packaging improvement (`v09` and `v10`)
  - [x] ARK dynamicFee implementation
  - [x] readonly wallet
 

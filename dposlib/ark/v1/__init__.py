@@ -3,7 +3,6 @@
 
 
 import pytz
-import logging
 
 from datetime import datetime
 
@@ -21,6 +20,20 @@ TRANSACTIONS = {
 	3: "vote",
 	4: "multisignature",
 }
+TYPING = {
+	"timestamp": int,
+	"type": int,
+	"amount": int,
+	"senderPublicKey": str,
+	"recipientId": str,
+	"senderId": str,
+	"vendorField": str,
+	"asset": dict,
+	"signature": str,
+	"signSignature": str,
+	"id": str,
+}
+
 
 def select_peers():
 	version = rest.GET.api.peers.version(returnKey='version') or '0.0.0'

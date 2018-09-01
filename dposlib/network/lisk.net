@@ -1,7 +1,6 @@
 {
 	"timeout": 5,
-	"begintime": [2016, 5, 24, 17],
-	"familly": "lisk",
+	"familly": "lisk.v10",
 	"maxlimit": 1000,
 	"maxvotepertx": 33,
 	"maxvote": 101,
@@ -13,14 +12,14 @@
 	},
 
 	"seeds": [
-		"https://main.liskwallet.io",
-		"https://wallet.lisknode.io",
-		"https://wallet.mylisk.com",
-		"https://example124124asdfasdgadsg.com",
-		"https://lisk-login.vipertkd.com",
-		"https://lisk.multiwallet.online",
-		"https://lisknode.grumlin.com",
-		"https://liskwallet.punkrock.me",
+		"https://node01.lisk.io",
+		"https://node02.lisk.io",
+		"https://node03.lisk.io",
+		"https://node04.lisk.io",
+		"https://node05.lisk.io",
+		"https://node06.lisk.io",
+		"https://node07.lisk.io",
+		"https://node08.lisk.io"
 	],
 
 	"explorer": "https://explorer.lisk.io",

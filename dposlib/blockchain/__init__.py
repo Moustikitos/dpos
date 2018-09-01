@@ -18,20 +18,6 @@ class Transaction(dict):
 	DFEES = False
 	FMULT = 10000
 
-	typing = {
-		"timestamp": int,
-		"type": int,
-		"amount": int,
-		"senderPublicKey": str,
-		"recipientId": str,
-		"senderId": str,
-		"vendorField": str,
-		"asset": dict,
-		"signature": str,
-		"signSignature": str,
-		"id": str
-	}
-
 	@staticmethod
 	def path():
 		"""Return current registry path."""
@@ -96,6 +82,8 @@ class Transaction(dict):
 			self["type"] = 0
 		if "timestamp" not in self:
 			self["timestamp"] = slots.getTime()
+		if "asset" not in self:
+			self["asset"] = {}
 
 		for key,value in [(k,v) for k,v in dict(arg, **kwargs).items() if v != None]:
 			self[key] = value
@@ -106,8 +94,8 @@ class Transaction(dict):
 
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
-		if item in Transaction.typing.keys():
-			cast = Transaction.typing[item]
+		if item in dposlib.core.TYPING.keys():
+			cast = dposlib.core.TYPING[item]
 			if not isinstance(value, cast):
 				value = cast(value)
 			dict.__setitem__(self, item, value)

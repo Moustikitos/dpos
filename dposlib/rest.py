@@ -171,7 +171,8 @@ def load(family_name):
 	try:
 		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
 		sys.modules[__package__].core.init()
-	except:
+	except Exception as e:
+		sys.stdout.write("%r\n" % e)
 		raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
 
 	# delete real package name loaded to keep namespace clear
