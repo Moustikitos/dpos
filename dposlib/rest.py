@@ -164,7 +164,10 @@ def load(family_name):
 	Loads a given blockchain package as `dposlib.core`
 	"""
 	if hasattr(sys.modules[__package__], "core"):
-		sys.modules[__package__].core.stop()
+		try:
+			sys.modules[__package__].core.stop()
+		except Exception as e:
+			sys.stdout.write("%r\n" % e)
 		del sys.modules[__package__].core
 
 	# initialize blockchain familly package

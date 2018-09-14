@@ -19,7 +19,7 @@ TRANSACTIONS = {
 	1: "delegateRegistration",
 	2: "secondSignature",
 	3: "vote",
-	# 4: "multiSignature",
+	4: "multiSignature",
 	# 5: "ipfs",
 	# 6: "timelockTransfer",
 	# 7: "multiPayment",
@@ -59,7 +59,7 @@ def init():
 	global DAEMON_PEERS
 	Transaction.DFEES = True
 
-	data = rest.GET.api.node.configuration().get("data", {})
+	data = rest.GET.api.v2.node.configuration().get("data", {})
 
 	constants =  data["constants"]
 	cfg.blocktime = constants["blocktime"]
@@ -74,7 +74,6 @@ def init():
 	cfg.token = data["token"]
 	cfg.symbol = data["symbol"]
 	cfg.ports = data["ports"]
-
 
 	select_peers()
 	DAEMON_PEERS = rotate_peers()

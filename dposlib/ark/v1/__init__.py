@@ -18,7 +18,7 @@ TRANSACTIONS = {
 	1: "secondsignature",
 	2: "delegate",
 	3: "vote",
-	# 4: "multisignature",
+	4: "multisignature",
 }
 TYPING = {
 	"timestamp": int,
