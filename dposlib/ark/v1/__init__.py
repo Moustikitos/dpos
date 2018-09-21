@@ -8,6 +8,7 @@ from datetime import datetime
 
 from dposlib import rest
 from dposlib.ark import crypto
+from dposlib.ark.v1 import api
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 
@@ -97,7 +98,7 @@ def stop():
 	DAEMON_PEERS.set()
 
 
-def send(amount, address, vendorField=None):
+def transfer(amount, address, vendorField=None):
 	return Transaction(
 		type=0,
 		amount=amount*100000000,

@@ -106,7 +106,7 @@ def setDynamicFees(tx):
 	dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload)) * Transaction.FMULT)
 
 
-def send(amount, address, vendorField=None):
+def transfer(amount, address, vendorField=None):
 	return Transaction(
 		type=0,
 		amount=amount*100000000,

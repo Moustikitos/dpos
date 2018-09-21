@@ -92,7 +92,9 @@ class EndPoint(object):
 			if return_key in data:
 				data = data.get(return_key, {})
 				if isinstance(data, dict):
-					for item in ["balance", "unconfirmedBalance", "vote"]:
+					for item in [
+						"balance", "unconfirmedBalance", "vote", "reward",
+						"totalAmount", "totalFee", "totalForged"]:
 						if item in data:
 							data[item] = float(data[item]) / 100000000
 		return data
