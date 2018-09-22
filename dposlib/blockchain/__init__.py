@@ -4,11 +4,13 @@
 import os
 import json
 import dposlib
+import weakref
 
 from collections import OrderedDict
 
 from dposlib import ROOT
 from dposlib.blockchain import slots, cfg
+from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
 from dposlib.util.bin import hexlify
 
@@ -180,3 +182,48 @@ class Transaction(dict):
 			registry = loadJson(pathfile)
 			registry[self["id"]] = self
 			dumpJson(registry, pathfile)
+
+
+class Data:
+
+	REF = set()
+	EVENT = False
+
+	@setInterval(30)
+	def heartbeat():
+		for ref in Data.REF:
+			dead, obj = set(), ref()
+			if obj:
+				obj.update()
+			else:
+				dead.add(ref)	
+		Data.REF -= dead
+
+		if len(Data.REF) == 0:
+			Data.EVENT.set()
+			Data.EVENT = False
+	
+	@staticmethod
+	def track(elem):
+		Data.REF.add(weakref.ref(elem))
+
+	def __init__(self, endpoint, *args, **kwargs):
+		track = kwargs.pop("track", True)
+		self.__dict = dict(**endpoint(*args, **kwargs))
+		self.__endpoint = endpoint
+		self.__kwargs = kwargs
+		self.__args = args
+
+		if Data.EVENT == False:
+			Data.EVENT = Data.heartbeat()
+		if track:
+			Data.track(self)
+		
+	def __repr__(self):
+		return json.dumps(OrderedDict(sorted(self.__dict.items(), key=lambda e:e[0])), indent=2)
+
+	def __getattr__(self, attr):
+		return self.__dict[attr]
+
+	def update(self):
+		self.__dict.update(**self.__endpoint(*self.__args, **self.__kwargs))

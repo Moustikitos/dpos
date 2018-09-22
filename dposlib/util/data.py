@@ -26,3 +26,17 @@ def dumpJson(data, path):
 		pass
 	with io.open(path, "w" if PY3 else "wb") as out:
 		json.dump(data, out, indent=4)
+
+
+def filter_dic(dic):
+	return dict(
+		(k, float(v)/100000000 if k in [
+			"amount",
+			"balance",
+			"fee", "fees", "forged",
+			"reward", "rewards",
+			"totalAmount", "totalFee", "totalForged",
+			"unconfirmedBalance",
+			"vote"
+		] else v) for k,v in dic.items()
+	)

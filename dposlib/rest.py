@@ -47,6 +47,7 @@ import requests
 
 from dposlib import FROZEN, ROOT
 from dposlib.blockchain import cfg
+from dposlib.util.data import filter_dic
 
 
 logging.getLogger("requests").setLevel(logging.CRITICAL)
@@ -79,24 +80,22 @@ class EndPoint(object):
 		peer = kwargs.pop('peer', False)
 		peer = peer if peer else random.choice(cfg.peers)
 		try:
-			data = requests.get(
+			req = requests.get(
 				peer + "/".join(args),
 				params=dict([k.replace('and_', 'AND:'), v] for k,v in kwargs.items()),
 				headers=cfg.headers,
 				verify=cfg.verify,
 				timeout=cfg.timeout
-			).json()
+			)
+			# print(req.url)
+			data = req.json()
 		except Exception as error:
 			data = {"success": False, "error": error, "peer": peer}
 		else:
 			if return_key in data:
 				data = data.get(return_key, {})
 				if isinstance(data, dict):
-					for item in [
-						"balance", "unconfirmedBalance", "vote", "reward",
-						"totalAmount", "totalFee", "totalForged"]:
-						if item in data:
-							data[item] = float(data[item]) / 100000000
+					data = filter_dic(data)
 		return data
 
 	@staticmethod

@@ -12,7 +12,6 @@ runs with python 2.x
 import os
 import sys
 import imp
-import logging
 
 
 PY3 = True if sys.version_info[0] >= 3 else False
