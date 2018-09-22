@@ -191,7 +191,7 @@ class Data:
 
 	@setInterval(30)
 	def heartbeat():
-		for ref in Data.REF:
+		for ref in list(Data.REF):
 			dead, obj = set(), ref()
 			if obj:
 				obj.update()
