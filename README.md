@@ -45,14 +45,61 @@
     * mainet : `ark`
     * devnet : `dark`
   - [x] Kapu : `kapu`
+  - [x] Persona : `prs`
+  - [x] Ripa : `ripa`
+  - [x] Lisk : `lisk`
   - [x] Local World Forwarder :
     * mainet : `lwf`
     * testnet : `tlwf`
-  - [x] Persona : `prs`
-  - [x] Ripa : `ripa`
   - [x] Shift : 
     * mainet : `shift`
     * testnet : `tshift`
+
+## Network API
+
+```python
+>>> rest.use("ark")
+>>> dlgt = dposlib.core.api.Delegate("arky") # get delegate by username
+>>> dlgt.forged()
+{'fees': 3294.7, 'forged': 227230.7, 'rewards': 223936.0}
+>>> dlgt.address
+'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE'
+>>> blk = dlgt.lastBlock() # get last forged block
+>>> blk
+{
+  "blockSignature": "304402200a496a628c2741537538f0492f9d683d3c4f1b30c8dd03c33ad8fbe79d08b6eb02206cdec7e1210db53a3ca22da30912479ff3644d3a1ed1d878417d5965f34dfd6d",
+  "confirmations": 68,
+  "generatorId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+  "generatorPublicKey": "030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e9",
+  "height": 5862354,
+  "id": "1894085440657345411",
+  "numberOfTransactions": 0,
+  "payloadHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "payloadLength": 0,
+  "previousBlock": "11181074894913507025",
+  "reward": 2.0,
+  "timestamp": 47535768,
+  "totalAmount": 0.0,
+  "totalFee": 0.0,
+  "totalForged": 2.0,
+  "version": 0
+}
+>>> blk.transactions()
+[]
+>>> wlt = dposlib.core.api.Wallet(dlgt.address) # get wallet by address
+>>> wlt.balance
+2537.42979112
+>>> for elem in [(tx["recipientId"], tx["amount"]) for tx in wlt.lastTransactions(2)]:
+...     print(elem)
+...
+('AHMXV6UdkVxsTwMqeoeqdpotRRmGZZaAtj', 0.08403461)
+('AUahWfkfr5J4tYakugRbfow7RWVTK35GPW', 329.32420472)
+```
+
+  - [x] Ark v1
+  - [ ] Ark v2
+  - [ ] Lisk v09
+  - [ ] Lisk v10
 
 ## Version
 
@@ -60,11 +107,11 @@
 
 ### 0.1.1 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
- - [x] ARK packaging improvement (`v1` and `v2`)
- - [x] LISK packaging improvement (`v09` and `v10`)
- - [x] ARK dynamicFee implementation
- - [x] readonly wallet
-
+  - [x] ARK packaging improvement (`v1` and `v2`)
+  - [x] LISK packaging improvement (`v09` and `v10`)
+  - [x] ARK dynamicFee implementation
+  - [x] readonly wallet
+   
 TODO
   - [ ] write `api` for each network package
   - [ ] integrate LedgerBlue Nano S use
@@ -72,3 +119,4 @@ TODO
   - [ ] wallet
   - [ ] CLI
   - [ ] DOC
+  - [ ] API

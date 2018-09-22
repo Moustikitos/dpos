@@ -74,4 +74,5 @@ def init():
 
 def stop():
 	global DAEMON_PEERS
-	DAEMON_PEERS.set()
+	if DAEMON_PEERS != None:
+		DAEMON_PEERS.set()

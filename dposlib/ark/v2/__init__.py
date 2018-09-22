@@ -81,8 +81,8 @@ def init():
 
 def stop():
 	global DAEMON_PEERS
-	Transaction.DFEES = False
-	DAEMON_PEERS.set()
+	if DAEMON_PEERS != None:
+		DAEMON_PEERS.set()
 
 
 def setDynamicFees(tx):

@@ -15,6 +15,10 @@ from dposlib.util.data import loadJson, dumpJson
 from dposlib.util.bin import hexlify
 
 
+def track_data(value=True):
+	Data.TRACK = value
+
+
 class Transaction(dict):
 
 	DFEES = False
@@ -188,6 +192,7 @@ class Data:
 
 	REF = set()
 	EVENT = False
+	TRACK = True
 
 	@setInterval(30)
 	def heartbeat():
@@ -203,12 +208,8 @@ class Data:
 			Data.EVENT.set()
 			Data.EVENT = False
 	
-	@staticmethod
-	def track(elem):
-		Data.REF.add(weakref.ref(elem))
-
 	def __init__(self, endpoint, *args, **kwargs):
-		track = kwargs.pop("track", True)
+		track = kwargs.pop("track", Data.TRACK)
 		self.__dict = dict(**endpoint(*args, **kwargs))
 		self.__endpoint = endpoint
 		self.__kwargs = kwargs
@@ -217,8 +218,8 @@ class Data:
 		if Data.EVENT == False:
 			Data.EVENT = Data.heartbeat()
 		if track:
-			Data.track(self)
-		
+			self.track()
+
 	def __repr__(self):
 		return json.dumps(OrderedDict(sorted(self.__dict.items(), key=lambda e:e[0])), indent=2)
 
@@ -227,3 +228,6 @@ class Data:
 
 	def update(self):
 		self.__dict.update(**self.__endpoint(*self.__args, **self.__kwargs))
+
+	def track(self):
+		Data.REF.add(weakref.ref(self))
