@@ -57,7 +57,7 @@ class Transaction(dict):
 		for attr in [
 			'_privateKey',
 			'_publicKey',
-			'_secondPublicKey'
+			'_secondPublicKey',
 			'_secondPrivateKey'
 		]:
 			if hasattr(Transaction, attr):
@@ -227,7 +227,9 @@ class Data:
 		return self.__dict[attr]
 
 	def update(self):
-		self.__dict.update(**self.__endpoint(*self.__args, **self.__kwargs))
+		result = self.__endpoint(*self.__args, **self.__kwargs)
+		if "error" not in result:
+			self.__dict.update(**result)
 
 	def track(self):
 		Data.REF.add(weakref.ref(self))

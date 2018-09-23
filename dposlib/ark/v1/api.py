@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+# ~ https://docs.ark.io/api/public/v1/
+
+import dposlib
+
 from dposlib import rest
-from dposlib.blockchain import Data
 from dposlib.util.data import filter_dic
+from dposlib.blockchain import Data, Transaction
 
 
 class Wallet(Data):
+	
+	link = staticmethod(Transaction.link)
+	unlink = staticmethod(Transaction.unlink)
 
 	def __init__(self, address, **kw):
 		Data.__init__(self, rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
@@ -19,6 +26,16 @@ class Wallet(Data):
 			tmpcount = len(sent)+len(received)
 			count = limit if count == tmpcount else tmpcount
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
+
+	def send(self, amount, recipientId, vendorField=None, **kw):
+		# create a type-1-transaction
+		tx = Transaction(type=0, amount=amount*100000000, recipientId=recipientId, vendorField=vendorField, **kw)
+		# sign if a public and private keys exists
+		try: tx.finalize()
+		# if no key: return orphan tx
+		except: return tx
+		# else broadcast tx
+		else: return rest.POST.peer.transactions(transactions=[tx])
 
 
 class Delegate(Data):
@@ -36,12 +53,9 @@ class Delegate(Data):
 		return list(sorted([filter_dic(dic) for dic in voters], key=lambda e:e["balance"], reverse=True))
 	
 	def lastBlock(self):
-		return Block(
-			list(filter(
-				lambda blk: blk["generatorId"] == self.address,
-				rest.GET.api.blocks(returnKey="blocks")
-			))[0]["id"]
-		)
+		blocks = [blk for blk in rest.GET.api.blocks(returnKey="blocks") if blk["generatorId"] == self.address]
+		if len(blocks):
+			return Block(blocks[0]["id"])
 
 
 class Block(Data):

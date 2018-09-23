@@ -83,6 +83,7 @@ def init():
 		if "version" not in cfg.headers:
 			cfg.headers["version"] = str(network.pop('version'))
 		cfg.headers["nethash"] = network.pop('nethash')
+		cfg.headers["API-Version"] = "1"
 		cfg.__dict__.update(network)
 		cfg.fees = rest.GET.api.blocks.getFees()["fees"]
 		# select peers immediately and keep refreshing them in a thread so we

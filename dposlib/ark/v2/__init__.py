@@ -8,6 +8,7 @@ from datetime import datetime
 
 from dposlib import rest
 from dposlib.ark import crypto
+from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 
@@ -68,6 +69,8 @@ def init():
 
 	cfg.headers["nethash"] = data["nethash"]
 	cfg.headers["version"] = data["version"]
+	cfg.headers["API-Version"] = "2"
+
 	cfg.fees = constants["fees"]
 	cfg.doffsets = constants["dynamicOffsets"]
 	cfg.explorer = data["explorer"]
