@@ -101,7 +101,7 @@
 
   - [x] Ark v1
   - [x] Ark v2
-  - [ ] Lisk v09
+  - [x] Lisk v09
   - [ ] Lisk v10
 
 ## Version
@@ -113,13 +113,13 @@
   - [x] ARK packaging improvement (`v1` and `v2`)
   - [x] LISK packaging improvement (`v09` and `v10`)
   - [x] ARK dynamicFee implementation
+  - [x] Network API created
   - [x] readonly wallet
-   
+
 TODO
-  - [ ] write `api` for each network package
+  - [ ] write `api` for lisk networks
   - [ ] integrate LedgerBlue Nano S use
+  - [ ] doc writing
   - [ ] unittest
   - [ ] wallet
   - [ ] CLI
-  - [ ] DOC
-  - [ ] API

@@ -8,6 +8,7 @@ from datetime import datetime
 
 from dposlib import rest
 from dposlib.lisk import crypto
+from dposlib.lisk.v09 import api
 from dposlib.blockchain import cfg, slots, Transaction
 from dposlib.util.asynch import setInterval
 
