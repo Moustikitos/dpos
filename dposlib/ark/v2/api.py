@@ -45,10 +45,9 @@ class Delegate(Data):
 		Data.__init__(self, rest.GET.api.delegates, username, **dict({"returnKey":"data"}, **kw))
 
 	def forged(self):
-		raise NotImplementedError
-		# result = filter_dic(rest.GET.api.delegates.forging.getForgedByAccount(generatorPublicKey=self.publicKey))
-		# result.pop("success", False)
-		# return result
+		result = filter_dic(rest.GET.api.delegates.forging.getForgedByAccount(generatorPublicKey=self.publicKey))
+		result.pop("success", False)
+		return result
 
 	def voters(self):
 		voters = [a for a in rest.GET.api.delegates(self.username, "voters", returnKey="data") if a["balance"] not in [0, "0"]]

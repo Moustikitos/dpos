@@ -3,10 +3,11 @@
 
 import struct
 
-from dposlib import rest
+from dposlib import ROOT, rest
 from dposlib.ark import crypto
 from dposlib.blockchain import Transaction, slots, cfg
 from dposlib.util.bin import unhexlify, hexlify
+from dposlib.util.data import loadJson, dumpJson
 	
 
 def computePayload(typ, tx):
@@ -58,7 +59,7 @@ def computePayload(typ, tx):
 			raise Exception("no up/down vote given")
 
 	elif typ == 4:
-		result = struct.pack("<BBB", data.get("minimum", 2), data.get("number", 3), data.get("lifetime", 24))
+		result = struct.pack("<BB", data.get("minimum", 2), data.get("number", 3))
 		for publicKey in data.get("publicKeys"):
 			result += struct.pack("<33s", publicKey.encode())
 		return payload
@@ -117,3 +118,14 @@ def getBytes(tx):
 	payload = computePayload(typ, tx)
 
 	return header + vendorField + payload
+
+
+def createWebhook(peer, event, target, conditions, folder=None):
+	data = rest.POST.api.webhooks(peer=peer, event=event, target=target, conditions=conditions, returnKey="data")
+	if "token" in data:
+		dumpJson(data, os.path.join(ROOT if not folder else folder, "%s.whk" % data["token"]))
+	return data
+
+
+def deleteWebhook(peer, id, token=None):
+	rest.DELETE.api.webhooks("%s"%id, peer=peer, token=token)

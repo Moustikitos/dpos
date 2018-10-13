@@ -12,7 +12,7 @@ from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 
-from dposlib.ark.v2.mixin import computePayload
+from dposlib.ark.v2.mixin import computePayload, createWebhook, deleteWebhook
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
@@ -154,3 +154,18 @@ def downVote(*usernames):
 		},
 	)
 
+
+# def multisignature(amount, *publicKeys, vendorField=None):
+# 	return Transaction(
+# 		type=4,
+# 		amount=amount*100000000,
+# 		vendorField=vendorField
+# 	)
+
+
+def nTransfer(*pairs, vendorField=None):
+	return Transaction(
+		type=7,
+		vendorField=vendorField,
+		asset=dict(pairs)
+	)

@@ -103,13 +103,15 @@ class EndPoint(object):
 		peer = kwargs.pop("peer", False)
 		peer = peer if peer else random.choice(cfg.peers)
 		try:
-			data = requests.post(
+			req = requests.post(
 				peer + "/".join(args),
 				data=json.dumps(kwargs),
 				headers=cfg.headers,
 				verify=cfg.verify,
 				timeout=cfg.timeout
-			).json()
+			)
+			# print(req.url)
+			data = req.json()
 		except Exception as error:
 			data = {"success": False, "error": error, "peer": peer}
 		return data
@@ -119,20 +121,40 @@ class EndPoint(object):
 		peer = kwargs.pop("peer", False)
 		peer = peer if peer else random.choice(cfg.peers)
 		try:
-			data = requests.put(
+			req = requests.put(
 				peer + "/".join(args),
 				data=json.dumps(kwargs),
 				headers=cfg.headers,
 				verify=cfg.verify,
 				timeout=cfg.timeout
-			).json()
+			)
+			# print(req.url)
+			data = req.json()
+		except Exception as error:
+			data = {"success": False, "error": error, "peer": peer}
+		return data
+
+	@staticmethod
+	def _DELETE(*args, **kwargs):
+		peer = kwargs.pop("peer", False)
+		peer = peer if peer else random.choice(cfg.peers)
+		try:
+			req = requests.delete(
+				peer + "/".join(args),
+				data=json.dumps(kwargs),
+				headers=cfg.headers,
+				verify=cfg.verify,
+				timeout=cfg.timeout
+			)
+			# print(req.url)
+			data = req.json()
 		except Exception as error:
 			data = {"success": False, "error": error, "peer": peer}
 		return data
 
 	def __init__(self, elem=None, parent=None, method=None):
-		if method not in [EndPoint._GET, EndPoint._POST, EndPoint._PUT]:
-			raise Exception("REST method is not a valid one")
+		if method not in [EndPoint._GET, EndPoint._POST, EndPoint._PUT, EndPoint._DELETE]:
+			raise Exception("REST method nort implemented")
 		self.elem = elem
 		self.parent = parent
 		self.method = method
@@ -154,6 +176,7 @@ class EndPoint(object):
 GET = EndPoint(method=EndPoint._GET)
 POST = EndPoint(method=EndPoint._POST)
 PUT = EndPoint(method=EndPoint._PUT)
+DELETE = EndPoint(method=EndPoint._DELETE)
 
 
 #######################

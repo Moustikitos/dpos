@@ -194,7 +194,7 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	return True
 
 
-def getBytes(tx):
+def getBytes(tx, ark_v2=False):
 	"""
 	Hash transaction object into bytes data.
 
@@ -242,7 +242,10 @@ def getBytes(tx):
 			pack_bytes(buf, "".join(asset["votes"]).encode("utf-8"))
 		elif typ == 4:
 			multisignature = asset.get("multisignature", {})
-			pack("<bb", buf, (multisignature["min"], multisignature["lifetime"]))
+			if ark_v2:
+				pack("<b", buf, (multisignature["min"],))
+			else:
+				pack("<bb", buf, (multisignature["min"], multisignature["lifetime"]))
 			for publicKey in multisignature["keysgroup"]:
 				pack_bytes(buf, unhexlify(publicKey))
 	# if there is a signature
