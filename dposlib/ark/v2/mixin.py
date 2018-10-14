@@ -52,15 +52,17 @@ def computePayload(typ, tx):
 			payload = struct.pack("<B", length)
 			for delegatePublicKey in delegatePublicKeys:
 				delegatePublicKey = delegatePublicKey.replace("+", "01").replace("-", "00")
-				payload += struct.pack("<34s", delegatePublicKey.encode())
+				payload += struct.pack("<34s", crypto.unhexlify(delegatePublicKey))
 			return payload
 		else:
 			raise Exception("no up/down vote given")
 
 	elif typ == 4:
-		result = struct.pack("<BB", data.get("minimum", 2), data.get("number", 3))
-		for publicKey in data.get("publicKeys"):
-			result += struct.pack("<33s", publicKey.encode())
+		data = data["multisignature"]
+		payload = struct.pack("<BB", data.get("minimum", 2), data.get("number", 3))
+		for publicKey in data.get("keysgroup", []):
+			publicKey = publicKey.replace("+", "")
+			payload += struct.pack("<33s",  crypto.unhexlify(publicKey))
 		return payload
 
 	elif typ == 5:

@@ -105,8 +105,9 @@ class Transaction(dict):
 			if not isinstance(value, cast):
 				value = cast(value)
 			dict.__setitem__(self, item, value)
-			if item not in ["signature", "signSignature", "id"]:
+			if item not in ["signature", "signatures", "signSignature", "id"]:
 				self.pop("signature", False)
+				self.pop("signatures", False)
 				self.pop("signSignature", False)
 				self.pop("id", False)
 		# set internal private keys (secrets are not stored)
@@ -125,6 +126,8 @@ class Transaction(dict):
 			dposlib.core.setDynamicFees(self)
 		else:
 			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]])
+			if self["type"] == 4:
+				fee *= 1+len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
 			dict.__setitem__(self, "fee", fee)
 
 	def signWithSecret(self, secret):
@@ -135,6 +138,9 @@ class Transaction(dict):
 		Transaction.link(None, secondSecret)
 		self.signSign()
 
+	def multiSignWithSecret(self, secret):
+		self.multiSignWithKey(self, dposlib.core.crypto.getKeys(secret)["privateKey"])
+
 	def signWithKeys(self, publicKey, privateKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
 		Transaction._publicKey = publicKey
@@ -144,6 +150,13 @@ class Transaction(dict):
 	def signSignWithKey(self, secondPrivateKey):
 		Transaction._secondPrivateKey = secondPrivateKey
 		self.signSign()
+
+	def multiSignWithKey(self, privateKey):
+		signature = dposlib.core.crypto.getSignature(self, privateKey)
+		if "signatures" in self:
+			self["signatures"].append(signature)
+		else:
+			self["signatures"] = [signature]
 
 	def sign(self):
 		if hasattr(Transaction, "_privateKey"):

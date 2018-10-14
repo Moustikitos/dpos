@@ -37,6 +37,7 @@ TYPING = {
 	"asset": dict,
 	"signature": str,
 	"signSignature": str,
+	"signatures": list,
 	"id": str,
 }
 
@@ -113,7 +114,7 @@ def upVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes":["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
@@ -122,17 +123,23 @@ def downVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes":["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
 
-# def multisignature(amount, *publicKeys, vendorField=None):
-# 	return Transaction(
-# 		type=4,
-# 		amount=amount*100000000,
-# 		vendorField=vendorField
-# 	)
+def multiSignature(*publicKeys, lifetime=72, minimum=2, vendorField=None):
+	return Transaction(
+		type=4,
+		vendorField=vendorField,
+		asset= {
+			"multisignature": {
+				"keysgroup": ["+"+pkey for pkey in publicKeys],
+				"lifetime": lifetime,
+				"min": minimum,
+			}
+		}
+	)
 
 
 def nTransfer(*pairs, vendorField=None):

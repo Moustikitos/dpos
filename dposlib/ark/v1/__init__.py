@@ -32,6 +32,7 @@ TYPING = {
 	"asset": dict,
 	"signature": str,
 	"signSignature": str,
+	"signatures": list,
 	"id": str,
 }
 
@@ -116,8 +117,8 @@ def registerSecondPublicKey(secondPublicKey):
 	return Transaction(
 		type=1,
 		asset={
-			"signature":{
-				"publicKey":secondPublicKey
+			"signature": {
+				"publicKey": secondPublicKey
 			}
 		}
 	)
@@ -127,8 +128,8 @@ def registerAsDelegate(username):
 	return Transaction(
 		type=2,
 		asset={
-			"delegate":{
-				"username":username
+			"delegate": {
+				"username": username
 			}
 		}
 	)
@@ -138,8 +139,8 @@ def upVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes":{
-				"username":["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			"votes": {
+				"username": ["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
 			}
 		}
 	)
@@ -149,8 +150,8 @@ def downVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes":{
-				"username":["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			"votes": {
+				"username": ["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
 			}
 		}
 	)
