@@ -28,16 +28,14 @@ def computePayload(typ, tx):
 		)
 
 	elif typ == 1:
-		if "secondSecret" in data:
-			secondPublicKey = crypto.getKeys(data["secondSecret"])["publicKey"]
-		elif "secondPublicKey" in data:
-			secondPublicKey = data["secondPublicKey"]
+		if "signature" in data:
+			secondPublicKey = data["signature"]["publicKey"]
 		else:
 			raise Exception("no secondSecret or secondPublicKey given")
 		return struct.pack("<33s", crypto.unhexlify(secondPublicKey))
 
 	elif typ == 2:
-		username = data.get("username", False)
+		username = data.get("delegate", {}).get("username", False)
 		if username:
 			length = len(username)
 			if 3 <= length <= 255:
@@ -48,11 +46,12 @@ def computePayload(typ, tx):
 			raise Exception("no username defined")
 
 	elif typ == 3:
-		delegatePublicKeys = data.get("delegatePublicKeys", False)
+		delegatePublicKeys = data.get("votes", False)
 		if delegatePublicKeys:
 			length = len(delegatePublicKeys)
 			payload = struct.pack("<B", length)
 			for delegatePublicKey in delegatePublicKeys:
+				delegatePublicKey = delegatePublicKey.replace("+", "01").replace("-", "00")
 				payload += struct.pack("<34s", delegatePublicKey.encode())
 			return payload
 		else:

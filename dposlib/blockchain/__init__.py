@@ -147,7 +147,12 @@ class Transaction(dict):
 
 	def sign(self):
 		if hasattr(Transaction, "_privateKey"):
+			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+			if "senderId" not in self:
+				self["senderId"] = address
+			if self["type"] in [1, 3, 4] and "recipientId" not in self:
+				self["recipientId"] = address
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:
 			raise Exception("Orphan transaction can not sign itsef")

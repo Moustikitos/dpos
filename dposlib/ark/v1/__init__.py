@@ -110,7 +110,7 @@ def transfer(amount, address, vendorField=None):
 
 
 def registerSecondSecret(secondSecret):
-	return registerSecondPublicKey(crypto.getKeys(secondsecret)["publicKey"])
+	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
 
 def registerSecondPublicKey(secondPublicKey):
 	return Transaction(

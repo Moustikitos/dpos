@@ -8,17 +8,17 @@ from datetime import datetime
 
 from dposlib import rest
 from dposlib.ark import crypto
-from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
-
+from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
 from dposlib.ark.v2.mixin import computePayload, createWebhook, deleteWebhook
+from dposlib.ark.v2 import api
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
 	0: "transfer",
-	1: "delegateRegistration",
-	2: "secondSignature",
+	1: "secondSignature",
+	2: "delegateRegistration",
 	3: "vote",
 	4: "multiSignature",
 	# 5: "ipfs",
@@ -109,39 +109,11 @@ def setDynamicFees(tx):
 	dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload)) * Transaction.FMULT)
 
 
-def transfer(amount, address, vendorField=None):
-	return Transaction(
-		type=0,
-		amount=amount*100000000,
-		recipientId=address,
-		vendorField=vendorField
-	)
-
-
-def registerSecondSecret(secondSecret):
-	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
-
-def registerSecondPublicKey(secondPublicKey):
-	return Transaction(
-		type=1,
-		asset={"secondPublicKey":secondPublicKey},
-	)
-
-
-def registerAsDelegate(username):
-	return Transaction(
-		type=2,
-		asset={
-			"username":username
-		},
-	)
-
-
 def upVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"delegatePublicKeys":["01"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			"votes":["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
@@ -150,7 +122,7 @@ def downVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"delegatePublicKeys":["00"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			"votes":["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
