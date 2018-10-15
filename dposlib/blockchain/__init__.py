@@ -201,7 +201,6 @@ class Transaction(dict):
 			self.identify()
 		else:
 			raise Exception("Orphan transaction")
-		self.setFees()
 			
 	def dump(self):
 		"""Dumps transaction in current registry."""
