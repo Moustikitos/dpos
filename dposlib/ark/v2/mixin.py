@@ -59,14 +59,15 @@ def computePayload(typ, tx):
 
 	elif typ == 4:
 		data = data["multisignature"]
-		payload = struct.pack("<BB", data.get("minimum", 2), data.get("number", 3))
-		for publicKey in data.get("keysgroup", []):
+		keysgroup = data.get("keysgroup", [])
+		payload = struct.pack("<BBB", data.get("min", 2), len(keysgroup), data.get("lifetime", 3))
+		for publicKey in keysgroup:
 			publicKey = publicKey.replace("+", "")
 			payload += struct.pack("<33s",  crypto.unhexlify(publicKey))
 		return payload
 
 	elif typ == 5:
-		dag = dara["dag"]
+		dag = data["dag"]
 		return struct.pack("<B%ss" % len(dag), dag.encode())
 
 	elif typ == 6:
