@@ -128,13 +128,12 @@ def downVote(*usernames):
 	)
 
 
-def multiSignature(*publicKeys, lifetime=72, minimum=2, vendorField=None):
+def multiSignature(*publicKeys, lifetime=72, minimum=2):
 	return Transaction(
 		type=4,
-		vendorField=vendorField,
 		asset= {
 			"multisignature": {
-				"keysgroup": ["+"+pkey for pkey in publicKeys],
+				"keysgroup": publicKeys,
 				"lifetime": lifetime,
 				"min": minimum,
 			}
