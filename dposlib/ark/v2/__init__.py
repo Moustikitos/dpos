@@ -110,7 +110,8 @@ def setDynamicFees(tx):
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature")])
 	if len(tx.get("signatures", [])):
 		signature += "ff" + "".join(tx["signatures"])
-	dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT)
+	return (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT
+	#dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT)
 
 
 def upVote(*usernames):
