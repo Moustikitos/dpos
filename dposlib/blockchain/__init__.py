@@ -64,8 +64,9 @@ class Transaction(dict):
 				delattr(Transaction, attr)
 
 	@staticmethod
-	def setDynamicFee():
+	def setDynamicFee(fmult=10000):
 		Transaction.DFEES = True
+		Transaction.FMULT = fmult
 
 	@staticmethod
 	def setStaticFee():
@@ -96,7 +97,8 @@ class Transaction(dict):
 		if hasattr(Transaction, "_publicKey"):
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 
-		self.setFees()
+		if not Transaction.DFEES:
+			self.setFees()
 
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
@@ -121,14 +123,19 @@ class Transaction(dict):
 			elif item == "secondPrivateKey":
 				Transaction._secondPrivateKey = str(value)
 
-	def setFees(self):
+	def setFees(self, included=False):
 		if Transaction.DFEES:
 			dposlib.core.setDynamicFees(self)
 		else:
-			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]])
-			if self["type"] == 4:
-				fee *= 1+len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
+			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
+			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
 			dict.__setitem__(self, "fee", fee)
+		if included:
+			if not hasattr(self, "_full_amount"):
+				self._full_amount = self["amount"]
+			self.__setitem__(self, "amount", self._full_amount - self["fee"])
+		elif hasattr(self, "_full_amount"):
+			self.__setitem__(self, "amount", self._full_amount)
 
 	def signWithSecret(self, secret):
 		Transaction.link(secret)
@@ -187,7 +194,6 @@ class Transaction(dict):
 
 	def finalize(self, secret=None, secondSecret=None):
 		Transaction.link(secret, secondSecret)
-		self.setFees()
 		if hasattr(Transaction, "_privateKey"):
 			self.sign()
 			if hasattr(Transaction, "_secondPrivateKey"):
@@ -195,6 +201,7 @@ class Transaction(dict):
 			self.identify()
 		else:
 			raise Exception("Orphan transaction")
+		self.setFees()
 			
 	def dump(self):
 		"""Dumps transaction in current registry."""
