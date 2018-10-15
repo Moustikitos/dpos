@@ -125,17 +125,17 @@ class Transaction(dict):
 
 	def setFees(self, included=False):
 		if Transaction.DFEES:
-			dposlib.core.setDynamicFees(self)
+			fee = dposlib.core.computeDynamicFees(self)
 		else:
 			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
 			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
-			dict.__setitem__(self, "fee", fee)
 		if included:
 			if not hasattr(self, "_full_amount"):
 				self._full_amount = self["amount"]
-			self.__setitem__(self, "amount", self._full_amount - self["fee"])
+			self.__setitem__(self, "amount", self._full_amount - fee)
 		elif hasattr(self, "_full_amount"):
 			self.__setitem__(self, "amount", self._full_amount)
+		dict.__setitem__(self, "fee", fee)
 
 	def signWithSecret(self, secret):
 		Transaction.link(secret)
