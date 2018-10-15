@@ -89,7 +89,7 @@ def stop():
 		DAEMON_PEERS.set()
 
 
-def setDynamicFees(tx):
+def computeDynamicFees(tx):
 	typ_ = tx.get("type", 0)
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
@@ -111,7 +111,6 @@ def setDynamicFees(tx):
 	if len(tx.get("signatures", [])):
 		signature += "ff" + "".join(tx["signatures"])
 	return (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT
-	#dict.__setitem__(tx, "fee", (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT)
 
 
 def upVote(*usernames):
