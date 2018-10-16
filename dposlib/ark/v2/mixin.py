@@ -100,26 +100,26 @@ def computePayload(typ, tx):
 		raise Exception("Unknown transaction type %d" % typ)
 
 
-def getBytes(tx):
-	typ = tx.get("type", 0)
-	vendorField = tx.get("vendorField", "")
-	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
+# def getBytes(tx):
+# 	typ = tx.get("type", 0)
+# 	vendorField = tx.get("vendorField", "")
+# 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
 
-	header = struct.pack(
-		"<BBBBI33sQB",
-		tx.get("head", 0xff),
-		tx.get("version", 0x02),
-		tx.get("network", int(cfg.marker, base=16)),
-		typ,
-		tx.get("timestamp", slots.getTime()),
-		unhexlify(Transaction._publicKey),
-		tx["fee"],
-		len(vendorField)
-	)
+# 	header = struct.pack(
+# 		"<BBBBI33sQB",
+# 		tx.get("head", 0xff),
+# 		tx.get("version", 0x02),
+# 		tx.get("network", int(cfg.marker, base=16)),
+# 		typ,
+# 		tx.get("timestamp", slots.getTime()),
+# 		unhexlify(Transaction._publicKey),
+# 		tx["fee"],
+# 		len(vendorField)
+# 	)
 	
-	payload = computePayload(typ, tx)
+# 	payload = computePayload(typ, tx)
 
-	return header + vendorField + payload
+# 	return header + vendorField + payload
 
 
 def createWebhook(peer, event, target, conditions, folder=None):

@@ -59,7 +59,6 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
-	Transaction.DFEES = True
 
 	data = rest.GET.api.v2.node.configuration().get("data", {})
 
@@ -74,6 +73,7 @@ def init():
 
 	cfg.fees = constants["fees"]
 	cfg.doffsets = constants["dynamicOffsets"]
+	cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 	cfg.explorer = data["explorer"]
 	cfg.token = data["token"]
 	cfg.symbol = data["symbol"]
@@ -81,6 +81,7 @@ def init():
 
 	select_peers()
 	DAEMON_PEERS = rotate_peers()
+	Transaction.setDynamicFee()
 
 
 def stop():
@@ -96,10 +97,9 @@ def computeDynamicFees(tx):
 	lenVF = len(vendorField)
 	payload = computePayload(typ_, tx)
 	T = cfg.doffsets[TRANSACTIONS[typ_]]
-	signatures = "".join([tx.get("signature", ""), tx.get("signSignature")])
-	if len(tx.get("signatures", [])):
-		signature += "ff" + "".join(tx["signatures"])
-	return (T + 50 + lenVF + len(payload) + len(signatures)/2) * Transaction.FMULT
+	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
+	minimum = cfg.feestats.get(tx["type"], {}).get("maxFee", 2500000000)
+	return min(minimum, int((T + 50 + lenVF + len(payload)) * Transaction.FMULT))
 
 
 def upVote(*usernames):

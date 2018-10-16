@@ -19,7 +19,6 @@ TRANSACTIONS = {
 	1: "secondsignature",
 	2: "delegate",
 	3: "vote",
-	4: "multisignature",
 }
 TYPING = {
 	"timestamp": int,
@@ -32,7 +31,6 @@ TYPING = {
 	"asset": dict,
 	"signature": str,
 	"signSignature": str,
-	"signatures": list,
 	"id": str,
 }
 
@@ -75,7 +73,8 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
-	Transaction.DFEES = False
+	Transaction.setStaticFee()
+
 
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	response = rest.GET.api.loader.autoconfigure()
