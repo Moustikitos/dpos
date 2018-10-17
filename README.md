@@ -114,10 +114,9 @@
   - [x] LISK packaging improvement (`v09` and `v10`)
   - [x] ARK dynamicFee implementation
   - [x] Network API created
-  - [x] readonly wallet
 
 TODO
-  - [ ] write `api` for lisk networks
+  - [ ] write `api` for lisk V10 network
   - [ ] integrate LedgerBlue Nano S use
   - [ ] doc writing
   - [ ] unittest
