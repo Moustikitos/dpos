@@ -24,6 +24,7 @@ kw = {
 	"description": "light api compatible with main ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
 	"packages": [
+		"dposlib",
 		"dposlib.util",
 		# "dposlib.wallet",
 		# "dposlib.wallet.app",
