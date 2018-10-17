@@ -25,8 +25,8 @@ kw = {
 	"long_description": LONG_DESCRIPTION,
 	"packages": [
 		"dposlib.util",
-		"dposlib.wallet",
-		"dposlib.wallet.app",
+		# "dposlib.wallet",
+		# "dposlib.wallet.app",
 		"dposlib.ark",
 		"dposlib.ark.v1",
 		"dposlib.ark.v2",

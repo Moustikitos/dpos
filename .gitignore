@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 simple_history.html
 .registry/
+*.whk
