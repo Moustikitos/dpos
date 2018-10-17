@@ -108,13 +108,18 @@
 
 ### 0.1.0 : available on [PyPi](https://pypi.org/project/dposlib/)
 
-### 0.1.1 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.1 : available on [PyPi](https://pypi.org/project/dposlib/)
 
   - [x] ARK packaging improvement (`v1` and `v2`)
   - [x] LISK packaging improvement (`v09` and `v10`)
   - [x] ARK dynamicFee implementation
   - [x] Network API created
 
+### 0.1.2 : available on [PyPi](https://pypi.org/project/dposlib/)
+
+  - [x] Packaging bugfix
+
+### 0.1.3 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 TODO
   - [ ] write `api` for lisk V10 network
   - [ ] integrate LedgerBlue Nano S use

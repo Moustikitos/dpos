@@ -57,7 +57,7 @@ def getKeys(secret, seed=None):
 
 	Return dict
 	"""
-	if not isinstance(secret, bytes): secret = secret.encode('utf-8')
+	if secret and not isinstance(secret, bytes): secret = secret.encode('utf-8')
 	seed = hashlib.sha256(secret).digest() if not seed else seed
 	signingKey = SigningKey.from_secret_exponent(
 		int(binascii.hexlify(seed), 16),
