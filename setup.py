@@ -13,7 +13,7 @@ with open("VERSION") as f1, open("README.md") as f2:
 kw = {
 	"version": VERSION,
 	"name": "dposlib",
-	"keywords": ["cli", "wallet", "dpos", "blockchain"],
+	"keywords": ["api", "dpos", "blockchain"],
 	"author": "Toons",
 	"author_email": "moustikitos@gmail.com",
 	"maintainer": "Toons",
@@ -21,7 +21,7 @@ kw = {
 	"url": "https://github.com/Moustikitos/dpos",
 	"download_url": "https://github.com/Moustikitos/dpos/archive/master.zip",
 	"include_package_data": True,
-	"description": "light wallet compatible with all ARK and LISK forks",
+	"description": "light api compatible with main ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
 	"packages": [
 		"dposlib.util",
@@ -41,7 +41,10 @@ kw = {
 		"pytz",
 		"base58",
 		# "ledgerblue",
-		"flask"
+		# "flask"
+	],
+	"excludes": [
+		"dposlib.wallet"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
