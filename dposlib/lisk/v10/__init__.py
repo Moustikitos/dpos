@@ -58,7 +58,7 @@ def init():
 	constants = rest.GET.api.node.constants(returnKey="data")
 	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:00.000Z"))
 	cfg.headers["nethash"] = constants["nethash"]
-	cfg.headers["version"] = constants["version"]
+	cfg.headers["version"] = str(constants["version"])
 	cfg.fees = constants["fees"]
 
 	select_peers()

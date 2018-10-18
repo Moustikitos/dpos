@@ -68,7 +68,7 @@ def init():
 	cfg.delegate = constants["activeDelegates"]
 
 	cfg.headers["nethash"] = data["nethash"]
-	cfg.headers["version"] = data["version"]
+	cfg.headers["version"] = str(data["version"])
 	cfg.headers["API-Version"] = "2"
 
 	cfg.fees = constants["fees"]
@@ -120,22 +120,22 @@ def downVote(*usernames):
 	)
 
 
-def multiSignature(*publicKeys, lifetime=72, minimum=2):
+def multiSignature(*publicKeys, **kwargs): #lifetime=72, minimum=2):
 	return Transaction(
 		type=4,
 		asset= {
 			"multisignature": {
 				"keysgroup": publicKeys,
-				"lifetime": lifetime,
-				"min": minimum,
+				"lifetime": kwargs.get("lifetime", 72),
+				"min": kwargs.get("minimum", 2),
 			}
 		}
 	)
 
 
-def nTransfer(*pairs, vendorField=None):
+def nTransfer(*pairs, **kwargs): #, vendorField=None):
 	return Transaction(
 		type=7,
-		vendorField=vendorField,
+		vendorField=kwargs.get("vendorField", None),
 		asset=dict(pairs)
 	)

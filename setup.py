@@ -44,9 +44,6 @@ kw = {
 		# "ledgerblue",
 		# "flask"
 	],
-	"excludes": [
-		"dposlib.wallet"
-	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
 		"Development Status :: 4 - Beta",

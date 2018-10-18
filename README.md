@@ -119,7 +119,14 @@
 
   - [x] Packaging bugfix
 
-### 0.1.3 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.3 : available on [PyPi](https://pypi.org/project/dposlib/)
+
+  - [x] Headers bugfix (ubuntu)
+
+### 0.1.4 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+
+  - [x] Python 2.x compatibility fix
+
 TODO
   - [ ] write `api` for lisk V10 network
   - [ ] integrate LedgerBlue Nano S use
