@@ -180,7 +180,6 @@ class Transaction(dict):
 			self["signatures"] = [signature]
 
 	def sign(self):
-		self.setFees()
 		if hasattr(Transaction, "_privateKey"):
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
@@ -207,8 +206,11 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
-	def finalize(self, secret=None, secondSecret=None):
+	def finalize(self, secret=None, secondSecret=None, fee_included=False):
 		Transaction.link(secret, secondSecret)
+		self.setFees()
+		if fee_included:
+			self.feeIncluded()
 		if hasattr(Transaction, "_privateKey"):
 			self.sign()
 			if hasattr(Transaction, "_secondPrivateKey"):

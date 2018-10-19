@@ -126,6 +126,7 @@
 ### 0.1.4 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
   - [x] Python 2.x compatibility fix
+  - [x] dposlib.core.Transaction.sign does not set fees anymore
 
 TODO
   - [ ] write `api` for lisk V10 network
