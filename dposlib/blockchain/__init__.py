@@ -66,6 +66,12 @@ class Transaction(dict):
 
 	@staticmethod
 	def setDynamicFee(value="avgFee"):
+		"""
+		Activate and configure dynamic fees parameters. Value can be either an
+		integer defining the fee multiplier constant or a string defining the
+		fee level to use acccording to the 30-days-average. possible values are
+		'avgFee' (default) 'minFee' and 'maxFee'.
+		"""
 		if hasattr(cfg, "doffsets"):
 			Transaction.DFEES = True
 			if isinstance(value, int):
@@ -78,6 +84,7 @@ class Transaction(dict):
 
 	@staticmethod
 	def setStaticFee():
+		"""Activate static fees."""
 		Transaction.DFEES = False
 
 	@staticmethod
@@ -91,17 +98,15 @@ class Transaction(dict):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
 
 	def __init__(self, arg={}, **kwargs):
+		data = dict(arg, **kwargs)
 		dict.__init__(self)
-
-		if "type" not in self:
-			self["type"] = 0
-		if "timestamp" not in self:
-			self["timestamp"] = slots.getTime()
-		if "asset" not in self:
-			self["asset"] = {}
-
-		for key,value in [(k,v) for k,v in dict(arg, **kwargs).items() if v != None]:
+		
+		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
+		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
+		self["asset"] = data.pop("asset", {}) # put asset value if no one given
+		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
+
 		if hasattr(Transaction, "_publicKey"):
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 
@@ -112,6 +117,7 @@ class Transaction(dict):
 			if not isinstance(value, cast):
 				value = cast(value)
 			dict.__setitem__(self, item, value)
+			# remove signatures and ids if an item other than signature or id is modified
 			if item not in ["signature", "signatures", "signSignature", "id"]:
 				self.pop("signature", False)
 				self.pop("signatures", False)
@@ -130,27 +136,31 @@ class Transaction(dict):
 
 	def setFees(self):
 		if Transaction.DFEES:
+			# use 30-days-average id FEESL is not None
 			if Transaction.FEESL != None:
 				fee = cfg.feestats[self["type"]][Transaction.FEESL]
+			# else compute fees using fee multiplier and tx size
 			else:
 				fee = dposlib.core.computeDynamicFees(self)
 		else:
+			# k is 0 or signature number in case of multisignature tx
 			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
 			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
 	def feeIncluded(self):
-		if self["type"] in [1, 7]:
+		if self["type"] in [0, 7]:
 			if not hasattr(self, "_amount"):
 				setattr(self, "_amount", self["amount"])
-			self.__setitem__(self, "amount", self._amount - fee)
+			self["amount"] = self._amount - self["fee"]
 
 	def feeExcluded(self):
-		if self["type"] in [1, 7]:
+		if self["type"] in [0, 7]:
 			if hasattr(self, "_amount"):
-				self.__setitem__(self, "amount", self._amount)
+				self["amount"] = self._amount
 				delattr(self, "_amount")
 
+	# sign functions using passphrases
 	def signWithSecret(self, secret):
 		Transaction.link(secret)
 		self.sign()
@@ -162,6 +172,7 @@ class Transaction(dict):
 	def multiSignWithSecret(self, secret):
 		self.multiSignWithKey(dposlib.core.crypto.getKeys(secret)["privateKey"])
 
+	# sign function using crypto keys
 	def signWithKeys(self, publicKey, privateKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
 		Transaction._publicKey = publicKey
@@ -179,6 +190,7 @@ class Transaction(dict):
 		else:
 			self["signatures"] = [signature]
 
+	# root sign function called by others
 	def sign(self):
 		if hasattr(Transaction, "_privateKey"):
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
@@ -191,6 +203,7 @@ class Transaction(dict):
 		else:
 			raise Exception("Orphan transaction can not sign itsef")
 
+	# root second sign function called by others
 	def signSign(self):
 		if "signature" in self:
 			try:
@@ -207,6 +220,9 @@ class Transaction(dict):
 			raise Exception("Transaction not signed")
 
 	def finalize(self, secret=None, secondSecret=None, fee_included=False):
+		"""
+		Finalize a transaction by setting fees, signatures and id.
+		"""
 		Transaction.link(secret, secondSecret)
 		self.setFees()
 		if fee_included:

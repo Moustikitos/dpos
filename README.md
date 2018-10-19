@@ -127,6 +127,7 @@
 
   - [x] Python 2.x compatibility fix
   - [x] dposlib.core.Transaction.sign does not set fees anymore
+  - [x] dposlib.core.Transaction.finalize set fees before signature
 
 TODO
   - [ ] write `api` for lisk V10 network
