@@ -90,7 +90,7 @@ class EndPoint(object):
 			# print(req.url)
 			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": error, "peer": peer}
+			data = {"success": False, "error": "%r"%error, "except": True}
 		else:
 			if return_key in data:
 				data = data.get(return_key, {})
@@ -114,7 +114,7 @@ class EndPoint(object):
 			# print(req.url)
 			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": error, "peer": peer}
+			data = {"success": False, "error": "%r"%error, "except": True}
 		else:
 			if return_key in data:
 				data = data.get(return_key, {})
@@ -136,7 +136,7 @@ class EndPoint(object):
 			# print(req.url)
 			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": error, "peer": peer}
+			data = {"success": False, "error": "%r"%error, "except": True}
 		else:
 			if return_key in data:
 				data = data.get(return_key, {})
@@ -158,7 +158,7 @@ class EndPoint(object):
 			# print(req.url)
 			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": error, "peer": peer}
+			data = {"success": False, "error": "%r"%error, "except": True}
 		else:
 			if return_key in data:
 				data = data.get(return_key, {})

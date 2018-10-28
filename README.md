@@ -1,4 +1,4 @@
-# `dposlib`
+# `dposlib` Quick View
 
 `dposlib` package aims to provide a simple API to link major DPOS blockchain.
 
@@ -104,32 +104,38 @@
   - [x] Lisk v09
   - [ ] Lisk v10
 
+## Install
+
 ## Version
 
-### 0.1.0 : available on [PyPi](https://pypi.org/project/dposlib/)
+### 0.1.0
 
-### 0.1.1 : available on [PyPi](https://pypi.org/project/dposlib/)
+  - [x] First rebrand
+
+### 0.1.1
 
   - [x] ARK packaging improvement (`v1` and `v2`)
   - [x] LISK packaging improvement (`v09` and `v10`)
   - [x] ARK dynamicFee implementation
   - [x] Network API created
 
-### 0.1.2 : available on [PyPi](https://pypi.org/project/dposlib/)
+### 0.1.2 :
 
-  - [x] Packaging bugfix
+  - [x] Packaging improvement
 
 ### 0.1.3 : available on [PyPi](https://pypi.org/project/dposlib/)
 
-  - [x] Headers bugfix (ubuntu)
+  - [x] REST requests header bugfix (ubuntu)
 
 ### 0.1.4 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
   - [x] Python 2.x compatibility fix
   - [x] dposlib.core.Transaction.sign does not set fees anymore
   - [x] dposlib.core.Transaction.finalize set fees before signature
+  - [x] dposlib.core.Transaction fee management improved
 
-TODO
+## TODO
+
   - [ ] write `api` for lisk V10 network
   - [ ] integrate LedgerBlue Nano S use
   - [ ] doc writing
