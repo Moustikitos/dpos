@@ -73,6 +73,24 @@ def check_latency(peer):
 class EndPoint(object):
 
 	@staticmethod
+	def _manage_response(req, returnKey):
+		# print(req.url)
+		if req.status_code == 200:
+			try:
+				data = req.json()
+			except Exception as error:
+				data = {"success": True, "except": True, "data": req.text, "error": "%r"%error}
+			else:
+				tmp = data.get(returnKey, False)
+				if isinstance(tmp, dict):
+					data = filter_dic(tmp)
+				elif returnKey:
+					data["warning"] = "returnKey %s not found" % returnKey
+			return data
+		else:
+			return {"success": False, "except": True, "error": "status code %s returned" % req.status_code}
+
+	@staticmethod
 	def _GET(*args, **kwargs):
 		# API response contains several fields and wanted one can be extracted using
 		# a returnKey that match the field name
@@ -87,16 +105,10 @@ class EndPoint(object):
 				verify=cfg.verify,
 				timeout=cfg.timeout
 			)
-			# print(req.url)
-			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
-			if return_key in data:
-				data = data.get(return_key, {})
-				if isinstance(data, dict):
-					data = filter_dic(data)
-		return data
+			return EndPoint._manage_response(req, return_key)
 
 	@staticmethod
 	def _POST(*args, **kwargs):
@@ -111,14 +123,10 @@ class EndPoint(object):
 				verify=cfg.verify,
 				timeout=cfg.timeout
 			)
-			# print(req.url)
-			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
-			if return_key in data:
-				data = data.get(return_key, {})
-		return data
+			return EndPoint._manage_response(req, return_key)
 
 	@staticmethod
 	def _PUT(*args, **kwargs):
@@ -133,14 +141,10 @@ class EndPoint(object):
 				verify=cfg.verify,
 				timeout=cfg.timeout
 			)
-			# print(req.url)
-			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
-			if return_key in data:
-				data = data.get(return_key, {})
-		return data
+			return EndPoint._manage_response(req, return_key)
 
 	@staticmethod
 	def _DELETE(*args, **kwargs):
@@ -155,14 +159,10 @@ class EndPoint(object):
 				verify=cfg.verify,
 				timeout=cfg.timeout
 			)
-			# print(req.url)
-			data = req.json()
 		except Exception as error:
-			data = {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
-			if return_key in data:
-				data = data.get(return_key, {})
-		return data
+			return EndPoint._manage_response(req, return_key)
 
 	def __init__(self, elem=None, parent=None, method=None):
 		if method not in [EndPoint._GET, EndPoint._POST, EndPoint._PUT, EndPoint._DELETE]:
