@@ -77,7 +77,7 @@ def getAddress(publicKey):
 	Computes ARK address from keyring.
 
 	Argument:
-	keys (ArkyDict) -- keyring returned by `getKeys`
+	publicKey (str) -- public key string
 
 	Return str
 	"""

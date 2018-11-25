@@ -72,7 +72,8 @@ def init():
 	cfg.headers["API-Version"] = "2"
 
 	cfg.fees = constants["fees"]
-	cfg.doffsets = constants["dynamicOffsets"]
+	print(cfg.fees)
+	cfg.doffsets = cfg.fees["dynamicFees"]["addonBytes"]
 	cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 	cfg.explorer = data["explorer"]
 	cfg.token = data["token"]
