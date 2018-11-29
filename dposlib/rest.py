@@ -73,9 +73,9 @@ def check_latency(peer):
 class EndPoint(object):
 
 	@staticmethod
-	def _manage_response(req, returnKey):
+	def _manage_response(req, returnKey, error=None):
 		# print(req.url)
-		if req.status_code == 200:
+		if req.status_code < 300:
 			try:
 				data = req.json()
 			except Exception as error:
@@ -88,7 +88,7 @@ class EndPoint(object):
 					data["warning"] = "returnKey %s not found" % returnKey
 			return data
 		else:
-			return {"success": False, "except": True, "error": "status code %s returned" % req.status_code}
+			return {"success": False, "except": True, "error": ("status code %s returned" % req.status_code) if not error else ("%r"%error)}
 
 	@staticmethod
 	def _GET(*args, **kwargs):
@@ -106,7 +106,8 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return {"success": False, "error": "%r"%error, "except": True}
+			return EndPoint._manage_response(req, return_key, error)
+			# return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -114,17 +115,19 @@ class EndPoint(object):
 	def _POST(*args, **kwargs):
 		return_key = kwargs.pop('returnKey', False)
 		peer = kwargs.pop("peer", False)
+		headers = kwargs.pop("headers", cfg.headers)
 		peer = peer if peer else random.choice(cfg.peers)
 		try:
 			req = requests.post(
 				peer + "/".join(args),
 				data=json.dumps(kwargs),
-				headers=cfg.headers,
+				headers=headers,
 				verify=cfg.verify,
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return {"success": False, "error": "%r"%error, "except": True}
+			return EndPoint._manage_response(req, return_key, error)
+			# return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -142,7 +145,8 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return {"success": False, "error": "%r"%error, "except": True}
+			return EndPoint._manage_response(req, return_key, error)
+			# return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -160,7 +164,8 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return {"success": False, "error": "%r"%error, "except": True}
+			return EndPoint._manage_response(req, return_key, error)
+			# return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
