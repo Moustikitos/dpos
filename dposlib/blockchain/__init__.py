@@ -145,7 +145,7 @@ class Transaction(dict):
 		else:
 			# k is 0 or signature number in case of multisignature tx
 			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
-			fee = cfg.fees.get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
+			fee = cfg.fees["staticFees"].get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
 	def feeIncluded(self):
