@@ -88,7 +88,7 @@ class EndPoint(object):
 					data["warning"] = "returnKey %s not found" % returnKey
 			return data
 		else:
-			return {"success": False, "except": True, "error": ("status code %s returned" % req.status_code) if not error else ("%r"%error)}
+			return {"success": False, "except": True, "error": "status code %s returned" % req.status_code}
 
 	@staticmethod
 	def _GET(*args, **kwargs):
@@ -106,8 +106,7 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return EndPoint._manage_response(req, return_key, error)
-			# return {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -126,8 +125,7 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return EndPoint._manage_response(req, return_key, error)
-			# return {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -145,8 +143,7 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return EndPoint._manage_response(req, return_key, error)
-			# return {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
@@ -164,8 +161,7 @@ class EndPoint(object):
 				timeout=cfg.timeout
 			)
 		except Exception as error:
-			return EndPoint._manage_response(req, return_key, error)
-			# return {"success": False, "error": "%r"%error, "except": True}
+			return {"success": False, "error": "%r"%error, "except": True}
 		else:
 			return EndPoint._manage_response(req, return_key)
 
