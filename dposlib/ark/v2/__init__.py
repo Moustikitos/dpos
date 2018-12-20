@@ -98,8 +98,10 @@ def computeDynamicFees(tx):
 	payload = computePayload(typ_, tx)
 	T = cfg.doffsets[TRANSACTIONS[typ_]]
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
-	minimum = cfg.feestats.get(tx["type"], {}).get("maxFee", 2500000000)
-	return min(minimum, int((T + 50 + lenVF + len(payload)) * Transaction.FMULT))
+	return min(
+		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
+		int((T + 50 + lenVF + len(payload)) * Transaction.FMULT)
+	)
 
 
 def upVote(*usernames):
