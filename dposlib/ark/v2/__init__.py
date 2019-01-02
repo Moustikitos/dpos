@@ -72,6 +72,8 @@ def init():
 	cfg.headers["API-Version"] = "2"
 
 	cfg.fees = constants["fees"]
+	# on v 2.1.x dynamicFees field does not exist
+	# so use get with an expected default value
 	cfg.doffsets = cfg.fees.get("dynamicFees", {"addonBytes":{}})["addonBytes"]
 	cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 	cfg.explorer = data["explorer"]

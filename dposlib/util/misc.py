@@ -7,7 +7,7 @@ from dposlib.blockchain import slots
 
 
 def loadPages(endpoint, pages=None, quiet=True, nb_tries=10):
-	if not isinstance(endpoint, zen.rest.EndPoint):
+	if not isinstance(endpoint, rest.EndPoint):
 		raise Exception("Invalid endpoint class")
 	count, pageCount, data = 0, 1, []
 	while count < pageCount:
