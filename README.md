@@ -109,33 +109,32 @@
 ## Version
 
 ### 0.1.0
-
   - [x] First rebrand
 
 ### 0.1.1
-
   - [x] ARK packaging improvement (`v1` and `v2`)
   - [x] LISK packaging improvement (`v09` and `v10`)
   - [x] ARK dynamicFee implementation
   - [x] Network API created
 
-### 0.1.2 :
-
+### 0.1.2
   - [x] Packaging improvement
 
 ### 0.1.3 : available on [PyPi](https://pypi.org/project/dposlib/)
-
   - [x] REST requests header bugfix (ubuntu)
 
-### 0.1.4 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-
+### 0.1.4
   - [x] Python 2.x compatibility fix
   - [x] dposlib.core.Transaction.sign does not set fees anymore
   - [x] dposlib.core.Transaction.finalize set fees before signature
   - [x] dposlib.core.Transaction fee management improved
 
-## TODO
+### 0.1.5
+  - [x] compatibility with both ark-core v2 devnet and mainnet
 
+### 0.1.6 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+
+## TODO
   - [ ] write `api` for lisk V10 network
   - [ ] integrate LedgerBlue Nano S use
   - [ ] doc writing
