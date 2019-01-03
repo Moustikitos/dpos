@@ -33,6 +33,9 @@ class Delegate(dposlib.blockchain.Delegate):
 		if self.blocks.get("last", False):
 			return Block(self.blocks["last"]["id"])
 
+	def wallet(self):
+		return Wallet(self.address)
+
 
 class Block(dposlib.blockchain.Block):
 

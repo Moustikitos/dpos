@@ -244,6 +244,7 @@ class Transaction(dict):
 			dumpJson(registry, pathfile)
 
 
+###### API 
 class Data:
 
 	REF = set()
@@ -302,8 +303,6 @@ class Data:
 		Data.REF.add(weakref.ref(self))
 
 
-##### create api V1 objects ######
-
 class Wallet(Data):
 	
 	link = staticmethod(lambda s,ss=None: [Transaction.unlink(), Transaction.link(s,ss)][0])
@@ -312,7 +311,7 @@ class Wallet(Data):
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
-	def lastTransactions(self, limit=50):
+	def transactions(self, limit=50):
 		received, sent, count = [], [], 0
 		while count < limit:
 			sent.extend(dposlib.rest.GET.api.transactions(senderId=self.address, orderBy="timestamp:desc", returnKey="transactions", offset=len(sent)))
@@ -358,6 +357,9 @@ class Delegate(Data):
 		blocks = [blk for blk in dposlib.rest.GET.api.blocks(returnKey="blocks") if blk["generatorId"] == self.address]
 		if len(blocks):
 			return Block(blocks[0]["id"])
+
+	def wallet(self):
+		return Wallet(self.address)
 
 
 class Block(Data):
