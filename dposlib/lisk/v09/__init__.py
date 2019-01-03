@@ -77,3 +77,13 @@ def stop():
 	global DAEMON_PEERS
 	if DAEMON_PEERS != None:
 		DAEMON_PEERS.set()
+
+
+def transfer(amount, address, vendorField=None):
+	return Transaction(
+		type=0,
+		amount=amount*100000000,
+		recipientId=address,
+	)
+
+

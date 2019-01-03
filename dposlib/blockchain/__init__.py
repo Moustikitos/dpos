@@ -145,7 +145,7 @@ class Transaction(dict):
 		else:
 			# k is 0 or signature number in case of multisignature tx
 			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
-			fee = cfg.fees["staticFees"].get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
+			fee = cfg.fees.get("staticFees", cfg.fees).get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
 	def feeIncluded(self):
@@ -310,7 +310,7 @@ class Wallet(Data):
 	unlink = staticmethod(Transaction.unlink)
 
 	def __init__(self, address, **kw):
-		dposlib.blockchain.Wallet.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
+		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
 	def lastTransactions(self, limit=50):
 		received, sent, count = [], [], 0
