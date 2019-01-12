@@ -264,9 +264,9 @@ def use(network, **kwargs):
 				cfg.peers = [peer]
 				break
 
-	data.pop("peers", [])
-	data.pop("seeds", [])
 	if len(cfg.peers):
+		data.pop("peers", [])
+		data.pop("seeds", [])
 		# store options in cfg module
 		cfg.__dict__.update(data)
 		load(cfg.familly)

@@ -73,8 +73,6 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
-	Transaction.setStaticFee()
-
 
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	response = rest.GET.api.loader.autoconfigure()
@@ -90,6 +88,7 @@ def init():
 		# are sure we make requests to working peers
 		select_peers()
 		DAEMON_PEERS = rotate_peers()
+		Transaction.setStaticFee()
 	else:
 		raise Exception("Initialization error with peer %s" % response.get("peer", "???"))
 

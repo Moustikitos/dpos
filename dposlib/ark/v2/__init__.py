@@ -63,9 +63,11 @@ def init():
 	data = rest.GET.api.v2.node.configuration().get("data", {})
 
 	constants =  data["constants"]
+	cfg.delegate = constants["activeDelegates"]
+	cfg.maxlimit = constants["block"]["maxTransactions"]
 	cfg.blocktime = constants["blocktime"]
 	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
-	cfg.delegate = constants["activeDelegates"]
+	cfg.blockreward = constants["reward"]/100000000
 
 	cfg.headers["nethash"] = data["nethash"]
 	cfg.headers["version"] = str(data["version"])
