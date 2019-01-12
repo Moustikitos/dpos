@@ -1,7 +1,7 @@
 {
 	"timeout": 5,
 	"familly": "ark.v2",
-	"maxlimit": 50,
+	"maxlimit": 150,
 	"maxvotepertx": 1,
 	"maxvote": 1,
 
@@ -19,9 +19,15 @@
 		"Content-Type": "application/json; charset=utf-8"
 	},
 
-	"seeds":[
+	"seeds": [
 		"https://dexplorer.ark.io:8443"
 	],
+	"broadcast": 10,
 
-	"broadcast": 10
+	"explorer": "https://dexplorer.ark.io",
+	"token": "dark",
+	"symbol": "dѦ",
+	"delegate": 51,
+	"blocktime": 8,
+	"blockreward": 2
 }

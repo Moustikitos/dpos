@@ -86,6 +86,18 @@ def getAddress(publicKey):
 	return base58.b58encode_check(seed)
 
 
+def getAddressFromSecret(secret):
+	"""
+	Computes ARK address from secret.
+
+	Argument:
+	secret (str) -- secret string
+
+	Return str
+	"""
+	return getAddress(getKeys(secret)["publicKey"])
+
+
 def getWIF(seed):
 	"""
 	Computes WIF address from seed.

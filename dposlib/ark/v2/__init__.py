@@ -46,7 +46,7 @@ def select_peers():
 	peers = [
 		"http://%(ip)s:%(port)s" % {
 			"ip":p["ip"],
-			"port":cfg.ports["@arkecosystem/core-api"]
+			"port":cfg.ports["core-api"]
 		} for p in rest.GET.api.peers().get("data", [])][:cfg.broadcast]
 	if len(peers):
 		cfg.peers = peers
@@ -64,7 +64,7 @@ def init():
 
 	constants =  data["constants"]
 	cfg.blocktime = constants["blocktime"]
-	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:00.000Z"))
+	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
 	cfg.delegate = constants["activeDelegates"]
 
 	cfg.headers["nethash"] = data["nethash"]
@@ -79,7 +79,7 @@ def init():
 	cfg.explorer = data["explorer"]
 	cfg.token = data["token"]
 	cfg.symbol = data["symbol"]
-	cfg.ports = data["ports"]
+	cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
 
 	select_peers()
 	DAEMON_PEERS = rotate_peers()

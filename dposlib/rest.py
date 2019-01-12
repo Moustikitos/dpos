@@ -40,11 +40,13 @@ import sys
 import json
 import random
 import logging
+import datetime
+import pytz
 
-from importlib import import_module
-
+import pytz
 import requests
 
+from importlib import import_module
 from dposlib import FROZEN, ROOT
 from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
@@ -228,35 +230,45 @@ def use(network, **kwargs):
 	package.
 	"""
 	# clear data in cfg module and initialize with minimum vars
-	cfg.__dict__.clear()
+	[cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]
+	cfg.verify = os.path.join(os.path.dirname(sys.executable), 'cacert.pem') if FROZEN else True
+	cfg.timeout = 5
 	cfg.network = None
 	cfg.hotmode = False
+	cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 	
+	# try to load network.net configuration
 	path = os.path.join(ROOT, "network", network + ".net")
 	if os.path.exists(path):
 		with io.open(os.path.join(ROOT, "network", network + ".net")) as f:
 			data = json.load(f)
 	else:
 		raise Exception('"{}" blockchain parameters does not exist'.format(network))
+	
+	# override some options if given
 	data.update(**kwargs)
 
-	cfg.__dict__.update(data)
-	cfg.verify = os.path.join(os.path.dirname(sys.executable), 'cacert.pem') if FROZEN else True
-
+	# connect with network to create peer nodes
+	# seed is a complete url
+	cfg.peers = []
 	if data.get("seeds", False):
-		cfg.peers = []
-		for seed in cfg.seeds:
+		for seed in data["seeds"]:
 			if check_latency(seed):
 				cfg.peers.append(seed)
 				break
-	else:
+
+	if not len(cfg.peers):
 		for peer in data.get("peers", []):
 			peer = "http://{0}:{1}".format(peer, data.get("port", 22))
 			if check_latency(peer):
 				cfg.peers = [peer]
 				break
 
+	data.pop("peers", [])
+	data.pop("seeds", [])
 	if len(cfg.peers):
+		# store options in cfg module
+		cfg.__dict__.update(data)
 		load(cfg.familly)
 		cfg.network = network
 		cfg.hotmode = True

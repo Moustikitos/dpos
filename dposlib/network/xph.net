@@ -7,12 +7,11 @@
 
 	"compressed": true,
 	"wif": "aa",
-	"marker": "17",
-	"slip44": "111",
-
+	"marker": "37",
+	"slip44": "1",
 	"bip32": {
-		"private": 76066276,
-		"public": 76067358
+		"private": 70615956,
+		"public": 70617039
 	},
 
 	"headers": {
@@ -20,13 +19,13 @@
 	},
 
 	"seeds": [
-		"https://explorer.ark.io:8443"
+		"https://explorer.phantom.org:8443"
 	],
 	"broadcast": 10,
 	
-	"explorer": "https://explorer.ark.io",
-	"token": "ark",
-	"symbol": "Ѧ",
+	"explorer": "https://explorer.phantom.org",
+	"token": "XPH",
+	"symbol": "ⓟ",
 	"delegate": 51,
 	"blocktime": 8,
 	"blockreward": 2

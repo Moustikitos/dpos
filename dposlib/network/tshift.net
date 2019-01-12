@@ -8,12 +8,12 @@
 	"marker": "S",
 
 	"headers": {
-	"Content-Type": "application/json; charset=utf-8",
-	"port": "9305"
+		"Content-Type": "application/json; charset=utf-8",
+		"port": "9305"
 	},
 
 	"seeds": [
-	"https://wallet.testnet.shiftnrg.org"
+		"https://wallet.testnet.shiftnrg.org"
 	],
 
 	"explorer": "https://explorer.testnet.shiftnrg.org",

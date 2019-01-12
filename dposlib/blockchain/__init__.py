@@ -255,7 +255,7 @@ class Data:
 	def wallet_islinked(func):
 		def wrapper(*args, **kw):
 			obj = args[0]
-			if getattr(Transaction, "_publicKey", None) == obj.publicKey and \
+			if (obj.publicKey == None or getattr(Transaction, "_publicKey", None) == obj.publicKey) and \
 			   getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey:
 				return func(*args, **kw)
 			else:
@@ -338,6 +338,9 @@ class Wallet(Data):
 		tx.finalize()
 		return dposlib.rest.POST.api.transactions(transactions=[tx])
 
+	def setFeeLevel(fee_level):
+		
+		pass
 
 class Delegate(Data):
 	
