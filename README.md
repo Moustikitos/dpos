@@ -44,16 +44,20 @@
   - [x] Ark
     * mainet : `ark`
     * devnet : `dark`
-  - [x] Kapu : `kapu`
-  - [x] Persona : `prs`
-  - [x] Ripa : `ripa`
-  - [x] Lisk : `lisk`
-  - [x] Local World Forwarder :
-    * mainet : `lwf`
-    * testnet : `tlwf`
-  - [x] Shift : 
-    * mainet : `shift`
-    * testnet : `tshift`
+    * forks
+      - [x] Kapu : `kapu`
+      - [x] Persona : `prs`
+      - [x] Ripa : `ripa`
+      - [x] Phantom : `xph`
+  - [x] Lisk (bêta)
+    * mainet : `lisk`
+    * forks
+      - [x] Local World Forwarder :
+        * mainet : `lwf`
+        * testnet : `tlwf`
+      - [x] Shift : 
+        * mainet : `shift`
+        * testnet : `tshift`
 
 ## Network API
 
