@@ -22,7 +22,7 @@ def getTimestamp(**kw):
 def getTime(time=None):
 	delta = (datetime.now(pytz.UTC) if not time else time) - cfg.begintime
 	return delta.total_seconds()
-getTime = getEpoch
+getEpoch = getTime
 
 def getRealTime(epoch=None):
 	epoch = getTime() if epoch is None else epoch

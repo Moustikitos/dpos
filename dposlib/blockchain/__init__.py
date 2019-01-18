@@ -255,8 +255,8 @@ class Data:
 	def wallet_islinked(func):
 		def wrapper(*args, **kw):
 			obj = args[0]
-			if (obj.publicKey == None or getattr(Transaction, "_publicKey", None) == obj.publicKey) and \
-			   getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey:
+			if (obj.publicKey == None and dposlib.core.crypto.getAddress(getattr(Transaction, "_publicKey", " ")) == obj.address) or \
+			   (getattr(Transaction, "_publicKey", None) == obj.publicKey and getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey):
 				return func(*args, **kw)
 			else:
 				raise Exception("wallet not linked yet or publicKey mismatch")
@@ -311,6 +311,8 @@ class Wallet(Data):
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
+	# def link(self, secret, secondSecret):
+
 	def transactions(self, limit=50):
 		received, sent, count = [], [], 0
 		while count < limit:
@@ -338,9 +340,9 @@ class Wallet(Data):
 		tx.finalize()
 		return dposlib.rest.POST.api.transactions(transactions=[tx])
 
-	def setFeeLevel(fee_level):
-		
+	def setFeeLevel(fee_level):	
 		pass
+
 
 class Delegate(Data):
 	
