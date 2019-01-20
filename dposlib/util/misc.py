@@ -30,7 +30,7 @@ def loadPages(endpoint, pages=None, quiet=True, nb_tries=10):
 
 
 def deltas():
-	delegates = loadAllPages(rest.GET.api.v2.delegates)
+	delegates = loadPages(rest.GET.api.v2.delegates)
 	blocks = [d["blocks"] for d in delegates]
 	produced = sum(b["produced"] for b in blocks)
 	missed = sum(b["missed"] for b in blocks)

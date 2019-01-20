@@ -100,7 +100,7 @@ def computeDynamicFees(tx):
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
 	lenVF = len(vendorField)
 	payload = computePayload(typ_, tx)
-	T = cfg.doffsets[TRANSACTIONS[typ_]]
+	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
 	return min(
 		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),

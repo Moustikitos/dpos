@@ -98,6 +98,8 @@ class Transaction(dict):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
 
 	def __init__(self, arg={}, **kwargs):
+		if not hasattr(dposlib, "core"):
+			raise Exception("No blockchain available")
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
 		
@@ -127,6 +129,7 @@ class Transaction(dict):
 		elif hasattr(dposlib, "core"):
 			if item == "secret":
 				Transaction.link(value)
+				dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 			elif item == "secondSecret":
 				Transaction.link(None, value)
 			elif item == "privateKey":
@@ -194,8 +197,7 @@ class Transaction(dict):
 		if hasattr(Transaction, "_privateKey"):
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
-			if "senderId" not in self:
-				self["senderId"] = address
+			self["senderId"] = address
 			if self["type"] in [1, 3, 4] and "recipientId" not in self:
 				self["recipientId"] = address
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
@@ -218,14 +220,14 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
-	def finalize(self, secret=None, secondSecret=None, fee_included=False):
+	def finalize(self, secret=None, secondSecret=None, dynamic_fee=False, fee_included=False):
 		"""
 		Finalize a transaction by setting fees, signatures and id.
 		"""
 		Transaction.link(secret, secondSecret)
+		self.setDynamicFee() if dynamic_fee else self.setStaticFee()
 		self.setFees()
-		if fee_included:
-			self.feeIncluded()
+		self.feeIncluded() if fee_included else self.feeExcluded()
 		if hasattr(Transaction, "_privateKey"):
 			self.sign()
 			if hasattr(Transaction, "_secondPrivateKey"):
@@ -233,7 +235,7 @@ class Transaction(dict):
 			self.identify()
 		else:
 			raise Exception("Orphan transaction")
-			
+
 	def dump(self):
 		"""Dumps transaction in current registry."""
 		if "id" in self:
@@ -255,8 +257,10 @@ class Data:
 	def wallet_islinked(func):
 		def wrapper(*args, **kw):
 			obj = args[0]
-			if (obj.publicKey == None and dposlib.core.crypto.getAddress(getattr(Transaction, "_publicKey", " ")) == obj.address) or \
-			   (getattr(Transaction, "_publicKey", None) == obj.publicKey and getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey):
+			if not hasattr(obj, "address"):
+				raise Exception("not a wallet")
+			elif (obj.publicKey == None and dposlib.core.crypto.getAddress(getattr(Transaction, "_publicKey", " ")) == obj.address) or \
+			     (getattr(Transaction, "_publicKey", None) == obj.publicKey and getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey):
 				return func(*args, **kw)
 			else:
 				raise Exception("wallet not linked yet or publicKey mismatch")
