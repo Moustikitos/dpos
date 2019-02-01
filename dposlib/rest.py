@@ -236,7 +236,8 @@ def use(network, **kwargs):
 	cfg.network = None
 	cfg.hotmode = False
 	cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
-	
+	cfg.headers = {"Content-Type": "application/json; charset=utf-8"}
+
 	# try to load network.net configuration
 	path = os.path.join(ROOT, "network", network + ".net")
 	if os.path.exists(path):
