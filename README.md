@@ -4,7 +4,7 @@
 
 ## Support this project
 
-  * [X] send &#1126; to `AUahWfkfr5J4tYakugRbfow7RWVTK35GPW`
+  * [X] Send &#1126; to `AUahWfkfr5J4tYakugRbfow7RWVTK35GPW`
   * [X] Vote `arky` on [Ark blockchain](https://explorer.ark.io) and [earn &#1126; weekly](http://dpos.arky-delegate.info/arky)
 
 ## Overview
