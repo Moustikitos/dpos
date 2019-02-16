@@ -141,7 +141,10 @@
 ### 0.1.5
   - [x] compatibility with both ark-core v2 devnet and mainnet
 
-### 0.1.6 : [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.6 :
+  - [x] Ark-core v 2.1.x compatibility
+
+### 0.1.7 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] write `api` for lisk V10 network
