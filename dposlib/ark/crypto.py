@@ -251,10 +251,12 @@ def getBytes(tx, ark_v2=False):
 			pack_bytes(buf, asset["delegate"]["username"].encode("utf-8"))
 		elif typ == 3 and "votes" in asset:
 			pack_bytes(buf, "".join(asset["votes"]).encode("utf-8"))
-		elif typ == 4:
-			multisignature = asset.get("multisignature", {})
-			pack("<bb", buf, (multisignature["min"], multisignature["lifetime"]))
-			pack_bytes(buf, "".join(multisignature["keysgroup"]).encode("utf-8"))
+		# elif typ == 4:
+		# 	multisignature = asset.get("multisignature", {})
+		# 	pack("<bb", buf, (multisignature["min"], multisignature["lifetime"]))
+		# 	pack_bytes(buf, "".join(multisignature["keysgroup"]).encode("utf-8"))
+		else:
+			raise Exception("transaction type %s not implemented" % typ)
 	# if there is a signature
 	if tx.get("signature", False):
 		pack_bytes(buf, unhexlify(tx["signature"]))

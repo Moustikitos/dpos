@@ -1,6 +1,6 @@
 # `dposlib` Quick View
 
-`dposlib` package aims to provide a simple API to link major DPOS blockchain.
+`dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
 ## Support this project
 
@@ -54,15 +54,6 @@
       - [x] Persona : `prs`
       - [x] Ripa : `ripa`
       - [x] Phantom : `xph`
-  - [x] Lisk (bêta)
-    * mainet : `lisk`
-    * forks
-      - [x] Local World Forwarder :
-        * mainet : `lwf`
-        * testnet : `tlwf`
-      - [x] Shift : 
-        * mainet : `shift`
-        * testnet : `tshift`
 
 ## Network API
 
@@ -110,8 +101,6 @@
 
   - [x] Ark v1
   - [x] Ark v2
-  - [x] Lisk v09
-  - [ ] Lisk v10
 
 ## Install
 
@@ -145,6 +134,7 @@
   - [x] Ark-core v 2.1.x compatibility
 
 ### 0.1.7 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] Lisk blockchain and forks developpement frozen
 
 ## TODO
   - [ ] write `api` for lisk V10 network

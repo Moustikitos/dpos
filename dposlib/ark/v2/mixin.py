@@ -110,3 +110,7 @@ def createWebhook(peer, event, target, conditions, folder=None):
 
 def deleteWebhook(peer, id, token=None):
 	rest.DELETE.api.webhooks("%s"%id, peer=peer, token=token)
+
+
+def serialize(tx):
+	pass
