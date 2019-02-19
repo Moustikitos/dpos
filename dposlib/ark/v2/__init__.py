@@ -20,7 +20,7 @@ TRANSACTIONS = {
 	1: "secondSignature",
 	2: "delegateRegistration",
 	3: "vote",
-	4: "multiSignature",
+	# 4: "multiSignature",
 	# 5: "ipfs",
 	# 6: "timelockTransfer",
 	# 7: "multiPayment",
@@ -61,27 +61,30 @@ def init():
 	global DAEMON_PEERS
 
 	data = rest.GET.api.v2.node.configuration().get("data", {})
-
 	constants =  data["constants"]
+
+	cfg.version = hex(data["version"])
 	cfg.delegate = constants["activeDelegates"]
 	cfg.maxlimit = constants["block"]["maxTransactions"]
 	cfg.blocktime = constants["blocktime"]
 	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
-	cfg.blockreward = constants["reward"]/100000000
-
-	cfg.headers["nethash"] = data["nethash"]
-	cfg.headers["version"] = str(data["version"])
-	cfg.headers["API-Version"] = "2"
+	cfg.blockreward = constants["reward"]/100000000.
 
 	cfg.fees = constants["fees"]
-	# on v 2.1.x dynamicFees field does not exist
-	# so use get with an expected default value
-	cfg.doffsets = cfg.fees.get("dynamicFees", {"addonBytes":{}})["addonBytes"]
+	# on v 2.0.x dynamicFees field is in "fees" field
+	cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
+	# on v 2.1.x dynamicFees field is in "transactionPool" Field
+	cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
 	cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
+
 	cfg.explorer = data["explorer"]
 	cfg.token = data["token"]
 	cfg.symbol = data["symbol"]
 	cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
+
+	cfg.headers["nethash"] = data["nethash"]
+	cfg.headers["version"] = str(data["version"])
+	cfg.headers["API-Version"] = "2"
 
 	select_peers()
 	DAEMON_PEERS = rotate_peers()
