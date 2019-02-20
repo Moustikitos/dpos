@@ -27,7 +27,7 @@ def loadPages(endpoint, pages=None, quiet=True, nb_tries=10, limit=False):
 			data.extend(req.get("data", []))
 			count += 1
 		if limit and limit < len(data):
-			break
+			return data[:limit]
 	return data
 
 
