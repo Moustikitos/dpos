@@ -244,7 +244,7 @@ def use(network, **kwargs):
 	# try to load network.net configuration
 	path = os.path.join(ROOT, "network", network + ".net")
 	if os.path.exists(path):
-		with io.open(os.path.join(ROOT, "network", network + ".net")) as f:
+		with io.open(os.path.join(ROOT, "network", network + ".net"), encoding='utf8') as f:
 			data = json.load(f)
 	else:
 		raise Exception('"{}" blockchain parameters does not exist'.format(network))

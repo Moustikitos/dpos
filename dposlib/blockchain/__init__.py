@@ -267,7 +267,7 @@ class Data:
 		return wrapper
 
 	@setInterval(30)
-	def heartbeat():
+	def heartbeat(self):
 		for ref in list(Data.REF):
 			dead, obj = set(), ref()
 			if obj:
@@ -288,7 +288,7 @@ class Data:
 		self.__args = args
 
 		if Data.EVENT == False:
-			Data.EVENT = Data.heartbeat()
+			Data.EVENT = self.heartbeat()
 		if track:
 			self.track()
 
