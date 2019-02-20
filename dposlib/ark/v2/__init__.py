@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-
 import pytz
 
 from datetime import datetime
@@ -13,6 +12,7 @@ from dposlib.util.asynch import setInterval
 from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
 from dposlib.ark.v2.mixin import serialize, serializePayload, createWebhook, deleteWebhook
 from dposlib.ark.v2 import api
+
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
