@@ -21,6 +21,7 @@ def track_data(value=True):
 
 class Transaction(dict):
 
+	VERSION = 1
 	DFEES = False
 	FMULT = 10000
 	FEESL = None
@@ -220,12 +221,11 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
-	def finalize(self, secret=None, secondSecret=None, dynamic_fee=False, fee_included=False):
+	def finalize(self, secret=None, secondSecret=None, fee_included=False):
 		"""
 		Finalize a transaction by setting fees, signatures and id.
 		"""
 		Transaction.link(secret, secondSecret)
-		self.setDynamicFee() if dynamic_fee else self.setStaticFee()
 		self.setFees()
 		self.feeIncluded() if fee_included else self.feeExcluded()
 		if hasattr(Transaction, "_privateKey"):
@@ -315,8 +315,6 @@ class Wallet(Data):
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
-	# def link(self, secret, secondSecret):
-
 	def transactions(self, limit=50):
 		received, sent, count = [], [], 0
 		while count < limit:
@@ -325,6 +323,9 @@ class Wallet(Data):
 			tmpcount = len(sent)+len(received)
 			count = limit if count == tmpcount else tmpcount
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
+
+	def getDelegate(self):
+		return Delegate(self.username) if self.isDelegate else None
 
 	@Data.wallet_islinked
 	def send(self, amount, address, vendorField=None, fee_included=False):
@@ -344,14 +345,20 @@ class Wallet(Data):
 		tx.finalize()
 		return dposlib.rest.POST.api.transactions(transactions=[tx])
 
-	def setFeeLevel(fee_level):	
-		pass
+	def setFeeLevel(self, fee_level=None):
+		if fee_level == None:
+			Transaction.setStaticFee()
+		else:
+			Transaction.setDynamicFee(fee_level)
 
 
 class Delegate(Data):
 	
 	def __init__(self, username, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.delegates.get, **dict({"username":username, "returnKey":"delegate"}, **kw))
+
+	def getWallet(self):
+		return Wallet(self.address)
 
 	def forged(self):
 		result = filter_dic(dposlib.rest.GET.api.delegates.forging.getForgedByAccount(generatorPublicKey=self.publicKey))
@@ -366,9 +373,6 @@ class Delegate(Data):
 		blocks = [blk for blk in dposlib.rest.GET.api.blocks(returnKey="blocks") if blk["generatorId"] == self.address]
 		if len(blocks):
 			return Block(blocks[0]["id"])
-
-	def wallet(self):
-		return Wallet(self.address)
 
 
 class Block(Data):

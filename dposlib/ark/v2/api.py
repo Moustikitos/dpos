@@ -5,6 +5,8 @@
 
 
 import dposlib
+
+from dposlib.util import misc
 from dposlib.util.data import filter_dic
 
 
@@ -13,17 +15,27 @@ class Wallet(dposlib.blockchain.Wallet):
 	def __init__(self, address, **kw):
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.wallets, address, **dict({"returnKey":"data"}, **kw))
 
+	def getDelegate(self):
+		return Delegate(self.username) if self.isDelegate else None
+
+	def transactions(self, limit=50):
+		sent = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).__getattr__("transactions").__getattr__("sent"), limit=limit)
+		received = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).__getattr__("transactions").__getattr__("received"), limit=limit)
+		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)[:limit]]
 
 class Delegate(dposlib.blockchain.Delegate):
 
 	def __init__(self, username, **kw):
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.delegates, username, **dict({"returnKey":"data"}, **kw))
 
+	def getWallet(self):
+		return Wallet(self.address)
+
 	def forged(self):
-		return self._Data__dict["forged"]
+		return filter_dic(self._Data__dict["forged"])
 
 	def voters(self):
-		voters = [a for a in dposlib.rest.GET.api.delegates(self.username, "voters", returnKey="data") if a["balance"] not in [0, "0"]]
+		voters = misc.loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).__getattr__("voters"))
 		return list(sorted([filter_dic(dic) for dic in voters], key=lambda e:e["balance"], reverse=True))
 	
 	def lastBlocks(self, limit=50):

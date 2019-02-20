@@ -135,6 +135,7 @@
 
 ### 0.1.7 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] Lisk blockchain and forks developpement frozen
+  - [x] fees data initialisation improvement
 
 ## TODO
   - [ ] write `api` for lisk V10 network
@@ -143,3 +144,4 @@
   - [ ] unittest
   - [ ] wallet
   - [ ] CLI
+ 

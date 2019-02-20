@@ -21,7 +21,5 @@
 	"seeds": [
 		"https://dexplorer.ark.io:8443"
 	],
-	"broadcast": 10,
-
-	"explorer": "https://dexplorer.ark.io"
+	"broadcast": 10
 }

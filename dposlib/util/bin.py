@@ -27,9 +27,9 @@ def unpack(fmt, fileobj):
 	return struct.unpack(fmt, fileobj.read(struct.calcsize(fmt)))
 
 
-def pack(fmt, fileobj, value):
+def pack(fmt, fileobj, values):
 	# write value as binary data into buffer
-	return fileobj.write(struct.pack(fmt, *value))
+	return fileobj.write(struct.pack(fmt, *values))
 
 
 def unpack_bytes(f, n):

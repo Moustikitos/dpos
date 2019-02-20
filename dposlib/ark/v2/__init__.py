@@ -11,7 +11,7 @@ from dposlib.ark import crypto
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
-from dposlib.ark.v2.mixin import computePayload, createWebhook, deleteWebhook
+from dposlib.ark.v2.mixin import serialize, serializePayload, createWebhook, deleteWebhook
 from dposlib.ark.v2 import api
 
 DAEMON_PEERS = None
@@ -61,34 +61,36 @@ def init():
 	global DAEMON_PEERS
 
 	data = rest.GET.api.v2.node.configuration().get("data", {})
-	constants =  data["constants"]
+	if data != {}:
+		cfg.explorer = data["explorer"]
+		cfg.pubKeyHash = data["version"]
+		cfg.token = data["token"]
+		cfg.symbol = data["symbol"]
+		cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
+		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 
-	cfg.version = hex(data["version"])
-	cfg.delegate = constants["activeDelegates"]
-	cfg.maxlimit = constants["block"]["maxTransactions"]
-	cfg.blocktime = constants["blocktime"]
-	cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
-	cfg.blockreward = constants["reward"]/100000000.
+		cfg.headers["nethash"] = data["nethash"]
+		cfg.headers["version"] = str(data["version"])
+		cfg.headers["API-Version"] = "2"
 
-	cfg.fees = constants["fees"]
-	# on v 2.0.x dynamicFees field is in "fees" field
-	cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
-	# on v 2.1.x dynamicFees field is in "transactionPool" Field
-	cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
-	cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
+		constants =  data["constants"]
+		cfg.delegate = constants["activeDelegates"]
+		cfg.maxlimit = constants["block"]["maxTransactions"]
+		cfg.blocktime = constants["blocktime"]
+		cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
+		cfg.blockreward = constants["reward"]/100000000.
+		cfg.fees = constants["fees"]
+		# on v 2.0.x dynamicFees field is in "fees" field
+		cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
+		# on v 2.1.x dynamicFees field is in "transactionPool" Field
+		cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
 
-	cfg.explorer = data["explorer"]
-	cfg.token = data["token"]
-	cfg.symbol = data["symbol"]
-	cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
+		select_peers()
+		DAEMON_PEERS = rotate_peers()
+		Transaction.setDynamicFee()
 
-	cfg.headers["nethash"] = data["nethash"]
-	cfg.headers["version"] = str(data["version"])
-	cfg.headers["API-Version"] = "2"
-
-	select_peers()
-	DAEMON_PEERS = rotate_peers()
-	Transaction.setDynamicFee()
+	else:
+		raise Exception("Initialization error")
 
 
 def stop():
@@ -102,7 +104,7 @@ def computeDynamicFees(tx):
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
 	lenVF = len(vendorField)
-	payload = computePayload(typ_, tx)
+	payload = serializePayload(tx)
 	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
 	return min(
@@ -129,20 +131,7 @@ def downVote(*usernames):
 	)
 
 
-def multiSignature(*publicKeys, **kwargs): #lifetime=72, minimum=2):
-	return Transaction(
-		type=4,
-		asset= {
-			"multisignature": {
-				"keysgroup": publicKeys,
-				"lifetime": kwargs.get("lifetime", 72),
-				"min": kwargs.get("minimum", 2),
-			}
-		}
-	)
-
-
-def nTransfer(*pairs, **kwargs): #, vendorField=None):
+def nTransfer(*pairs, **kwargs):
 	return Transaction(
 		type=7,
 		vendorField=kwargs.get("vendorField", None),

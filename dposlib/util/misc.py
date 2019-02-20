@@ -6,7 +6,7 @@ from dposlib import rest
 from dposlib.blockchain import slots
 
 
-def loadPages(endpoint, pages=None, quiet=True, nb_tries=10):
+def loadPages(endpoint, pages=None, quiet=True, nb_tries=10, limit=False):
 	if not isinstance(endpoint, rest.EndPoint):
 		raise Exception("Invalid endpoint class")
 	count, pageCount, data = 0, 1, []
@@ -26,6 +26,8 @@ def loadPages(endpoint, pages=None, quiet=True, nb_tries=10):
 				zen.logMsg("reading page %s over %s" % (count+1, pageCount))
 			data.extend(req.get("data", []))
 			count += 1
+		if limit and limit < len(data):
+			break
 	return data
 
 

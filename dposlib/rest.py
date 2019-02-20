@@ -84,10 +84,13 @@ class EndPoint(object):
 				data = {"success": True, "except": True, "data": req.text, "error": "%r"%error}
 			else:
 				tmp = data.get(returnKey, False)
-				if isinstance(tmp, dict):
-					data = filter_dic(tmp)
-				elif returnKey:
-					data["warning"] = "returnKey %s not found" % returnKey
+				if not tmp:
+					if returnKey:
+						data["warning"] = "returnKey %s not found" % returnKey
+				else:
+					data = tmp
+					if isinstance(tmp, dict):
+						data = filter_dic(tmp)
 			return data
 		else:
 			return {"success": False, "except": True, "error": "status code %s returned" % req.status_code}

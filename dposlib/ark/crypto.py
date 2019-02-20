@@ -217,7 +217,7 @@ def getBytes(tx, ark_v2=False):
 	"""
 	buf = BytesIO()
 	# write type and timestamp
-	pack("<bi", buf, (tx["type"], int(tx["timestamp"])))
+	pack("<BI", buf, (tx["type"], int(tx["timestamp"])))
 	# write senderPublicKey as bytes in buffer
 	if "senderPublicKey" in tx:
 		pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
