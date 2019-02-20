@@ -296,7 +296,10 @@ class Data:
 		return json.dumps(OrderedDict(sorted(self.__dict.items(), key=lambda e:e[0])), indent=2)
 
 	def __getattr__(self, attr):
-		return self.__dict[attr]
+		if attr in self.__dict:
+			return self.__dict[attr]
+		else:
+			return Data.__getattribute__(attr)
 
 	def update(self):
 		result = self.__endpoint(*self.__args, **self.__kwargs)
