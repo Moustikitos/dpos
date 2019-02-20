@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
-
 # ~ https://docs.ark.io/api/public/v2/
-
 
 import dposlib
 
@@ -23,7 +21,8 @@ class Wallet(dposlib.blockchain.Wallet):
 		received = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).__getattr__("transactions").__getattr__("received"), limit=limit)
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
-class Delegate(dposlib.blockchain.Delegate):
+
+class Delegate(dposlib.blockchain.Data):
 
 	def __init__(self, username, **kw):
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.delegates, username, **dict({"returnKey":"data"}, **kw))
@@ -45,11 +44,8 @@ class Delegate(dposlib.blockchain.Delegate):
 		if self.blocks.get("last", False):
 			return Block(self.blocks["last"]["id"])
 
-	def wallet(self):
-		return Wallet(self.address)
 
-
-class Block(dposlib.blockchain.Block):
+class Block(dposlib.blockchain.Data):
 
 	def __init__(self, blk_id, **kw):
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.blocks, blk_id, **dict({"returnKey":"data"}, **kw))
