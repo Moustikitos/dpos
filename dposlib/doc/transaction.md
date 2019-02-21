@@ -75,10 +75,10 @@ Ark blockchain allows two types of fees&nbsp;: `static` and `dynamic`([AIP16](ht
 >>> tx["fee"]
 254000
 >>> # dynamic fee using a custom fee multiplier
->>> tx.setDynamicFee(1000)
+>>> tx.setDynamicFee(10000)
 >>> tx.setFees()
 >>> tx["fee"]
-99000
+990000
 ```
 
 ### Sign transfer
@@ -90,7 +90,7 @@ Once public and private keys are stored in `Transaction` object, the simplest wa
 {
   "amount": 100000000,
   "asset": {},
-  "fee": 99000,
+  "fee": 990000,
   "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderId": "DC53P3wf42jP5NzExzKzX1YGHv61pbNgVD",
   "senderPublicKey": "020c6f784ccc53d6e280ebca5055a6639415e583c9c637791d0c20166bb9f4bb71",
@@ -107,7 +107,7 @@ You may sign with another secret (check `senderPublicKey`, `senderId` and `signa
 {
   "amount": 100000000,
   "asset": {},
-  "fee": 99000,
+  "fee": 990000,
   "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderId": "DBJbxDPiv6x5xjH4mVFPuCCqx57D8dmyuP",
   "senderPublicKey": "021b4f96931a26926864d1bbdfd63e8a932f409b7f0e4a61dab9cab2962e5a1c45",
@@ -127,7 +127,7 @@ Or if you have your public and private keys&nbsp;:
 {
   "amount": 100000000,
   "asset": {},
-  "fee": 99000,
+  "fee": 990000,
   "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderId": "DM7UiH4b2rW2Nv11Wu6ToiZi8MJhGCEWhP",
   "senderPublicKey": "025f81956d5826bad7d30daed2b5c8c98e72046c1ec8323da336445476183fb7ca",
@@ -146,7 +146,7 @@ Or if you have your public and private keys&nbsp;:
 {
   "amount": 100000000,
   "asset": {},
-  "fee": 99000,
+  "fee": 990000,
   "id": "610e8fe28a3ed219fadb7c142350959c4453f47cf18b45ffaf515e00d1c0f04d",
   "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderId": "DM7UiH4b2rW2Nv11Wu6ToiZi8MJhGCEWhP",
@@ -174,7 +174,7 @@ Or if you have your public and private keys&nbsp;:
 {
   "amount": 100000000,
   "asset": {},
-  "fee": 99000,
+  "fee": 990000,
   "id": "3569eccbcee38c7d49ee87b16cd1268c3028c9d5a0663e34da2d4c968d6fd8c7",
   "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderId": "DC53P3wf42jP5NzExzKzX1YGHv61pbNgVD",
