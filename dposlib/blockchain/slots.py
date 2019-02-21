@@ -24,6 +24,7 @@ def getTime(time=None):
 	return delta.total_seconds()
 getEpoch = getTime
 
+
 def getRealTime(epoch=None):
 	epoch = getTime() if epoch is None else epoch
 	return cfg.begintime + timedelta(seconds=epoch)

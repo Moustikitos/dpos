@@ -1,0 +1,10 @@
+{
+    "type": 1,
+    "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+    "timestamp": 60644831,
+    "asset": {
+        "signature": {
+            "publicKey": "0292d580f200d041861d78b3de5ff31c6665b7a092ac3890d9132593beb9aa8513"
+        }
+    }
+}
