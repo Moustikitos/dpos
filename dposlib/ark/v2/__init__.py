@@ -73,7 +73,6 @@ def init():
 		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 
 		cfg.headers["nethash"] = data["nethash"]
-		# cfg.headers["version"] = str(data["version"])
 		cfg.headers["API-Version"] = "2"
 
 		constants =  data["constants"]
@@ -135,22 +134,42 @@ def downVote(*usernames):
 	)
 
 
-def nTransfer(*pairs, **kwargs):
+def registerIPFS(dag):
 	return Transaction(
-		type=7,
-		vendorField=kwargs.get("vendorField", None),
+		type=5,
 		asset={
-			"payments": [{"amount":a, "recipientId":r} for r,a in pairs]
+			"ipfs": {"dag": dag}
 		}
 	)
 
 
-def delegateResignation(username):
+def timelockTransfer(amount, address, lockvalue, locktype="timestamp", vendorField=None):
 	return Transaction(
-		type=8,
+		type=6,
+		amount=amount*100000000,
+		recipientId=address,
+		vendorField=vendorField,
+		timelock=lockvalue,
+		timelockType={
+			"timestamp":0,
+			"blockheight":1
+		}[locktype]
+	)
+
+
+def multiPayment(*pairs, **kwargs):
+	return Transaction(
+		type=7,
+		vendorField=kwargs.get("vendorField", None),
 		asset={
-			"delegate": {
-				"username": username
-			}
+			"payments": [
+				{"amount":a, "recipientId":r} for r,a in pairs
+			]
 		}
+	)
+
+
+def delegateResignation():
+	return Transaction(
+		type=8
 	)

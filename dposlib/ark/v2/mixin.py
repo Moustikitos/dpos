@@ -10,7 +10,6 @@ from dposlib.blockchain import Transaction, slots, cfg
 from dposlib.util.bin import pack, pack_bytes, unhexlify, hexlify
 
 
-# Reference: https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 def serializePayload(tx):
 	asset = tx.get("asset", {})
 	buf = BytesIO()
@@ -98,6 +97,7 @@ def serializePayload(tx):
 	return result
 
 
+# Reference: https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 def serialize(tx):
 	buf = BytesIO()
 
