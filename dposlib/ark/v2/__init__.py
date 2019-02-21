@@ -2,18 +2,15 @@
 # © Toons
 
 import pytz
-
 from datetime import datetime
 
 from dposlib import rest
-from dposlib.ark import crypto
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
 from dposlib.ark.v2.mixin import serialize, serializePayload
-from dposlib.ark.v2 import api
 
-MINIMUM_VERSION = "2.1"
+
 DAEMON_PEERS = None
 TRANSACTIONS = {
 	0: "transfer",
@@ -49,7 +46,7 @@ def select_peers():
 		"http://%(ip)s:%(port)s" % {
 			"ip":p["ip"],
 			"port":cfg.ports["core-api"]
-		} for p in rest.GET.api.peers().get("data", []) if p.get("version", "").startswith(MINIMUM_VERSION)
+		} for p in rest.GET.api.peers().get("data", []) if p.get("version", "").startswith(cfg.minversion)
 	][:cfg.broadcast]
 	if len(peers):
 		cfg.peers = peers

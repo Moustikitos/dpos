@@ -238,6 +238,7 @@ def use(network, **kwargs):
 	cfg.timeout = 5
 	cfg.network = None
 	cfg.hotmode = False
+	cfg.compressed = True
 	cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 	cfg.headers = {"Content-Type": "application/json; charset=utf-8"}
 

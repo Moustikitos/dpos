@@ -4,7 +4,6 @@
 	"maxvotepertx": 1,
 	"maxvote": 1,
 
-	"compressed": true,
 	"wif": "aa",
 	"marker": "37",
 	"slip44": "1",
@@ -21,7 +20,5 @@
 	"seeds": [
 		"https://explorer.phantom.org:8443"
 	],
-	"broadcast": 10,
-	
-	"explorer": "https://explorer.phantom.org"
+	"broadcast": 10
 }

@@ -3,8 +3,8 @@
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
+	"minversion": "2.1",
 
-	"compressed": true,
 	"wif": "aa",
 	"marker": "1e",
 	"slip44": "111",

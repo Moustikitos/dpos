@@ -6,7 +6,6 @@
 	"maxvotepertx": 1,
 	"maxvote": 1,
 
-	"compressed": true,
 	"wif": "50",
 	"marker": "37",
 	"slip44": "1",
