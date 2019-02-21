@@ -19,6 +19,19 @@ def track_data(value=True):
 	Data.TRACK = value
 
 
+def broadcastTransactions(*transactions, serialized=False):
+	report = []
+	if serialized:
+		transactions = [dposlib.core.serialize(tx) for tx in transactions]
+		for chunk in [transactions[i:i+dposlib.rest.cfg.maxlimit] for i in range(0, len(transactions), dposlib.rest.cfg.maxlimit)]:
+			pass
+	else:
+		for chunk in [transactions[i:i+dposlib.rest.cfg.maxlimit] for i in range(0, len(transactions), dposlib.rest.cfg.maxlimit)]:
+			response = dposlib.rest.POST.api.transactions(transactions=chunk)
+			report.append(response)
+	return None if len(report) == 0 else report[0] if len(report) == 1 else report
+
+
 class Transaction(dict):
 
 	VERSION = 1
@@ -103,7 +116,7 @@ class Transaction(dict):
 			raise Exception("No blockchain available")
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
-		
+
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
@@ -246,7 +259,7 @@ class Transaction(dict):
 			dumpJson(registry, pathfile)
 
 
-###### API 
+###### API
 class Data:
 
 	REF = set()
@@ -273,13 +286,13 @@ class Data:
 			if obj:
 				obj.update()
 			else:
-				dead.add(ref)	
+				dead.add(ref)
 		Data.REF -= dead
 
 		if len(Data.REF) == 0:
 			Data.EVENT.set()
 			Data.EVENT = False
-	
+
 	def __init__(self, endpoint, *args, **kwargs):
 		track = kwargs.pop("track", Data.TRACK)
 		self.__dict = dict(**endpoint(*args, **kwargs))
@@ -311,15 +324,12 @@ class Data:
 
 
 class Wallet(Data):
-	
+
 	link = staticmethod(lambda s,ss=None: [Transaction.unlink(), Transaction.link(s,ss)][0])
 	unlink = staticmethod(Transaction.unlink)
 
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
-
-	def _broadcast(self, *transactions):
-		return dposlib.rest.POST.api.transactions(transactions=list(transactions))
 
 	def setFeeLevel(self, fee_level=None):
 		if fee_level == None:
@@ -340,35 +350,34 @@ class Wallet(Data):
 	def send(self, amount, address, vendorField=None, fee_included=False):
 		tx = dposlib.core.transfer(amount, address, vendorField)
 		tx.finalize(fee_included=fee_included)
-		return self._broadcast(tx)
+		return broadcastTransactions(tx)
 
 	@Data.wallet_islinked
 	def registerSecondSecret(self, secondSecret):
 		tx = dposlib.core.registerSecondSecret(secondSecret)
 		tx.finalize()
-		return self._broadcast(tx)
+		return broadcastTransactions(tx)
 
 	@Data.wallet_islinked
 	def registerSecondPublicKey(self, secondPublicKey):
 		tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
 		tx.finalize()
-		return self._broadcast(tx)
+		return broadcastTransactions(tx)
 
 	@Data.wallet_islinked
 	def registerAsDelegate(self, username):
 		tx = dposlib.core.registerAsDelegate(username)
 		tx.finalize()
-		return self._broadcast(tx)
+		return broadcastTransactions(tx)
 
 	@Data.wallet_islinked
 	def upVote(self, *usernames):
 		tx = dposlib.core.upVote(*usernames)
 		tx.finalize()
-		return self._broadcast(tx)
+		return broadcastTransactions(tx)
 
 	@Data.wallet_islinked
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
 		tx.finalize()
-		return self._broadcast(tx)
-
+		return broadcastTransactions(tx)

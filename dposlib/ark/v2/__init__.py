@@ -13,7 +13,7 @@ from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey
 from dposlib.ark.v2.mixin import serialize, serializePayload, createWebhook, deleteWebhook
 from dposlib.ark.v2 import api
 
-
+MINIMUM_VERSION = "2.1"
 DAEMON_PEERS = None
 TRANSACTIONS = {
 	0: "transfer",
@@ -47,7 +47,8 @@ def select_peers():
 		"http://%(ip)s:%(port)s" % {
 			"ip":p["ip"],
 			"port":cfg.ports["core-api"]
-		} for p in rest.GET.api.peers().get("data", [])][:cfg.broadcast]
+		} for p in rest.GET.api.peers().get("data", []) if p.get("version", "").startswith(MINIMUM_VERSION)
+	][:cfg.broadcast]
 	if len(peers):
 		cfg.peers = peers
 
@@ -99,6 +100,7 @@ def stop():
 		DAEMON_PEERS.set()
 
 
+# https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
 def computeDynamicFees(tx):
 	typ_ = tx.get("type", 0)
 	vendorField = tx.get("vendorField", "")
@@ -135,5 +137,18 @@ def nTransfer(*pairs, **kwargs):
 	return Transaction(
 		type=7,
 		vendorField=kwargs.get("vendorField", None),
-		asset=dict(pairs)
+		asset={
+			"payments": [{"amount":a, "recipientId":r} for r,a in pairs]
+		}
+	)
+
+
+def delegateResignation(username):
+	return Transaction(
+		type=8,
+		asset={
+			"delegate": {
+				"username": username
+			}
+		}
 	)
