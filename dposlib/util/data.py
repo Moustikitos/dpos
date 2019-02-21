@@ -38,5 +38,5 @@ def filter_dic(dic):
 			"totalAmount", "totalFee", "totalForged",
 			"unconfirmedBalance",
 			"votes"
-		] else v) for k,v in dic.items()
+		] and isinstance(v, (int,float,str)) else v) for k,v in dic.items()
 	)
