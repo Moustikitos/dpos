@@ -46,7 +46,7 @@ def select_peers():
 		"http://%(ip)s:%(port)s" % {
 			"ip":p["ip"],
 			"port":cfg.ports["core-api"]
-		} for p in rest.GET.api.peers().get("data", []) if p.get("version", "").startswith(cfg.minversion)
+		} for p in rest.GET.api.peers().get("data", []) if p.get("version", "") > cfg.minversion
 	][:cfg.broadcast]
 	if len(peers):
 		cfg.peers = peers

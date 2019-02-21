@@ -3,6 +3,7 @@
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
+	"minversion": "2",
 
 	"wif": "aa",
 	"marker": "37",
