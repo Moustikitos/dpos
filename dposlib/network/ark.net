@@ -14,10 +14,6 @@
 		"public": 76067358
 	},
 
-	"headers": {
-		"Content-Type": "application/json; charset=utf-8"
-	},
-
 	"seeds": [
 		"https://explorer.ark.io:8443"
 	],

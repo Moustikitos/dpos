@@ -318,6 +318,15 @@ class Wallet(Data):
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
+	def _broadcast(self, *transactions):
+		return dposlib.rest.POST.api.transactions(transactions=list(transactions))
+
+	def setFeeLevel(self, fee_level=None):
+		if fee_level == None:
+			Transaction.setStaticFee()
+		else:
+			Transaction.setDynamicFee(fee_level)
+
 	def transactions(self, limit=50):
 		received, sent, count = [], [], 0
 		while count < limit:
@@ -331,22 +340,35 @@ class Wallet(Data):
 	def send(self, amount, address, vendorField=None, fee_included=False):
 		tx = dposlib.core.transfer(amount, address, vendorField)
 		tx.finalize(fee_included=fee_included)
-		return dposlib.rest.POST.api.transactions(transactions=[tx])
+		return self._broadcast(tx)
+
+	@Data.wallet_islinked
+	def registerSecondSecret(self, secondSecret):
+		tx = dposlib.core.registerSecondSecret(secondSecret)
+		tx.finalize()
+		return self._broadcast(tx)
+
+	@Data.wallet_islinked
+	def registerSecondPublicKey(self, secondPublicKey):
+		tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
+		tx.finalize()
+		return self._broadcast(tx)
+
+	@Data.wallet_islinked
+	def registerAsDelegate(self, username):
+		tx = dposlib.core.registerAsDelegate(username)
+		tx.finalize()
+		return self._broadcast(tx)
 
 	@Data.wallet_islinked
 	def upVote(self, *usernames):
 		tx = dposlib.core.upVote(*usernames)
 		tx.finalize()
-		return dposlib.rest.POST.api.transactions(transactions=[tx])
+		return self._broadcast(tx)
 
 	@Data.wallet_islinked
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
 		tx.finalize()
-		return dposlib.rest.POST.api.transactions(transactions=[tx])
+		return self._broadcast(tx)
 
-	def setFeeLevel(self, fee_level=None):
-		if fee_level == None:
-			Transaction.setStaticFee()
-		else:
-			Transaction.setDynamicFee(fee_level)

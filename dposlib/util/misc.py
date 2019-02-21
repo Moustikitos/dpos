@@ -2,6 +2,7 @@
 import datetime
 import pytz
 
+from collections import OrderedDict
 from dposlib import rest
 from dposlib.blockchain import slots
 
@@ -43,7 +44,7 @@ def deltas():
 
 	theorical_height = int((datetime.datetime.now(pytz.UTC) - rest.cfg.begintime).total_seconds() / rest.cfg.blocktime)
 
-	return {
+	return OrderedDict({
 		"real blocktime": total_elapsed_time / produced,
 		"failureless blocktime": total_elapsed_time / total_blocks,
 		"block missed": missed,
@@ -51,4 +52,4 @@ def deltas():
 		"theorical height": theorical_height,
 		"height shift": produced - theorical_height,
 		"failureless height shift": produced + missed - theorical_height
-	}
+	})

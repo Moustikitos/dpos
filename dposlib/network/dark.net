@@ -14,10 +14,6 @@
 		"public": 46090600
 	},
 
-	"headers": {
-		"Content-Type": "application/json; charset=utf-8"
-	},
-
 	"seeds": [
 		"https://dexplorer.ark.io:8443"
 	],
