@@ -10,7 +10,7 @@ from dposlib.ark import crypto
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.ark.v1 import transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
-from dposlib.ark.v2.mixin import serialize, serializePayload, createWebhook, deleteWebhook
+from dposlib.ark.v2.mixin import serialize, serializePayload
 from dposlib.ark.v2 import api
 
 MINIMUM_VERSION = "2.1"

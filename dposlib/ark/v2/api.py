@@ -2,10 +2,11 @@
 # © Toons
 # ~ https://docs.ark.io/api/public/v2/
 
+import os
 import dposlib
 
 from dposlib.util import misc
-from dposlib.util.data import filter_dic
+from dposlib.util.data import filter_dic, loadJson, dumpJson
 
 
 class Wallet(dposlib.blockchain.Wallet):
@@ -55,3 +56,22 @@ class Block(dposlib.blockchain.Data):
 
 	def transactions(self):
 		return dposlib.rest.GET.api.blocks(self.id, "transactions", returnKey="data")
+
+
+class Webhook(dposlib.blockchain.Data):
+
+	@staticmethod
+	def create(peer, event, target, conditions):
+		data = rest.POST.api.webhooks(peer=peer, event=event, target=target, conditions=conditions, returnKey="data")
+		if "token" in data:
+			dumpJson(data, os.path.join(dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network, data["token"][32:]))
+		return Webhook(data["id"], peer=peer)
+		
+	def __init__(self, whk_id, **kw):
+		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.webhooks, "%s"%whk_id, **dict({"track":False, "returnKey":"data"}, **kw))
+
+	def delete(self):
+		rest.DELETE.api.webhooks("%s"%self.id, peer=self.__kwargs.get("peer", None))
+		whk_path = os.path.join(dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network, self.token[32:])
+		if os.path.exists(whk_path):
+			os.remove(whk_path)
