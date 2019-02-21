@@ -4,22 +4,10 @@
 import os
 import struct
 
-from dposlib import ROOT, rest, BytesIO
+from dposlib import rest, BytesIO
 from dposlib.ark import crypto
 from dposlib.blockchain import Transaction, slots, cfg
 from dposlib.util.bin import pack, pack_bytes, unhexlify, hexlify
-from dposlib.util.data import loadJson, dumpJson
-
-
-def createWebhook(peer, event, target, conditions, folder=None):
-	data = rest.POST.api.webhooks(peer=peer, event=event, target=target, conditions=conditions, returnKey="data")
-	if "token" in data:
-		dumpJson(data, os.path.join(ROOT if not folder else folder, "%s.whk" % data["token"]))
-	return data
-
-
-def deleteWebhook(peer, id, token=None):
-	rest.DELETE.api.webhooks("%s"%id, peer=peer, token=token)
 
 
 # Reference: https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md

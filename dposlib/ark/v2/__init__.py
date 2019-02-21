@@ -21,13 +21,15 @@ TRANSACTIONS = {
 	2: "delegateRegistration",
 	3: "vote",
 	# 4: "multiSignature",
-	# 5: "ipfs",
-	# 6: "timelockTransfer",
-	# 7: "multiPayment",
-	# 8: "delegateResignation",
+	5: "ipfs",
+	6: "timelockTransfer",
+	7: "multiPayment",
+	8: "delegateResignation",
 }
 TYPING = {
 	"timestamp": int,
+	"timelockType": int,
+	"timelock": int,
 	"type": int,
 	"amount": int,
 	"senderPublicKey": str,
@@ -71,7 +73,7 @@ def init():
 		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 
 		cfg.headers["nethash"] = data["nethash"]
-		cfg.headers["version"] = str(data["version"])
+		# cfg.headers["version"] = str(data["version"])
 		cfg.headers["API-Version"] = "2"
 
 		constants =  data["constants"]

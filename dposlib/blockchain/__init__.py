@@ -8,7 +8,6 @@ import weakref
 
 from collections import OrderedDict
 
-from dposlib import ROOT
 from dposlib.blockchain import slots, cfg
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
@@ -23,10 +22,10 @@ def broadcastTransactions(*transactions, serialized=False):
 	report = []
 	if serialized:
 		transactions = [dposlib.core.serialize(tx) for tx in transactions]
-		for chunk in [transactions[i:i+dposlib.rest.cfg.maxlimit] for i in range(0, len(transactions), dposlib.rest.cfg.maxlimit)]:
+		for chunk in [transactions[i:i+cfg.maxlimit] for i in range(0, len(transactions), cfg.maxlimit)]:
 			pass
 	else:
-		for chunk in [transactions[i:i+dposlib.rest.cfg.maxlimit] for i in range(0, len(transactions), dposlib.rest.cfg.maxlimit)]:
+		for chunk in [transactions[i:i+cfg.maxlimit] for i in range(0, len(transactions), cfg.maxlimit)]:
 			response = dposlib.rest.POST.api.transactions(transactions=chunk)
 			report.append(response)
 	return None if len(report) == 0 else report[0] if len(report) == 1 else report
@@ -34,7 +33,7 @@ def broadcastTransactions(*transactions, serialized=False):
 
 class Transaction(dict):
 
-	VERSION = 1
+	VERSION = 2
 	DFEES = False
 	FMULT = 10000
 	FEESL = None
@@ -43,7 +42,7 @@ class Transaction(dict):
 	def path():
 		"""Return current registry path."""
 		if hasattr(Transaction, "_publicKey"):
-			return os.path.join(ROOT, ".registry", cfg.network, Transaction._publicKey)
+			return os.path.join(dposlib.ROOT, ".registry", cfg.network, Transaction._publicKey)
 		else:
 			raise Exception("Register a public key or set secret")
 
@@ -281,8 +280,9 @@ class Data:
 
 	@setInterval(30)
 	def heartbeat(self):
+		dead = set()
 		for ref in list(Data.REF):
-			dead, obj = set(), ref()
+			obj = ref()
 			if obj:
 				obj.update()
 			else:
