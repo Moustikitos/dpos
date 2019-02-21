@@ -167,6 +167,7 @@ Or if you have your public and private keys&nbsp;:
 ...    amount=100000000,
 ...    vendorField="Smartbridge data",
 ...    secret="a 12 word secret passphrase",
+...    secondSecret="another 12 word secret passphrase",
 ...    recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk")
 >>> tx.finalize()
 >>> tx
