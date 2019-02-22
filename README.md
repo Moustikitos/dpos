@@ -137,7 +137,7 @@
   - [X] added `transaction` and `rest` MarkDown documentation files
   - [x] dposlib.core.api is both python 2.x and 3.x compliant
   - [x] added Webhook api (experimental)
-  - [x] fees data initialisation improvement
+  - [x] fee data initialisation improvement
   - [x] transaction broadcasting improvement
   - [x] peer selection improvement
   - [x] Lisk blockchain and forks developpement frozen
