@@ -133,7 +133,7 @@
 ### 0.1.6 :
   - [x] Ark-core v 2.1.x compatibility
 
-### 0.1.7 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.7 :
   - [X] added `transaction` and `rest` MarkDown documentation files
   - [x] dposlib.core.api is both python 2.x and 3.x compliant
   - [x] added Webhook api (experimental)
@@ -141,6 +141,8 @@
   - [x] transaction broadcasting improvement
   - [x] peer selection improvement
   - [x] Lisk blockchain and forks developpement frozen
+
+### 0.1.8 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] integrate LedgerBlue Nano S use
