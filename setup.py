@@ -26,13 +26,9 @@ kw = {
 	"packages": [
 		"dposlib",
 		"dposlib.util",
-		# "dposlib.wallet",
-		# "dposlib.wallet.app",
 		"dposlib.ark",
 		"dposlib.ark.v1",
 		"dposlib.ark.v2",
-		"dposlib.lisk.v09",
-		"dposlib.lisk.v10",
 		"dposlib.blockchain"
 	],
 	"install_requires": [
@@ -40,9 +36,7 @@ kw = {
 		"ecdsa",
 		"pynacl",
 		"pytz",
-		"base58",
-		# "ledgerblue",
-		# "flask"
+		"base58"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
