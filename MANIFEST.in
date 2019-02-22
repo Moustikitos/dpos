@@ -1,3 +1,2 @@
 recursive-include dposlib *.net
-recursive-include dposlib *.7z
 include VERSION
