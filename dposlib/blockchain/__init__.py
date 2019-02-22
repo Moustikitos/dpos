@@ -18,7 +18,8 @@ def track_data(value=True):
 	Data.TRACK = value
 
 
-def broadcastTransactions(*transactions, serialized=False):
+def broadcastTransactions(*transactions, **params):
+	serialized = params.pop("serialzed", False)
 	report = []
 	if serialized:
 		transactions = [dposlib.core.serialize(tx) for tx in transactions]
