@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Helper module to provide a timer."""
-
 import threading
 
 
