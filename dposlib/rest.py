@@ -2,28 +2,20 @@
 # © Toons
 
 """
-`rest` module loads networks constants to `cfg` module and provides GET, PUT and
-POST endpoints classes.
+`rest` module loads networks constants to `cfg` module and provides endpoints
+classes.
 
 >>> from dposlib import rest
 >>> rest.use("ark")
->>> # = 'http://explorer.ark.io:8443/api/delegates/get?username=arky'
->>> rest.GET.api.delegates.get(username="arky")
+>>> # = 'http://explorer.ark.io:8443/api/delegates/arky'
+>>> rest.GET.api.delegates.arky()
 {'success': True, 'delegate': {'vote': '142348239372385', 'producedblocks': 107\
 856, 'productivity': 98.63, 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', 'r\
 ate': 42, 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
 110d60a15e9', 'approval': 1.05, 'username': 'arky', 'missedblocks': 1499}}
 
-If you know the content key of blockchain response you can ask it using
-`returnKey` keyword (satoshi values are converted to float values).
->>> rest.GET.api.delegates.get(username="arky", returnKey="delegate")
-{'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15\
-e9', 'rate': 42, 'approval': 1.05, 'producedblocks': 107858, 'missedblocks': 14\
-96, 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', 'vote': 1423484.39372385, \
-'productivity': 98.63, 'username': 'arky'}
-
-`rest` also creates a `core` module to `dposlib` package containing transactions
-functions and `crypto` module. 
+`rest` also creates a `core` module into `dposlib` package containing
+transactions functions and `crypto` module. 
 
 >>> import dposlib
 >>> dposlib.core.crypto.getKeys("secret")
@@ -41,7 +33,6 @@ import json
 import random
 import logging
 import datetime
-import pytz
 
 import pytz
 import requests
@@ -97,7 +88,7 @@ class EndPoint(object):
 
 	@staticmethod
 	def _GET(*args, **kwargs):
-		# API response contains several fields and wanted one can be extracted using
+		# API response contains several fields. Wanted one can be extracted using
 		# a returnKey that match the field name
 		return_key = kwargs.pop('returnKey', False)
 		peer = kwargs.pop('peer', False)
@@ -203,7 +194,7 @@ DELETE = EndPoint(method=EndPoint._DELETE)
 
 def load(family_name):
 	"""
-	Loads a given blockchain package as `dposlib.core`
+	Loads a given blockchain package as `dposlib.core` module.
 	"""
 	if hasattr(sys.modules[__package__], "core"):
 		try:

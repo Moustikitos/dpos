@@ -99,11 +99,6 @@
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
 ```
 
-  - [x] Ark v1
-  - [x] Ark v2
-
-## Install
-
 ## Version
 
 ### 0.1.0

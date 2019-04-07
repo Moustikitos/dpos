@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 # © Toons
+"""
+"""
+
 
 import os
 import json
@@ -20,16 +23,19 @@ def track_data(value=True):
 
 def broadcastTransactions(*transactions, **params):
 	serialized = params.pop("serialzed", False)
+	chunk_size = params.pop("chunk_size", 20)
 	report = []
 	if serialized:
 		transactions = [dposlib.core.serialize(tx) for tx in transactions]
-		for chunk in [transactions[i:i+cfg.maxlimit] for i in range(0, len(transactions), cfg.maxlimit)]:
+		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
 			pass
 	else:
-		for chunk in [transactions[i:i+cfg.maxlimit] for i in range(0, len(transactions), cfg.maxlimit)]:
+		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
 			response = dposlib.rest.POST.api.transactions(transactions=chunk)
 			report.append(response)
-	return None if len(report) == 0 else report[0] if len(report) == 1 else report
+	return None if len(report) == 0 else \
+		   report[0] if len(report) == 1 else \
+		   report
 
 
 class Transaction(dict):
@@ -45,7 +51,7 @@ class Transaction(dict):
 		if hasattr(Transaction, "_publicKey"):
 			return os.path.join(dposlib.ROOT, ".registry", cfg.network, Transaction._publicKey)
 		else:
-			raise Exception("Register a public key or set secret")
+			raise Exception("No public key found")
 
 	@staticmethod
 	def link(secret=None, secondSecret=None):
@@ -104,9 +110,7 @@ class Transaction(dict):
 	@staticmethod
 	def load(txid):
 		"""Loads the transaction identified by txid from current registry."""
-		pathfile = Transaction.path()
-		registry = loadJson(pathfile)
-		return Transaction(registry[txid])
+		return Transaction(loadJson(Transaction.path())[txid])
 
 	def __repr__(self):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
