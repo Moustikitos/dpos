@@ -29,14 +29,15 @@ kw = {
 		"dposlib.ark",
 		"dposlib.ark.v1",
 		"dposlib.ark.v2",
-		"dposlib.blockchain"
+		"dposlib.blockchain",
 	],
 	"install_requires": [
 		"requests",
 		"ecdsa",
-		"pynacl",
+		# "pynacl",
 		"pytz",
-		"base58"
+		"base58",
+		"ledgerblue"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
