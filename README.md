@@ -129,7 +129,7 @@
   - [x] Ark-core v 2.1.x compatibility
 
 ### 0.1.7 :
-  - [X] added `transaction` and `rest` MarkDown documentation files
+  - [x] added `transaction` and `rest` MarkDown documentation files
   - [x] dposlib.core.api is both python 2.x and 3.x compliant
   - [x] added Webhook api (experimental)
   - [x] fee data initialisation improvement
@@ -138,9 +138,10 @@
   - [x] Lisk blockchain and forks developpement frozen
 
 ### 0.1.8 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [X] added ledger nano S support
+  - [X] peer selection now checks syncing status
 
 ## TODO
-  - [ ] integrate LedgerBlue Nano S use
   - [ ] doc writing
   - [ ] unittest
   - [ ] wallet
