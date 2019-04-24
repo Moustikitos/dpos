@@ -1,38 +1,21 @@
 {
 	"timeout": 5,
-	"begintime": [2017, 3, 21, 13],
-	"familly": "ark.v1",
-	"maxlimit": 25,
+	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
+
 
 	"wif": "aa",
 	"marker": "37",
 	"slip44": "1",
+
 	"bip32": {
 		"private": 65165636,
 		"public": 65166718
 	},
 
-	"headers": {
-		"Content-Type": "application/json; charset=utf-8",
-		"port": "5500"
-	},
-
-	"port": 5500,
-	"peers": [
-		"51.15.85.181",
-		"78.12.176.6",
-		"54.37.235.26",
-		"54.37.149.118",
-		"51.15.220.208"
+	"seeds": [
+		"https://explorer.ripaex.io:8443"
 	],
-	"broadcast": 5,
-
-	"explorer": "https://explorer.ripaex.io",
-	"token": "XPX",
-	"symbol": "₱",
-	"delegate": 101,
-	"blocktime": 8,
-	"blockreward": 2
+	"broadcast": 10
 }
