@@ -3,7 +3,7 @@
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
-	"minversion": "2",
+	"minversion": "2.0",
 
 	"wif": "aa",
 	"marker": "37",
@@ -12,10 +12,6 @@
 	"bip32": {
 		"private": 70615956,
 		"public": 70617039
-	},
-
-	"headers": {
-		"Content-Type": "application/json; charset=utf-8"
 	},
 
 	"seeds": [
