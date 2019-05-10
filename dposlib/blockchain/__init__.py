@@ -3,11 +3,12 @@
 """
 """
 
-
 import os
+import sys
 import json
 import dposlib
 import weakref
+import getpass
 
 from collections import OrderedDict
 
@@ -317,7 +318,8 @@ class Data:
 		if attr in self.__dict:
 			return self.__dict[attr]
 		else:
-			return Data.__getattribute__(attr)
+			try: return Data.__getattribute__(attr)
+			except: return None
 
 	def update(self):
 		result = self.__endpoint(*self.__args, **self.__kwargs)
@@ -330,11 +332,46 @@ class Data:
 
 class Wallet(Data):
 
-	link = staticmethod(lambda s,ss=None: [Transaction.unlink(), Transaction.link(s,ss)][0])
 	unlink = staticmethod(Transaction.unlink)
 
 	def __init__(self, address, **kw):
 		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
+
+	def link(self, secret=None, secondSecret=None):
+		self.unlink()
+		try:
+			keys = dposlib.core.crypto.getKeys(
+				secret if secret != None else \
+				getpass.getpass("secret > ")
+			)
+			if self.publicKey == None: # uncreated wallet
+				while dposlib.core.crypto.getAddress(keys.get("publicKey", None)) != self.address:
+					keys = dposlib.core.crypto.getKeys(getpass.getpass("secret > "))
+			else:
+				while keys.get("publicKey", None) != self.publicKey:
+					keys = dposlib.core.crypto.getKeys(getpass.getpass("secret > "))
+
+			if self.secondPublicKey != None:
+				keys_2 = dposlib.core.crypto.getKeys(
+					secondSecret if secondSecret != None else \
+					getpass.getpass("second secret > ")
+				)
+				while keys_2.get("publicKey", None) != self.secondPublicKey:
+					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+			else:
+				keys_2 = {}
+
+		except KeyboardInterrupt:
+			sys.stdout.write("\n")
+			return False
+
+		else:
+			Transaction._publicKey = keys["publicKey"]
+			Transaction._privateKey = keys["privateKey"]
+			if len(keys_2):
+				Transaction._secondPublicKey = keys_2["publicKey"]
+				Transaction._secondPrivateKey = keys_2["privateKey"]
+			return True
 
 	def setFeeLevel(self, fee_level=None):
 		if fee_level == None:

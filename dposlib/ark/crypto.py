@@ -83,7 +83,8 @@ def getAddress(publicKey):
 	"""
 	ripemd160 = hashlib.new('ripemd160', unhexlify(publicKey)).digest()[:20]
 	seed = unhexlify(cfg.marker) + ripemd160
-	return base58.b58encode_check(seed)
+	b58 = base58.b58encode_check(seed)
+	return b58.decode('utf-8') if isinstance(b58, bytes) else b58
 
 
 def getAddressFromSecret(secret):
@@ -108,7 +109,8 @@ def getWIF(seed):
 	Return str
 	"""
 	seed = unhexlify(cfg.wif) + seed[:32] + (b"\x01" if cfg.compressed else b"")
-	return base58.b58encode_check(seed)
+	b58 = base58.b58encode_check(seed)
+	return b58.decode('utf-8') if isinstance(b58, bytes) else b58
 
 
 def getSignature(tx, privateKey):

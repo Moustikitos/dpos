@@ -43,13 +43,11 @@ TYPING = {
 
 
 def select_peers():
+	api_port = cfg.ports["core-api"]
 	peers = [
-		"http://%(ip)s:%(port)s" % {
-			"ip":p["ip"],
-			"port":cfg.ports["core-api"]
-		} for p in rest.GET.api.peers().get("data", []) if \
+		"http://%s:%s" % (p["ip"], api_port) for p in rest.GET.api.peers().get("data", []) if \
 			p.get("version", "") > cfg.minversion and \
-			rest.GET.api.node.status(peer="http://%(ip)s:4003"%p).get("data", {}).get("synced", False)
+			rest.GET.api.node.status(peer="http://%s:%s"% (p["ip"], api_port)).get("data", {}).get("synced", False)
 	][:cfg.broadcast]
 	if len(peers):
 		cfg.peers = peers
