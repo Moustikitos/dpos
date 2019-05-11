@@ -428,12 +428,14 @@ class Wallet(Data):
 
 class NanoS(Wallet):
 
-	link = unlink = lambda *a,**kw: raise Exception("unavailable")
+	link = unlink = lambda *a,**kw: None #raise Exception("unavailable")
 
 	def __init__(self, rank=0, index=0, **kw):
 		self.derivation_path = "44'/" + cfg.slip44 + "'/%s'/0/%s" % (index, rank)
-		self.address = dposlib.core.crypto.GetAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
+		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
 		Wallet.__init__(self, self.address, **kw)
+		self._Data__dict["address"] = self.address
+		self._Data__dict["derivationPath"] = self.derivation_path
 
 	def finalizeTx(self, tx, fee_included=False):
 		tx.setFees()
