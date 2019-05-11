@@ -23,6 +23,16 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
+class NanoS(Wallet):
+
+	link = unlink = lambda *a,**kw: raise Exception("unavailable")
+
+	def __init__(self, rank=0, index=0, **kw):
+		self.derivation_path = "44'/" + cfg.slip44 + "'/%s'/0/%s" % (index, rank)
+		self.address = dposlib.core.crypto.GetAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
+		Wallet.__init__(self, self.address, **kw)
+
+
 class Delegate(dposlib.blockchain.Data):
 
 	def __init__(self, username, **kw):

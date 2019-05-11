@@ -12,6 +12,7 @@ import getpass
 
 from collections import OrderedDict
 
+from dposlib import ldgr
 from dposlib.blockchain import slots, cfg
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
@@ -390,38 +391,53 @@ class Wallet(Data):
 			count = limit if count == tmpcount else tmpcount
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
 
+	def finalizeTx(self, tx, fee_included=False):
+		tx.finalize(fee_included=fee_included)
+		return tx
+
 	@Data.wallet_islinked
 	def send(self, amount, address, vendorField=None, fee_included=False):
 		tx = dposlib.core.transfer(amount, address, vendorField)
-		tx.finalize(fee_included=fee_included)
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx, fee_included=fee_included))
 
 	@Data.wallet_islinked
 	def registerSecondSecret(self, secondSecret):
 		tx = dposlib.core.registerSecondSecret(secondSecret)
-		tx.finalize()
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerSecondPublicKey(self, secondPublicKey):
 		tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
-		tx.finalize()
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerAsDelegate(self, username):
 		tx = dposlib.core.registerAsDelegate(username)
-		tx.finalize()
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def upVote(self, *usernames):
 		tx = dposlib.core.upVote(*usernames)
-		tx.finalize()
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
-		tx.finalize()
-		return broadcastTransactions(tx)
+		return broadcastTransactions(self.finalizeTx(tx))
+
+
+class NanoS(Wallet):
+
+	link = unlink = lambda *a,**kw: raise Exception("unavailable")
+
+	def __init__(self, rank=0, index=0, **kw):
+		self.derivation_path = "44'/" + cfg.slip44 + "'/%s'/0/%s" % (index, rank)
+		self.address = dposlib.core.crypto.GetAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
+		Wallet.__init__(self, self.address, **kw)
+
+	def finalizeTx(self, tx, fee_included=False):
+		tx.setFees()
+		tx.feeIncluded() if fee_included else tx.feeExcluded()
+		ldgr.signTransaction(tx, self.derivation_path)
+		tx.identify()
+		return tx

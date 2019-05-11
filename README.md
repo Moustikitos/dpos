@@ -138,8 +138,10 @@
   - [x] Lisk blockchain and forks developpement frozen
 
 ### 0.1.8 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [X] added ledger nano S support
-  - [X] peer selection now checks syncing status
+  - [x] added ark v2.4 compatibility
+  - [x] api wallet link using getpass library
+  - [x] added ledger nano S support
+  - [x] peer selection now checks syncing status
 
 ## TODO
   - [ ] doc writing
