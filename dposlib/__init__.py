@@ -2,8 +2,8 @@
 # © Toons
 
 """
-`dposlib` is a package providing REST API and a CLI  to interact with major dpos
-blockchain environement.
+`dposlib` is a package providing REST API and to interact with ark and ark forks
+blockchain.
 
 It is designed to run with both python 2.x and 3.x.
 """

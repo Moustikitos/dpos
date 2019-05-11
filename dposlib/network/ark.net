@@ -4,10 +4,7 @@
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "2.1",
-
-	"wif": "aa",
 	"marker": "17",
-	"slip44": "111",
 
 	"bip32": {
 		"private": 76066276,

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+Binary data manipulation that perform samely on python 2.x and 3.x.
+"""
+
 import re
 import struct
 import binascii

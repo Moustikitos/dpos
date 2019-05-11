@@ -86,7 +86,7 @@ class Transaction(dict):
 				delattr(Transaction, attr)
 
 	@staticmethod
-	def setDynamicFee(value="avgFee"):
+	def useDynamicFee(value="avgFee"):
 		"""
 		Activate and configure dynamic fees parameters. Value can be either an
 		integer defining the fee multiplier constant or a string defining the
@@ -104,7 +104,7 @@ class Transaction(dict):
 			raise Exception("Dynamic fees can not be set on %s network" % cfg.network)
 
 	@staticmethod
-	def setStaticFee():
+	def useStaticFee():
 		"""Activate static fees."""
 		Transaction.DFEES = False
 
@@ -157,17 +157,19 @@ class Transaction(dict):
 				Transaction._secondPrivateKey = str(value)
 
 	def setFees(self):
+		static_value = cfg.fees.get("staticFees", cfg.fees).get(dposlib.core.TRANSACTIONS[self["type"]])
 		if Transaction.DFEES:
-			# use 30-days-average id FEESL is not None
+			# use fee statistics if FEESL is not None
 			if Transaction.FEESL != None:
-				fee = cfg.feestats[self["type"]][Transaction.FEESL]
+				# if fee statistics not found, return static fee value
+				fee = cfg.feestats.get(self["type"], {}).get(Transaction.FEESL, static_value)
 			# else compute fees using fee multiplier and tx size
 			else:
 				fee = dposlib.core.computeDynamicFees(self)
 		else:
 			# k is 0 or signature number in case of multisignature tx
 			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
-			fee = cfg.fees.get("staticFees", cfg.fees).get(dposlib.core.TRANSACTIONS[self["type"]]) * (1+k)
+			fee = static_value * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
 	def feeIncluded(self):
@@ -375,9 +377,9 @@ class Wallet(Data):
 
 	def setFeeLevel(self, fee_level=None):
 		if fee_level == None:
-			Transaction.setStaticFee()
+			Transaction.useStaticFee()
 		else:
-			Transaction.setDynamicFee(fee_level)
+			Transaction.useDynamicFee(fee_level)
 
 	def transactions(self, limit=50):
 		received, sent, count = [], [], 0

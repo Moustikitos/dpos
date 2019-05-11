@@ -88,7 +88,7 @@ def init():
 		# are sure we make requests to working peers
 		select_peers()
 		DAEMON_PEERS = rotate_peers()
-		Transaction.setStaticFee()
+		Transaction.useStaticFee()
 	else:
 		raise Exception("Initialization error with peer %s" % response.get("peer", "???"))
 

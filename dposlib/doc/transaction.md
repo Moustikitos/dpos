@@ -60,22 +60,22 @@ A blockchain must be loaded first&nbsp;:
 Ark blockchain allows two types of fees&nbsp;: `static` and `dynamic`([AIP16](https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md))
 
 ```python
->>> tx.setStaticFee()
+>>> tx.useStaticFee()
 >>> tx.setFees()
 >>> tx["fee"]
 10000000
 >>> # dynamic fee using avgFee level
->>> tx.setDynamicFee()
+>>> tx.useDynamicFee()
 >>> tx.setFees()
 >>> tx["fee"]
 684253
 >>> # dynamic fee at minFee level
->>> tx.setDynamicFee("minFee")
+>>> tx.useDynamicFee("minFee")
 >>> tx.setFees()
 >>> tx["fee"]
 254000
 >>> # dynamic fee using a custom fee multiplier
->>> tx.setDynamicFee(10000)
+>>> tx.useDynamicFee(10000)
 >>> tx.setFees()
 >>> tx["fee"]
 990000

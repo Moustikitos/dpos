@@ -62,13 +62,14 @@ def init():
 	global DAEMON_PEERS
 
 	data = rest.GET.api.v2.node.configuration().get("data", {})
+	cfg.__data__ = data
+
 	if data != {}:
 		cfg.explorer = data["explorer"]
 		cfg.pubKeyHash = data["version"]
 		cfg.token = data["token"]
 		cfg.symbol = data["symbol"]
 		cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
-		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 
 		cfg.headers["nethash"] = data["nethash"]
 		cfg.headers["API-Version"] = "2"
@@ -80,13 +81,26 @@ def init():
 		cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
 		cfg.blockreward = constants["reward"]/100000000.
 		cfg.fees = constants["fees"]
+
+		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 		# on v 2.0.x dynamicFees field is in "fees" field
 		cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
 		# on v 2.1.x dynamicFees field is in "transactionPool" Field
 		cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
+		# on v 2.4.x wif and slip44 are provided by network
+		if "slip44" in data: cfg.slip44 = str(data["slip44"])
+		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
+		# on v 2.4.x feestatistics moved to api.ode.fees endpoint
+		if cfg.feestats == {}:
+			cfg.feestats = dict([i["type"], {
+				"avgFee": i["avg"],
+				"minFee": i["min"],
+				"maxFee": i["min"],
+				"medFee": i["median"]
+			}] for i in rest.GET.api.node.fees().get("data", []))
 
 		DAEMON_PEERS = rotate_peers()
-		Transaction.setDynamicFee()
+		Transaction.useDynamicFee()
 
 	else:
 		raise Exception("Initialization error")

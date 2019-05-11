@@ -50,6 +50,7 @@ def check_latency(peer):
 	"""
 	Returns latency in second for a given peer
 	"""
+
 	try:
 		request = requests.get(peer, timeout=cfg.timeout, verify=cfg.verify)
 	except Exception:
@@ -196,6 +197,7 @@ def load(family_name):
 	"""
 	Loads a given blockchain package as `dposlib.core` module.
 	"""
+
 	if hasattr(sys.modules[__package__], "core"):
 		try:
 			sys.modules[__package__].core.stop()
@@ -223,6 +225,7 @@ def use(network, **kwargs):
 	Sets the blockchain parameters in the `cfg` module and initialize blockchain
 	package.
 	"""
+
 	# clear data in cfg module and initialize with minimum vars
 	[cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]
 	cfg.verify = os.path.join(os.path.dirname(sys.executable), 'cacert.pem') if FROZEN else True
