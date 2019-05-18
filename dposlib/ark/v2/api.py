@@ -33,6 +33,16 @@ class NanoS(dposlib.blockchain.NanoS):
 		self.debug = kw.pop("debug", False)
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.wallets, self.address, **dict({"returnKey":"data"}, **kw))
 
+	@staticmethod
+	def fromDerivationPath(derivationPath, **kw):
+		nanos = NanoS(0,0,0, **kw)
+		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+		nanos.address = address
+		nanos.derivationPath = derivationPath
+		nanos._Data__args = (address,)
+		nanos.update()
+		return nanos
+
 
 class Delegate(dposlib.blockchain.Data):
 

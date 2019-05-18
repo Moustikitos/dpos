@@ -9,6 +9,7 @@ import json
 import dposlib
 import weakref
 import getpass
+import ledgerblue
 
 from collections import OrderedDict
 
@@ -439,11 +440,15 @@ class NanoS(Wallet):
 		self.debug = kw.pop("debug", False)
 		Wallet.__init__(self, self.address, **kw)
 
-	def setDerivationPath(self, derivationPath):
-		self.derivationPath = derivationPath
-		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
-		self.update()
-		
+	@staticmethod
+	def fromDerivationPath(derivationPath, **kw):
+		nanos = NanoS(0,0,0, **kw)
+		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+		nanos.derivationPath = derivationPath
+		nanos._Data__kwargs["address"] = nanos.address = address
+		nanos.update()
+		return nanos
+
 	def finalizeTx(self, tx, fee_included=False):
 		tx.setFees()
 		tx.feeIncluded() if fee_included else tx.feeExcluded()
@@ -452,8 +457,11 @@ class NanoS(Wallet):
 		if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
 			tx["recipientId"] = self.address
 
-		ldgr.signTransaction(tx, self.derivationPath, self.debug)
-
+		try:
+			ldgr.signTransaction(tx, self.derivationPath, self.debug)
+		except ledgerblue.commException.CommException:
+			raise Exception("transaction cancelled")
+		
 		if self.secondPublicKey != None:
 			try:
 				keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
