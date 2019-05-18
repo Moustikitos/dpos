@@ -123,6 +123,7 @@ class Transaction(dict):
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
 
+		self["amount"] = data.pop("amount", 0)
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
@@ -278,7 +279,9 @@ class Data:
 	def wallet_islinked(func):
 		def wrapper(*args, **kw):
 			obj = args[0]
-			if not hasattr(obj, "address"):
+			if hasattr(obj, "derivationPath"):
+				return func(*args, **kw)
+			elif not hasattr(obj, "address"):
 				raise Exception("not a wallet")
 			elif (obj.publicKey == None and dposlib.core.crypto.getAddress(getattr(Transaction, "_publicKey", " ")) == obj.address) or \
 			     (getattr(Transaction, "_publicKey", None) == obj.publicKey and getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey):
@@ -326,8 +329,9 @@ class Data:
 
 	def update(self):
 		result = self.__endpoint(*self.__args, **self.__kwargs)
-		if "error" not in result:
-			self.__dict.update(**result)
+		for key in [k for k in self.__dict if k not in result]:
+			self.__dict.pop(key, False)
+		self.__dict.update(**result)
 
 	def track(self):
 		Data.REF.add(weakref.ref(self))
@@ -428,18 +432,37 @@ class Wallet(Data):
 
 class NanoS(Wallet):
 
-	link = unlink = lambda *a,**kw: None #raise Exception("unavailable")
-
-	def __init__(self, rank=0, index=0, **kw):
-		self.derivation_path = "44'/" + cfg.slip44 + "'/%s'/0/%s" % (index, rank)
-		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
+	def __init__(self, network, account, index, **kw):
+		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (cfg.slip44, network, account, index)
+		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
+		self.debug = kw.pop("debug", False)
 		Wallet.__init__(self, self.address, **kw)
-		self._Data__dict["address"] = self.address
-		self._Data__dict["derivationPath"] = self.derivation_path
 
+	def setDerivationPath(self, derivationPath):
+		self.derivationPath = derivationPath
+		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+		self.update()
+		
 	def finalizeTx(self, tx, fee_included=False):
 		tx.setFees()
 		tx.feeIncluded() if fee_included else tx.feeExcluded()
-		ldgr.signTransaction(tx, self.derivation_path)
+
+		tx["senderId"] = self.address
+		if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
+			tx["recipientId"] = self.address
+
+		ldgr.signTransaction(tx, self.derivationPath, self.debug)
+
+		if self.secondPublicKey != None:
+			try:
+				keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+				while keys_2.get("publicKey", None) != self.secondPublicKey:
+					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+			except KeyboardInterrupt:
+				raise Exception("transaction cancelled")
+			else:
+				tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
+
 		tx.identify()
 		return tx

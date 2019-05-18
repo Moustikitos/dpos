@@ -24,16 +24,14 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
-class NanoS(Wallet):
+class NanoS(dposlib.blockchain.NanoS):
 
-	link = unlink = lambda *a,**kw: None #raise Exception("unavailable")
-
-	def __init__(self, rank=0, index=0, **kw):
-		self.derivation_path = "44'/" + dposlib.rest.cfg.slip44 + "'/%s'/0/%s" % (index, rank)
-		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivation_path)))
-		Wallet.__init__(self, self.address, **kw)
-		self._Data__dict["address"] = self.address
-		self._Data__dict["derivationPath"] = self.derivation_path
+	def __init__(self, network, account, index, **kw):
+		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (dposlib.rest.cfg.slip44, network, account, index)
+		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
+		self.debug = kw.pop("debug", False)
+		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.wallets, self.address, **dict({"returnKey":"data"}, **kw))
 
 
 class Delegate(dposlib.blockchain.Data):

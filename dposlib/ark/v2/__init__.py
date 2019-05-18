@@ -92,11 +92,11 @@ def init():
 		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
 		# on v 2.4.x feestatistics moved to api.ode.fees endpoint
 		if cfg.feestats == {}:
-			cfg.feestats = dict([i["type"], {
-				"avgFee": i["avg"],
-				"minFee": i["min"],
-				"maxFee": i["min"],
-				"medFee": i["median"]
+			cfg.feestats = dict([int(i["type"]), {
+				"avgFee": int(i["avg"]),
+				"minFee": int(i["min"]),
+				"maxFee": int(i["min"]),
+				"medFee": int(i["median"])
 			}] for i in rest.GET.api.node.fees().get("data", []))
 
 		DAEMON_PEERS = rotate_peers()

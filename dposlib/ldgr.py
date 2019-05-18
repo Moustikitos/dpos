@@ -63,7 +63,7 @@ def buildTxApdu(dongle_path, data):
 		p1 = util.unhexlify("e0048040")
 
 	return [
-		p1 + util.intasb(path_len + 1 + len(data1)) + util.intasb(path_len//4) + dongle_path + data1,
+		p1 + util.intasb(1 + path_len + len(data1)) + util.intasb(path_len//4) + dongle_path + data1,
 		util.unhexlify("e0048140") + util.intasb(len(data2)) + data2 if len(data2) else None
 	]
 

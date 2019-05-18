@@ -50,7 +50,6 @@
     * mainet : `ark`
     * devnet : `dark`
     * forks
-      - [x] Kapu : `kapu`
       - [x] Persona : `prs`
       - [x] Ripa : `ripa`
       - [x] Phantom : `xph`
@@ -140,7 +139,7 @@
 ### 0.1.8 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] added ark v2.4 compatibility
   - [x] api wallet link using getpass library
-  - [x] added ledger nano S support
+  - [x] added ledger nano S support (transaction type 0, 1, 2 & 3)
   - [x] peer selection now checks syncing status
 
 ## TODO
