@@ -15,7 +15,8 @@
 	},
 
 	"seeds": [
-		"http://explorer.persona.im:8443"
+		"https://explorer.persona.im:8443"
 	],
+
 	"broadcast": 10
 }
