@@ -14,5 +14,6 @@
 	"seeds": [
 		"https://explorer.ark.io:8443"
 	],
+
 	"broadcast": 10
 }
