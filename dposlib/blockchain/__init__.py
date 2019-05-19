@@ -337,7 +337,10 @@ class Data:
 		self.__dict.update(**result)
 
 	def track(self):
-		Data.REF.add(weakref.ref(self))
+		try:
+			Data.REF.add(weakref.ref(self))
+		except:
+			pass
 
 
 class Wallet(Data):

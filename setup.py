@@ -23,6 +23,7 @@ kw = {
 	"include_package_data": True,
 	"description": "light api compatible with main ARK and LISK forks",
 	"long_description": LONG_DESCRIPTION,
+	"long_description_content_type": "text/markdown",
 	"packages": [
 		"dposlib",
 		"dposlib.util",
@@ -41,7 +42,7 @@ kw = {
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
-		"Development Status :: 4 - Beta",
+		"Development Status :: 5 - Production/Stable",
 		"Environment :: Console",
 		"Environment :: Web Environment",
 		"Framework :: Flask",

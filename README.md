@@ -120,7 +120,7 @@
 ### 0.1.2
   - [x] Packaging improvement
 
-### 0.1.3 : available on [PyPi](https://pypi.org/project/dposlib/)
+### 0.1.3
   - [x] REST requests header bugfix (ubuntu)
 
 ### 0.1.4
@@ -132,10 +132,10 @@
 ### 0.1.5
   - [x] compatibility with both ark-core v2 devnet and mainnet
 
-### 0.1.6 :
+### 0.1.6
   - [x] Ark-core v 2.1.x compatibility
 
-### 0.1.7 :
+### 0.1.7
   - [x] added `transaction` and `rest` MarkDown documentation files
   - [x] dposlib.core.api is both python 2.x and 3.x compliant
   - [x] added Webhook api (experimental)
@@ -144,15 +144,16 @@
   - [x] peer selection improvement
   - [x] Lisk blockchain and forks developpement frozen
 
-### 0.1.8 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.8
   - [x] added ark v2.4 compatibility
   - [x] api wallet link using getpass library
   - [x] added ledger nano S support (transaction type 0, 1, 2 & 3)
   - [x] peer selection now checks syncing status
 
+### 0.1.9  [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+
 ## TODO
   - [ ] doc writing
   - [ ] unittest
-  - [ ] wallet
   - [ ] CLI
  
