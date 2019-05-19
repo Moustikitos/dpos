@@ -1,11 +1,29 @@
-# `dposlib` Quick View
+> `dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
-`dposlib` package aims to provide a simple API to ARK blockchain and forks.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Support this project
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
+[![GitHub release](https://img.shields.io/github/release/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/releases/)
+
+[![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
+[![PyPI download total](https://img.shields.io/pypi/dm/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
+
+### Support this project
 
   * [X] Send &#1126; to `AUahWfkfr5J4tYakugRbfow7RWVTK35GPW`
   * [X] Vote `arky` on [Ark blockchain](https://explorer.ark.io) and [earn &#1126; weekly](http://arky-delegate.info/arky)
+
+# Quick View
+
+## Available network
+
+  - [x] Ark
+    * mainet : `ark`
+    * devnet : `dark`
+    * forks
+      - [x] Persona : `prs`
+      - [x] Ripa : `ripa`
+      - [x] Phantom : `xph`
 
 ## Overview
 
@@ -43,16 +61,6 @@
 >>> rest.POST.api.transactions(transactions=[tx])
 {'data': {'broadcast': ['5a90ea87fb8848c3402e5d6da5d34651eee01124387aa4f499c84621e03dd791'], 'excess': [], 'invalid': [], 'accept': []}}
 ```
-
-## Available network
-
-  - [x] Ark
-    * mainet : `ark`
-    * devnet : `dark`
-    * forks
-      - [x] Persona : `prs`
-      - [x] Ripa : `ripa`
-      - [x] Phantom : `xph`
 
 ## Network API
 

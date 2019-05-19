@@ -104,11 +104,13 @@ class Transaction(dict):
 				Transaction.FEESL = value
 		else:
 			raise Exception("Dynamic fees can not be set on %s network" % cfg.network)
+	setDynamicFee = useDynamicFee
 
 	@staticmethod
 	def useStaticFee():
 		"""Activate static fees."""
 		Transaction.DFEES = False
+	setStaticFee = useStaticFee
 
 	@staticmethod
 	def load(txid):
