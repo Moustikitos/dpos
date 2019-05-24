@@ -403,6 +403,7 @@ class Wallet(Data):
 
 	def finalizeTx(self, tx, fee_included=False):
 		tx.finalize(fee_included=fee_included)
+		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))
 		return tx
 
 	@Data.wallet_islinked
@@ -478,4 +479,5 @@ class NanoS(Wallet):
 				tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
 
 		tx.identify()
+		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))
 		return tx

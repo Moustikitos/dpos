@@ -106,6 +106,42 @@
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
 ```
 
+## Ledger Nano S API
+
+```python
+>>> rest.use("dark")
+>>> # 0,0,0 = devnet, account, index
+>>> ldg = dposlib.core.api.NanoS(0,0,0)
+>>> ldg
+{
+  "address": "DEVx3osw9Rj1wZhoUf2dMbPmmUN9P3XFpb",
+  "balance": 69.9939675,
+  "isDelegate": true,
+  "publicKey": "025993c687f1e3418e0aa47b6ab091e414b51c45b32a107745c01c124652112c7a",
+}
+>>> ldg.derivationPath
+"44'/1'/0'/0'/0"
+>>> ldg.send(1, "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7")
+```
+<img src="ledger_confirm.png" />
+
+```python
+{'data': {'accept': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'broadcast': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'excess': [], 'invalid': []}}
+>>> ldg.upVote("darktoons")
+```
+<img src="ledger_confirm.png" />
+
+```python
+{'data': {'accept': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'broadcast': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'excess': [], 'invalid': []}}
+>>> dposlib.core.api.NanoS.fromDerivationPath("44'/1'/0'/0/0")
+{
+  "address": "DDC7kWToyvfKa8dvRTXitr7o5FHMVKtBve",
+  "balance": 95.20477813,
+  "publicKey": "038473178d89988b1f8428efe758b99ebf1d49c47b679f3f4a9cdc0829fa6ece2b",
+  "vote": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933"
+}
+```
+
 ## Version
 
 ### 0.1.0

@@ -70,7 +70,6 @@ def init():
 		cfg.token = data["token"]
 		cfg.symbol = data["symbol"]
 		cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
-
 		cfg.headers["nethash"] = data["nethash"]
 		cfg.headers["API-Version"] = "2"
 
@@ -88,9 +87,9 @@ def init():
 		# on v 2.1.x dynamicFees field is in "transactionPool" Field
 		cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
 		# on v 2.4.x wif and slip44 are provided by network
-		if "slip44" in data: cfg.slip44 = str(data["slip44"])
 		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
-		# on v 2.4.x feestatistics moved to api.ode.fees endpoint
+		if "slip44" in data: cfg.slip44 = str(data["slip44"])
+		# on v 2.4.x feestatistics moved to api.node.fees endpoint
 		if cfg.feestats == {}:
 			cfg.feestats = dict([int(i["type"]), {
 				"avgFee": int(i["avg"]),
