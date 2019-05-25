@@ -1,12 +1,11 @@
 {
-	"timeout": 5,
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "2.0",
+    "aip20": 0,
 
 	"wif": "aa",
-	"marker": "37",
 	"slip44": "1",
 	
 	"bip32": {
@@ -16,6 +15,5 @@
 
 	"seeds": [
 		"https://explorer.phantom.org:8443"
-	],
-	"broadcast": 10
+	]
 }

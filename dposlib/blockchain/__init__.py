@@ -115,7 +115,10 @@ class Transaction(dict):
 	@staticmethod
 	def load(txid):
 		"""Loads the transaction identified by txid from current registry."""
-		return Transaction(loadJson(Transaction.path())[txid])
+		data = loadJson(Transaction.path())[txid]
+		data.pop("network", False)
+		data["senderId"] = dposlib.core.crypto.getAddress(data["publicKey"])
+		return Transaction(data)
 
 	def __repr__(self):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
@@ -253,21 +256,20 @@ class Transaction(dict):
 		Transaction.link(secret, secondSecret)
 		self.setFees()
 		self.feeIncluded() if fee_included else self.feeExcluded()
-		if hasattr(Transaction, "_privateKey"):
-			self.sign()
-			if hasattr(Transaction, "_secondPrivateKey"):
-				self.signSign()
-			self.identify()
-		else:
-			raise Exception("Orphan transaction")
+		self.sign()
+		self.signSign()
+		self.identify()
 
 	def dump(self):
 		"""Dumps transaction in current registry."""
 		if "id" in self:
 			id_ = self["id"]
 			pathfile = Transaction.path()
+			data = dict(self)
+			data.pop("senderId", False)
+			data.network = int(dposlib.rest.cfg.marker, base=16)
 			registry = loadJson(pathfile)
-			registry[self["id"]] = self
+			registry[id_] = data
 			dumpJson(registry, pathfile)
 
 
@@ -441,7 +443,7 @@ class NanoS(Wallet):
 
 	def __init__(self, network, account, index, **kw):
 		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (cfg.slip44, network, account, index)
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (cfg.slip44, getattr(dposlib.rest.cfg, "aip20", network), account, index)
 		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
 		self.debug = kw.pop("debug", False)
 		Wallet.__init__(self, self.address, **kw)

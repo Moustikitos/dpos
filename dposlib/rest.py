@@ -232,6 +232,7 @@ def use(network, **kwargs):
 	cfg.timeout = 5
 	cfg.network = None
 	cfg.hotmode = False
+	cfg.broadcast = 10
 	cfg.compressed = True
 	cfg.minversion = "1.0"
 	cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)

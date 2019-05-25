@@ -15,6 +15,8 @@ class TestEcdsaCrypto(unittest.TestCase):
 		"asset": {},
 		"fee": 216000,
 		"recipientId": "DMzZgqGrZkmyPGgUTULSw1XWPrbj9dVwM3",
+		"senderPublicKey":
+			"03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
 		"timestamp": 736409,
 		"type": 0,
 		"vendorField": "unitest: tx with simple signature"
@@ -134,3 +136,33 @@ class TestEcdsaCrypto(unittest.TestCase):
 			TestEcdsaCrypto.signSigned_tx0_hex,
 			bin_.hexlify(dposlib.core.crypto.getBytes(TestEcdsaCrypto.signSigned_tx0_dict))
 		)
+	
+	def test_transaction_link(self):
+		dposlib.core.Transaction.link(self.secret, self.secondSecret)
+		self.assertEqual(
+			dposlib.core.crypto.verifySignatureFromBytes(
+				dposlib.core.crypto.getBytes(TestEcdsaCrypto.tx0_dict),
+				dposlib.core.Transaction._publicKey,
+				TestEcdsaCrypto.signed_tx0_dict["signature"]
+			),
+			True
+		)
+		self.assertEqual(
+			dposlib.core.crypto.verifySignatureFromBytes(
+				dposlib.core.crypto.getBytes(TestEcdsaCrypto.signed_tx0_dict),
+				dposlib.core.Transaction._secondPublicKey,
+				TestEcdsaCrypto.signSigned_tx0_dict["signSignature"]
+			),
+			True
+		)
+		dposlib.core.Transaction.unlink()
+
+	def test_transaction_sign(self):
+		dposlib.core.Transaction.link(self.secret, self.secondSecret)
+		tx = dposlib.core.Transaction(TestEcdsaCrypto.tx0_dict)
+		dict.__setitem__(tx, "fee", TestEcdsaCrypto.tx0_dict["fee"])
+		tx.sign()
+		self.assertEqual(tx["signature"], TestEcdsaCrypto.signed_tx0_dict["signature"])
+		tx.signSign()
+		self.assertEqual(tx["signSignature"], TestEcdsaCrypto.signSigned_tx0_dict["signSignature"])
+		dposlib.core.Transaction.unlink()

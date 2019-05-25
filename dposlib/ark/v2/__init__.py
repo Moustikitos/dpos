@@ -65,6 +65,7 @@ def init():
 	cfg.__data__ = data
 
 	if data != {}:
+		cfg.marker = hex(data["version"])[2:]
 		cfg.explorer = data["explorer"]
 		cfg.pubKeyHash = data["version"]
 		cfg.token = data["token"]
@@ -76,6 +77,7 @@ def init():
 		constants =  data["constants"]
 		cfg.delegate = constants["activeDelegates"]
 		cfg.maxlimit = constants["block"]["maxTransactions"]
+		cfg.maxTransactions = constants["block"]["maxTransactions"]
 		cfg.blocktime = constants["blocktime"]
 		cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"))
 		cfg.blockreward = constants["reward"]/100000000.

@@ -1,10 +1,7 @@
 > `dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
-[![GitHub release](https://img.shields.io/github/release/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/releases/)
-
+[![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags/)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
 [![PyPI download total](https://img.shields.io/pypi/dm/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
 
@@ -110,8 +107,8 @@
 
 ```python
 >>> rest.use("dark")
->>> # 0,0,0 = devnet, account, index
->>> ldg = dposlib.core.api.NanoS(0,0,0)
+>>> # 1,0,0 = devnet, account, index
+>>> ldg = dposlib.core.api.NanoS(1,0,0)
 >>> ldg
 {
   "address": "DEVx3osw9Rj1wZhoUf2dMbPmmUN9P3XFpb",

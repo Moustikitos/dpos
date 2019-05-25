@@ -1,5 +1,4 @@
 {
-	"timeout": 5,
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
@@ -7,6 +6,7 @@
 
 	"wif": "6f",
 	"marker": "2d",
+	"network": 45,
 	"slip44": "111",
 
 	"bip32": {
@@ -17,6 +17,5 @@
 	"port": 9701,
 	"peers": [
 		"51.15.136.166"
-	],
-	"broadcast": 10
+	]
 }

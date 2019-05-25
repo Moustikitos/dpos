@@ -1,12 +1,11 @@
 {
-	"timeout": 5,
 	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "2.0",
+    "aip20": 0,
 
 	"wif": "aa",
-	"marker": "37",
 	"slip44": "1",
 
 	"bip32": {
@@ -23,6 +22,5 @@
 		"95.179.153.114",
 		"51.15.120.180",
 		"51.15.84.120"
-	],
-	"broadcast": 10
+	]
 }
