@@ -26,9 +26,14 @@ class Wallet(dposlib.blockchain.Wallet):
 
 class NanoS(dposlib.blockchain.NanoS):
 
-	def __init__(self, network, account, index, **kw):
+	def __init__(self, account, index, network=1, **kw):
 		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (dposlib.rest.cfg.slip44, network, account, index)
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
+			dposlib.rest.cfg.slip44,
+			getattr(dposlib.rest.cfg, "aip20", network),
+			account,
+			index
+		)
 		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
 		self.debug = kw.pop("debug", False)
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.wallets, self.address, **dict({"returnKey":"data"}, **kw))
