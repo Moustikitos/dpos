@@ -1,5 +1,6 @@
 > `dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
+[![Build Status](https://travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://travis-ci.com/Moustikitos/dpos)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
 [![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags/)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib/)
@@ -11,6 +12,15 @@
   * [X] Vote `arky` on [Ark blockchain](https://explorer.ark.io) and [earn &#1126; weekly](http://arky-delegate.info/arky)
 
 # Quick View
+
+## Ubuntu dependencies installation
+
+```bash
+sudo apt-get install python python-dev python3 python3-dev
+sudo apt-get install python-setuptools python3-setuptools
+sudo apt-get install python-pip python3-pip
+sudo apt-get install libudev-dev libusb-1.0.0-dev
+```
 
 ## Available network
 
@@ -184,6 +194,7 @@
   - [x] peer selection now checks syncing status
 
 ### 0.1.9  [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] [travis-ci](https://travis-ci.com) integration
 
 ## TODO
   - [ ] doc writing

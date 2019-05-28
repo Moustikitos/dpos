@@ -7,12 +7,23 @@ classes.
 
 >>> from dposlib import rest
 >>> rest.use("ark")
->>> # = 'http://explorer.ark.io:8443/api/delegates/arky'
->>> rest.GET.api.delegates.arky()
-{'success': True, 'delegate': {'vote': '142348239372385', 'producedblocks': 107\
-856, 'productivity': 98.63, 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', 'r\
-ate': 42, 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
-110d60a15e9', 'approval': 1.05, 'username': 'arky', 'missedblocks': 1499}}
+>>> # = 'https://explorer.ark.io:8443/api/delegates/arky'
+>>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
+{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
+'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
+9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
+: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
+eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
+'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
+es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
+>>> rest.GET.api.delegates.arky() # in blockchain connection, peer is not mandatory
+{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
+'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
+9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
+: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
+eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
+'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
+es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
 
 `rest` also creates a `core` module into `dposlib` package containing
 transactions functions and `crypto` module. 
@@ -275,3 +286,5 @@ def use(network, **kwargs):
 		cfg.hotmode = True
 	else:
 		raise Exception("Error occurred during network setting...")
+	
+	return True
