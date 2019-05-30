@@ -276,15 +276,16 @@ def use(network, **kwargs):
 				cfg.peers = [peer]
 				break
 
+	cfg.__dict__.update(data)
+	load(cfg.familly)
+
 	if len(cfg.peers):
 		data.pop("peers", [])
 		data.pop("seeds", [])
 		# store options in cfg module
-		cfg.__dict__.update(data)
-		load(cfg.familly)
 		cfg.network = network
 		cfg.hotmode = True
 	else:
-		raise Exception("Error occurred during network setting...")
+		raise Exception("No network connection...")
 	
 	return True

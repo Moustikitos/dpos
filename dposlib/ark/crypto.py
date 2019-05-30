@@ -72,7 +72,7 @@ def getKeys(secret, seed=None):
 	}
 
 
-def getAddress(publicKey):
+def getAddress(publicKey, marker=None):
 	"""
 	Computes ARK address from keyring.
 
@@ -81,8 +81,12 @@ def getAddress(publicKey):
 
 	Return str
 	"""
+	if marker and isinstance(marker, int):
+		marker = hex(marker)[2:]
+	else:
+		marker = None
 	ripemd160 = hashlib.new('ripemd160', unhexlify(publicKey)).digest()[:20]
-	seed = unhexlify(cfg.marker) + ripemd160
+	seed = unhexlify(cfg.marker if not marker else marker) + ripemd160
 	b58 = base58.b58encode_check(seed)
 	return b58.decode('utf-8') if isinstance(b58, bytes) else b58
 

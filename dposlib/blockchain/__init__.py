@@ -116,8 +116,7 @@ class Transaction(dict):
 	def load(txid):
 		"""Loads the transaction identified by txid from current registry."""
 		data = loadJson(Transaction.path())[txid]
-		data.pop("network", False)
-		data["senderId"] = dposlib.core.crypto.getAddress(data["publicKey"])
+		data["senderId"] = dposlib.core.crypto.getAddress(data["publicKey"], marker=data.pop("network", False))
 		return Transaction(data)
 
 	def __repr__(self):
@@ -163,33 +162,48 @@ class Transaction(dict):
 				Transaction._privateKey = str(value)
 			elif item == "secondPrivateKey":
 				Transaction._secondPrivateKey = str(value)
-
-	def setFees(self):
-		static_value = cfg.fees.get("staticFees", cfg.fees).get(dposlib.core.TRANSACTIONS[self["type"]])
-		if Transaction.DFEES:
-			# use fee statistics if FEESL is not None
-			if Transaction.FEESL != None:
-				# if fee statistics not found, return static fee value
-				fee = cfg.feestats.get(self["type"], {}).get(Transaction.FEESL, static_value)
-			# else compute fees using fee multiplier and tx size
 			else:
-				fee = dposlib.core.computeDynamicFees(self)
+				raise AttributeError("attribute %s not allowed in transaction class" % item)
 		else:
-			# k is 0 or signature number in case of multisignature tx
-			k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
-			fee = static_value * (1+k)
+			raise Exception("no blockchain package loaded")
+
+	def __getattr__(self, attr):
+		return dict.get(self, attr, self.__dict__.get(attr, False))
+
+	def __setattr__(self, attr, value):
+		self[attr] = value
+
+	def setFees(self, value=None):
+		if value:
+			fee = value
+		else:
+			static_value = getattr(cfg, "fees", {})\
+			               .get("staticFees", getattr(cfg, "fees", {}))\
+						   .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
+			if Transaction.DFEES:
+				# use fee statistics if FEESL is not None
+				if Transaction.FEESL != None:
+					# if fee statistics not found, return static fee value
+					fee = cfg.feestats.get(self["type"], {}).get(Transaction.FEESL, static_value)
+				# else compute fees using fee multiplier and tx size
+				else:
+					fee = dposlib.core.computeDynamicFees(self)
+			else:
+				# k is 0 or signature number in case of multisignature tx
+				k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
+				fee = static_value * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
 	def feeIncluded(self):
 		if self["type"] in [0, 7] and self["fee"] < self["amount"]:
-			if not hasattr(self, "_amount"):
-				setattr(self, "_amount", self["amount"])
-			self["amount"] = self._amount - self["fee"]
+			if "_amount" not in self.__dict__:
+				self.__dict__["_amount"] = self["amount"]
+			self["amount"] = self.__dict__["_amount"] - self["fee"]
 
 	def feeExcluded(self):
-		if self["type"] in [0, 7] and hasattr(self, "_amount"):
-			self["amount"] = self._amount
-			delattr(self, "_amount")
+		if self["type"] in [0, 7] and "_amount" in self.__dict__:
+			self["amount"] = self.__dict__["_amount"]
+			self.__dict__.pop("_amount", False)
 
 	# sign functions using passphrases
 	def signWithSecret(self, secret):
@@ -249,15 +263,17 @@ class Transaction(dict):
 		else:
 			raise Exception("Transaction not signed")
 
-	def finalize(self, secret=None, secondSecret=None, fee_included=False):
+	def finalize(self, secret=None, secondSecret=None, fee=None, fee_included=False):
 		"""
 		Finalize a transaction by setting fees, signatures and id.
 		"""
 		Transaction.link(secret, secondSecret)
-		self.setFees()
+		if "fee" not in self or fee != None:
+			self.setFees(fee)
 		self.feeIncluded() if fee_included else self.feeExcluded()
 		self.sign()
-		self.signSign()
+		if hasattr(Transaction, "_secondPrivateKey"):
+			self.signSign()
 		self.identify()
 
 	def dump(self):
