@@ -24,6 +24,7 @@ TYPING = {
 	"timestamp": int,
 	"type": int,
 	"amount": int,
+	"fee": int,
 	"senderPublicKey": str,
 	"recipientId": str,
 	"senderId": str,

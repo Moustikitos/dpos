@@ -419,40 +419,40 @@ class Wallet(Data):
 			count = limit if count == tmpcount else tmpcount
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
 
-	def finalizeTx(self, tx, fee_included=False):
-		tx.finalize(fee_included=fee_included)
+	def _finalizeTx(self, tx, fee=None, fee_included=False):
+		tx.finalize(fee=fee, fee_included=fee_included)
 		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))
 		return tx
 
 	@Data.wallet_islinked
 	def send(self, amount, address, vendorField=None, fee_included=False):
 		tx = dposlib.core.transfer(amount, address, vendorField)
-		return broadcastTransactions(self.finalizeTx(tx, fee_included=fee_included))
+		return broadcastTransactions(self._finalizeTx(tx, fee_included=fee_included))
 
 	@Data.wallet_islinked
 	def registerSecondSecret(self, secondSecret):
 		tx = dposlib.core.registerSecondSecret(secondSecret)
-		return broadcastTransactions(self.finalizeTx(tx))
+		return broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerSecondPublicKey(self, secondPublicKey):
 		tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
-		return broadcastTransactions(self.finalizeTx(tx))
+		return broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerAsDelegate(self, username):
 		tx = dposlib.core.registerAsDelegate(username)
-		return broadcastTransactions(self.finalizeTx(tx))
+		return broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def upVote(self, *usernames):
 		tx = dposlib.core.upVote(*usernames)
-		return broadcastTransactions(self.finalizeTx(tx))
+		return broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
-		return broadcastTransactions(self.finalizeTx(tx))
+		return broadcastTransactions(self._finalizeTx(tx))
 
 
 class NanoS(Wallet):
@@ -473,8 +473,9 @@ class NanoS(Wallet):
 		nanos.update()
 		return nanos
 
-	def finalizeTx(self, tx, fee_included=False):
-		tx.setFees()
+	def _finalizeTx(self, tx, fee=None, fee_included=False):
+		if "fee" not in tx or fee != None:
+			tx.setFees(fee)
 		tx.feeIncluded() if fee_included else tx.feeExcluded()
 
 		tx["senderId"] = self.address

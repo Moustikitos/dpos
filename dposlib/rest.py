@@ -222,7 +222,7 @@ def load(family_name):
 		sys.modules[__package__].core.init()
 	except Exception as e:
 		sys.stdout.write("%r\n" % e)
-		raise Exception("%s is in readonly mode (no crypto package found)" % family_name)
+		raise Exception("%s is in readonly mode" % family_name)
 
 	# delete real package name loaded to keep namespace clear
 	try:

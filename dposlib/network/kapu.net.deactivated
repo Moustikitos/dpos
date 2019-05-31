@@ -4,9 +4,8 @@
 	"maxvote": 1,
 	"minversion": "2.0",
 
-	"wif": "6f",
+	"wif": "aa",
 	"marker": "2d",
-	"network": 45,
 	"slip44": "111",
 
 	"bip32": {

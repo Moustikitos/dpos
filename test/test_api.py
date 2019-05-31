@@ -2,6 +2,7 @@
 # © Toons
 
 import os
+import sys
 import unittest
 import dposlib
 
@@ -27,12 +28,12 @@ class TestDposApi(unittest.TestCase):
 			try:
 				self.assertEqual(rest.use(name), True)
 			except Exception as e:
-				raise e
+				sys.stdout.write("%s network failed...\n" % name)
 		rest.use("dark")
 
 	def test_wallet(self):
-		dgt = dposlib.core.api.Wallet(self.wallet.username)
-		self.assertEqual(dgt.address, self.wallet.address)
+		wlt = dposlib.core.api.Wallet(self.wallet.username)
+		self.assertEqual(wlt.address, self.wallet.address)
 
 	def test_wallet_link(self):
 		self.wallet.link(self.secret, self.secondSecret)
