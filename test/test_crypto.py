@@ -160,9 +160,10 @@ class TestEcdsaCrypto(unittest.TestCase):
 	def test_transaction_sign(self):
 		dposlib.core.Transaction.link(self.secret, self.secondSecret)
 		tx = dposlib.core.Transaction(TestEcdsaCrypto.tx0_dict)
-		dict.__setitem__(tx, "fee", TestEcdsaCrypto.tx0_dict["fee"])
 		tx.sign()
 		self.assertEqual(tx["signature"], TestEcdsaCrypto.signed_tx0_dict["signature"])
+		self.assertEqual(bin_.hexlify(dposlib.core.crypto.getBytes(tx)), TestEcdsaCrypto.signed_tx0_hex)
 		tx.signSign()
 		self.assertEqual(tx["signSignature"], TestEcdsaCrypto.signSigned_tx0_dict["signSignature"])
+		self.assertEqual(bin_.hexlify(dposlib.core.crypto.getBytes(tx)), TestEcdsaCrypto.signSigned_tx0_hex)
 		dposlib.core.Transaction.unlink()
