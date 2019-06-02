@@ -1,19 +1,165 @@
 # class `Transaction`
 
-`Transaction` object is at the center of `dposlib` package. It is a python dictionary containing basic functions to interact with a blockchain environement. `Transaction` class is available in `blockchain` sub package.
+`Transaction` object a center piece of `dposlib` package. It is a python dictionary containing basic functions to interact with a blockchain environement. `Transaction` class is available in `blockchain` sub package.
 
-A blockchain must be loaded first&nbsp;:
+[A blockchain must be loaded first](rest.md)
+
+Transaction object is available in `dposlib.blockchain` package&nbsp;:
 
 ```python
 >>> from dposlib import blockchain
->>> from dposlib import rest
->>> rest.use("dark")
 ```
 
-### Create a transfer transaction
+## Create a transaction
 
 ```python
 >>> tx = blockchain.Transaction()
+```
+Default transaction is a `Transfer` transaction (`type = 0`). It is a python dictionary with `__getattr__` and `__setattr__` interface implemented. Only valid transaction fields are allowed trough `Transaction` object interface.
+```python
+>>> tx
+{
+  "amount": 0,
+  "asset": {},
+  "timestamp": 1559492013,
+  "type": 0
+}
+>>> tx.amount = "11000"
+>>> tx["amount"]
+11000
+>>> tx.wrongField = "wrongValue"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\Bruno\GitHub\dpos\dposlib\blockchain\__init__.py", line 174, in __setattr__
+    self[attr] = value
+  File "C:\Users\Bruno\GitHub\dpos\dposlib\blockchain\__init__.py", line 166, in __setitem__
+    raise AttributeError("attribute %s not allowed in transaction class" % item)
+AttributeError: attribute wrongField not allowed in transaction class
+```
+
+### Available transaction types
+
+The `dposlib.core` module provides transaction builders matching available blockchain transaction types.
+
+```python
+>>> dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "vendorField value")
+{
+  "amount": 100000000,
+  "asset": {},
+  "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "timestamp": 69406298,
+  "type": 0,
+  "vendorField": "vendorField value"
+}
+>>> dposlib.core.registerSecondSecret("secondSecret")
+>>> # or
+>>> dposlib.core.registerSecondPublicKey("0292d580f200d041861d78b3de5ff31c6665b7a092ac3890d9132593beb9aa8513")
+{
+  "amount": 0,
+  "asset": {
+    "signature": {
+      "publicKey": "0292d580f200d041861d78b3de5ff31c6665b7a092ac3890d9132593beb9aa8513"
+    }
+  },
+  "timestamp": 69406435,
+  "type": 1
+}
+>>> dposlib.core.registerAsDelegate("username")
+{
+  "amount": 0,
+  "asset": {
+    "delegate": {
+      "username": "username"
+    }
+  },
+  "timestamp": 69406518,
+  "type": 2
+}
+>>> dposlib.core.upVote("username")
+{
+  "amount": 0,
+  "asset": {
+    "votes": [
+      "+02d504380b5b99fb3d839772fad3ef63b5ab1b2239b52a71e88bd96374ef0f5bfd"
+    ]
+  },
+  "timestamp": 69406610,
+  "type": 3
+}
+>>> dposlib.core.downVote("username")
+{
+  "amount": 0,
+  "asset": {
+    "votes": [
+      "-02d504380b5b99fb3d839772fad3ef63b5ab1b2239b52a71e88bd96374ef0f5bfd"
+    ]
+  },
+  "timestamp": 69406626,
+  "type": 3
+}
+```
+
+## Finalize transaction : the fast way
+
+`dposlib.blockchain.Transaction` class provides a fast and simple way to sign a transaction.
+
+```python
+>>> tx = dposlib.core.transfer(1, "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7", "vendorField value")
+>>> tx.finalize("secret", "secondSecret")
+>>> tx
+{
+  "amount": 100000000,
+  "asset": {},
+  "fee": 1089042,
+  "id": "0030817df517fc78718ffca8601c745cf879b02c77c7d4a542241c715538dd7c",
+  "recipientId": "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7",
+  "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+  "signSignature": "304402202e7fae36f102fd4d7274dc9eb1bdf2a4a5098921b1dcae48e591d604373bd629022027f94d8374890fb0a6fa7703de0a96181e4b260672ffc9f1818a11daa57db9fe",
+  "signature": "3045022100d5bdac44fe58c90b704ab4b5ef18007e7f77ba26dbfd631a7001c0cd8e71ee5602206f0794ada5cde643e289f71041bd9535635f39813c4f274fd95cd0cfbc08bb90",
+  "timestamp": 69408909,
+  "type": 0,
+  "vendorField": "vendorField value"
+}
+>>> # fee_included : fee + amount = desired amount spent
+>>> tx.finalize("secret", "secondSecret", fee_included=True)
+>>> tx
+{
+  "amount": 98910958,
+  "asset": {},
+  "fee": 1089042,
+  "id": "457361cc4c074dd7f77e89a2fb47263e01791f300299b6fc839d2703383467f3",
+  "recipientId": "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7",
+  "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+  "signSignature": "304402204e8a0719f49fc119bd0ee0065fd9dec99b945f437dd74fe794d320664bec29fd02203152c6efe95fa73b4bf7179f414560d157d18e67ac86a36b4fa39cfc2c5da4b8",
+  "signature": "3045022100a51496456a77b5141bcfb4c78ca524122b037d5aa0fc6b9ae19a279d56dc75fd02203823c284bb3d9f1b497d059c881b7af72b5b6cff7c1c4b4279fcf57f169147f4",
+  "timestamp": 69408909,
+  "type": 0,
+  "vendorField": "vendorField value"
+}
+>>> # fee can be set manualy
+>>> tx.finalize("secret", "secondSecret", fee=200000, fee_included=True)
+>>> tx
+{
+  "amount": 99800000,
+  "asset": {},
+  "fee": 200000,
+  "id": "d112c4183a786e316b016e94f681101ad92658e718034642c51347dce251ed67",
+  "recipientId": "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7",
+  "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+  "signSignature": "3045022100c13afdac19300d40f34bdaea6886ab2d87b3aa16bcf363b71ea4cb22f6f82e06022005f6fda821a4f95b645ed86e4f3c78fa75b49092e291af95015dc6561f0cdcb3",
+  "signature": "304502210098ecc65d1e502cf6a9527e491ca1a88ae349aaf7ec187f58677d9cd004f012bc0220205cb288186eb34a0a552091b7e834ea33d2b7d7d3e03b98c4347227f60bfe45",
+  "timestamp": 69408909,
+  "type": 0,
+  "vendorField": "vendorField value"
+}
+```
+
+Once signatures and id are set, the transaction is ready to be broadcasted to the blockchain.
+
+<!-- ```python
 >>> tx["amount"] = 100000000
 >>> tx["vendorField"] = "Smartbridge data"
 >>> tx["recipientId"] = "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk"
@@ -185,4 +331,4 @@ Or if you have your public and private keys&nbsp;:
   "type": 0,
   "vendorField": "Smartbridge data"
 }
-```
+``` -->

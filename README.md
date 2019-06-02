@@ -73,6 +73,8 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 {'data': {'accept': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'broadcast': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'excess': [], 'invalid': []}}
 ```
 
+[See more about transactions](doc/transaction.md)
+
 ### Network API
 
 ```python

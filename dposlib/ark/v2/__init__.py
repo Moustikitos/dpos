@@ -207,22 +207,22 @@ def downVote(*usernames):
 	)
 
 
-def upVote(*usernames):
-	return Transaction(
-		type=3,
-		asset={
-			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
-		},
-	)
+# def upVote(*usernames):
+# 	return Transaction(
+# 		type=3,
+# 		asset={
+# 			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+# 		},
+# 	)
 
 
-def downVote(*usernames):
-	return Transaction(
-		type=3,
-		asset={
-			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
-		},
-	)
+# def downVote(*usernames):
+# 	return Transaction(
+# 		type=3,
+# 		asset={
+# 			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+# 		},
+# 	)
 
 
 def registerIPFS(dag):
