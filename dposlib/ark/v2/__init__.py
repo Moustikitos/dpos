@@ -70,14 +70,14 @@ def rotate_peers():
 def init():
 	global DAEMON_PEERS
 
-	data = rest.GET.api.v2.node.configuration().get("data", {})
-	# if no network connection, load basic confivuration from local folder
-	if data == {}:
-		cfg.hotmode = False
-		data = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
-	else:
+	if len(cfg.peers):
+		data = rest.GET.api.v2.node.configuration().get("data", {})
 		cfg.hotmode = True
 		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+	# if no network connection, load basic confivuration from local folder
+	else:
+		cfg.hotmode = False
+		data = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
 
 	# no network connetcion neither local configuration files
 	if data == {}:
@@ -112,11 +112,11 @@ def init():
 
 		# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
 		if cfg.feestats == {}:
-			fees = rest.GET.api.node.fees()
-			if fees.get("success", False):
-				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
-			else:
+			if len(cfg.peers):
+				fees = rest.GET.api.node.fees()
 				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+			else:
+				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
 			cfg.feestats = dict([int(i["type"]), {
 				"avgFee": int(i["avg"]),
 				"minFee": int(i["min"]),
@@ -124,7 +124,8 @@ def init():
 				"medFee": int(i["median"])
 			}] for i in fees.get("data", []))
 
-		DAEMON_PEERS = rotate_peers()
+		if len(cfg.peers):
+			DAEMON_PEERS = rotate_peers()
 		Transaction.useDynamicFee()
 
 
