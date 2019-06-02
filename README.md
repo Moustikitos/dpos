@@ -51,7 +51,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 >>> import dposlib
 >>> # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
 >>> tx = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "message")
->>> # sign tx with secret and [optionale second secret]
+>>> # sign tx with secret and [optional second secret]
 >>> tx.finalize("secret", "secondSecret")
 >>> tx
 {
