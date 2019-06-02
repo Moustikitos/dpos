@@ -197,6 +197,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] [travis-ci](https://travis-ci.com) integration
   - [x] dposlib.core.Transaction interface improvement
   - [x] Ark v1 and v2 cross-dependency removed
+  - [x] offline work feature added
 
 ## TODO
   - [ ] doc writing

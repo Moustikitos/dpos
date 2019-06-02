@@ -5,6 +5,7 @@ import os
 import pytz
 from datetime import datetime
 
+import dposlib
 from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
@@ -47,11 +48,16 @@ TYPING = {
 
 def select_peers():
 	api_port = cfg.ports["core-api"]
-	peers = [
-		"http://%s:%s" % (p["ip"], api_port) for p in rest.GET.api.peers().get("data", []) if \
-			p.get("version", "") > cfg.minversion and \
-			rest.GET.api.node.status(peer="http://%s:%s"% (p["ip"], api_port)).get("data", {}).get("synced", False)
-	][:cfg.broadcast]
+	peers = []
+	candidates = rest.GET.api.peers().get("data", [])
+	for candidate in candidates:
+		peer = "http://%s:%s" % (candidate["ip"], api_port)
+		if candidate.get("version", "") > cfg.minversion:
+			synced = rest.GET.api.node.status(peer=peer).get("data")
+			if isinstance(synced, dict) and synced.get("synced", False):
+				peers.append(peer)
+		if len(peers) >= cfg.broadcast:
+			break
 	if len(peers):
 		cfg.peers = peers
 
@@ -72,13 +78,6 @@ def init():
 	else:
 		cfg.hotmode = True
 		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
-
-	# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
-	fees = rest.GET.api.node.fees().get("data", [])
-	if fees == []:
-		fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
-	else:
-		dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
 
 	# no network connetcion neither local configuration files
 	if data == {}:
@@ -110,14 +109,20 @@ def init():
 		# on v 2.4.x wif and slip44 are provided by network
 		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
 		if "slip44" in data: cfg.slip44 = str(data["slip44"])
-		# on v 2.4.x feestatistics moved to api.node.fees endpoint
+
+		# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
 		if cfg.feestats == {}:
+			fees = rest.GET.api.node.fees()
+			if fees.get("success", False):
+				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+			else:
+				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
 			cfg.feestats = dict([int(i["type"]), {
 				"avgFee": int(i["avg"]),
 				"minFee": int(i["min"]),
 				"maxFee": int(i["min"]),
 				"medFee": int(i["median"])
-			}] for i in fees)
+			}] for i in fees.get("data", []))
 
 		DAEMON_PEERS = rotate_peers()
 		Transaction.useDynamicFee()
