@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+import os
 import pytz
 from datetime import datetime
 
 from dposlib import rest
 from dposlib.ark import crypto
+from dposlib.ark.v2 import api
+from dposlib.ark.v2.mixin import serialize, serializePayload
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
-from dposlib.ark.v2.mixin import serialize, serializePayload
-from dposlib.ark.v2 import api
+from dposlib.util.data import loadJson, dumpJson
 
 
 DAEMON_PEERS = None
@@ -63,9 +65,25 @@ def init():
 	global DAEMON_PEERS
 
 	data = rest.GET.api.v2.node.configuration().get("data", {})
-	cfg.__data__ = data
+	# if no network connection, load basic confivuration from local folder
+	if data == {}:
+		cfg.hotmode = False
+		data = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+	else:
+		cfg.hotmode = True
+		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
 
-	if data != {}:
+	# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
+	fees = rest.GET.api.node.fees().get("data", [])
+	if fees == []:
+		fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+	else:
+		dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+
+	# no network connetcion neither local configuration files
+	if data == {}:
+		raise Exception("Initialization error")
+	else:
 		cfg.marker = hex(data["version"])[2:]
 		cfg.explorer = data["explorer"]
 		cfg.pubKeyHash = data["version"]
@@ -99,13 +117,10 @@ def init():
 				"minFee": int(i["min"]),
 				"maxFee": int(i["min"]),
 				"medFee": int(i["median"])
-			}] for i in rest.GET.api.node.fees().get("data", []))
+			}] for i in fees)
 
 		DAEMON_PEERS = rotate_peers()
 		Transaction.useDynamicFee()
-
-	else:
-		raise Exception("Initialization error")
 
 
 def stop():

@@ -78,6 +78,7 @@ def init():
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	response = rest.GET.api.loader.autoconfigure()
 	if response["success"]:
+		cfg.hotmode = True
 		network = response["network"]
 		if "version" not in cfg.headers:
 			cfg.headers["version"] = str(network.pop('version'))

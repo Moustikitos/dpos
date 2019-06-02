@@ -116,12 +116,16 @@ def serialize(tx):
 	# custom part
 	pack_bytes(buf, serializePayload(tx))
 	
-	#signatures part
+	# signatures part
 	pack_bytes(buf, unhexlify(tx["signature"]))
 	if "signSignature" in tx:
 		pack_bytes(buf, unhexlify(tx["signSignature"]))
 	elif "secondSignature" in tx:
 		pack_bytes(buf, unhexlify(tx["secondSignature"]))
+
+	# id part
+	if "id" in tx:
+		pack_bytes(buf, unhexlify(tx["id"]))
 
 	result = buf.getvalue()
 	buf.close()
