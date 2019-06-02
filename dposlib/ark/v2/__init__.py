@@ -5,9 +5,9 @@ import pytz
 from datetime import datetime
 
 from dposlib import rest
+from dposlib.ark import crypto
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
-from dposlib.ark.v1 import crypto, transfer, registerAsDelegate, registerSecondPublicKey, registerSecondSecret
 from dposlib.ark.v2.mixin import serialize, serializePayload
 from dposlib.ark.v2 import api
 
@@ -126,6 +126,63 @@ def computeDynamicFees(tx):
 	return min(
 		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
 		int((T + 50 + lenVF + len(payload)) * Transaction.FMULT)
+	)
+
+
+def transfer(amount, address, vendorField=None):
+	return Transaction(
+		type=0,
+		amount=amount*100000000,
+		recipientId=address,
+		vendorField=vendorField
+	)
+
+
+def registerSecondSecret(secondSecret):
+	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
+
+
+def registerSecondPublicKey(secondPublicKey):
+	return Transaction(
+		type=1,
+		asset={
+			"signature": {
+				"publicKey": secondPublicKey
+			}
+		}
+	)
+
+
+def registerAsDelegate(username):
+	return Transaction(
+		type=2,
+		asset={
+			"delegate": {
+				"username": username
+			}
+		}
+	)
+
+
+def upVote(*usernames):
+	return Transaction(
+		type=3,
+		asset={
+			"votes": {
+				"username": ["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			}
+		}
+	)
+
+
+def downVote(*usernames):
+	return Transaction(
+		type=3,
+		asset={
+			"votes": {
+				"username": ["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
+			}
+		}
 	)
 
 

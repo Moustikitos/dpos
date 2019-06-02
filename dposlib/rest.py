@@ -215,15 +215,18 @@ def load(family_name):
 		except Exception as e:
 			sys.stdout.write("%r\n" % e)
 		del sys.modules[__package__].core
-
 	# initialize blockchain familly package
 	try:
 		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
-		sys.modules[__package__].core.init()
-	except Exception as e:
-		sys.stdout.write("%r\n" % e)
-		raise Exception("%s is in readonly mode" % family_name)
-
+	except ImportError as e:
+		raise Exception("%s package not found" % family_name)
+	else:
+		try:
+			sys.modules[__package__].core.init()
+			cfg.hotmode = True
+		except:
+			cfg.hotmode = False
+			sys.stdout.write("Network connection disabled\n")
 	# delete real package name loaded to keep namespace clear
 	try:
 		sys.modules[__package__].__delattr__(family_name)
@@ -282,10 +285,8 @@ def use(network, **kwargs):
 	if len(cfg.peers):
 		data.pop("peers", [])
 		data.pop("seeds", [])
-		# store options in cfg module
 		cfg.network = network
-		cfg.hotmode = True
 	else:
-		raise Exception("No network connection...")
+		return False
 	
 	return True

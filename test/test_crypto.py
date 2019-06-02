@@ -88,11 +88,11 @@ class TestEcdsaCrypto(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(self):
-		# initialize on ark devnet
-		rest.use("dark")
 		# secrets used for testing
 		self.secret = "secret"
 		self.secondSecret = "secondSecret"
+		# initialize on ark devnet
+		rest.use("dark")
 
 	def test_get_address(self):
 		self.assertEqual(
