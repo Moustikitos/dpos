@@ -116,7 +116,7 @@ class Transaction(dict):
 	def load(txid):
 		"""Loads the transaction identified by txid from current registry."""
 		data = loadJson(Transaction.path())[txid]
-		data["senderId"] = dposlib.core.crypto.getAddress(data["publicKey"], marker=data.pop("network", False))
+		data["senderId"] = dposlib.core.crypto.getAddress(data["senderPublicKey"], marker=data.pop("network", False))
 		return Transaction(data)
 
 	def __repr__(self):
@@ -283,7 +283,10 @@ class Transaction(dict):
 			pathfile = Transaction.path()
 			data = dict(self)
 			data.pop("senderId", False)
-			data.network = int(dposlib.rest.cfg.marker, base=16)
+			data.pop("signature", False)
+			data.pop("signSignature", False)
+			data.pop("id", False)
+			data["network"] = int(dposlib.rest.cfg.marker, base=16)
 			registry = loadJson(pathfile)
 			registry[id_] = data
 			dumpJson(registry, pathfile)
