@@ -32,44 +32,48 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
       - [x] Ripa : `ripa`
       - [x] Phantom : `xph`
 
-## Overview
+## Main features
 
-**Import REST API**
+### An intuitive REST API
 ```python
 >>> from dposlib import rest
 >>> rest.use("dark")
+>>> # ~/api/delegates/darktoons endpoint
+>>> rest.GET.api.delegates.darktoons()
+{'data': {'username': 'darktoons', 'address': 'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', 'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'votes': 9385785081642, 'rank': 45, 'blocks': {'produced': 32015, 'last': {'id': '9d5085e503e09c656152b541bc243155f560347aa8b377d3f2f9a1cb71900d90', 'height': 2544602, 'timestamp': {'epoch': 69406864, 'unix': 1559508064, 'human': '2019-06-02T20:41:04.000Z'}}}, 'production': {'approval': 0.07}, 'forged': {'fees': 14640580130, 'rewards': 6403000000000, 'total': 6417640580130}}}
+>>> # ~/api/node/fees endpoint
+>>> rest.GET.api.node.fees()
+{'meta': {'days': 7}, 'data': [{'type': '0', 'min': '200000', 'max': '10000000', 'avg': '1089596', 'sum': '14887144978', 'median': '460000'}, {'type': '1', 'min': '500000000', 'max': '500000000', 'avg': '500000000', 'sum': '313500000000', 'median': '500000000'}, {'type': '3', 'min': '10000000', 'max': '100000000', 'avg': '58541781', 'sum': '1756253430', 'median': '61114510'}]}
 ```
 
-**Bake Transaction:**
+### Fast way to interact with blockchain
 ```python
->>> from dposlib.blockchain import Transaction
->>> tx = Transaction(
-... amount=100000000,
-... recipientId="DRgh1n8oyGHDE6xXVq4yhh3sSajAr7uHJY",
-... secret="secret",
-... secondSecret="secondSecret")
->>> tx.finalize()
+>>> import dposlib
+>>> # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
+>>> tx = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "message")
+>>> # sign tx with secret and [optionale second secret]
+>>> tx.finalize("secret", "secondSecret")
 >>> tx
 {
   "amount": 100000000,
-  "fee": 1830000,
-  "id": "5a90ea87fb8848c3402e5d6da5d34651eee01124387aa4f499c84621e03dd791",
-  "recipientId": "DRgh1n8oyGHDE6xXVq4yhh3sSajAr7uHJY",
+  "asset": {},
+  "fee": 1090241,
+  "id": "1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d",
+  "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
   "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-  "signSignature": "3045022100f297bf2241eb1603c4e91552416bbd900f1335684d3bb8751a043b5ae4569948022067c166322df1374222589d81b4ea52d56d93db8eab7be59a258420cbc6217360",
-  "signature": "304402205e609776d7d04a659ab8057e269c26e8b611ed4952ffb6b1af9c9bca19a9e3c50220755b8e2a10783bab0e7da95229e358d8e9e4628241a39640869fb8bf856a953a",
-  "timestamp": 45690392,
-  "type": 0
+  "signSignature": "3045022100a8dd9c50b18002bd6f8ffe9f1c0700cafb95de18670b48fa76afd85c3003a2d202200a1cc102c13857a38d8311a5c80a9222329f0c53f3305c70c91979efd5288d21",
+  "signature": "304402206576aee7893f3c038d58a6def5180881077531c4b1ebe87e835da2dbe40d0670022064ae37be3f160b0c969459e06912ee619997ccf303e6d919135cdf594a74b77d",
+  "timestamp": 69407340,
+  "type": 0,
+  "vendorField": "message"
 }
-```
-
-**Broadcast transaction**
-```python
+>>> # broadcast transaction
 >>> rest.POST.api.transactions(transactions=[tx])
-{'data': {'broadcast': ['5a90ea87fb8848c3402e5d6da5d34651eee01124387aa4f499c84621e03dd791'], 'excess': [], 'invalid': [], 'accept': []}}
+{'data': {'accept': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'broadcast': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'excess': [], 'invalid': []}}
 ```
 
-## Network API
+### Network API
 
 ```python
 >>> rest.use("ark")
@@ -113,7 +117,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
 ```
 
-## Ledger Nano S API
+### Ledger Nano S integration
 
 ```python
 >>> rest.use("dark")
