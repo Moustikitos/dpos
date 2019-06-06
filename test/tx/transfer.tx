@@ -1,9 +1,0 @@
-{
-    "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-    "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
-    "timestamp": 60644480,
-    "asset": {},
-    "type": 0,
-    "amount": 100000000,
-    "vendorField": "unittest transaction"
-}

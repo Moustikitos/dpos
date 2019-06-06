@@ -199,11 +199,13 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] added ledger nano S support (transaction type 0, 1, 2 & 3)
   - [x] peer selection now checks syncing status
 
-### 0.1.9  [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.1.9
   - [x] [travis-ci](https://travis-ci.com) integration
   - [x] dposlib.core.Transaction interface improvement
   - [x] Ark v1 and v2 cross-dependency removed
   - [x] offline work feature added
+
+### 0.2.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] doc writing
