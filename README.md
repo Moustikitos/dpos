@@ -28,9 +28,9 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
     * mainet : `ark`
     * devnet : `dark`
     * forks
-      - [x] Persona : `prs`
+      - [x] Persona : `persona`
       - [x] Ripa : `ripa`
-      - [x] Phantom : `xph`
+      - [x] Phantom : `phantom`
 
 ## Main features
 
@@ -205,10 +205,12 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] Ark v1 and v2 cross-dependency removed
   - [x] offline work feature added
 
-### 0.2.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.2.0
   - [x] ark.v2 api improvement
   - [x] dposlib.util.misc module improvement
-  - [x] upVote and downVote bugfix
+  - [x] upVote/downVote bugfix
+
+### 0.2.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] doc writing
