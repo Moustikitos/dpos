@@ -19,8 +19,8 @@ class Wallet(dposlib.blockchain.Wallet):
 		return Delegate(self.username) if self.isDelegate else None
 
 	def transactions(self, limit=50):
-		sent = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).__getattr__("transactions").__getattr__("sent"), limit=limit)
-		received = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).__getattr__("transactions").__getattr__("received"), limit=limit)
+		sent = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.sent, limit=limit)
+		received = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.received, limit=limit)
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
@@ -61,7 +61,7 @@ class Delegate(dposlib.blockchain.Data):
 		return filter_dic(self._Data__dict["forged"])
 
 	def voters(self):
-		voters = misc.loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).__getattr__("voters"))
+		voters = misc.loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).voters)
 		return list(sorted([filter_dic(dic) for dic in voters], key=lambda e:e["balance"], reverse=True))
 	
 	def lastBlocks(self, limit=50):
@@ -81,7 +81,7 @@ class Block(dposlib.blockchain.Data):
 		return Block(self._Data__dict["previous"])
 
 	def transactions(self):
-		return dposlib.rest.GET.api.blocks(self.id, "transactions", returnKey="data")
+		return [filter_dic(dic) for dic in misc.loadPages(dposlib.rest.GET.api.blocks.__getattr__(self.id).transactions, limit=False)]
 
 
 class Webhook(dposlib.blockchain.Data):

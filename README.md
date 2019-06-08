@@ -133,7 +133,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   "publicKey": "025993c687f1e3418e0aa47b6ab091e414b51c45b32a107745c01c124652112c7a",
 }
 >>> ldg.derivationPath
-"44'/1'/0'/0'/0"
+"44'/1'/1'/0'/0"
 >>> ldg.send(1, "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7")
 ```
 <img src="ledger_confirm.png" />
