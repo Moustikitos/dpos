@@ -23,7 +23,7 @@ class TestDposApi(unittest.TestCase):
 		self.secret = "secret"
 		self.secondSecret = "secondSecret"
 		# initialize on ark devnet
-		if rest.use("dark"):
+		if rest.use("d.ark"):
 			self.wallet = dposlib.core.api.Wallet(
 				dposlib.core.crypto.getAddress(dposlib.core.crypto.getKeys(self.secret)["publicKey"])
 			)
@@ -35,7 +35,7 @@ class TestDposApi(unittest.TestCase):
 				self.assertEqual(rest.use(name), True)
 			except Exception as e:
 				sys.stdout.write("%s network failed...\n" % name)
-		rest.use("dark")
+		rest.use("d.ark")
 
 	@connection_enabled
 	def test_wallet(self):

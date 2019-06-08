@@ -92,7 +92,7 @@ class TestEcdsaCrypto(unittest.TestCase):
 		self.secret = "secret"
 		self.secondSecret = "secondSecret"
 		# initialize on ark devnet
-		rest.use("dark")
+		rest.use("d.ark")
 
 	def test_get_address(self):
 		self.assertEqual(

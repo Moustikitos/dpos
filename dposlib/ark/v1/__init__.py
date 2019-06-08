@@ -37,34 +37,24 @@ TYPING = {
 
 
 def select_peers():
-	version = rest.GET.api.peers.version(returnKey='version') or '0.0.0'
-	height = rest.GET.api.blocks.getHeight(returnKey='height') or 0
+	version = rest.GET.api.peers.version().get('version', '0.0.0')
+	height = rest.GET.api.blocks.getHeight().get('height', 0)
 	if isinstance(height, dict) or isinstance(version, dict):
 		return
-
-	peers = rest.GET.peer.list().get('peers', [])
-	good_peers = []
-	for peer in peers:
-		if (
-			peer.get("delay", 6000) <= cfg.timeout * 1000 and peer.get("version") == version and
+		
+	good_peers = list(sorted([
+		peer for peer in rest.GET.api.peers().get('peers', []) if (
+			peer.get("delay", 6000) <= cfg.timeout * 1000 and peer.get("version") == version and \
 			peer.get("height", -1) > height - 10
-		):
-			good_peers.append(peer)
+		)
+	], key=lambda e: e["delay"]))
 
-	good_peers = sorted(good_peers, key=lambda e: e["delay"])
-
-	min_selection = getattr(cfg, "broadcast", 0)
-	selection = []
-	for peer in good_peers:
-		peer = "http://{ip}:{port}".format(**peer)
-		if rest.check_latency(peer):
-			selection.append(peer)
-
-		if len(selection) >= min_selection:
-			break
-
-	if len(selection) >= min_selection:
-		cfg.peers = selection
+	min_selection = getattr(cfg, "broadcast", 10)
+	if len(good_peers) >= min_selection:
+		cfg.peers = [
+			"http://%(ip)s:%(port)s" % {"ip":peer["ip"], "port":rest.cfg.port} for \
+			peer in good_peers[:min_selection]
+		]
 
 
 @setInterval(30)
@@ -80,12 +70,12 @@ def init():
 	if response["success"]:
 		cfg.hotmode = True
 		network = response["network"]
-		if "version" not in cfg.headers:
-			cfg.headers["version"] = str(network.pop('version'))
+		cfg.headers["version"] = str(network.pop('version'))
 		cfg.headers["nethash"] = network.pop('nethash')
 		cfg.headers["API-Version"] = "1"
 		cfg.__dict__.update(network)
 		cfg.fees = rest.GET.api.blocks.getFees()["fees"]
+
 		# select peers immediately and keep refreshing them in a thread so we
 		# are sure we make requests to working peers
 		select_peers()
