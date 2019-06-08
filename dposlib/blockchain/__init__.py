@@ -331,10 +331,10 @@ class Data:
 
 	def __init__(self, endpoint, *args, **kwargs):
 		track = kwargs.pop("track", Data.TRACK)
-		self.__dict = dict(**endpoint(*args, **kwargs))
 		self.__endpoint = endpoint
 		self.__kwargs = kwargs
 		self.__args = args
+		self.__dict = self._get_result()
 
 		if Data.EVENT == False:
 			Data.EVENT = self.heartbeat()
@@ -351,8 +351,18 @@ class Data:
 			try: return Data.__getattribute__(attr)
 			except: return None
 
+	def _get_result(self):
+		if dposlib.rest.cfg.familly == "lisk.v10":
+			result = self.__endpoint(*self.__args, **self.__kwargs)
+			if isinstance(result, list):
+				return result[0]
+			elif isinstance(result, dict):
+				return result
+		else:
+			return self.__endpoint(*self.__args, **self.__kwargs)
+
 	def update(self):
-		result = self.__endpoint(*self.__args, **self.__kwargs)
+		result = self._get_result()
 		for key in [k for k in self.__dict if k not in result]:
 			self.__dict.pop(key, False)
 		self.__dict.update(**result)
@@ -367,9 +377,6 @@ class Data:
 class Wallet(Data):
 
 	unlink = staticmethod(Transaction.unlink)
-
-	def __init__(self, address, **kw):
-		Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
 	def link(self, secret=None, secondSecret=None):
 		self.unlink()
@@ -450,13 +457,6 @@ class Wallet(Data):
 
 
 class NanoS(Wallet):
-
-	def __init__(self, network, account, index, **kw):
-		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (cfg.slip44, getattr(dposlib.rest.cfg, "aip20", network), account, index)
-		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
-		self.debug = kw.pop("debug", False)
-		Wallet.__init__(self, self.address, **kw)
 
 	@staticmethod
 	def fromDerivationPath(derivationPath, **kw):
