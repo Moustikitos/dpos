@@ -24,7 +24,7 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
-class NanoS(dposlib.blockchain.NanoS):
+class NanoS(Wallet, dposlib.blockchain.NanoS):
 
 	def __init__(self, account, index, network=1, **kw):
 		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
@@ -36,7 +36,7 @@ class NanoS(dposlib.blockchain.NanoS):
 		)
 		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
 		self.debug = kw.pop("debug", False)
-		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.wallets, self.address, **dict({"returnKey":"data"}, **kw))
+		Wallet.__init__(self, self.address, **kw)
 
 	@staticmethod
 	def fromDerivationPath(derivationPath, **kw):

@@ -7,29 +7,57 @@ from dposlib import rest
 from dposlib.blockchain import slots
 
 
-def loadPages(endpoint, pages=None, quiet=True, nb_tries=10, limit=False):
-	if not isinstance(endpoint, rest.EndPoint):
-		raise Exception("Invalid endpoint class")
-	count, pageCount, data = 0, 1, []
-	while count < pageCount:
-		req = endpoint.__call__(page=count+1)
-		if req.get("error", False):
-			nb_tries -= 1
-			if not quiet:
-				zen.logMsg("Api error occured... [%d tries left]" % nb_tries)
-			if nb_tries <= 0:
-				raise Exception("Api error occured: %r" % req)
+class DataIterator:
+
+	def __init__(self, endpoint, tries=10):
+		if not isinstance(endpoint, rest.EndPoint):
+			raise Exception("Invalid endpoint class")
+		self.endpoint = endpoint
+		self.data = {}
+		self.page = 0
+		self.errors = 0
+		self.tries = tries
+
+	def __next__(self):
+		if not self.data.get("meta", {}).get("next", None) and self.page:
+			raise StopIteration("End of data reached")
 		else:
-			pageCount = req["meta"]["pageCount"]
-			if isinstance(pages, int):
-				pageCount = min(pages, pageCount)
-			if not quiet:
-				zen.logMsg("reading page %s over %s" % (count+1, pageCount))
-			data.extend(req.get("data", []))
-			count += 1
-		if limit and limit < len(data):
-			return data[:limit]
-	return data
+			self.page += 1
+			data = self.endpoint(page=self.page)
+			if not data.get("error", False):
+				self.errors += 1
+				self.data = data
+		return self.data.get("data", [])
+
+	def __iter__(self):
+		while True:
+			try:
+				yield next(self)
+			except:
+				break
+			else:
+				if self.errors > self.tries:
+					raise Exception("Too much unsuccesfull tries")
+
+
+def loadPages(endpoint, pages=False, nb_tries=10, limit=False):
+	data_iterator = DataIterator(endpoint, nb_tries)
+	data = []
+	while True:
+		try:
+			if limit and len(data) > limit:
+				break
+			_data = next(data_iterator)
+		except StopIteration:
+			break
+		else:
+			if not pages or data_iterator.page <= pages:
+				data.extend(_data)
+			else:
+				break
+				
+	return data[:limit]
+	# return data
 
 
 def deltas():
