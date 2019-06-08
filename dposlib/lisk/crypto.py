@@ -10,7 +10,7 @@ from dposlib.util.bin import hexlify, pack, pack_bytes, unhexlify
 from nacl.bindings import crypto_sign_BYTES
 from nacl.bindings.crypto_sign import crypto_sign, crypto_sign_seed_keypair
 
-from six import BytesIO
+from dposlib import BytesIO
 
 
 def getKeys(secret, seed=None):
