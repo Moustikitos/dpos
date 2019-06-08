@@ -11,17 +11,10 @@
 	},
 
 	"seeds": [
-		"https://node01.lisk.io",
-		"https://node02.lisk.io",
-		"https://node03.lisk.io",
-		"https://node04.lisk.io",
-		"https://node05.lisk.io",
-		"https://node06.lisk.io",
-		"https://node07.lisk.io",
-		"https://node08.lisk.io"
+		"https://testnet.lisk.io"
 	],
 
-	"explorer": "https://explorer.lisk.io",
+	"explorer": "https://texplorer.lisk.io",
 	"token": "lisk",
 	"symbol": "Ⱡ",
 	"delegate": 101,

@@ -16,14 +16,17 @@
 
 	"headers": {
 		"nethash": "5e67037fd290ba7ab378e84a591d251c46eb9770eb134983771fd602233bf193",
-		"Content-Type": "application/json; charset=utf-8",
-		"port": "4101",
-		"version": "1"
+		"port": "4101"
 	},
 
-	"port": 4101,
+	"port": 4103,
 	"peers": [
-		"http://52.42.208.237"
+		"35.163.173.247",
+		"116.203.33.4",
+		"116.203.56.119",
+		"116.203.58.165",
+		"159.69.89.111",
+		"159.69.89.41"
 	],
 
 	"explorer": "https://explorer.qredit.io",
