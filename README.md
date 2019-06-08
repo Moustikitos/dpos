@@ -24,13 +24,21 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ## Available network
 
-  - [x] Ark
+  - [x] Ark (transaction type `0`, `1`, `2`, `3`)
     * mainet : `ark`
-    * devnet : `dark`
+    * devnet : `d.ark`
     * forks
-      - [x] Persona : `persona`
-      - [x] Ripa : `ripa`
-      - [x] Phantom : `phantom`
+      + [x] Persona : `persona`
+      + [x] Ripa : `ripa`
+      + [x] Phantom : `phantom`
+      + [x] Qredit : `qredit`
+  - [x] Lisk (transaction type `0`)
+    * mainet : `lisk`
+    * testnet : `t.lisk`
+    * forks
+      + [x] shift
+        - mainnet : `shift`
+        - testnet : `t.shift`
 
 ## Main features
 
@@ -211,6 +219,8 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] upVote/downVote bugfix
 
 ### 0.2.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] added `lisk` blockchain
+  - [x] added `shift`, `t.shift` and `qredit` network
 
 ## TODO
   - [ ] doc writing
