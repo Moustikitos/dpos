@@ -1,5 +1,6 @@
 requests
 ecdsa
+pynacl
 pytz
 base58
 ledgerblue

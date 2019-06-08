@@ -413,15 +413,6 @@ class Wallet(Data):
 		else:
 			Transaction.useDynamicFee(fee_level)
 
-	def transactions(self, limit=50):
-		received, sent, count = [], [], 0
-		while count < limit:
-			sent.extend(dposlib.rest.GET.api.transactions(senderId=self.address, orderBy="timestamp:desc", returnKey="transactions", offset=len(sent)))
-			received.extend(dposlib.rest.GET.api.transactions(recipientId=self.address, orderBy="timestamp:desc", returnKey="transactions", offset=len(received)))
-			tmpcount = len(sent)+len(received)
-			count = limit if count == tmpcount else tmpcount
-		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
-
 	def _finalizeTx(self, tx, fee=None, fee_included=False):
 		tx.finalize(fee=fee, fee_included=fee_included)
 		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))

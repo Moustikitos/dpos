@@ -10,6 +10,39 @@ from dposlib.blockchain import Transaction, slots, cfg
 from dposlib.util.bin import pack, pack_bytes, unhexlify, hexlify
 
 
+class DataIterator:
+
+	def __init__(self, endpoint, tries=10):
+		if not isinstance(endpoint, rest.EndPoint):
+			raise Exception("Invalid endpoint class")
+		self.endpoint = endpoint
+		self.data = {}
+		self.page = 0
+		self.errors = 0
+		self.tries = tries
+
+	def __next__(self):
+		if not self.data.get("meta", {}).get("next", None) and self.page:
+			raise StopIteration("End of data reached")
+		else:
+			self.page += 1
+			data = self.endpoint(page=self.page)
+			if not data.get("error", False):
+				self.errors += 1
+				self.data = data
+		return self.data.get("data", [])
+
+	def __iter__(self):
+		while True:
+			try:
+				yield next(self)
+			except:
+				break
+			else:
+				if self.errors > self.tries:
+					raise Exception("Too much unsuccesfull tries")
+
+
 def serializePayload(tx):
 	asset = tx.get("asset", {})
 	buf = BytesIO()
@@ -130,3 +163,25 @@ def serialize(tx):
 	result = buf.getvalue()
 	buf.close()
 	return result
+
+
+def loadPages(endpoint, pages=False, nb_tries=10, limit=False):
+	data_iterator = DataIterator(endpoint, nb_tries)
+	data = []
+	while True:
+		try:
+			if limit and len(data) > limit:
+				break
+			_data = next(data_iterator)
+		except StopIteration:
+			break
+		else:
+			if not pages or data_iterator.page <= pages:
+				data.extend(_data)
+			else:
+				break
+				
+	if limit:
+		return data[:limit]
+	else:
+		return data

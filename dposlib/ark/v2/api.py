@@ -8,6 +8,7 @@ import dposlib
 from dposlib import ldgr
 from dposlib.util import misc
 from dposlib.util.data import filter_dic, loadJson, dumpJson
+from dposlib.ark.v2.mixin import loadPages
 
 
 class Wallet(dposlib.blockchain.Wallet):

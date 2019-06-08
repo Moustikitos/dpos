@@ -35,7 +35,7 @@ kw = {
 	"install_requires": [
 		"requests",
 		"ecdsa",
-		# "pynacl",
+		"pynacl",
 		"pytz",
 		"base58",
 		"ledgerblue"
