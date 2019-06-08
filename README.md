@@ -206,6 +206,9 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] offline work feature added
 
 ### 0.2.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] ark.v2 api improvement
+  - [x] dposlib.util.misc module improvement
+  - [x] upVote and downVote bugfix
 
 ## TODO
   - [ ] doc writing
