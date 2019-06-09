@@ -78,3 +78,183 @@ def getBytes(tx):
 	result = buf.getvalue()
 	buf.close()
 	return result
+
+
+	# function isSignatureTransaction () {
+	# 	var bb = new ByteBuffer(32, true);
+	# 	var publicKey = transaction.asset.signature.publicKey;
+	# 	var publicKeyBuffer = Buffer.from(publicKey, 'hex');
+
+	# 	for (var i = 0; i < publicKeyBuffer.length; i++) {
+	# 		bb.writeByte(publicKeyBuffer[i]);
+	# 	}
+
+	# 	bb.flip();
+	# 	var signatureBytes = new Uint8Array(bb.toArrayBuffer());
+
+	# 	return {
+	# 		assetBytes: signatureBytes,
+	# 		assetSize: 32
+	# 	};
+	# }
+
+	# /**
+	#  * @method isDelegateTransaction
+	#  * @return {object}
+	#  */
+
+	# function isDelegateTransaction () {
+	# 	return {
+	# 		assetBytes: Buffer.from(transaction.asset.delegate.username),
+	# 		assetSize: Buffer.from(transaction.asset.delegate.username).length
+	# 	};
+	# }
+
+	# /**
+	#  * @method isVoteTransaction
+	#  * @return {object}
+	#  */
+
+	# function isVoteTransaction () {
+	# 	var voteTransactionBytes = (Buffer.from(transaction.asset.votes.join('')) || null);
+
+	# 	return {
+	# 		assetBytes: voteTransactionBytes,
+	# 		assetSize: (voteTransactionBytes.length || 0)
+	# 	};
+	# }
+
+	# /**
+	#  * @method isMultisignatureTransaction
+	#  * @return {object}
+	#  */
+
+	# function isMultisignatureTransaction () {
+	# 	var MINSIGNATURES = 1;
+	# 	var LIFETIME = 1;
+	# 	var keysgroupBuffer = Buffer.from(transaction.asset.multisignature.keysgroup.join(''), 'utf8');
+
+	# 	var bb = new ByteBuffer(MINSIGNATURES + LIFETIME + keysgroupBuffer.length, true);
+	# 	bb.writeByte(transaction.asset.multisignature.min);
+	# 	bb.writeByte(transaction.asset.multisignature.lifetime);
+	# 	for (var i = 0; i < keysgroupBuffer.length; i++) {
+	# 		bb.writeByte(keysgroupBuffer[i]);
+	# 	}
+	# 	bb.flip();
+
+	# 	bb.toBuffer();
+	# 	var multiSigBuffer = new Uint8Array(bb.toArrayBuffer());
+
+	# 	return {
+	# 		assetBytes: multiSigBuffer,
+	# 		assetSize: multiSigBuffer.length
+	# 	};
+	# }
+
+	# /**
+	#  * @method isDappTransaction
+	#  * @return {object}
+	#  */
+
+	# function isDappTransaction () {
+	# 	var dapp = transaction.asset.dapp;
+	# 	var buf = new Buffer([]);
+	# 	var nameBuf = Buffer.from(dapp.name);
+	# 	buf = Buffer.concat([buf, nameBuf]);
+
+	# 	if (dapp.description) {
+	# 		var descriptionBuf = Buffer.from(dapp.description);
+	# 		buf = Buffer.concat([buf, descriptionBuf]);
+	# 	}
+
+	# 	if (dapp.tags) {
+	# 		var tagsBuf = Buffer.from(dapp.tags);
+	# 		buf = Buffer.concat([buf, tagsBuf]);
+	# 	}
+
+	# 	if (dapp.link) {
+	# 		buf = Buffer.concat([buf, Buffer.from(dapp.link)]);
+	# 	}
+
+	# 	if (dapp.icon) {
+	# 		buf = Buffer.concat([buf, Buffer.from(dapp.icon)]);
+	# 	}
+
+	# 	var bb = new ByteBuffer(4 + 4, true);
+	# 	bb.writeInt(dapp.type);
+	# 	bb.writeInt(dapp.category);
+	# 	bb.flip();
+
+	# 	buf = Buffer.concat([buf, bb.toBuffer()]);
+
+	# 	return {
+	# 		assetBytes: buf,
+	# 		assetSize: buf.length
+	# 	};
+	# }
+
+	# /**
+	#  * @method isDappTransferTransaction
+	#  * @return {object}
+	#  */
+
+	# function isDappTransferTransaction () {
+	# 	var arrayBuf = new Buffer([]);
+	# 	var dappBuffer = Buffer.from(transaction.asset.dapptransfer.dappid);
+	# 	arrayBuf = Buffer.concat([arrayBuf, dappBuffer]);
+
+	# 	return {
+	# 		assetBytes: arrayBuf,
+	# 		assetSize: arrayBuf.length
+	# 	};
+	# }
+
+	# /**
+	#  * @method isLockTransaction
+	#  * @return {object}
+	#  */
+
+	# function isLockTransaction () {
+	# 	var lock = transaction.asset.lock;
+
+	# 	var byteBuf = new ByteBuffer(8, true);
+	# 	byteBuf.writeUint64(lock.bytes, 0);
+	# 	var arrayBuf = Buffer.from(new Uint8Array(byteBuf.toArrayBuffer()));
+
+	# 	return {
+	# 		assetBytes: arrayBuf,
+	# 		assetSize: arrayBuf.length
+	# 	};
+	# }
+
+	# /**
+	#  * @method isPinTransaction
+	#  * @return {object}
+	#  */
+
+	# function isPinTransaction () {
+	# 	var pin = transaction.asset.pin;
+	# 	var arrayBuf = new Buffer([]);
+
+	# 	var hashBuf = Buffer.from(pin.hash.toString(), 'utf8');
+	# 	arrayBuf = Buffer.concat([arrayBuf, hashBuf]);
+
+	# 	var byteBuf = new ByteBuffer(8, true);
+	# 	byteBuf.writeUint64(pin.bytes, 0);
+	# 	byteBuf = Buffer.from(new Uint8Array(byteBuf.toArrayBuffer()));
+
+	# 	arrayBuf = Buffer.concat([arrayBuf, byteBuf]);
+
+	# 	if (pin.parent) {
+	# 		var parentBuf = new ByteBuffer(8, true);
+	# 		parentBuf.writeUint64(pin.parent, 0);
+	# 		parentBuf = Buffer.from(new Uint8Array(parentBuf.toArrayBuffer()));
+
+	# 		arrayBuf = Buffer.concat([arrayBuf, parentBuf]);
+	# 	}
+
+	# 	return {
+	# 		assetBytes: arrayBuf,
+	# 		assetSize: arrayBuf.length
+	# 	};
+	# }

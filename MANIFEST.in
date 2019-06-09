@@ -1,2 +1,3 @@
 recursive-include dposlib *.net
+include .cold/*
 include VERSION

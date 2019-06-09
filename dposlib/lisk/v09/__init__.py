@@ -8,6 +8,7 @@ import dposlib
 
 from datetime import datetime
 
+import dposlib
 from dposlib import rest
 from dposlib.lisk import crypto
 from dposlib.lisk.v09 import api
@@ -38,15 +39,25 @@ TYPING = {
 
 
 def init():
-	Transaction.DFEES = False
-
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
-	resp = rest.GET.api.blocks.getNethash()
+
+	if len(cfg.peers):
+		resp = rest.GET.api.blocks.getNethash()
+		cfg.hotmode = resp.get("success", False)
+		dumpJson(resp, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v09.cfg"))
+	else:
+		cfg.hotmode = False
+		resp = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v09.cfg"))
+
 	if resp.get("success", False):
-		cfg.hotmode = True
 		cfg.headers["version"] = str(rest.GET.api.peers.version(returnKey="version"))
 		cfg.headers["nethash"] = resp["nethash"]
-		cfg.fees = rest.GET.api.blocks.getFees()["fees"]
+		if len(cfg.peers):
+			cfg.fees = rest.GET.api.blocks.getFees().get("fees", {})
+			dumpJson(cfg.fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v09.fee"))
+		else:
+			cfg.fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v09.fee"))
+		Transaction.useStaticFee()
 
 
 def stop():

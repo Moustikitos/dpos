@@ -73,11 +73,11 @@ def init():
 	if len(cfg.peers):
 		data = rest.GET.api.v2.node.configuration().get("data", {})
 		cfg.hotmode = True
-		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg"))
 	# if no network connection, load basic confivuration from local folder
 	else:
 		cfg.hotmode = False
-		data = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+		data = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg"))
 
 	# no network connetcion neither local configuration files
 	if data == {}:
@@ -114,9 +114,9 @@ def init():
 		if cfg.feestats == {}:
 			if len(cfg.peers):
 				fees = rest.GET.api.node.fees()
-				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
 			else:
-				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".fee"))
+				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
 			cfg.feestats = dict([int(i["type"]), {
 				"avgFee": int(i["avg"]),
 				"minFee": int(i["min"]),

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-
+import os
 import pytz
-
 from datetime import datetime
 
+import dposlib
 from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.ark.v1 import api
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
+from dposlib.util.data import loadJson, dumpJson
 
 
 DAEMON_PEERS = None
@@ -64,17 +65,26 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
-
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
-	response = rest.GET.api.loader.autoconfigure()
-	if response["success"]:
-		cfg.hotmode = True
-		network = response["network"]
+
+	if len(cfg.peers):
+		network = rest.GET.api.loader.autoconfigure().get("network", {})
+		cfg.hotmode = True if len(network) else False
+		dumpJson(network, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v1.cfg"))
+	else:
+		cfg.hotmode = False
+		network = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v1.cfg"))
+
+	if len(network):
 		cfg.headers["version"] = str(network.pop('version'))
 		cfg.headers["nethash"] = network.pop('nethash')
 		cfg.headers["API-Version"] = "1"
 		cfg.__dict__.update(network)
-		cfg.fees = rest.GET.api.blocks.getFees()["fees"]
+		if len(cfg.peers):
+			cfg.fees = rest.GET.api.blocks.getFees().get("fees", {})
+			dumpJson(cfg.fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v1.fee"))
+		else:
+			cfg.fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v1.fee"))
 
 		# select peers immediately and keep refreshing them in a thread so we
 		# are sure we make requests to working peers

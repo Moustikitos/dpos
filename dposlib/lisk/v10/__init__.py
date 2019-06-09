@@ -38,15 +38,13 @@ TYPING = {
 
 
 def init():
-	Transaction.DFEES = False
-
 	if len(cfg.peers):
 		constants = rest.GET.api.node.constants().get("data", {})
 		cfg.hotmode = True
-		dumpJson(constants, os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+		dumpJson(constants, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v10.cfg"))
 	else:
 		cfg.hotmode = False
-		constants = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".cfg"))
+		constants = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v10.cfg"))
 
 	if len(constants):
 		cfg.begintime = pytz.utc.localize(datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:00.000Z"))
@@ -54,6 +52,7 @@ def init():
 		cfg.headers["version"] = str(constants["version"])
 		cfg.fees = constants["fees"]
 		cfg.blockreward = int(constants["reward"]) / 100000000.
+		Transaction.useStaticFee()
 
 
 def stop():
