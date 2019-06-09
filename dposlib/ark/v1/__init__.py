@@ -91,6 +91,19 @@ def stop():
 		DAEMON_PEERS.set()
 
 
+def broadcastTransactions(*transactions, **params):
+	chunk_size = params.pop("chunk_size", 20)
+	report = []
+
+	for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
+		response = rest.POST.peer.transactions(transactions=chunk)
+		report.append(response)
+	
+	return None if len(report) == 0 else \
+		   report[0] if len(report) == 1 else \
+		   report
+
+
 def transfer(amount, address, vendorField=None):
 	return Transaction(
 		type=0,

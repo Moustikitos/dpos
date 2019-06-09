@@ -150,6 +150,23 @@ def computeDynamicFees(tx):
 	)
 
 
+def broadcastTransactions(*transactions, **params):
+	serialized = params.pop("serialzed", False)
+	chunk_size = params.pop("chunk_size", 20)
+	report = []
+	if serialized:
+		transactions = [serialize(tx) for tx in transactions]
+		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
+			pass
+	else:
+		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
+			response = rest.POST.api.transactions(transactions=chunk)
+			report.append(response)
+	return None if len(report) == 0 else \
+		   report[0] if len(report) == 1 else \
+		   report
+
+
 def transfer(amount, address, vendorField=None):
 	return Transaction(
 		type=0,

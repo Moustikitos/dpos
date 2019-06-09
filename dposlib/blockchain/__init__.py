@@ -24,23 +24,6 @@ def track_data(value=True):
 	Data.TRACK = value
 
 
-def broadcastTransactions(*transactions, **params):
-	serialized = params.pop("serialzed", False)
-	chunk_size = params.pop("chunk_size", 20)
-	report = []
-	if serialized:
-		transactions = [dposlib.core.serialize(tx) for tx in transactions]
-		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
-			pass
-	else:
-		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
-			response = dposlib.rest.POST.api.transactions(transactions=chunk)
-			report.append(response)
-	return None if len(report) == 0 else \
-		   report[0] if len(report) == 1 else \
-		   report
-
-
 class Transaction(dict):
 
 	VERSION = 2
@@ -428,32 +411,32 @@ class Wallet(Data):
 	@Data.wallet_islinked
 	def send(self, amount, address, vendorField=None, fee_included=False):
 		tx = dposlib.core.transfer(amount, address, vendorField)
-		return broadcastTransactions(self._finalizeTx(tx, fee_included=fee_included))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx, fee_included=fee_included))
 
 	@Data.wallet_islinked
 	def registerSecondSecret(self, secondSecret):
 		tx = dposlib.core.registerSecondSecret(secondSecret)
-		return broadcastTransactions(self._finalizeTx(tx))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerSecondPublicKey(self, secondPublicKey):
 		tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
-		return broadcastTransactions(self._finalizeTx(tx))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def registerAsDelegate(self, username):
 		tx = dposlib.core.registerAsDelegate(username)
-		return broadcastTransactions(self._finalizeTx(tx))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def upVote(self, *usernames):
 		tx = dposlib.core.upVote(*usernames)
-		return broadcastTransactions(self._finalizeTx(tx))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 	@Data.wallet_islinked
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
-		return broadcastTransactions(self._finalizeTx(tx))
+		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 
 class NanoS(Wallet):

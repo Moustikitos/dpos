@@ -26,6 +26,7 @@ TYPING = {
 	"timestamp": int,
 	"type": int,
 	"amount": str,
+	"fee": str,
 	"senderPublicKey": str,
 	"recipientId": str,
 	"senderId": str,
@@ -34,15 +35,6 @@ TYPING = {
 	"signSignature": str,
 	"id": str,
 }
-
-
-def select_peers():
-	pass
-
-
-@setInterval(30)
-def rotate_peers():
-	select_peers()
 
 
 def init():
@@ -59,6 +51,20 @@ def init():
 
 def stop():
 	pass
+
+
+def broadcastTransactions(*transactions, **params):
+	chunk_size = params.pop("chunk_size", 20)
+
+	report = []
+	for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
+		response = rest.POST.peer.transactions(transactions=chunk)
+		response["ids"] = [tx["id"] for tx in chunk]
+		report.append(response)
+
+	return None if len(report) == 0 else \
+		   report[0] if len(report) == 1 else \
+		   report
 
 
 def transfer(amount, address, vendorField=None):
