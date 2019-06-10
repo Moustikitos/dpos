@@ -32,11 +32,11 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
       + [x] Ripa : `ripa`
       + [x] Phantom : `phantom`
       + [x] Qredit : `qredit`
-  - [x] Lisk (transaction type `0`)
+  - [x] Lisk
     * mainet : `lisk`
     * testnet : `t.lisk`
     * forks
-      + [x] shift
+      + [x] shift (transaction type `0` and `3`)
         - mainnet : `shift`
         - testnet : `t.shift`
 
@@ -222,6 +222,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] added `lisk` blockchain
   - [x] added `shift`, `t.shift` and `qredit` network
   - [x] added .cold data in package distribution
+  - [x] transaction types `0` and `3` added to lisk.v09 network
 
 ## TODO
   - [ ] doc writing
