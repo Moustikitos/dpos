@@ -25,11 +25,11 @@ class DataIterator:
 		if not self.data.get("meta", {}).get("next", None) and self.page:
 			raise StopIteration("End of data reached")
 		else:
-			self.page += 1
-			data = self.endpoint(page=self.page)
-			if not data.get("error", False):
+			self.data = self.endpoint(page=self.page+1)
+			if self.data.get("error", False):
 				self.errors += 1
-				self.data = data
+			else:
+				self.page += 1
 		return self.data.get("data", [])
 
 	def __iter__(self):

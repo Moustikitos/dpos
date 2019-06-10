@@ -3,6 +3,7 @@
 # ~ https://docs.ark.io/archive/api/public-v1/
 
 import dposlib
+from dposlib.ark.v1.mixin import loadPages
 from dposlib.util.data import filter_dic
 
 
@@ -21,7 +22,7 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
 
 
-class NanoS(dposlib.blockchain.NanoS):
+class NanoS(Wallet, dposlib.blockchain.NanoS):
 
 	def __init__(self, network, account, index, **kw):
 		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
@@ -29,6 +30,15 @@ class NanoS(dposlib.blockchain.NanoS):
 		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
 		self.debug = kw.pop("debug", False)
 		Wallet.__init__(self, self.address, **kw)
+
+	@staticmethod
+	def fromDerivationPath(derivationPath, **kw):
+		nanos = NanoS(0,0,0, **kw)
+		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+		nanos.derivationPath = derivationPath
+		nanos._Data__kwargs["address"] = nanos.address = address
+		nanos.update()
+		return nanos
 
 
 class Delegate(dposlib.blockchain.Data):

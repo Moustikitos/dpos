@@ -6,7 +6,6 @@ import os
 import dposlib
 
 from dposlib import ldgr
-from dposlib.util import misc
 from dposlib.util.data import filter_dic, loadJson, dumpJson
 from dposlib.ark.v2.mixin import loadPages
 
@@ -20,8 +19,8 @@ class Wallet(dposlib.blockchain.Wallet):
 		return Delegate(self.username) if self.isDelegate else None
 
 	def transactions(self, limit=50):
-		sent = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.sent, limit=limit)
-		received = misc.loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.received, limit=limit)
+		sent = loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.sent, limit=limit)
+		received = loadPages(dposlib.rest.GET.api.wallets.__getattr__(self.address).transactions.received, limit=limit)
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
@@ -62,11 +61,11 @@ class Delegate(dposlib.blockchain.Data):
 		return filter_dic(self._Data__dict["forged"])
 
 	def voters(self):
-		voters = misc.loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).voters)
+		voters = loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).voters)
 		return list(sorted([filter_dic(dic) for dic in voters], key=lambda e:e["balance"], reverse=True))
 	
 	def lastBlocks(self, limit=50):
-		return dposlib.rest.GET.api.delegates(self.username, "blocks", returnKey="data")[:limit]
+		return loadPages(dposlib.rest.GET.api.delegates.__getattr__(self.username).blocks)[:limit]
 
 	def lastBlock(self):
 		if self.blocks.get("last", False):
@@ -82,7 +81,7 @@ class Block(dposlib.blockchain.Data):
 		return Block(self._Data__dict["previous"])
 
 	def transactions(self):
-		return [filter_dic(dic) for dic in misc.loadPages(dposlib.rest.GET.api.blocks.__getattr__(self.id).transactions, limit=False)]
+		return [filter_dic(dic) for dic in loadPages(dposlib.rest.GET.api.blocks.__getattr__(self.id).transactions, limit=False)]
 
 
 class Webhook(dposlib.blockchain.Data):

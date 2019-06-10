@@ -221,6 +221,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### 0.2.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] added `lisk` blockchain
   - [x] added `shift`, `t.shift` and `qredit` network
+  - [x] added .cold data in package distribution
 
 ## TODO
   - [ ] doc writing

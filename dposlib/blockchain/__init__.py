@@ -405,7 +405,6 @@ class Wallet(Data):
 
 	def _finalizeTx(self, tx, fee=None, fee_included=False):
 		tx.finalize(fee=fee, fee_included=fee_included)
-		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))
 		return tx
 
 	@Data.wallet_islinked
@@ -441,15 +440,6 @@ class Wallet(Data):
 
 class NanoS(Wallet):
 
-	@staticmethod
-	def fromDerivationPath(derivationPath, **kw):
-		nanos = NanoS(0,0,0, **kw)
-		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
-		nanos.derivationPath = derivationPath
-		nanos._Data__kwargs["address"] = nanos.address = address
-		nanos.update()
-		return nanos
-
 	def _finalizeTx(self, tx, fee=None, fee_included=False):
 		if "fee" not in tx or fee != None:
 			tx.setFees(fee)
@@ -475,5 +465,4 @@ class NanoS(Wallet):
 				tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
 
 		tx.identify()
-		# sys.stdout.write("%s\n" % json.dumps(tx, indent=2))
 		return tx
