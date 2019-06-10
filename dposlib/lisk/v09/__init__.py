@@ -26,14 +26,15 @@ TRANSACTIONS = {
 TYPING = {
 	"timestamp": int,
 	"type": int,
-	"amount": str,
-	"fee": str,
+	"amount": int,
+	"fee": int,
 	"senderPublicKey": str,
 	"recipientId": str,
 	"senderId": str,
 	"asset": dict,
 	"signature": str,
 	"signSignature": str,
+	"signatures": list,
 	"id": str,
 }
 
