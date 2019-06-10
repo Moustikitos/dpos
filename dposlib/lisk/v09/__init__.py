@@ -103,9 +103,7 @@ def upVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes": {
-				"username": ["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
-			}
+			"votes": ["+"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
 		}
 	)
 
@@ -114,9 +112,7 @@ def downVote(*usernames):
 	return Transaction(
 		type=3,
 		asset={
-			"votes": {
-				"username": ["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
-			}
+			"votes": ["-"+rest.GET.api.delegates.get(username=username, returnKey="delegate")["publicKey"] for username in usernames]
 		}
 	)
 
