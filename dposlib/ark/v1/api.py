@@ -3,6 +3,8 @@
 # ~ https://docs.ark.io/archive/api/public-v1/
 
 import dposlib
+
+from dposlib import ldgr
 from dposlib.ark.v1.mixin import loadPages
 from dposlib.util.data import filter_dic
 
@@ -13,12 +15,8 @@ class Wallet(dposlib.blockchain.Wallet):
 		dposlib.blockchain.Data.__init__(self, dposlib.rest.GET.api.accounts, **dict({"address":address, "returnKey":"account"}, **kw))
 
 	def transactions(self, limit=50):
-		received, sent, count = [], [], 0
-		while count < limit:
-			sent.extend(dposlib.rest.GET.api.transactions(senderId=self.address, orderBy="timestamp:desc", returnKey="transactions", offset=len(sent)))
-			received.extend(dposlib.rest.GET.api.transactions(recipientId=self.address, orderBy="timestamp:desc", returnKey="transactions", offset=len(received)))
-			tmpcount = len(sent)+len(received)
-			count = limit if count == tmpcount else tmpcount
+		received = loadPages(dposlib.rest.GET.api.transactions, "transactions", recipientId=self.address, orderBy="timestamp:desc", limit=limit)
+		sent = loadPages(dposlib.rest.GET.api.transactions, "transactions", senderId=self.address, orderBy="timestamp:desc", limit=limit)
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
 
 
@@ -26,7 +24,7 @@ class NanoS(Wallet, dposlib.blockchain.NanoS):
 
 	def __init__(self, network, account, index, **kw):
 		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (cfg.slip44, getattr(dposlib.rest.cfg, "aip20", network), account, index)
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (dposlib.rest.cfg.slip44, getattr(dposlib.rest.cfg, "aip20", network), account, index)
 		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
 		self.debug = kw.pop("debug", False)
 		Wallet.__init__(self, self.address, **kw)
