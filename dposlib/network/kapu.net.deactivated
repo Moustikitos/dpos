@@ -7,7 +7,8 @@
 	"wif": "aa",
 	"marker": "2d",
 	"slip44": "111",
-
+	"aip20": 0,
+	
 	"bip32": {
 		"private": 46089520,
 		"public": 46090600

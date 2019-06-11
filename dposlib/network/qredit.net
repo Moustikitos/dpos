@@ -4,11 +4,13 @@
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "1.0",
-    "aip20": 0,
 
 	"wif": "bb",
 	"marker": "3a",
-	"slip44": "1",
+
+	"slip44": "111",
+    "aip20": 0,
+	
 	"bip32": {
 		"private": 70615956,
 		"public": 70617039

@@ -4,6 +4,7 @@
 	"maxvotepertx": 33,
 	"maxvote": 101,
 	"marker": "L",
+	"slip44": 134,
 
 	"headers": {
 		"Content-Type": "application/json; charset=utf-8",
