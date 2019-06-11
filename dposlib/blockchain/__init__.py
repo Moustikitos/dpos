@@ -115,7 +115,7 @@ class Transaction(dict):
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
-		self["signatures"] = []
+		# self["signatures"] = []
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
 

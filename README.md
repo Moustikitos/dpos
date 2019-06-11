@@ -24,7 +24,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ## Available network
 
-  - [x] Ark (transaction type `0`, `1`, `2`, `3`)
+  - [x] Ark (transaction type `0`, `1`, `2` & `3`)
     * mainet : `ark`
     * devnet : `d.ark`
     * forks
@@ -36,7 +36,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
     * mainet : `lisk`
     * testnet : `t.lisk`
     * forks
-      + [x] shift (transaction type `0` and `3`)
+      + [x] shift (transaction type `0`, `1` and `3`)
         - mainnet : `shift`
         - testnet : `t.shift`
 
@@ -45,7 +45,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### An intuitive REST API
 ```python
 >>> from dposlib import rest
->>> rest.use("dark")
+>>> rest.use("d.ark")
 >>> # ~/api/delegates/darktoons endpoint
 >>> rest.GET.api.delegates.darktoons()
 {'data': {'username': 'darktoons', 'address': 'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', 'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'votes': 9385785081642, 'rank': 45, 'blocks': {'produced': 32015, 'last': {'id': '9d5085e503e09c656152b541bc243155f560347aa8b377d3f2f9a1cb71900d90', 'height': 2544602, 'timestamp': {'epoch': 69406864, 'unix': 1559508064, 'human': '2019-06-02T20:41:04.000Z'}}}, 'production': {'approval': 0.07}, 'forged': {'fees': 14640580130, 'rewards': 6403000000000, 'total': 6417640580130}}}
@@ -130,7 +130,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### Ledger Nano S integration
 
 ```python
->>> rest.use("dark")
+>>> rest.use("d.ark")
 >>> # 1,0,0 = devnet, account, index
 >>> ldg = dposlib.core.api.NanoS(1,0,0)
 >>> ldg

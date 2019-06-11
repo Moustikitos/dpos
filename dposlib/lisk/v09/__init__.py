@@ -88,15 +88,37 @@ def transfer(amount, address, vendorField=None):
 
 
 def registerSecondSecret(secondSecret):
-	raise NotImplementedError("Transaction not implemented yet")
+	return Transaction(
+		type=1,
+		asset={
+			"signature": {
+				"publicKey": dposlib.core.crypto.getKeys(secondSecret)["publicKey"]
+			}
+		}
+	)
 
 
 def registerSecondPublicKey(secondPublicKey):
-	raise NotImplementedError("Transaction not implemented yet")
+	return Transaction(
+		type=1,
+		asset={
+			"signature": {
+				"publicKey": secondPublicKey
+			}
+		}
+	)
 
 
 def registerAsDelegate(username):
 	raise NotImplementedError("Transaction not implemented yet")
+	return Transaction(
+		type=2,
+		asset={
+			"delegate": {
+				"username": username
+			}
+		}
+	)
 
 
 def upVote(*usernames):

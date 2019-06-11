@@ -13,7 +13,7 @@ class DataIterator:
 		if not isinstance(endpoint, rest.EndPoint):
 			raise Exception("Invalid endpoint class")
 		self.tries = kwargs.pop("tries", 10)
-		self.limit = kwargs.pop("tries", 50)
+		self.limit = kwargs.pop("limit", 50)
 		self.returnKey = returnKey
 		self.endpoint = endpoint
 		self.kwargs = kwargs
@@ -45,8 +45,8 @@ class DataIterator:
 					raise Exception("Too much unsuccesfull tries")
 
 
-def loadPages(endpoint, returnKey, pages=False, nb_tries=10, limit=False):
-	data_iterator = DataIterator(endpoint, returnKey, tries=nb_tries)
+def loadPages(endpoint, returnKey, pages=False, nb_tries=10, limit=False, **kw):
+	data_iterator = DataIterator(endpoint, returnKey, tries=nb_tries, **kw)
 	data = []
 	while True:
 		try:

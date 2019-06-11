@@ -25,8 +25,8 @@ TRANSACTIONS = {
 TYPING = {
 	"timestamp": int,
 	"type": int,
-	"amount": int,
-	"fee": int,
+	"amount": str,
+	"fee": str,
 	"senderPublicKey": str,
 	"recipientId": str,
 	"senderId": str,
