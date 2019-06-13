@@ -121,7 +121,7 @@ def init():
 				"avgFee": int(i["avg"]),
 				"minFee": int(i["min"]),
 				"maxFee": int(i["min"]),
-				"medFee": int(i["median"])
+				# "medFee": int(i["median"])
 			}] for i in fees.get("data", []))
 
 		if len(cfg.peers):

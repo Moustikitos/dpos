@@ -11,7 +11,7 @@ from dposlib import PY3
 def loadJson(path):
 	"""Load JSON data from path"""
 	if os.path.exists(path):
-		with io.open(path) as in_:
+		with io.open(path, encoding="utf-8") as in_:
 			data = json.load(in_)
 	else:
 		data = {}
@@ -24,7 +24,11 @@ def dumpJson(data, path):
 		os.makedirs(os.path.dirname(path))
 	except:
 		pass
-	with io.open(path, "w" if PY3 else "wb") as out:
+	with io.open(
+		path, 
+		"w" if PY3 else "wb", 
+		**({"encoding":"utf-8"} if PY3 else {})
+	) as out:
 		json.dump(data, out, indent=4)
 
 
