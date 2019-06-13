@@ -218,11 +218,14 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] dposlib.util.misc module improvement
   - [x] upVote/downVote bugfix
 
-### 0.2.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.2.1
   - [x] added `lisk` blockchain
   - [x] added `shift`, `t.shift` and `qredit` network
   - [x] added .cold data in package distribution
   - [x] transaction types `0`, `1` and `3` added to lisk.v09 network
+  - [x] python 2.x compliancy for util.data package
+
+### 0.2.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] doc writing
