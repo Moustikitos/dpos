@@ -226,6 +226,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] python 2.x compliancy for util.data package
 
 ### 0.2.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] Ark v2.5 headers fix
 
 ## TODO
   - [ ] doc writing
