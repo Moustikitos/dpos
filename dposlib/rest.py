@@ -230,11 +230,11 @@ def load(family_name):
 			sys.modules[__package__].__delattr__(family_name)
 		except AttributeError:
 			pass
-		try:
-			sys.modules[__package__].core.init()
-		except:
-			cfg.hotmode = False
-			sys.stdout.write("Network connection disabled\n")
+		# try:
+		sys.modules[__package__].core.init()
+		# except:
+		# 	cfg.hotmode = False
+		# 	sys.stdout.write("Network connection disabled\n")
 	return cfg.hotmode
 
 
@@ -254,7 +254,7 @@ def use(network, **kwargs):
 	cfg.compressed = True
 	cfg.minversion = "1.0"
 	cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
-	cfg.headers = {"Content-Type": "application/json; charset=utf-8"}
+	cfg.headers = {"Content-Type": "application/json"}
 
 	# try to load network.net configuration
 	path = os.path.join(ROOT, "network", network + ".net")
