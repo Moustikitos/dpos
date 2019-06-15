@@ -144,7 +144,8 @@ def serialize(tx):
 		vendorField = tx.get("vendorField", "").encode("utf-8")
 
 	# common part
-	pack("<BBBBI", buf, (255, Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
+	# pack("<BBBBI", buf, (255, Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
+	pack("<BBBI", buf, (Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
 	pack("<QB", buf, (tx["fee"], len(vendorField)))
 	pack_bytes(buf, vendorField)
