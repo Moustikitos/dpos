@@ -10,7 +10,7 @@ import os
 import struct
 
 import dposlib
-from dposlib.util import bin as util
+from dposlib.util.bin import unhexlify, hexlify, intasb, basint
 from ledgerblue.comm import getDongle
 
 PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
@@ -56,15 +56,15 @@ def buildTxApdu(dongle_path, data):
 	if len(data) > 255 - (path_len+1):
 		data1 = data[:255-(path_len+1)]
 		data2 = data[255-(path_len+1):]
-		p1 = util.unhexlify("e0040040")
+		p1 = unhexlify("e0040040")
 	else:
 		data1 = data
-		data2 = util.unhexlify("")
-		p1 = util.unhexlify("e0048040")
+		data2 = unhexlify("")
+		p1 = unhexlify("e0048040")
 
 	return [
-		p1 + util.intasb(1 + path_len + len(data1)) + util.intasb(path_len//4) + dongle_path + data1,
-		util.unhexlify("e0048140") + util.intasb(len(data2)) + data2 if len(data2) else None
+		p1 + intasb(1 + path_len + len(data1)) + intasb(path_len//4) + dongle_path + data1,
+		unhexlify("e0048140") + intasb(len(data2)) + data2 if len(data2) else None
 	]
 
 
@@ -79,8 +79,8 @@ def buildPkeyApdu(dongle_path):
 	"""
 
 	path_len = len(dongle_path)
-	return util.unhexlify("e0020040") + util.intasb(1 + path_len) + \
-	       util.intasb(path_len//4) + dongle_path
+	return unhexlify("e0020040") + intasb(1 + path_len) + \
+	       intasb(path_len//4) + dongle_path
 
 
 def getPublicKey(dongle_path, debug=False):
@@ -100,8 +100,8 @@ def getPublicKey(dongle_path, debug=False):
 	dongle = getDongle(debug)
 	data = bytes(dongle.exchange(apdu, timeout=30))
 	dongle.close()
-	len_pkey = util.basint(data[0])
-	return util.hexlify(data[1:len_pkey+1])
+	len_pkey = basint(data[0])
+	return hexlify(data[1:len_pkey+1])
 
 
 def getSignature(data, dongle_path, debug=False):
@@ -122,10 +122,10 @@ def getSignature(data, dongle_path, debug=False):
 	dongle = getDongle(debug)
 	result = dongle.exchange(bytes(apdu1), timeout=30)
 	if apdu2:
-		apdu = util.unhexlify("e0048140") + util.intasb(len(apdu2)) + apdu2
+		apdu = unhexlify("e0048140") + intasb(len(apdu2)) + apdu2
 		result = dongle.exchange(bytes(apdu), timeout=30)
 	dongle.close()
-	return util.hexlify(result)
+	return hexlify(result)
 
 
 def signTransaction(tx, path, debug=False):

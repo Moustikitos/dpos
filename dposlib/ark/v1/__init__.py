@@ -67,7 +67,8 @@ def rotate_peers():
 def init():
 	global DAEMON_PEERS
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
-
+	cfg.headers["API-Version"] = "1"
+	
 	if len(cfg.peers):
 		network = rest.GET.api.loader.autoconfigure().get("network", {})
 		cfg.hotmode = True if len(network) else False
@@ -79,7 +80,6 @@ def init():
 	if len(network):
 		cfg.headers["version"] = str(network.pop('version'))
 		cfg.headers["nethash"] = network.pop('nethash')
-		cfg.headers["API-Version"] = "1"
 		cfg.__dict__.update(network)
 		if len(cfg.peers):
 			cfg.fees = rest.GET.api.blocks.getFees().get("fees", {})
@@ -100,6 +100,10 @@ def stop():
 	global DAEMON_PEERS
 	if DAEMON_PEERS != None:
 		DAEMON_PEERS.set()
+
+
+def computeDynamicFees(tx):
+	raise NotImplementedError("No dynamic fees on ark v1 blockchain !")
 
 
 def broadcastTransactions(*transactions, **params):

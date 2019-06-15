@@ -65,6 +65,10 @@ def stop():
 	pass
 
 
+def computeDynamicFees(tx):
+	raise NotImplementedError("No dynamic fees on lisk v09 blockchain !")
+
+
 def broadcastTransactions(*transactions, **params):
 	chunk_size = params.pop("chunk_size", 20)
 

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-"""
-"""
-
 from dposlib.blockchain import cfg
 from datetime import datetime, timedelta
 

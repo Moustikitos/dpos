@@ -230,11 +230,11 @@ def load(family_name):
 			sys.modules[__package__].__delattr__(family_name)
 		except AttributeError:
 			pass
-		# try:
-		sys.modules[__package__].core.init()
-		# except:
-		# 	cfg.hotmode = False
-		# 	sys.stdout.write("Network connection disabled\n")
+		try:
+			sys.modules[__package__].core.init()
+		except:
+			cfg.hotmode = False
+			sys.stdout.write("Network connection disabled\n")
 	return cfg.hotmode
 
 

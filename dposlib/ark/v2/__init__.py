@@ -14,6 +14,7 @@ from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
 
+Transaction.serialize = serialize
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
@@ -69,9 +70,10 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
-
+	cfg.headers["API-Version"] = "2"
+	
 	if len(cfg.peers):
-		data = rest.GET.api.v2.node.configuration().get("data", {})
+		data = rest.GET.api.node.configuration().get("data", {})
 		cfg.hotmode = True
 		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg"))
 	# if no network connection, load basic confivuration from local folder
@@ -90,7 +92,6 @@ def init():
 		cfg.symbol = data["symbol"]
 		cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
 		cfg.headers["nethash"] = data["nethash"]
-		cfg.headers["API-Version"] = "2"
 
 		constants =  data["constants"]
 		cfg.delegate = constants["activeDelegates"]
@@ -155,7 +156,7 @@ def broadcastTransactions(*transactions, **params):
 	chunk_size = params.pop("chunk_size", 20)
 	report = []
 	if serialized:
-		transactions = [serialize(tx) for tx in transactions]
+		transactions = [tx.serialize() for tx in transactions]
 		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
 			pass
 	else:
@@ -259,3 +260,12 @@ def delegateResignation():
 	return Transaction(
 		type=8
 	)
+
+
+__all__ = [
+	"crypto",
+	"Transaction",
+	"loadPages", "broadcastTransactions",
+	"transfer", "registerSecondSecret", "registerSecondPublicKey", "registerAsDelegate", "upVote", "downVote",
+	"registerIPFS", "timelockTransfer", "multiPayment", "delegateResignation"
+]

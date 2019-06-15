@@ -3,7 +3,10 @@
 
 import os
 import struct
+import datetime
+from collections import OrderedDict
 
+import pytz
 from dposlib import rest, BytesIO
 from dposlib.ark import crypto
 from dposlib.blockchain import Transaction, slots, cfg
@@ -138,7 +141,7 @@ def serialize(tx):
 	if "vendorFieldHex" in tx:
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
-		vendorField = tx["vendorField"].encode("utf-8")
+		vendorField = tx.get("vendorField", "").encode("utf-8")
 
 	# common part
 	pack("<BBBBI", buf, (255, Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
@@ -165,7 +168,7 @@ def serialize(tx):
 	return result
 
 
-def loadPages(endpoint, pages=False, nb_tries=10, limit=False):
+def loadPages(endpoint, pages=False, nb_tries=10, limit=False, **kx):
 	data_iterator = DataIterator(endpoint, nb_tries)
 	data = []
 	while True:
@@ -185,3 +188,21 @@ def loadPages(endpoint, pages=False, nb_tries=10, limit=False):
 		return data[:limit]
 	else:
 		return data
+
+
+def deltas():
+	delegates = loadPages(rest.GET.api.delegates)
+	blocks = [d["blocks"] for d in delegates]
+	produced = sum(b["produced"] for b in blocks)
+
+	last_block_timestamp = slots.getRealTime(delegates[0]["blocks"]["last"]["timestamp"]["epoch"])
+	total_elapsed_time = (last_block_timestamp - rest.cfg.begintime).total_seconds()
+
+	theorical_height = int((datetime.datetime.now(pytz.UTC) - rest.cfg.begintime).total_seconds() / rest.cfg.blocktime)
+
+	return OrderedDict({
+		"real blocktime": total_elapsed_time / produced,
+		"block produced (real height)": produced,
+		"theorical height": theorical_height,
+		"height shift": produced - theorical_height,
+	})
