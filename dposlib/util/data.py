@@ -33,14 +33,19 @@ def dumpJson(data, path):
 
 
 def filter_dic(dic):
+	special_keys = [
+		"amount",
+		"balance",
+		"fee", "fees", "forged",
+		"reward", "rewards",
+		"totalAmount", "totalFee", "totalForged", "total",
+		"unconfirmedBalance",
+		"votes"
+	]
 	return dict(
-		(k, float(v)/100000000 if k in [
-			"amount",
-			"balance",
-			"fee", "fees", "forged",
-			"reward", "rewards",
-			"totalAmount", "totalFee", "totalForged",
-			"unconfirmedBalance",
-			"votes"
-		] and isinstance(v, (int,float,str)) else v) for k,v in dic.items()
+		(k,
+			float(v)/100000000 if k in special_keys and isinstance(v, (int,long,float,str)) else \
+			filter_dic(v) if isinstance(v, dict) else \
+			v
+		) for k,v in dic.items()
 	)

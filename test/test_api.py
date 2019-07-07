@@ -36,11 +36,11 @@ class TestDposApi(unittest.TestCase):
 				self.assertEqual(rest.use(name), True)
 			except Exception as e:
 				sys.stdout.write("%s network failed...\n" % name)
-			else:
-				try:
-					print("%s (blocktime=%s)" % (rest.cfg.network, rest.cfg.blocktime), json.dumps(dposlib.core.mixin.deltas(), indent=2))
-				except:
-					pass
+			# else:
+			# 	try:
+			# 		print("%s (blocktime=%s)" % (rest.cfg.network, rest.cfg.blocktime), json.dumps(dposlib.core.mixin.deltas(), indent=2))
+			# 	except:
+			# 		pass
 		rest.use("d.ark")
 
 	@connection_enabled
