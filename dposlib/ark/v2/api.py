@@ -7,7 +7,7 @@ import dposlib
 
 from dposlib import ldgr
 from dposlib.util.data import filter_dic, loadJson, dumpJson
-from dposlib.ark.v2.mixin import loadPages
+from dposlib.ark.v2.mixin import loadPages, deltas
 
 
 class Wallet(dposlib.blockchain.Wallet):

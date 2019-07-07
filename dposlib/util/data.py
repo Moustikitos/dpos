@@ -42,9 +42,12 @@ def filter_dic(dic):
 		"unconfirmedBalance",
 		"votes"
 	]
+	def cast_value(typ, value):
+		try: return typ(value)/100000000.0
+		except: return value
 	return dict(
 		(k,
-			float(v)/100000000 if k in special_keys and isinstance(v, (int,long,float,str)) else \
+			cast_value(float, v) if k in special_keys else \
 			filter_dic(v) if isinstance(v, dict) else \
 			v
 		) for k,v in dic.items()

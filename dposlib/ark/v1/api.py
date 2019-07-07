@@ -5,7 +5,7 @@
 import dposlib
 
 from dposlib import ldgr
-from dposlib.ark.v1.mixin import loadPages
+from dposlib.ark.v1.mixin import loadPages, deltas
 from dposlib.util.data import filter_dic
 
 
