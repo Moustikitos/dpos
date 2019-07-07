@@ -37,6 +37,7 @@ class DataIterator:
 				result = self.data.get(self.returnKey, [])
 				self.count += len(result)
 		return result
+	next = __next__
 
 	def __iter__(self):
 		while True:

@@ -34,6 +34,7 @@ class DataIterator:
 			else:
 				self.page += 1
 		return self.data.get("data", [])
+	next = __next__
 
 	def __iter__(self):
 		while True:
