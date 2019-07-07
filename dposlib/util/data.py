@@ -42,12 +42,12 @@ def filter_dic(dic):
 		"unconfirmedBalance",
 		"votes"
 	]
-	
+
 	def cast_value(typ, value):
 		try:
 			return typ(value)/100000000.0
 		except:
-			return filter_dic(v) if isinstance(v, dict) else v
+			return filter_dic(value) if isinstance(value, dict) else value
 
 	return dict(
 		(k,
