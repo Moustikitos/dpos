@@ -9,7 +9,7 @@ import dposlib
 from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.ark.v1 import api
-from dposlib.ark.v1.mixin import loadPages
+from dposlib.ark.v1.mixin import loadPages, deltas
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
