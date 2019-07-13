@@ -227,7 +227,9 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ### 0.2.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] Ark v2.5 headers fix
+  - [x] Ark v2.5 BigInt fix
   - [x] packaging improvement
+  - [x] rest `returnKey` behaviour improvement
 
 ## TODO
   - [ ] doc writing
