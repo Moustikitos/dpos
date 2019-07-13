@@ -38,7 +38,7 @@ def filter_dic(dic):
 		"balance",
 		"fee", "fees", "forged",
 		"reward", "rewards",
-		"totalAmount", "totalFee", "totalForged", "total",
+		"totalAmount", "totalFee", "totalForged", "total", "totalVotes",
 		"unconfirmedBalance",
 		"votes"
 	]
