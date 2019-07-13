@@ -144,13 +144,13 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 "44'/1'/1'/0'/0"
 >>> ldg.send(1, "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7")
 ```
-<img src="ledger_confirm.png" />
+<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/ledger_confirm.png" />
 
 ```python
 {'data': {'accept': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'broadcast': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'excess': [], 'invalid': []}}
 >>> ldg.upVote("darktoons")
 ```
-<img src="ledger_confirm.png" />
+<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/ledger_confirm.png" />
 
 ```python
 {'data': {'accept': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'broadcast': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'excess': [], 'invalid': []}}
@@ -225,11 +225,13 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] transaction types `0`, `1` and `3` added to lisk.v09 network
   - [x] python 2.x compliancy for util.data package
 
-### 0.2.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.2.2 
   - [x] Ark v2.5 headers fix
   - [x] Ark v2.5 BigInt fix
   - [x] packaging improvement
   - [x] rest `returnKey` behaviour improvement
+
+### 0.2.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] doc writing
