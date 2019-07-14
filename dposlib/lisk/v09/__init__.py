@@ -113,13 +113,13 @@ def registerSecondPublicKey(secondPublicKey):
 	)
 
 
-def registerAsDelegate(username):
-	raise NotImplementedError("Transaction not implemented yet")
+def registerAsDelegate(username, publicKey):
 	return Transaction(
 		type=2,
 		asset={
 			"delegate": {
-				"username": username
+				"username": username,
+				"publicKey": publicKey
 			}
 		}
 	)
