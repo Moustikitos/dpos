@@ -50,9 +50,10 @@ class DataIterator:
 def serializePayload(tx):
 	asset = tx.get("asset", {})
 	buf = BytesIO()
+	_type = tx["type"]
 
 	# transfer transaction
-	if tx["type"] == 0:
+	if _type == 0:
 		try:
 			recipientId = crypto.base58.b58decode_check(tx["recipientId"])
 		except:
@@ -62,15 +63,17 @@ def serializePayload(tx):
 			int(tx.get("expiration", 0)),
 		))
 		pack_bytes(buf, recipientId)
+
 	# secondSignature registration
-	elif tx["type"] == 1:
+	elif _type == 1:
 		if "signature" in asset:
 			secondPublicKey = asset["signature"]["publicKey"]
 		else:
 			raise Exception("no secondSecret or secondPublicKey given")
 		pack_bytes(buf, unhexlify(secondPublicKey))
+
 	# delegate registration
-	elif tx["type"] == 2:
+	elif _type == 2:
 		username = asset.get("delegate", {}).get("username", False)
 		if username:
 			length = len(username)
@@ -81,8 +84,9 @@ def serializePayload(tx):
 				raise Exception("bad username length [3-255]: %s" % username)
 		else:
 			raise Exception("no username defined")
+
 	# vote
-	elif tx["type"] == 3:
+	elif _type == 3:
 		delegatePublicKeys = asset.get("votes", False)
 		if delegatePublicKeys:
 			payload = pack("<B", buf, (len(delegatePublicKeys), ))
@@ -91,29 +95,18 @@ def serializePayload(tx):
 				pack_bytes(buf, unhexlify(delegatePublicKey))
 		else:
 			raise Exception("no up/down vote given")
+
 	# IPFS
-	elif tx["type"] == 5:
-		dag = asset.get("ipfs", {}).get("dag", False)
-		if dag:
-			dag = unhexlify(dag)
-			pack("<B", buf, (len(dag), ))
-			pack_bytes(buf, dag)
-		else:
-			raise Exception("no IPFS DAG given")
-	# timelock transaction
-	elif tx["type"] == 6:
+	elif _type == 5:
+		ipfs = asset.get("ipfs", {}).get("dag", False)
 		try:
-			recipientId = crypto.base58.b58decode_check(tx["recipientId"])
+			data = crypto.base58.b58decode(ipfs)
 		except:
-			raise Exception("no recipientId defined")
-		pack("<QBI", buf, (
-			int(tx.get("amount", 0)),
-			int(tx.get("timelockType", 0)),
-			int(tx.get("timelock", 0)),
-		))
-		pack_bytes(buf, recipientId)
+			raise Exception("bad ipfs autentification")
+		pack_bytes(buf, data)
+
 	# multipayment
-	elif tx["type"] == 7:
+	elif _type == 6:
 		try:
 			items = [(p["amount"], crypto.base58.b58decode_check(p["recipientId"])) for p in asset.get("payments", {})]
 		except:
@@ -122,9 +115,39 @@ def serializePayload(tx):
 		for amount,address in items:
 			pack("<Q", buf, (amount, ))
 			pack_bytes(buf, address)
+
 	# delegate resignation
-	elif tx["type"] == 8:
+	elif _type == 7:
 		pass
+
+	# HTLC lock
+	elif _type == 8:
+		try:
+			recipientId = crypto.base58.b58decode_check(tx["recipientId"])
+		except:
+			raise Exception("no recipientId defined")
+		lock = asset.get("lock", False)
+		if not lock:
+			raise Exception("no lock data found")
+		pack("<I", buf, (int(tx.get("amount", 0)),))
+		pack_bytes(buf, unhexlify(lock["secretHash"]))
+		pack("<I", buf, (int(lock.get("expiration", 0)),))
+		pack_bytes(buf, recipientId)
+
+	# HTLC claim
+	elif _type == 9:
+		claim = asset.get("claim", False)
+		if not claim:
+			raise Exception("no claim data found")
+		pack_bytes(buf, unhexlify(claim["lockTransactionId"]))
+		pack_bytes(buf, claim["unLockSecret"].encode().ljust(32, b"\x00"))
+
+	# HTLC refund
+	elif _type == 10:
+		refund = asset.get("refund", False)
+		if not refund:
+			raise Exception("no refund data found")
+		pack_bytes(buf, unhexlify(refund["lockTransactionId"]))
 
 	else:
 		raise Exception("Unknown transaction type %d" % tx["type"])
@@ -143,10 +166,10 @@ def serialize(tx):
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
 		vendorField = tx.get("vendorField", "").encode("utf-8")
+	vendorField = vendorField[:255 if getattr(tx, "_version", 0x01) >= 0x02 else 64]
 
 	# common part
-	# pack("<BBBBI", buf, (255, Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
-	pack("<BBBI", buf, (Transaction.VERSION, rest.cfg.pubKeyHash, tx["type"], tx["timestamp"]))
+	pack("<BBBBQ", 0xff, buf, (tx._version, rest.cfg.pubKeyHash, tx["type"], tx.get("nonce", tx["timestamp"])))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
 	pack("<QB", buf, (tx["fee"], len(vendorField)))
 	pack_bytes(buf, vendorField)
@@ -155,7 +178,8 @@ def serialize(tx):
 	pack_bytes(buf, serializePayload(tx))
 	
 	# signatures part
-	pack_bytes(buf, unhexlify(tx["signature"]))
+	if "signature" in tx:
+		pack_bytes(buf, unhexlify(tx["signature"]))
 	if "signSignature" in tx:
 		pack_bytes(buf, unhexlify(tx["signSignature"]))
 	elif "secondSignature" in tx:

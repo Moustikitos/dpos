@@ -24,12 +24,15 @@ TRANSACTIONS = {
 	3: "vote",
 	# 4: "multiSignature",
 	5: "ipfs",
-	6: "timelockTransfer",
-	7: "multiPayment",
-	8: "delegateResignation",
+	6: "multiPayment",
+	7: "delegateResignation",
+	8: "htlclock",
+	9: "htlcclaim",
+	10: "htlcrefund",
 }
 TYPING = {
 	"timestamp": int,
+	"nonce": int,
 	"timelockType": int,
 	"timelock": int,
 	"type": int,
@@ -122,7 +125,6 @@ def init():
 				"avgFee": int(i["avg"]),
 				"minFee": int(i["min"]),
 				"maxFee": int(i["min"]),
-				# "medFee": int(i["median"])
 			}] for i in fees.get("data", []))
 
 		if len(cfg.peers):
@@ -152,7 +154,7 @@ def computeDynamicFees(tx):
 
 
 def broadcastTransactions(*transactions, **params):
-	serialized = params.pop("serialzed", False)
+	serialized = params.pop("serialized", False)
 	chunk_size = params.pop("chunk_size", 20)
 	report = []
 	if serialized:
@@ -230,23 +232,9 @@ def registerIPFS(dag):
 	)
 
 
-def timelockTransfer(amount, address, lockvalue, locktype="timestamp", vendorField=None):
-	return Transaction(
-		type=6,
-		amount=amount*100000000,
-		recipientId=address,
-		vendorField=vendorField,
-		timelock=lockvalue,
-		timelockType={
-			"timestamp":0,
-			"blockheight":1
-		}[locktype]
-	)
-
-
 def multiPayment(*pairs, **kwargs):
 	return Transaction(
-		type=7,
+		type=6,
 		vendorField=kwargs.get("vendorField", None),
 		asset={
 			"payments": [
@@ -258,7 +246,45 @@ def multiPayment(*pairs, **kwargs):
 
 def delegateResignation():
 	return Transaction(
-		type=8
+		type=7
+	)
+
+
+def htlcLock(amount, address, expiration, secretHash, vendorField=None):
+	return Transaction(
+		type=8,
+		amount=amount*100000000,
+		recipientId=address,
+		vendorField=vendorField,
+		asset={
+			"lock"{
+				"secretHash":secretHash,
+				"expiration":expiration
+			}
+		}
+	)
+
+
+def htlcClaim(lockTransactionId, unLockSecret):
+	return Transaction(
+		type=9,
+		asset={
+			"claim"{
+				"lockTransactionId":lockTransactionId,
+				"unLockSecret":unLockSecret
+			}
+		}
+	)
+
+
+def htlcRefund(lockTransactionId):
+	return Transaction(
+		type=10,
+		asset={
+			"refund"{
+				"lockTransactionId":lockTransactionId,
+			}
+		}
 	)
 
 
@@ -267,5 +293,5 @@ __all__ = [
 	"Transaction",
 	"loadPages", "broadcastTransactions",
 	"transfer", "registerSecondSecret", "registerSecondPublicKey", "registerAsDelegate", "upVote", "downVote",
-	"registerIPFS", "timelockTransfer", "multiPayment", "delegateResignation"
+	"registerIPFS", "multiPayment", "delegateResignation"
 ]

@@ -26,7 +26,6 @@ def track_data(value=True):
 
 class Transaction(dict):
 
-	VERSION = 2
 	DFEES = False
 	FMULT = 10000
 	FEESL = None
@@ -106,6 +105,9 @@ class Transaction(dict):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
 
 	def __init__(self, arg={}, **kwargs):
+		_version = kwargs.pop("version", 0x01)
+		self.__dict__["_version"] = _version
+
 		if not hasattr(dposlib, "core"):
 			raise Exception("No blockchain available")
 		data = dict(arg, **kwargs)
@@ -115,9 +117,11 @@ class Transaction(dict):
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
-		# self["signatures"] = []
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
+
+		if _version == 0x02:
+			self["nonce"] = kwargs.get("nonce", hexlify(os.urandom(8)))
 
 		if hasattr(Transaction, "_publicKey"):
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
@@ -225,7 +229,7 @@ class Transaction(dict):
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
 			self["senderId"] = address
-			if self["type"] in [1, 3, 4] and "recipientId" not in self:
+			if self["type"] in [1, 3, 4, 9] and "recipientId" not in self:
 				self["recipientId"] = address
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:

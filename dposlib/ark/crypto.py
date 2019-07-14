@@ -212,7 +212,7 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	return True
 
 
-def getBytes(tx, ark_v2=False):
+def getBytes(tx):
 	"""
 	Hash transaction object into bytes data.
 
@@ -221,6 +221,9 @@ def getBytes(tx, ark_v2=False):
 
 	Return bytes sequence
 	"""
+	if getattr(tx, "_version", 0x01) >= 0x02:
+		return tx.serialize()
+
 	buf = BytesIO()
 	# write type and timestamp
 	pack("<BI", buf, (tx["type"], int(tx["timestamp"])))
@@ -257,10 +260,6 @@ def getBytes(tx, ark_v2=False):
 			pack_bytes(buf, asset["delegate"]["username"].encode("utf-8"))
 		elif typ == 3 and "votes" in asset:
 			pack_bytes(buf, "".join(asset["votes"]).encode("utf-8"))
-		# elif typ == 4:
-		# 	multisignature = asset.get("multisignature", {})
-		# 	pack("<bb", buf, (multisignature["min"], multisignature["lifetime"]))
-		# 	pack_bytes(buf, "".join(multisignature["keysgroup"]).encode("utf-8"))
 		else:
 			raise Exception("transaction type %s not implemented" % typ)
 	# if there is a signature
