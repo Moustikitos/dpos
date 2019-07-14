@@ -9,26 +9,7 @@ from ecpy.curves import Curve, Point
 from ecpy.keys import ECPublicKey, ECPrivateKey
 from ecpy.ecdsa import ECDSA
 from ecpy.ecschnorr import ECSchnorr
-###
-# here is a fix because rfc 6979 not implemented yet in ecpy.ecschnorr
-# https://tools.ietf.org/html/rfc6979
-def sign_rfc6979(cls, msg, pv_key, hasher, canonical=False):
-	""" Signs a message hash  according to  RFC6979 
-	Args:
-		msg (bytes)                    : the message hash to sign
-		pv_key (ecpy.keys.ECPrivateKey): key to use for signing
-		hasher (hashlib)               : hasher conform to hashlib interface
-	"""
-	field = pv_key.curve.field
-	V = None
-	for i in range(1, cls.maxtries):
-		k,V = ecpy.ecrand.rnd_rfc6979(msg, pv_key.d, field, hasher, V)
-		sig = cls._do_sign(msg, pv_key, k)
-		if sig:
-			return sig
-		return None
-ECSchnorr.sign_rfc6979 = sign_rfc6979
-###
+
 from dposlib import BytesIO
 from dposlib.blockchain import cfg
 from dposlib.util.bin import basint, hexlify, pack, pack_bytes, unhexlify
@@ -160,7 +141,7 @@ def getSignatureFromBytes(data, privateKey, schnorr=False):
 	privateKey = ECPrivateKey(int(privateKey, 16), Curve.get_curve("secp256k1"))
 	message = hashlib.sha256(data).digest()
 	if schnorr:
-		signer = ECSchnorr(hashlib.sha256, option="ISO", fmt="DER")
+		signer = ECSchnorr(hashlib.sha256, option="LIBSECP", fmt="DER")
 	else:
 		signer = ECDSA("DER")
 	return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
@@ -194,7 +175,7 @@ def verifySignatureFromBytes(data, publicKey, signature, schnorr=False):
 	publicKey = uncompressECPublicKey(publicKey)
 	message = hashlib.sha256(data).digest()
 	if schnorr:
-		verifier = ECSchnorr(hashlib.sha256, option="ISO", fmt="DER")
+		verifier = ECSchnorr(hashlib.sha256, option="LIBSECP", fmt="DER")
 	else:
 		verifier = ECDSA("DER")
 	return verifier.verify(message, unhexlify(signature), publicKey)

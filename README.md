@@ -232,8 +232,10 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] rest `returnKey` behaviour improvement
 
 ### 0.2.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [ ] HTLC implementation
   - [ ] Ark 2.6 compatibility
+  - [X] ecdsa replaced by ecpy
+  - [X] Schnorr signature
+  - [ ] HTLC implementation
 
 ## TODO
   - [ ] doc writing
