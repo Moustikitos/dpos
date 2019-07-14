@@ -169,7 +169,7 @@ def serialize(tx):
 	vendorField = vendorField[:255 if getattr(tx, "_version", 0x01) >= 0x02 else 64]
 
 	# common part
-	pack("<BBBBQ", 0xff, buf, (tx._version, rest.cfg.pubKeyHash, tx["type"], tx.get("nonce", tx["timestamp"])))
+	pack("<BBBBQ", buf, (0xff, tx._version, rest.cfg.pubKeyHash, tx["type"], tx.get("nonce", tx["timestamp"])))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
 	pack("<QB", buf, (tx["fee"], len(vendorField)))
 	pack_bytes(buf, vendorField)

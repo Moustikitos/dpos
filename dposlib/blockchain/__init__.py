@@ -121,7 +121,7 @@ class Transaction(dict):
 			self[key] = value
 
 		if _version == 0x02:
-			self["nonce"] = kwargs.get("nonce", hexlify(os.urandom(8)))
+			self["nonce"] = int(kwargs.get("nonce", hexlify(os.urandom(8))), base=16)
 
 		if hasattr(Transaction, "_publicKey"):
 			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)

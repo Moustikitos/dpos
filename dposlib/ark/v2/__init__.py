@@ -257,7 +257,7 @@ def htlcLock(amount, address, expiration, secretHash, vendorField=None):
 		recipientId=address,
 		vendorField=vendorField,
 		asset={
-			"lock"{
+			"lock":{
 				"secretHash":secretHash,
 				"expiration":expiration
 			}
@@ -269,7 +269,7 @@ def htlcClaim(lockTransactionId, unLockSecret):
 	return Transaction(
 		type=9,
 		asset={
-			"claim"{
+			"claim":{
 				"lockTransactionId":lockTransactionId,
 				"unLockSecret":unLockSecret
 			}
@@ -281,7 +281,7 @@ def htlcRefund(lockTransactionId):
 	return Transaction(
 		type=10,
 		asset={
-			"refund"{
+			"refund":{
 				"lockTransactionId":lockTransactionId,
 			}
 		}
