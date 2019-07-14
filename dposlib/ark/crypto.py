@@ -4,25 +4,44 @@ import binascii
 import hashlib
 import base58
 
-from ecdsa import BadSignatureError
-from ecdsa.der import UnexpectedDER
-from ecdsa.curves import SECP256k1
-from ecdsa.keys import SigningKey, VerifyingKey
-from ecdsa.util import sigdecode_der, sigencode_der_canonize
-
+import ecpy.ecrand
+from ecpy.curves import Curve, Point
+from ecpy.keys import ECPublicKey, ECPrivateKey
+from ecpy.ecdsa import ECDSA
+from ecpy.ecschnorr import ECSchnorr
+###
+# here is a fix because rfc 6979 not implemented yet in ecpy.ecschnorr
+# https://tools.ietf.org/html/rfc6979
+def sign_rfc6979(cls, msg, pv_key, hasher, canonical=False):
+	""" Signs a message hash  according to  RFC6979 
+	Args:
+		msg (bytes)                    : the message hash to sign
+		pv_key (ecpy.keys.ECPrivateKey): key to use for signing
+		hasher (hashlib)               : hasher conform to hashlib interface
+	"""
+	field = pv_key.curve.field
+	V = None
+	for i in range(1, cls.maxtries):
+		k,V = ecpy.ecrand.rnd_rfc6979(msg, pv_key.d, field, hasher, V)
+		sig = cls._do_sign(msg, pv_key, k)
+		if sig:
+			return sig
+		return None
+ECSchnorr.sign_rfc6979 = sign_rfc6979
+###
 from dposlib import BytesIO
 from dposlib.blockchain import cfg
 from dposlib.util.bin import basint, hexlify, pack, pack_bytes, unhexlify
 
 
-def compressEcdsaPublicKey(pubkey):
-	first, last = pubkey[:32], pubkey[32:]
+def compressECPublicKey(ecpublickey):
+	first, last = unhexlify("%x" % ecpublickey.W.x), unhexlify("%x" % ecpublickey.W.y)
 	# check if last digit of second part is even (2%2 = 0, 3%2 = 1)
 	even = not bool(basint(last[-1]) % 2)
 	return (b"\x02" if even else b"\x03") + first
 
 
-def uncompressEcdsaPublicKey(pubkey):
+def uncompressECPublicKey(pubkey):
 	"""
 	Uncompressed public key is:
 	0x04 + x-coordinate + y-coordinate
@@ -42,8 +61,8 @@ def uncompressEcdsaPublicKey(pubkey):
 	y = pow(a, (p + 1) // 4, p)
 	if y % 2 != y_parity:
 		y = -y % p
-	# return result as der signature (no 0x04 preffix)
-	return '{:x}{:x}'.format(x, y)
+	# return result as ECPublicKey
+	return ECPublicKey(Point(x, y, Curve.get_curve("secp256k1"), check=True))
 
 
 def getKeys(secret, seed=None):
@@ -59,17 +78,27 @@ def getKeys(secret, seed=None):
 	"""
 	if secret and not isinstance(secret, bytes): secret = secret.encode('utf-8')
 	seed = hashlib.sha256(secret).digest() if not seed else seed
-	signingKey = SigningKey.from_secret_exponent(
-		int(binascii.hexlify(seed), 16),
-		SECP256k1,
-		hashlib.sha256
-	)
-	publicKey = signingKey.get_verifying_key().to_string()
+	hex_seed = hexlify(seed)
+	privateKey = ECPrivateKey(int(hex_seed, 16), Curve.get_curve("secp256k1"))
+	publicKey = privateKey.get_public_key()
+
 	return {
-		"publicKey": hexlify(compressEcdsaPublicKey(publicKey) if cfg.compressed else publicKey),
-		"privateKey": hexlify(signingKey.to_string()),
+		"publicKey": hexlify(compressECPublicKey(publicKey)),
+		"privateKey": hex_seed,
 		"wif": getWIF(seed)
 	}
+
+
+def getAddressFromSecret(secret):
+	"""
+	Computes ARK address from secret.
+
+	Argument:
+	secret (str) -- secret string
+
+	Return str
+	"""
+	return getAddress(getKeys(secret)["publicKey"])
 
 
 def getAddress(publicKey, marker=None):
@@ -91,18 +120,6 @@ def getAddress(publicKey, marker=None):
 	return b58.decode('utf-8') if isinstance(b58, bytes) else b58
 
 
-def getAddressFromSecret(secret):
-	"""
-	Computes ARK address from secret.
-
-	Argument:
-	secret (str) -- secret string
-
-	Return str
-	"""
-	return getAddress(getKeys(secret)["publicKey"])
-
-
 def getWIF(seed):
 	"""
 	Computes WIF address from seed.
@@ -117,7 +134,7 @@ def getWIF(seed):
 	return b58.decode('utf-8') if isinstance(b58, bytes) else b58
 
 
-def getSignature(tx, privateKey):
+def getSignature(tx, privateKey, schnorr=False):
 	"""
 	Generate transaction signature using private key.
 
@@ -127,15 +144,10 @@ def getSignature(tx, privateKey):
 
 	Return str
 	"""
-	signingKey = SigningKey.from_string(unhexlify(privateKey), SECP256k1, hashlib.sha256)
-	return hexlify(signingKey.sign_deterministic(
-		getBytes(tx),
-		hashlib.sha256,
-		sigencode=sigencode_der_canonize)
-	)
+	return getSignatureFromBytes(getBytes(tx), privateKey, schnorr)
 
 
-def getSignatureFromBytes(data, privateKey):
+def getSignatureFromBytes(data, privateKey, schnorr=False):
 	"""
 	Generate data signature using private key.
 
@@ -145,12 +157,47 @@ def getSignatureFromBytes(data, privateKey):
 
 	Return str
 	"""
-	signingKey = SigningKey.from_string(unhexlify(privateKey), SECP256k1, hashlib.sha256)
-	return hexlify(signingKey.sign_deterministic(
-		data,
-		hashlib.sha256,
-		sigencode=sigencode_der_canonize)
-	)
+	privateKey = ECPrivateKey(int(privateKey, 16), Curve.get_curve("secp256k1"))
+	message = hashlib.sha256(data).digest()
+	if schnorr:
+		signer = ECSchnorr(hashlib.sha256, option="ISO", fmt="DER")
+	else:
+		signer = ECDSA("DER")
+	return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
+
+
+def verifySignature(value, publicKey, signature, schnorr=False):
+	"""
+	Verify signature.
+
+	Arguments:
+	value (bytes) -- value as hex string in bytes
+	publicKey (str) -- a public key as hex string
+	signature (str) -- a signature as hex string
+
+	Return bool
+	"""
+	return verifySignatureFromBytes(unhexlify(value), publicKey, signature, schnorr)
+
+
+def verifySignatureFromBytes(data, publicKey, signature, schnorr=False):
+	"""
+	Verify signature.
+
+	Arguments:
+	data (bytes) -- data in bytes
+	publicKey (str) -- a public key as hex string
+	signature (str) -- a signature as hex string
+
+	Return bool
+	"""
+	publicKey = uncompressECPublicKey(publicKey)
+	message = hashlib.sha256(data).digest()
+	if schnorr:
+		verifier = ECSchnorr(hashlib.sha256, option="ISO", fmt="DER")
+	else:
+		verifier = ECDSA("DER")
+	return verifier.verify(message, unhexlify(signature), publicKey)
 
 
 def getId(tx):
@@ -162,7 +209,7 @@ def getId(tx):
 
 	Return str
 	"""
-	return hexlify(hashlib.sha256(getBytes(tx)).digest())
+	return getIdFromBytes(getBytes(tx))
 
 
 def getIdFromBytes(data):
@@ -175,41 +222,6 @@ def getIdFromBytes(data):
 	Return str
 	"""
 	return hexlify(hashlib.sha256(data).digest())
-
-
-def verifySignature(value, publicKey, signature):
-	"""
-	Verify signature.
-
-	Arguments:
-	value (bytes) -- value as hex string in bytes
-	publicKey (str) -- a public key as hex string
-	signature (str) -- a signature as hex string
-
-	Return bool
-	"""
-	return verifySignatureFromBytes(unhexlify(value), publicKey, signature)
-
-
-def verifySignatureFromBytes(data, publicKey, signature):
-	"""
-	Verify signature.
-
-	Arguments:
-	data (bytes) -- data in bytes
-	publicKey (str) -- a public key as hex string
-	signature (str) -- a signature as hex string
-
-	Return bool
-	"""
-	if len(publicKey) == 66:
-		publicKey = uncompressEcdsaPublicKey(publicKey)
-	verifyingKey = VerifyingKey.from_string(unhexlify(publicKey), SECP256k1, hashlib.sha256)
-	try:
-		verifyingKey.verify(unhexlify(signature), data, hashlib.sha256, sigdecode_der)
-	except (BadSignatureError, UnexpectedDER):
-		return False
-	return True
 
 
 def getBytes(tx):

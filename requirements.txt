@@ -1,5 +1,5 @@
 requests
-ecdsa
+ecpy
 pynacl
 pytz
 base58

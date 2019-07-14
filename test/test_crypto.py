@@ -103,10 +103,10 @@ class TestEcdsaCrypto(unittest.TestCase):
 	def test_signature(self):
 		keys = dposlib.core.crypto.getKeys(self.secret)
 		message = "test message".encode("utf-8")
-		signature = dposlib.core.crypto.getSignatureFromBytes(message, keys["privateKey"])
+		signature = dposlib.core.crypto.getSignatureFromBytes(message, keys["privateKey"], schnorr=True)
 		self.assertEqual(
 			True,
-			dposlib.core.crypto.verifySignatureFromBytes(message, keys["publicKey"], signature)
+			dposlib.core.crypto.verifySignatureFromBytes(message, keys["publicKey"], signature, schnorr=True)
 		)
 
 	def test_get_id(self):

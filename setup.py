@@ -37,7 +37,7 @@ kw = {
 	],
 	"install_requires": [
 		"requests",
-		"ecdsa",
+		"ecpy",
 		"pynacl",
 		"pytz",
 		"base58",
