@@ -36,12 +36,15 @@ kw = {
 		"dposlib.blockchain",
 	],
 	"install_requires": [
+		"future",
 		"requests",
-		"ecpy",
 		"pynacl",
 		"pytz",
 		"base58",
 		"ledgerblue"
+	],
+	"dependency_links": [
+		"https://github.com/Moustikitos/ECPy/archive/master.zip"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [

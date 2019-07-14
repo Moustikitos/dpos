@@ -1,5 +1,6 @@
+future
 requests
-ecpy
+git+https://github.com/Moustikitos/ecpy.git@master
 pynacl
 pytz
 base58
