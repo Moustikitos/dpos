@@ -30,6 +30,12 @@ class Transaction(dict):
 	FMULT = 10000
 	FEESL = None
 
+	def _setSenderPublicKey(self, publicKey):
+		dict.__setitem__(self, "senderPublicKey", publicKey)
+		if self._version >= 0x02:
+			# TODO: setNonce
+			pass
+
 	@staticmethod
 	def path():
 		"""Return current registry path."""
@@ -117,14 +123,12 @@ class Transaction(dict):
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
+
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
 
-		if _version == 0x02:
-			self["nonce"] = int(kwargs.get("nonce", hexlify(os.urandom(8))), base=16)
-
 		if hasattr(Transaction, "_publicKey"):
-			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+			self._setSenderPublicKey(Transaction._publicKey)
 
 	def __setitem__(self, item, value):
 		# cast values according to transaction typing
@@ -134,16 +138,16 @@ class Transaction(dict):
 				value = cast(value)
 			dict.__setitem__(self, item, value)
 			# remove signatures and ids if an item other than signature or id is modified
-			if item not in ["signature", "signatures", "signSignature", "id"]:
+			if item not in ["signature", "signSignature", "secondSignature", "id"]:
 				self.pop("signature", False)
-				self.pop("signatures", False)
 				self.pop("signSignature", False)
+				self.pop("secondSignature", False)
 				self.pop("id", False)
 		# set internal private keys (secrets are not stored)
 		elif hasattr(dposlib, "core"):
 			if item == "secret":
 				Transaction.link(value)
-				dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+				self._setSenderPublicKey(Transaction._publicKey)
 			elif item == "secondSecret":
 				Transaction.link(None, value)
 			elif item == "privateKey":
@@ -177,8 +181,8 @@ class Transaction(dict):
 				else:
 					fee = dposlib.core.computeDynamicFees(self)
 			else:
-				# k is 0 or signature number in case of multisignature tx
-				k = len(self.get("asset", {}).get("multisignature", {}).get("keysgroup", []))
+				# k is 0 or signature number in case of multisignature registration
+				k = len(self.get("asset", {}).get("multisignature", {}).get("publicKeys", []))
 				fee = static_value * (1+k)
 		dict.__setitem__(self, "fee", fee)
 
@@ -207,7 +211,6 @@ class Transaction(dict):
 
 	# sign function using crypto keys
 	def signWithKeys(self, publicKey, privateKey):
-		dict.__setitem__(self, "senderPublicKey", publicKey)
 		Transaction._publicKey = publicKey
 		Transaction._privateKey = privateKey
 		self.sign()
@@ -227,7 +230,7 @@ class Transaction(dict):
 	def sign(self):
 		if hasattr(Transaction, "_privateKey"):
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
-			dict.__setitem__(self, "senderPublicKey", Transaction._publicKey)
+			self._setSenderPublicKey(Transaction._publicKey)
 			self["senderId"] = address
 			if self["type"] in [1, 3, 4, 9] and "recipientId" not in self:
 				self["recipientId"] = address

@@ -9,12 +9,11 @@ import dposlib
 from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
-from dposlib.ark.v2.mixin import serialize, serializePayload, loadPages, deltas
+from dposlib.ark.v2.mixin import loadPages, deltas
 from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
 
-Transaction.serialize = serialize
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
@@ -22,7 +21,7 @@ TRANSACTIONS = {
 	1: "secondSignature",
 	2: "delegateRegistration",
 	3: "vote",
-	# 4: "multiSignature",
+	4: "multiSignature",
 	5: "ipfs",
 	6: "multiPayment",
 	7: "delegateResignation",
@@ -89,12 +88,12 @@ def init():
 		raise Exception("Initialization error")
 	else:
 		cfg.marker = hex(data["version"])[2:]
-		cfg.explorer = data["explorer"]
 		cfg.pubKeyHash = data["version"]
 		cfg.token = data["token"]
 		cfg.symbol = data["symbol"]
 		cfg.ports = dict([k.split("/")[-1],v] for k,v in data["ports"].items())
 		cfg.headers["nethash"] = data["nethash"]
+		cfg.explorer = data["explorer"]
 
 		constants =  data["constants"]
 		cfg.delegate = constants["activeDelegates"]
@@ -105,15 +104,13 @@ def init():
 		cfg.blockreward = constants["reward"]/100000000.
 		cfg.fees = constants["fees"]
 
-		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
-		# on v 2.0.x dynamicFees field is in "fees" field
+		# dynamic fee management
+		# on v2.0 dynamicFees are in "fees" field
 		cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
-		# on v 2.1.x dynamicFees field is in "transactionPool" Field
+		# on v2.1 dynamicFees are in "transactionPool" field
 		cfg.doffsets.update(data.get("transactionPool", {}).get("dynamicFees", {}).get("addonBytes", {}))
-		# on v 2.4.x wif and slip44 are provided by network
-		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
-		if "slip44" in data: cfg.slip44 = str(data["slip44"])
-
+		# before ark v2.4 dynamicFees statistics are in "feeStatistics" field
+		cfg.feestats = dict([i["type"],i["fees"]] for i in data.get("feeStatistics", {}))
 		# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
 		if cfg.feestats == {}:
 			if len(cfg.peers):
@@ -121,11 +118,17 @@ def init():
 				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
 			else:
 				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
-			cfg.feestats = dict([int(i["type"]), {
-				"avgFee": int(i["avg"]),
-				"minFee": int(i["min"]),
-				"maxFee": int(i["min"]),
-			}] for i in fees.get("data", []))
+			cfg.feestats = dict([
+				int(i["type"]), {
+					"avgFee": int(i["avg"]),
+					"minFee": int(i["min"]),
+					"maxFee": int(i["min"]),
+				}
+			] for i in fees.get("data", []))
+
+		# since ark v2.4 wif and slip44 are provided by network
+		if "wif" in data: cfg.wif = hex(data["wif"])[2:]
+		if "slip44" in data: cfg.slip44 = str(data["slip44"])
 
 		if len(cfg.peers):
 			DAEMON_PEERS = rotate_peers()
@@ -141,15 +144,17 @@ def stop():
 # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
 def computeDynamicFees(tx):
 	typ_ = tx.get("type", 0)
+	_version = getattr(tx, "_version", 0x01)
+
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
 	lenVF = len(vendorField)
-	payload = serializePayload(tx)
+	payload = crypto.serializePayload(tx)
 	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
 	return min(
 		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
-		int((T + 50 + lenVF + len(payload)) * Transaction.FMULT)
+		int((T + 50 + (4 if _version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
 	)
 
 
@@ -158,7 +163,7 @@ def broadcastTransactions(*transactions, **params):
 	chunk_size = params.pop("chunk_size", 20)
 	report = []
 	if serialized:
-		transactions = [tx.serialize() for tx in transactions]
+		transactions = [crypto.serialize(tx) for tx in transactions]
 		for chunk in [transactions[i:i+chunk_size] for i in range(0, len(transactions), chunk_size)]:
 			pass
 	else:
@@ -223,17 +228,32 @@ def downVote(*usernames):
 	)
 
 
-def registerIPFS(dag):
+def registerMultiSignature(min, *publicKeys):
 	return Transaction(
+		version=2,
+		type=4,
+		asset={
+			"multiSignature": {
+				"min": min,
+				"publicKeys": publicKeys
+			}
+		},
+	)
+
+
+def registerIpfs(ipfs):
+	return Transaction(
+		version=2,
 		type=5,
 		asset={
-			"ipfs": {"dag": dag}
+			"ipfs": ipfs
 		}
 	)
 
 
 def multiPayment(*pairs, **kwargs):
 	return Transaction(
+		version=2,
 		type=6,
 		vendorField=kwargs.get("vendorField", None),
 		asset={
@@ -246,12 +266,14 @@ def multiPayment(*pairs, **kwargs):
 
 def delegateResignation():
 	return Transaction(
+		version=2,
 		type=7
 	)
 
 
 def htlcLock(amount, address, expiration, secretHash, vendorField=None):
 	return Transaction(
+		version=2,
 		type=8,
 		amount=amount*100000000,
 		recipientId=address,
@@ -267,6 +289,7 @@ def htlcLock(amount, address, expiration, secretHash, vendorField=None):
 
 def htlcClaim(lockTransactionId, unLockSecret):
 	return Transaction(
+		version=2,
 		type=9,
 		asset={
 			"claim":{
@@ -279,6 +302,7 @@ def htlcClaim(lockTransactionId, unLockSecret):
 
 def htlcRefund(lockTransactionId):
 	return Transaction(
+		version=2,
 		type=10,
 		asset={
 			"refund":{
@@ -293,5 +317,6 @@ __all__ = [
 	"Transaction",
 	"loadPages", "broadcastTransactions",
 	"transfer", "registerSecondSecret", "registerSecondPublicKey", "registerAsDelegate", "upVote", "downVote",
-	"registerIPFS", "multiPayment", "delegateResignation"
+	"registerMultiSignature", "registerIpfs", "multiPayment", "delegateResignation",
+	"htlcLock", "htlcClaim", "htlcRefund"
 ]
