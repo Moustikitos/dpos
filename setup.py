@@ -44,7 +44,7 @@ kw = {
 		"ledgerblue"
 	],
 	"dependency_links": [
-		"https://github.com/Moustikitos/ECPy/archive/schnorr-rfc6979.zip"
+		"https://github.com/Moustikitos/ECPy/archive/master.zip"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [
