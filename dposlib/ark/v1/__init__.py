@@ -66,9 +66,11 @@ def rotate_peers():
 
 def init():
 	global DAEMON_PEERS
+	crypto.SCHNORR_SIG = False
+	
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
 	cfg.headers["API-Version"] = "1"
-	
+
 	if len(cfg.peers):
 		network = rest.GET.api.loader.autoconfigure().get("network", {})
 		cfg.hotmode = True if len(network) else False

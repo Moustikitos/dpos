@@ -10,6 +10,7 @@ import os
 import struct
 
 import dposlib
+import ledgerblue
 from dposlib.util.bin import unhexlify, hexlify, intasb, basint
 from ledgerblue.comm import getDongle
 

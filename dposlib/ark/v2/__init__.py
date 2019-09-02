@@ -35,6 +35,7 @@ TYPING = {
 	"timelockType": int,
 	"timelock": int,
 	"type": int,
+	"typeGroup": int,
 	"amount": int,
 	"fee": int,
 	"senderPublicKey": str,

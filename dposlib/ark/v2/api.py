@@ -5,7 +5,6 @@
 import os
 import dposlib
 
-from dposlib import ldgr
 from dposlib.util.data import filter_dic, loadJson, dumpJson
 from dposlib.ark.v2.mixin import loadPages, deltas
 
@@ -24,29 +23,34 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
-class NanoS(Wallet, dposlib.blockchain.NanoS):
+try:
+	from dposlib import ldgr
+except:
+	pass
+else:
+	class NanoS(Wallet, dposlib.blockchain.NanoS):
 
-	def __init__(self, account, index, network=1, **kw):
-		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
-			dposlib.rest.cfg.slip44,
-			getattr(dposlib.rest.cfg, "aip20", network),
-			account,
-			index
-		)
-		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
-		self.debug = kw.pop("debug", False)
-		Wallet.__init__(self, self.address, **kw)
+		def __init__(self, account, index, network=1, **kw):
+			# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+			self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
+				dposlib.rest.cfg.slip44,
+				getattr(dposlib.rest.cfg, "aip20", network),
+				account,
+				index
+			)
+			self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
+			self.debug = kw.pop("debug", False)
+			Wallet.__init__(self, self.address, **kw)
 
-	@staticmethod
-	def fromDerivationPath(derivationPath, **kw):
-		nanos = NanoS(0,0,0, **kw)
-		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
-		nanos.address = address
-		nanos.derivationPath = derivationPath
-		nanos._Data__args = (address,)
-		nanos.update()
-		return nanos
+		@staticmethod
+		def fromDerivationPath(derivationPath, **kw):
+			nanos = NanoS(0,0,0, **kw)
+			address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+			nanos.address = address
+			nanos.derivationPath = derivationPath
+			nanos._Data__args = (address,)
+			nanos.update()
+			return nanos
 
 
 class Delegate(dposlib.blockchain.Data):

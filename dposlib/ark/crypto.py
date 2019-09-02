@@ -14,42 +14,31 @@ from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 SECP256K1 = Curve.get_curve("secp256k1")
+SCHNORR_SIG = False
 
 
 def ecPublicKey2Hex(ecpublickey):
 	"""
-	Convert an ecpy.ECPublicKey to a hex string.
+	Convert an ecpy.keys.ECPublicKey to a hex string.
 
 	Argument:
-	ecpublickey (ecpy.ECPublicKey) -- an ecpy.ECPublicKey instance
+	ecpublickey (ecpy.keys.ECPublicKey) -- an ecpy.keys.ECPublicKey instance
 
 	Returns str
-	"""
-	first, last = unhexlify("%x" % ecpublickey.W.x), unhexlify("%x" % ecpublickey.W.y)
-	# check if last digit of second part is even (2%2 = 0, 3%2 = 1)
-	even = not bool(bytearray(last)[-1] % 2)
-	return hexlify((b"\x02" if even else b"\x03") + first)
+	"""	
+	return hexlify(ecpublickey.encode_point())
 
 
 def hex2EcPublicKey(pubkey):
 	"""
-	Convert a valid hex string public key to an ecpy.ECPublicKey.
+	Convert a valid hex string public key to an ecpy.keys.ECPublicKey.
 
 	Argument:
 	pubkey (str) -- a valid hex string public key
 
-	Returns ecpy.ECPublicKey
-	"""
-
-	# ref : https://bitcointalk.org/index.php?topic=644919.msg7205689#msg7205689
-	p = SECP256K1.field
-	y_parity = int(pubkey[:2]) - 2
-	x = int(pubkey[2:], 16)
-	a = (pow(x, 3, p) + 7) % p
-	y = pow(a, (p + 1) // 4, p)
-	if y % 2 != y_parity:
-		y = -y % p
-	return ECPublicKey(Point(x, y, SECP256K1, check=True))
+	Returns ecpy.keys.ECPublicKey
+	"""	
+	return ECPublicKey(SECP256K1.decode_point(unhexlify(pubkey)))
 
 
 def getKeys(secret, seed=None):
@@ -124,6 +113,16 @@ def getWIF(seed):
 	return str(b58.decode('utf-8') if isinstance(b58, bytes) else b58)
 
 
+def wifSignature(tx, wif):
+	seed = base58.b58decode_check(wif)[1:33]
+	return getSignature(tx, hexlify(seed))
+
+
+def wifSignatureFromBytes(data, wif):
+	seed = base58.b58decode_check(wif)[1:33]
+	return getSignatureFromBytes(data, hexlify(seed))
+
+
 def getSignature(tx, privateKey):
 	"""
 	Generate transaction signature using private key.
@@ -134,10 +133,10 @@ def getSignature(tx, privateKey):
 
 	Return str
 	"""
-	return getSignatureFromBytes(getBytes(tx), privateKey, getattr(tx, "_version", 0x01) >= 0x02)
+	return getSignatureFromBytes(getBytes(tx), privateKey)
 
 
-def getSignatureFromBytes(data, privateKey, schnorr=False):
+def getSignatureFromBytes(data, privateKey):
 	"""
 	Generate data signature using private key.
 
@@ -151,11 +150,12 @@ def getSignatureFromBytes(data, privateKey, schnorr=False):
 	"""
 	privateKey = ECPrivateKey(int(privateKey, 16), SECP256K1)
 	message = hashlib.sha256(data).digest()
-	if schnorr:
-		signer = ECSchnorr(hashlib.sha256, option="LIBSECP", fmt="RAW")
+	if SCHNORR_SIG:
+		signer = ECSchnorr(hashlib.sha256, option="SECP256K1", fmt="RAW")
+		return hexlify(signer.sign_secp256k1(message, privateKey))
 	else:
 		signer = ECDSA("DER")
-	return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
+		return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
 
 
 def checkTransaction(tx, secondPublicKey=None):
@@ -181,8 +181,7 @@ def checkTransaction(tx, secondPublicKey=None):
 		checks.append(verifySignatureFromBytes(
 			_ser(tx, version),
 			publicKey,
-			signature,
-			schnorr=version >= 0x02
+			signature
 		))
 	# add signature and then check second signature if any
 	tx["signature"] = signature
@@ -190,14 +189,13 @@ def checkTransaction(tx, secondPublicKey=None):
 		checks.append(verifySignatureFromBytes(
 			_ser(tx, version),
 			secondPublicKey,
-			signSignature,
-			schnorr=version >= 0x02
+			signSignature
 		))
 
 	return not False in checks
 
 
-def verifySignature(value, publicKey, signature, schnorr=False):
+def verifySignature(value, publicKey, signature):
 	"""
 	Verify signature.
 
@@ -210,10 +208,10 @@ def verifySignature(value, publicKey, signature, schnorr=False):
 
 	Return bool
 	"""
-	return verifySignatureFromBytes(unhexlify(value), publicKey, signature, schnorr)
+	return verifySignatureFromBytes(unhexlify(value), publicKey, signature)
 
 
-def verifySignatureFromBytes(data, publicKey, signature, schnorr=False):
+def verifySignatureFromBytes(data, publicKey, signature):
 	"""
 	Verify signature.
 
@@ -228,8 +226,8 @@ def verifySignatureFromBytes(data, publicKey, signature, schnorr=False):
 	"""
 	publicKey = hex2EcPublicKey(publicKey)
 	message = hashlib.sha256(data).digest()
-	if schnorr:
-		verifier = ECSchnorr(hashlib.sha256, option="LIBSECP", fmt="RAW")
+	if len(signature) == 128: #schnorr:
+		verifier = ECSchnorr(hashlib.sha256, option="SECP256K1", fmt="RAW")
 	else:
 		verifier = ECDSA("DER")
 	return verifier.verify(message, unhexlify(signature), publicKey)
@@ -347,8 +345,11 @@ def serialize(tx, version=None):
 	vendorField = vendorField[:255 if _version >= 0x02 else 64]
 
 	# common part
-	pack("<BBBB", buf, (0xff, _version, cfg.pubKeyHash, tx["type"]))
-	pack("<Q", buf, (tx["nonce"],)) if _version >= 0x02 else pack("<I", buf, (tx["timestamp"],))
+	pack("<BBB", buf, (0xff, _version, cfg.pubKeyHash))
+	if _version >= 0x02:
+		pack("<BBQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
+	else:
+		pack("<BI", buf, (tx["type"], tx["timestamp"],))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
 	pack("<QB", buf, (tx["fee"], len(vendorField)))
 	pack_bytes(buf, vendorField)

@@ -9,11 +9,10 @@ import json
 import dposlib
 import weakref
 import getpass
-import ledgerblue
 
 from collections import OrderedDict
 
-from dposlib import ldgr
+from dposlib import rest
 from dposlib.blockchain import slots, cfg
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
@@ -35,6 +34,8 @@ class Transaction(dict):
 		if self._version >= 0x02:
 			# TODO: setNonce
 			pass
+		elif "timestamp" not in self:
+			self["timestamp"] = slots.getTime() # set timestamp
 
 	@staticmethod
 	def path():
@@ -111,18 +112,17 @@ class Transaction(dict):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
 
 	def __init__(self, arg={}, **kwargs):
-		_version = kwargs.pop("version", 0x01)
-		self.__dict__["_version"] = _version
-
+		self.__dict__["_version"] = kwargs.pop("version", 0x01)
 		if not hasattr(dposlib, "core"):
-			raise Exception("No blockchain available")
+			raise Exception("no blockchain loaded")
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
 
-		self["amount"] = data.pop("amount", 0)
+		self["amount"] = data.pop("amount", 0) # amount is required field
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
-		self["timestamp"] = data.pop("timestamp", slots.getTime()) # set timestamp if no one given
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
+		if self._version >= 0x02:
+			self["typeGroup"] = data.pop("typeGroup", 1) # default typeGroup is 1 (Ark core)
 
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
@@ -155,12 +155,16 @@ class Transaction(dict):
 			elif item == "secondPrivateKey":
 				Transaction._secondPrivateKey = str(value)
 			else:
-				raise AttributeError("attribute %s not allowed in transaction class" % item)
+				raise AttributeError("field '%s' not allowed in '%s' class" % (item, self.__class__.__name__))
 		else:
 			raise Exception("no blockchain package loaded")
 
 	def __getattr__(self, attr):
-		return dict.get(self, attr, self.__dict__.get(attr, False))
+		attr = dict.get(self, attr, self.__dict__.get(attr, False))
+		if attr == False:
+			raise AttributeError("'%s' object has no field '%s'" % (self.__class__.__name__, attr))
+		else:
+			return attr
 
 	def __setattr__(self, attr, value):
 		self[attr] = value
@@ -236,7 +240,7 @@ class Transaction(dict):
 				self["recipientId"] = address
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:
-			raise Exception("Orphan transaction can not sign itsef")
+			raise Exception("orphan transaction can not sign itsef")
 
 	# root second sign function called by others
 	def signSign(self):
@@ -244,15 +248,15 @@ class Transaction(dict):
 			try:
 				self["signSignature"] = dposlib.core.crypto.getSignature(self, Transaction._secondPrivateKey)
 			except AttributeError:
-				raise Exception("No second private Key available")
+				raise Exception("no second private Key available")
 		else:
-			raise Exception("Transaction not signed")
+			raise Exception("transaction not signed")
 
 	def identify(self):
 		if "signature" in self:
 			self["id"] = dposlib.core.crypto.getId(self)
 		else:
-			raise Exception("Transaction not signed")
+			raise Exception("transaction not signed")
 
 	def finalize(self, secret=None, secondSecret=None, fee=None, fee_included=False):
 		"""
@@ -446,31 +450,36 @@ class Wallet(Data):
 		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 
-class NanoS(Wallet):
+try:
+	from dposlib import ldgr
+except:
+	pass
+else:
+	class NanoS(Wallet):
 
-	def _finalizeTx(self, tx, fee=None, fee_included=False):
-		if "fee" not in tx or fee != None:
-			tx.setFees(fee)
-		tx.feeIncluded() if fee_included else tx.feeExcluded()
+		def _finalizeTx(self, tx, fee=None, fee_included=False):
+			if "fee" not in tx or fee != None:
+				tx.setFees(fee)
+			tx.feeIncluded() if fee_included else tx.feeExcluded()
 
-		tx["senderId"] = self.address
-		if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
-			tx["recipientId"] = self.address
+			tx["senderId"] = self.address
+			if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
+				tx["recipientId"] = self.address
 
-		try:
-			ldgr.signTransaction(tx, self.derivationPath, self.debug)
-		except ledgerblue.commException.CommException:
-			raise Exception("transaction cancelled")
-		
-		if self.secondPublicKey != None:
 			try:
-				keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
-				while keys_2.get("publicKey", None) != self.secondPublicKey:
-					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
-			except KeyboardInterrupt:
+				ldgr.signTransaction(tx, self.derivationPath, self.debug)
+			except ldgr.ledgerblue.commException.CommException:
 				raise Exception("transaction cancelled")
-			else:
-				tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
+			
+			if self.secondPublicKey != None:
+				try:
+					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+					while keys_2.get("publicKey", None) != self.secondPublicKey:
+						keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+				except KeyboardInterrupt:
+					raise Exception("transaction cancelled")
+				else:
+					tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
 
-		tx.identify()
-		return tx
+			tx.identify()
+			return tx
