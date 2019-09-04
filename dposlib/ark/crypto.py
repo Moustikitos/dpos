@@ -114,8 +114,7 @@ def getWIF(seed):
 
 
 def wifSignature(tx, wif):
-	seed = base58.b58decode_check(wif)[1:33]
-	return getSignature(tx, hexlify(seed))
+	return wifSignatureFromBytes(getBytes(tx), wif)
 
 
 def wifSignatureFromBytes(data, wif):
