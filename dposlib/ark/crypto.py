@@ -14,6 +14,7 @@ from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 SECP256K1 = Curve.get_curve("secp256k1")
+SCHNORR_SIG_PROTOCOL = "SECP256K1"
 SCHNORR_SIG = False
 
 
@@ -26,7 +27,7 @@ def ecPublicKey2Hex(ecpublickey):
 
 	Returns str
 	"""	
-	return hexlify(ecpublickey.encode_point())
+	return hexlify(ecpublickey.W.to_bytes())
 
 
 def hex2EcPublicKey(pubkey):
@@ -38,7 +39,7 @@ def hex2EcPublicKey(pubkey):
 
 	Returns ecpy.keys.ECPublicKey
 	"""	
-	return ECPublicKey(SECP256K1.decode_point(unhexlify(pubkey)))
+	return ECPublicKey(Point.from_bytes(unhexlify(pubkey), SECP256K1))
 
 
 def getKeys(secret, seed=None):
@@ -150,7 +151,7 @@ def getSignatureFromBytes(data, privateKey):
 	privateKey = ECPrivateKey(int(privateKey, 16), SECP256K1)
 	message = hashlib.sha256(data).digest()
 	if SCHNORR_SIG:
-		signer = ECSchnorr(hashlib.sha256, option="SECP256K1", fmt="RAW")
+		signer = ECSchnorr(hashlib.sha256, option=SCHNORR_SIG_PROTOCOL, fmt="RAW")
 		return hexlify(signer.sign_secp256k1(message, privateKey))
 	else:
 		signer = ECDSA("DER")
@@ -158,6 +159,16 @@ def getSignatureFromBytes(data, privateKey):
 
 
 def checkTransaction(tx, secondPublicKey=None):
+	"""
+	Verify transaction validity.
+
+	Arguments:
+	tx (dict) -- transaction object
+	Keyword argument:
+	secondPublicKey (str) -- secondPublicKey to use
+
+	Return bool
+	"""
 	checks = []
 	version = getattr(tx, "_version", 0x01)
 	publicKey = tx["senderPublicKey"]
@@ -225,8 +236,8 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	"""
 	publicKey = hex2EcPublicKey(publicKey)
 	message = hashlib.sha256(data).digest()
-	if len(signature) == 128: #schnorr:
-		verifier = ECSchnorr(hashlib.sha256, option="SECP256K1", fmt="RAW")
+	if len(signature) == 128:
+		verifier = ECSchnorr(hashlib.sha256, option=SCHNORR_SIG_PROTOCOL, fmt="RAW")
 	else:
 		verifier = ECDSA("DER")
 	return verifier.verify(message, unhexlify(signature), publicKey)
