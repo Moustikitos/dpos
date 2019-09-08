@@ -6,13 +6,13 @@
 import os
 import sys
 import json
-import dposlib
 import weakref
 import getpass
 
 from collections import OrderedDict
 
-from dposlib import rest
+import dposlib
+import dposlib.rest
 from dposlib.blockchain import slots, cfg
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
