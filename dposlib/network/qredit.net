@@ -1,24 +1,17 @@
 {
-	"begintime": [2017, 3, 21, 13],
-	"familly": "ark.v1",
+	"familly": "ark.v2",
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "1.0",
+    "aip20": 0,
 
 	"wif": "bb",
 	"marker": "3a",
-
 	"slip44": "111",
-    "aip20": 0,
 	
 	"bip32": {
 		"private": 70615956,
 		"public": 70617039
-	},
-
-	"headers": {
-		"nethash": "5e67037fd290ba7ab378e84a591d251c46eb9770eb134983771fd602233bf193",
-		"port": "4101"
 	},
 
 	"port": 4103,
@@ -29,12 +22,5 @@
 		"116.203.58.165",
 		"159.69.89.111",
 		"159.69.89.41"
-	],
-
-	"explorer": "https://explorer.qredit.io",
-	"token": "Qredit",
-	"symbol": "XQR",
-	"delegate": 51,
-	"blocktime": 8,
-	"blockreward": 2
+	]
 }

@@ -3,12 +3,11 @@
 	"maxvotepertx": 1,
 	"maxvote": 1,
 	"minversion": "2.0",
+    "aip20": 0,
 
 	"wif": "aa",
 	"marker": "37",
-
 	"slip44": "111",
-    "aip20": 0,
 	
 	"bip32": {
 		"private": 70615956,
