@@ -20,13 +20,15 @@ PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
 
 def parseBip32Path(path):
 	"""
-	Parse a derivation path.
-	~https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+	Parse a BIP44 derivation path.
 
-	Argument:
-	path -- the derivation path
+	https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 
-	Return bytes
+	Args:
+		path (:class:`str`): the derivation path
+
+	Returns:
+		:class:`bytes`: parsed bip32 path
 	"""
 	if len(path) == 0:
 		return b""
@@ -45,11 +47,12 @@ def buildTxApdu(dongle_path, data):
 	"""
 	Generate apdu from data. This apdu is to be sent into the ledger key.
 
-	Argument:
-	dongle_path -- value returned by parseBip32Path
-	data -- bytes value returned by dposlib.core.crypto.getBytes
+	Args:
+		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
+		data (:class:`bytes`): bytes value returned by :func:`dposlib.core.crypto.getBytes`
 
-	Return bytes
+	Returns
+		:class:`bytes`: public key apdu data
 	"""
 
 	path_len = len(dongle_path)
@@ -73,10 +76,11 @@ def buildPkeyApdu(dongle_path):
 	"""
 	Generate apdu to get public key from ledger key.
 
-	Argument:
-	dongle_path -- value returned by parseBip32Path
+	Args:
+		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
 
-	Return bytes
+	Returns
+		:class:`bytes`: public key apdu data
 	"""
 
 	path_len = len(dongle_path)
@@ -88,13 +92,12 @@ def getPublicKey(dongle_path, debug=False):
 	"""
 	Compute the public key associated to a derivation path.
 
-	Argument:
-	dongle_path -- value returned by parseBip32Path
+	Args:
+		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
+		debug (:class:`bool`): flag to activate debug messages from ledger key [default: False]
 
-	Keyword argument:
-	debug -- flag to activate debug messages from ledger key [default: False]
-
-	Return str (hex)
+	Returns:
+		:class:`str`: hexadecimal compressed publicKey
 	"""
 
 	apdu = buildPkeyApdu(dongle_path)
@@ -107,16 +110,18 @@ def getPublicKey(dongle_path, debug=False):
 
 def getSignature(data, dongle_path, debug=False):
 	"""
-	Get ledger Nano S signature of given transaction.
+	Get ledger Nano S signature of given data.
 
-	Argument:
-	data -- transaction as bytes data returned by dposlib.core.crypto.getBytes
-	dongle_path -- value returned by parseBip32Path
+	Args:
+		data (:class:`bytes`):
+			transaction as bytes data returned by :func:`dposlib.core.crypto.getBytes`
+		dongle_path (:class:`bytes`):
+			value returned by :func:`dposlib.ldgr.parseBip32Path`
+		debug (:class:`bool`):
+			flag to activate debug messages from ledger key
 
-	Keyword argument:
-	debug -- flag to activate debug messages from ledger key [default: False]
-
-	Return str (hex)
+	Returns:
+		:class:`str`: hexadecimal signature
 	"""
 
 	apdu1, apdu2 = buildTxApdu(dongle_path, data)
@@ -131,16 +136,13 @@ def getSignature(data, dongle_path, debug=False):
 
 def signTransaction(tx, path, debug=False):
 	"""
-	Append signature into transaction according to derivation path.
+	Append signature and sender public key into transaction according to
+	derivation path.
 
-	Argument:
-	tx -- transaction as dictionary
-	path -- derivation path
-
-	Keyword argument:
-	debug -- flag to activate debug messages from ledger key [default: False]
-	
-	Return None
+	Arguments:
+		tx (:class:`dict`): transaction as dictionary
+		path (:class:`str`): derivation path
+		debug (:class:`bool`): flag to activate debug messages from ledger key
 	"""
 
 	dongle_path = parseBip32Path(path)
