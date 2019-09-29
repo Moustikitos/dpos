@@ -176,8 +176,9 @@ def broadcastTransactions(*transactions, **params):
 		   report
 
 
-def transfer(amount, address, vendorField=None):
+def transfer(amount, address, vendorField=None, version=1):
 	return Transaction(
+		version=version,
 		type=0,
 		amount=amount*100000000,
 		recipientId=address,
@@ -185,12 +186,13 @@ def transfer(amount, address, vendorField=None):
 	)
 
 
-def registerSecondSecret(secondSecret):
-	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
+def registerSecondSecret(secondSecret, version=1):
+	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"], version=version)
 
 
-def registerSecondPublicKey(secondPublicKey):
+def registerSecondPublicKey(secondPublicKey, version=1):
 	return Transaction(
+		version=version,
 		type=1,
 		asset={
 			"signature": {
@@ -200,8 +202,9 @@ def registerSecondPublicKey(secondPublicKey):
 	)
 
 
-def registerAsDelegate(username):
+def registerAsDelegate(username, version=1):
 	return Transaction(
+		version=version,
 		type=2,
 		asset={
 			"delegate": {
@@ -211,8 +214,9 @@ def registerAsDelegate(username):
 	)
 
 
-def upVote(*usernames):
+def upVote(*usernames, version=1):
 	return Transaction(
+		version=version,
 		type=3,
 		asset={
 			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
@@ -220,8 +224,9 @@ def upVote(*usernames):
 	)
 
 
-def downVote(*usernames):
+def downVote(*usernames, version=1):
 	return Transaction(
+		version=version,
 		type=3,
 		asset={
 			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
@@ -229,9 +234,9 @@ def downVote(*usernames):
 	)
 
 
-def registerMultiSignature(min, *publicKeys):
+def registerMultiSignature(min, *publicKeys, version=1):
 	return Transaction(
-		version=2,
+		version=version,
 		type=4,
 		asset={
 			"multiSignature": {

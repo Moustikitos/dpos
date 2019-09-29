@@ -32,8 +32,9 @@ class Transaction(dict):
 	def _setSenderPublicKey(self, publicKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
 		if self._version >= 0x02:
-			# TODO: setNonce
-			pass
+			if "nonce" not in self:
+				# TODO: setNonce
+				pass
 		elif "timestamp" not in self:
 			self["timestamp"] = slots.getTime() # set timestamp
 
@@ -49,7 +50,7 @@ class Transaction(dict):
 	def link(secret=None, secondSecret=None):
 		"""
 		Save public and private keys derived from secrets. This is equivalent to
-		wallet login and limits number of secret keyboard entries.
+		wallet login. it limits number of secret keyboard entries.
 		"""
 		if hasattr(dposlib, "core"):
 			if secret:

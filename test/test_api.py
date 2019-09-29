@@ -29,19 +29,19 @@ class TestDposApi(unittest.TestCase):
 				dposlib.core.crypto.getAddress(dposlib.core.crypto.getKeys(self.secret)["publicKey"])
 			)
 
-	def test_networks(self):
-		path = os.path.join(dposlib.ROOT, "network")
-		for name in [n.replace(".net", "") for n in os.listdir(path) if n.endswith(".net")]:
-			try:
-				self.assertEqual(rest.use(name), True)
-			except Exception as e:
-				sys.stdout.write("%s network failed...\n" % name)
-			# else:
-			# 	try:
-			# 		print("%s (blocktime=%s)" % (rest.cfg.network, rest.cfg.blocktime), json.dumps(dposlib.core.mixin.deltas(), indent=2))
-			# 	except:
-			# 		pass
-		rest.use("d.ark")
+	# def test_networks(self):
+	# 	path = os.path.join(dposlib.ROOT, "network")
+	# 	for name in [n.replace(".net", "") for n in os.listdir(path) if n.endswith(".net")]:
+	# 		try:
+	# 			self.assertEqual(rest.use(name), True)
+	# 		except Exception as e:
+	# 			sys.stdout.write("%s network failed...\n" % name)
+	# 		# else:
+	# 		# 	try:
+	# 		# 		print("%s (blocktime=%s)" % (rest.cfg.network, rest.cfg.blocktime), json.dumps(dposlib.core.mixin.deltas(), indent=2))
+	# 		# 	except:
+	# 		# 		pass
+	# 	rest.use("d.ark")
 
 	@connection_enabled
 	def test_wallet(self):

@@ -14,7 +14,7 @@ from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 SECP256K1 = Curve.get_curve("secp256k1")
-SCHNORR_SIG_PROTOCOL = "SECP256K1"
+SCHNORR_SIG_PROTOCOL = "BIP"
 SCHNORR_SIG = False
 
 
@@ -27,7 +27,7 @@ def ecPublicKey2Hex(ecpublickey):
 
 	Returns str
 	"""	
-	return hexlify(ecpublickey.W.to_bytes())
+	return hexlify(ecpublickey.W.to_bytes(compressed=True))
 
 
 def hex2EcPublicKey(pubkey):
@@ -152,7 +152,7 @@ def getSignatureFromBytes(data, privateKey):
 	message = hashlib.sha256(data).digest()
 	if SCHNORR_SIG:
 		signer = ECSchnorr(hashlib.sha256, option=SCHNORR_SIG_PROTOCOL, fmt="RAW")
-		return hexlify(signer.sign_secp256k1(message, privateKey))
+		return hexlify(signer.sign_bip(message, privateKey))
 	else:
 		signer = ECDSA("DER")
 		return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
@@ -172,12 +172,10 @@ def checkTransaction(tx, secondPublicKey=None):
 	checks = []
 	version = getattr(tx, "_version", 0x01)
 	publicKey = tx["senderPublicKey"]
-
 	# pure python dict serializer
 	_ser = lambda t,v: serialize(t, version=v) if v >= 0x02 else getBytes(t)
 	# create a local copy of tx
 	tx = dict(**tx)
-
 	# id check
 	# remove id from tx if any and then compare
 	id_ = tx.pop("id", False)
@@ -201,7 +199,6 @@ def checkTransaction(tx, secondPublicKey=None):
 			secondPublicKey,
 			signSignature
 		))
-
 	return not False in checks
 
 
