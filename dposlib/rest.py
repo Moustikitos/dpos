@@ -79,28 +79,25 @@ class EndPoint(object):
 
 	@staticmethod
 	def _manage_response(req, returnKey, error=None):
-		# print(req.url)
+		# first try to jsonify response
+		try:
+			data = req.json()
+		except Exception as error:
+			data = {"success": True, "except": True, "data": req.text, "error": "%r"%error}
+
 		if req.status_code < 300:
-			# first try to jsonify response
-			try:
-				data = req.json()
-			# if not posible, trow an exception with req.text
-			except Exception as error:
-				data = {"success": True, "except": True, "data": req.text, "error": "%r"%error}
+			# else try to extract the returnKey
+			tmp = data.get(returnKey, False)
+			if not tmp:
+				if returnKey:
+					data["warning"] = "returnKey %s not found" % returnKey
+			# filter the result if returnKey gives a dict instance
 			else:
-				# else try to extract the returnKey
-				tmp = data.get(returnKey, False)
-				if not tmp:
-					if returnKey:
-						data["warning"] = "returnKey %s not found" % returnKey
-				# filter the result if returnKey gives a dict instance
-				else:
-					data = tmp
-					if isinstance(tmp, dict):
-						data = filter_dic(tmp)
-			return data
-		else:
-			return {"success": False, "except": True, "data": req.text, "error": "status code %s returned" % req.status_code}
+				data = tmp
+				if isinstance(tmp, dict):
+					data = filter_dic(tmp)
+
+		return data
 
 	@staticmethod
 	def _GET(*args, **kwargs):
