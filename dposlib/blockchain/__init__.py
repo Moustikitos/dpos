@@ -31,11 +31,10 @@ class Transaction(dict):
 
 	def _setSenderPublicKey(self, publicKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
-		if self._version >= 0x02:
+		if self["version"] >= 0x02:
 			if "nonce" not in self:
-				# TODO: setNonce
-				pass
-		elif "timestamp" not in self:
+				self["nonce"] = int(dposlib.rest.GET.api.wallets(publicKey).get("data", {}).get("nonce", 0))+1
+		if "timestamp" not in self:
 			self["timestamp"] = slots.getTime() # set timestamp
 
 	@staticmethod
@@ -113,16 +112,17 @@ class Transaction(dict):
 		return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
 
 	def __init__(self, arg={}, **kwargs):
-		self.__dict__["_version"] = kwargs.pop("version", 0x01)
 		if not hasattr(dposlib, "core"):
 			raise Exception("no blockchain loaded")
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
 
+		version = data.pop("version", 0x01)
+		self["version"] = version #
 		self["amount"] = data.pop("amount", 0) # amount is required field
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
-		if self._version >= 0x02:
+		if version >= 0x02:
 			self["typeGroup"] = data.pop("typeGroup", 1) # default typeGroup is 1 (Ark core)
 
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
@@ -145,27 +145,24 @@ class Transaction(dict):
 				self.pop("secondSignature", False)
 				self.pop("id", False)
 		# set internal private keys (secrets are not stored)
-		elif hasattr(dposlib, "core"):
-			if item == "secret":
-				Transaction.link(value)
-				self._setSenderPublicKey(Transaction._publicKey)
-			elif item == "secondSecret":
-				Transaction.link(None, value)
-			elif item == "privateKey":
-				Transaction._privateKey = str(value)
-			elif item == "secondPrivateKey":
-				Transaction._secondPrivateKey = str(value)
-			else:
-				raise AttributeError("field '%s' not allowed in '%s' class" % (item, self.__class__.__name__))
+		elif item == "secret":
+			Transaction.link(value)
+			self._setSenderPublicKey(Transaction._publicKey)
+		elif item == "secondSecret":
+			Transaction.link(None, value)
+		elif item == "privateKey":
+			Transaction._privateKey = str(value)
+		elif item == "secondPrivateKey":
+			Transaction._secondPrivateKey = str(value)
 		else:
-			raise Exception("no blockchain package loaded")
+			raise AttributeError("field '%s' not allowed in '%s' class" % (item, self.__class__.__name__))
 
 	def __getattr__(self, attr):
-		attr = dict.get(self, attr, self.__dict__.get(attr, False))
-		if attr == False:
+		_attr = dict.get(self, attr, self.__dict__.get(attr, False))
+		if _attr == False:
 			raise AttributeError("'%s' object has no field '%s'" % (self.__class__.__name__, attr))
 		else:
-			return attr
+			return _attr
 
 	def __setattr__(self, attr, value):
 		self[attr] = value
@@ -176,7 +173,7 @@ class Transaction(dict):
 		else:
 			static_value = getattr(cfg, "fees", {})\
 			               .get("staticFees", getattr(cfg, "fees", {}))\
-						   .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
+			               .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
 			if Transaction.DFEES:
 				# use fee statistics if FEESL is not None
 				if Transaction.FEESL != None:

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+# api endpoint to locate blockchain configuration
+__CFG__ = "api/node/configuration"
+__FEE__ = "api/node/fees"
+
 import os
 import pytz
 from datetime import datetime
@@ -30,23 +34,25 @@ TRANSACTIONS = {
 	10: "htlcrefund",
 }
 TYPING = {
-	"timestamp": int,
+	"amount": int,
+	"asset": dict,
+	"expiration": int,
+	"fee": int,
+	"id": str,
 	"nonce": int,
+	"recipientId": str,
+	"senderPublicKey": str,
+	"senderId": str,
+	"signature": str,
+	"signSignature": str,
+	"signatures": list,
+	"timestamp": int,
 	"timelockType": int,
 	"timelock": int,
 	"type": int,
 	"typeGroup": int,
-	"amount": int,
-	"fee": int,
-	"senderPublicKey": str,
-	"recipientId": str,
-	"senderId": str,
 	"vendorField": str,
-	"asset": dict,
-	"signature": str,
-	"signSignature": str,
-	"signatures": list,
-	"id": str,
+	"version": int,
 }
 
 
@@ -76,7 +82,7 @@ def init():
 	cfg.headers["API-Version"] = "2"
 	
 	if len(cfg.peers):
-		data = rest.GET.api.node.configuration().get("data", {})
+		data = rest.GET(*__CFG__.split("/")).get("data", {})
 		cfg.hotmode = True
 		dumpJson(data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg"))
 	# if no network connection, load basic confivuration from local folder
@@ -115,7 +121,7 @@ def init():
 		# since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
 		if cfg.feestats == {}:
 			if len(cfg.peers):
-				fees = rest.GET.api.node.fees()
+				fees = rest.GET(*__FEE__.split("/"))
 				dumpJson(fees, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
 			else:
 				fees = loadJson(os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee"))
@@ -145,7 +151,7 @@ def stop():
 # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
 def computeDynamicFees(tx):
 	typ_ = tx.get("type", 0)
-	_version = getattr(tx, "_version", 0x01)
+	version = tx.get("version", 0x01)
 
 	vendorField = tx.get("vendorField", "")
 	vendorField = vendorField.encode("utf-8") if not isinstance(vendorField, bytes) else vendorField
@@ -155,7 +161,7 @@ def computeDynamicFees(tx):
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
 	return min(
 		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
-		int((T + 50 + (4 if _version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
+		int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
 	)
 
 
@@ -176,24 +182,25 @@ def broadcastTransactions(*transactions, **params):
 		   report
 
 
-def transfer(amount, address, vendorField=None, version=1):
+def transfer(amount, address, expiration=0, vendorField=None, version=None):
 	return Transaction(
-		version=version,
 		type=0,
 		amount=amount*100000000,
 		recipientId=address,
-		vendorField=vendorField
+		vendorField=vendorField,
+		version=version,
+		expiration=None if version < 2 else expiration
 	)
 
 
-def registerSecondSecret(secondSecret, version=1):
+def registerSecondSecret(secondSecret, version=None):
 	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"], version=version)
 
 
-def registerSecondPublicKey(secondPublicKey, version=1):
+def registerSecondPublicKey(secondPublicKey, version=None):
 	return Transaction(
-		version=version,
 		type=1,
+		version=version,
 		asset={
 			"signature": {
 				"publicKey": secondPublicKey
@@ -202,10 +209,10 @@ def registerSecondPublicKey(secondPublicKey, version=1):
 	)
 
 
-def registerAsDelegate(username, version=1):
+def registerAsDelegate(username, version=None):
 	return Transaction(
-		version=version,
 		type=2,
+		version=version,
 		asset={
 			"delegate": {
 				"username": username
@@ -214,29 +221,29 @@ def registerAsDelegate(username, version=1):
 	)
 
 
-def upVote(*usernames, version=1):
+def upVote(*usernames, **kwargs): #, version=1):
 	return Transaction(
-		version=version,
 		type=3,
+		version=kwargs.get("version", None),
 		asset={
 			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
 
-def downVote(*usernames, version=1):
+def downVote(*usernames, **kwargs): #, version=1):
 	return Transaction(
-		version=version,
 		type=3,
+		version=kwargs.get("version", None),
 		asset={
 			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
 	)
 
 
-def registerMultiSignature(min, *publicKeys, version=1):
+def registerMultiSignature(min, *publicKeys, **kwargs): #, version=1):
 	return Transaction(
-		version=version,
+		version=kwargs.get("version", None),
 		type=4,
 		asset={
 			"multiSignature": {

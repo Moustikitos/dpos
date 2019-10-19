@@ -170,7 +170,7 @@ def checkTransaction(tx, secondPublicKey=None):
 	Return bool
 	"""
 	checks = []
-	version = getattr(tx, "_version", 0x01)
+	version = tx.get("version", 0x01)
 	publicKey = tx["senderPublicKey"]
 	# pure python dict serializer
 	_ser = lambda t,v: serialize(t, version=v) if v >= 0x02 else getBytes(t)
@@ -273,7 +273,7 @@ def getBytes(tx):
 
 	Return bytes sequence
 	"""
-	if getattr(tx, "_version", 0x01) >= 0x02:
+	if tx.get("version", 0x01) >= 0x02:
 		return serialize(tx)
 
 	buf = BytesIO()
@@ -342,19 +342,20 @@ def serialize(tx, version=None):
 	Return bytes sequence
 	"""
 	buf = BytesIO()
-	_version = getattr(tx, "_version", 0x01) if not version else version
+	version = tx.get("version", 0x01) if not version else version
 
 	# deal with vendorField
 	if "vendorFieldHex" in tx:
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
 		vendorField = tx.get("vendorField", "").encode("utf-8")
-	vendorField = vendorField[:255 if _version >= 0x02 else 64]
+	# vendorField = vendorField[:255 if version >= 0x02 else 64]
+	vendorField = vendorField[:255] # if version >= 0x02 else 64]
 
 	# common part
-	pack("<BBB", buf, (0xff, _version, cfg.pubKeyHash))
-	if _version >= 0x02:
-		pack("<BBQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
+	pack("<BBB", buf, (0xff, version, cfg.pubKeyHash))
+	if version >= 0x02:
+		pack("<IBQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
 	else:
 		pack("<BI", buf, (tx["type"], tx["timestamp"],))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
@@ -372,7 +373,7 @@ def serialize(tx, version=None):
 	elif "secondSignature" in tx:
 		pack_bytes(buf, unhexlify(tx["secondSignature"]))
 	if "signatures" in tx:
-		if _version == 0x01:
+		if version == 0x01:
 			pack("<B", buf, (0xff,))
 		pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
