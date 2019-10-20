@@ -349,8 +349,7 @@ def serialize(tx, version=None):
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
 		vendorField = tx.get("vendorField", "").encode("utf-8")
-	# vendorField = vendorField[:255 if version >= 0x02 else 64]
-	vendorField = vendorField[:255] # if version >= 0x02 else 64]
+	vendorField = vendorField[:255] # "vendorFieldLength" = 255 since height 8,128,000
 
 	# common part
 	pack("<BBB", buf, (0xff, version, cfg.pubKeyHash))

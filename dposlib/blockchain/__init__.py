@@ -236,6 +236,8 @@ class Transaction(dict):
 			self["senderId"] = address
 			if self["type"] in [1, 3, 4, 9] and "recipientId" not in self:
 				self["recipientId"] = address
+			if "fee" not in self:
+				self.setFees()
 			self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
 		else:
 			raise Exception("orphan transaction can not sign itsef")

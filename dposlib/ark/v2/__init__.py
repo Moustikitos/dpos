@@ -159,10 +159,12 @@ def computeDynamicFees(tx):
 	payload = crypto.serializePayload(tx)
 	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
-	return min(
-		cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
-		int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
-	)
+	return int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
+	
+	# return min(
+	# 	cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
+	# 	int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
+	# )
 
 
 def broadcastTransactions(*transactions, **params):
@@ -182,7 +184,7 @@ def broadcastTransactions(*transactions, **params):
 		   report
 
 
-def transfer(amount, address, expiration=0, vendorField=None, version=None):
+def transfer(amount, address, expiration=0, vendorField=None, version=1):
 	return Transaction(
 		type=0,
 		amount=amount*100000000,
@@ -193,11 +195,11 @@ def transfer(amount, address, expiration=0, vendorField=None, version=None):
 	)
 
 
-def registerSecondSecret(secondSecret, version=None):
+def registerSecondSecret(secondSecret, version=1):
 	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"], version=version)
 
 
-def registerSecondPublicKey(secondPublicKey, version=None):
+def registerSecondPublicKey(secondPublicKey, version=1):
 	return Transaction(
 		type=1,
 		version=version,
@@ -209,7 +211,7 @@ def registerSecondPublicKey(secondPublicKey, version=None):
 	)
 
 
-def registerAsDelegate(username, version=None):
+def registerAsDelegate(username, version=1):
 	return Transaction(
 		type=2,
 		version=version,
@@ -224,7 +226,7 @@ def registerAsDelegate(username, version=None):
 def upVote(*usernames, **kwargs): #, version=1):
 	return Transaction(
 		type=3,
-		version=kwargs.get("version", None),
+		version=kwargs.get("version", 1),
 		asset={
 			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
@@ -234,7 +236,7 @@ def upVote(*usernames, **kwargs): #, version=1):
 def downVote(*usernames, **kwargs): #, version=1):
 	return Transaction(
 		type=3,
-		version=kwargs.get("version", None),
+		version=kwargs.get("version", 1),
 		asset={
 			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
 		},
