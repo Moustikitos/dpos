@@ -299,7 +299,10 @@ def getBytes(tx):
 	if "vendorFieldHex" in tx:
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
-		vendorField = tx.get("vendorField", "").encode("utf-8")
+		value = tx.get("vendorField", b"")
+		if not isinstance(value, bytes):
+			value = value.encode("utf-8")
+		vendorField = value
 	vendorField = vendorField[:64].ljust(64, b"\x00")
 	pack_bytes(buf, vendorField)
 	# write amount and fee value

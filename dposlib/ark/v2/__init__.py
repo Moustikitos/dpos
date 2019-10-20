@@ -51,7 +51,7 @@ TYPING = {
 	"timelock": int,
 	"type": int,
 	"typeGroup": int,
-	"vendorField": str,
+	"vendorField": bytes,
 	"version": int,
 }
 
@@ -160,11 +160,6 @@ def computeDynamicFees(tx):
 	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
 	return int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
-	
-	# return min(
-	# 	cfg.feestats.get(typ_, {}).get("maxFee", cfg.fees["staticFees"][TRANSACTIONS[typ_]]),
-	# 	int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
-	# )
 
 
 def broadcastTransactions(*transactions, **params):
@@ -223,7 +218,7 @@ def registerAsDelegate(username, version=1):
 	)
 
 
-def upVote(*usernames, **kwargs): #, version=1):
+def upVote(*usernames, **kwargs):
 	return Transaction(
 		type=3,
 		version=kwargs.get("version", 1),
@@ -233,7 +228,7 @@ def upVote(*usernames, **kwargs): #, version=1):
 	)
 
 
-def downVote(*usernames, **kwargs): #, version=1):
+def downVote(*usernames, **kwargs):
 	return Transaction(
 		type=3,
 		version=kwargs.get("version", 1),
@@ -243,9 +238,9 @@ def downVote(*usernames, **kwargs): #, version=1):
 	)
 
 
-def registerMultiSignature(min, *publicKeys, **kwargs): #, version=1):
+def registerMultiSignature(min, *publicKeys, **kwargs):
 	return Transaction(
-		version=kwargs.get("version", None),
+		version=kwargs.get("version", 1),
 		type=4,
 		asset={
 			"multiSignature": {

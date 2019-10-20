@@ -136,7 +136,8 @@ class Transaction(dict):
 		if item in dposlib.core.TYPING.keys():
 			cast = dposlib.core.TYPING[item]
 			if not isinstance(value, cast):
-				value = cast(value)
+				value = value.encode("utf-8") if item == "vendorField" else \
+				        cast(value)
 			dict.__setitem__(self, item, value)
 			# remove signatures and ids if an item other than signature or id is modified
 			if item not in ["signature", "signSignature", "secondSignature", "id"]:
