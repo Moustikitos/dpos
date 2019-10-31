@@ -31,9 +31,9 @@ TRANSACTIONS = {
 	5: "ipfs",
 	6: "multiPayment",
 	7: "delegateResignation",
-	8: "htlclock",
-	9: "htlcclaim",
-	10: "htlcrefund",
+	8: "htlcLock",
+	9: "htlcClaim",
+	10: "htlcRefund",
 }
 TYPING = {
 	"amount": int,
@@ -313,7 +313,6 @@ def htlcClaim(txid, secret):
 	return Transaction(
 		version=2,
 		type=9,
-		fee = 0,
 		asset={
 			"claim":{
 				"lockTransactionId": txid,
@@ -327,7 +326,6 @@ def htlcRefund(txid):
 	return Transaction(
 		version=2,
 		type=10,
-		fee = 0,
 		asset={
 			"refund":{
 				"lockTransactionId": txid,
