@@ -31,7 +31,7 @@ class Transaction(dict):
 
 	def _setSenderPublicKey(self, publicKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
-		if self["version"] >= 0x02:
+		if self.get("version", 0x00) >= 0x02:
 			if "nonce" not in self:
 				self["nonce"] = int(dposlib.rest.GET.api.wallets(publicKey).get("data", {}).get("nonce", 0))+1
 		if "timestamp" not in self:
@@ -117,13 +117,16 @@ class Transaction(dict):
 		data = dict(arg, **kwargs)
 		dict.__init__(self)
 
-		version = data.pop("version", 0x01)
-		self["version"] = version #
+		version = data.pop("version", 0x0)
+		if version >= 0x1:
+			self["version"] = version
+		if version >= 0x2:
+			self["typeGroup"] = data.pop("typeGroup", 1) # default typeGroup is 1 (Ark core)
+			self["network"] = cfg.pubKeyHash
+
 		self["amount"] = data.pop("amount", 0) # amount is required field
 		self["type"] = data.pop("type", 0) # default type is 0 (transfer)
 		self["asset"] = data.pop("asset", {}) # put asset value if no one given
-		if version >= 0x02:
-			self["typeGroup"] = data.pop("typeGroup", 1) # default typeGroup is 1 (Ark core)
 
 		for key,value in [(k,v) for k,v in data.items() if v != None]:
 			self[key] = value
@@ -136,7 +139,7 @@ class Transaction(dict):
 		if item in dposlib.core.TYPING.keys():
 			cast = dposlib.core.TYPING[item]
 			if not isinstance(value, cast):
-				value = value.encode("utf-8") if item == "vendorField" else \
+				value = value.decode("utf-8") if item == "vendorField" else \
 				        cast(value)
 			dict.__setitem__(self, item, value)
 			# remove signatures and ids if an item other than signature or id is modified

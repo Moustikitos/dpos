@@ -14,8 +14,6 @@ from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 SECP256K1 = Curve.get_curve("secp256k1")
-SCHNORR_SIG_PROTOCOL = "BIP"
-SCHNORR_SIG = False
 
 
 def ecPublicKey2Hex(ecpublickey):
@@ -150,9 +148,10 @@ def getSignatureFromBytes(data, privateKey):
 	"""
 	privateKey = ECPrivateKey(int(privateKey, 16), SECP256K1)
 	message = hashlib.sha256(data).digest()
-	if SCHNORR_SIG:
-		signer = ECSchnorr(hashlib.sha256, option=SCHNORR_SIG_PROTOCOL, fmt="RAW")
-		return hexlify(signer.sign_bip(message, privateKey))
+	if bytearray(data)[0] == 0xff:
+		signer = ECSchnorr(hashlib.sha256, fmt="RAW")
+		return hexlify(signer.bcrypto410_sign(message, privateKey))
+		# return hexlify(signer.bip_sign(message, privateKey))
 	else:
 		signer = ECDSA("DER")
 		return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
@@ -234,10 +233,11 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	publicKey = hex2EcPublicKey(publicKey)
 	message = hashlib.sha256(data).digest()
 	if len(signature) == 128:
-		verifier = ECSchnorr(hashlib.sha256, option=SCHNORR_SIG_PROTOCOL, fmt="RAW")
+		verifier = ECSchnorr(hashlib.sha256, fmt="RAW")
+		return verifier.bip_verify(message, unhexlify(signature), publicKey)
 	else:
 		verifier = ECDSA("DER")
-	return verifier.verify(message, unhexlify(signature), publicKey)
+		return verifier.verify(message, unhexlify(signature), publicKey)
 
 
 def getId(tx):
@@ -351,13 +351,15 @@ def serialize(tx, version=None):
 	if "vendorFieldHex" in tx:
 		vendorField = unhexlify(tx["vendorFieldHex"])
 	else:
-		vendorField = tx.get("vendorField", "").encode("utf-8")
+		vendorField = tx.get("vendorField", "")
+		if not isinstance(vendorField, bytes):
+			vendorField = vendorField.encode("utf-8")
 	vendorField = vendorField[:255] # "vendorFieldLength" = 255 since height 8,128,000
 
 	# common part
 	pack("<BBB", buf, (0xff, version, cfg.pubKeyHash))
 	if version >= 0x02:
-		pack("<IBQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
+		pack("<IHQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
 	else:
 		pack("<BI", buf, (tx["type"], tx["timestamp"],))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
@@ -458,7 +460,7 @@ def serializePayload(tx):
 			items = [(p["amount"], base58.b58decode_check(p["recipientId"])) for p in asset.get("payments", {})]
 		except:
 			raise Exception("error in recipientId address list")
-		result = pack(buf, "<H", (len(items), ))
+		result = pack("<H", buf, (len(items), ))
 		for amount,address in items:
 			pack("<Q", buf, (amount, ))
 			pack_bytes(buf, address)
@@ -474,11 +476,12 @@ def serializePayload(tx):
 		except:
 			raise Exception("no recipientId defined")
 		lock = asset.get("lock", False)
-		if not lock:
-			raise Exception("no lock data found")
-		pack("<I", buf, (int(tx.get("amount", 0)),))
+		expiration = lock.get("expiration", False)
+		if not lock or not expiration:
+			raise Exception("no lock nor expiration data found")
+		pack("<Q", buf, (int(tx.get("amount", 0)),))
 		pack_bytes(buf, unhexlify(lock["secretHash"]))
-		pack("<I", buf, (int(lock.get("expiration", 0)),))
+		pack("<BI", buf, [int(expiration["type"]), int(expiration["value"])]) 
 		pack_bytes(buf, recipientId)
 
 	# HTLC claim
@@ -487,7 +490,7 @@ def serializePayload(tx):
 		if not claim:
 			raise Exception("no claim data found")
 		pack_bytes(buf, unhexlify(claim["lockTransactionId"]))
-		pack_bytes(buf, claim["unLockSecret"].encode().ljust(32, b"\x00"))
+		pack_bytes(buf, claim["unlockSecret"].encode("utf-8"))
 
 	# HTLC refund
 	elif _type == 10:

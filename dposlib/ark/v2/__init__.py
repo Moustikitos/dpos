@@ -7,6 +7,7 @@ __FEE__ = "api/node/fees"
 
 import os
 import pytz
+import hashlib
 from datetime import datetime
 
 import dposlib
@@ -14,9 +15,10 @@ from dposlib import rest
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
 from dposlib.ark.v2.mixin import loadPages, deltas
-from dposlib.blockchain import cfg, Transaction
+from dposlib.blockchain import cfg, slots, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
+from dposlib.util.bin import hexlify, unhexlify
 
 
 DAEMON_PEERS = None
@@ -39,6 +41,7 @@ TYPING = {
 	"expiration": int,
 	"fee": int,
 	"id": str,
+	"network":int,
 	"nonce": int,
 	"recipientId": str,
 	"senderPublicKey": str,
@@ -51,7 +54,7 @@ TYPING = {
 	"timelock": int,
 	"type": int,
 	"typeGroup": int,
-	"vendorField": bytes,
+	"vendorField": str,
 	"version": int,
 }
 
@@ -159,7 +162,7 @@ def computeDynamicFees(tx):
 	payload = crypto.serializePayload(tx)
 	T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
 	signatures = "".join([tx.get("signature", ""), tx.get("signSignature", "")])
-	return int((T + 50 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
+	return int((T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * Transaction.FMULT)
 
 
 def broadcastTransactions(*transactions, **params):
@@ -179,7 +182,7 @@ def broadcastTransactions(*transactions, **params):
 		   report
 
 
-def transfer(amount, address, expiration=0, vendorField=None, version=1):
+def transfer(amount, address, vendorField=None, expiration=0, version=1):
 	return Transaction(
 		type=0,
 		amount=amount*100000000,
@@ -239,16 +242,17 @@ def downVote(*usernames, **kwargs):
 
 
 def registerMultiSignature(min, *publicKeys, **kwargs):
-	return Transaction(
-		version=kwargs.get("version", 1),
-		type=4,
-		asset={
-			"multiSignature": {
-				"min": min,
-				"publicKeys": publicKeys
-			}
-		},
-	)
+	raise NotImplementedError("transaction type 4 not implemented yet")
+	# return Transaction(
+	# 	version=kwargs.get("version", 1),
+	# 	type=4,
+	# 	asset={
+	# 		"multiSignature": {
+	# 			"min": min,
+	# 			"publicKeys": publicKeys
+	# 		}
+	# 	},
+	# )
 
 
 def registerIpfs(ipfs):
@@ -268,7 +272,7 @@ def multiPayment(*pairs, **kwargs):
 		vendorField=kwargs.get("vendorField", None),
 		asset={
 			"payments": [
-				{"amount":a, "recipientId":r} for r,a in pairs
+				{"amount":a*100000000, "recipientId":r} for r,a in pairs
 			]
 		}
 	)
@@ -281,7 +285,12 @@ def delegateResignation():
 	)
 
 
-def htlcLock(amount, address, expiration, secretHash, vendorField=None):
+htlcSecret = lambda s: hexlify(hashlib.sha256(
+	s if isinstance(s, bytes) else \
+	s.encode("utf-8")
+).digest()[:16])
+
+def htlcLock(amount, address, secret, expiration=24, vendorField=None):
 	return Transaction(
 		version=2,
 		type=8,
@@ -290,33 +299,38 @@ def htlcLock(amount, address, expiration, secretHash, vendorField=None):
 		vendorField=vendorField,
 		asset={
 			"lock":{
-				"secretHash":secretHash,
-				"expiration":expiration
+				"secretHash": hexlify(hashlib.sha256(htlcSecret(secret).encode("utf-8")).digest()),
+				"expiration": {
+					"type": 1,
+					"value": int(slots.getTime() + expiration*60*60)
+				}
 			}
 		}
 	)
 
 
-def htlcClaim(lockTransactionId, unLockSecret):
+def htlcClaim(txid, secret):
 	return Transaction(
 		version=2,
 		type=9,
+		fee = 0,
 		asset={
 			"claim":{
-				"lockTransactionId":lockTransactionId,
-				"unLockSecret":unLockSecret
+				"lockTransactionId": txid,
+				"unlockSecret": htlcSecret(secret)
 			}
 		}
 	)
 
 
-def htlcRefund(lockTransactionId):
+def htlcRefund(txid):
 	return Transaction(
 		version=2,
 		type=10,
+		fee = 0,
 		asset={
 			"refund":{
-				"lockTransactionId":lockTransactionId,
+				"lockTransactionId": txid,
 			}
 		}
 	)
