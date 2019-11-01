@@ -1,10 +1,32 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-"""
+r"""
 :mod:`dposlib.blockchain` package provides
 :class:`dposlib.blockchain.Transaction` and :class:`dposlib.blockchain.Wallet`
 classes.
+
+A blockchain have to be loaded first to use
+:class:`dposlib.blockchain.Transaction:
+
+>>> from dposlib import blockchain
+>>> blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\Bruno\Python\../GitHub/dpos\dposlib\blockchain\__init__.py", line 156, in __init__
+    raise Exception("no blockchain loaded")
+Exception: no blockchain loaded
+>>> from dposlib import rest
+>>> rest.use("d.ark")
+True
+>>> blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+{
+  "amount": 1,
+  "asset": {},
+  "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "type": 0,
+  "version": 1
+}
 """
 
 import os
@@ -29,7 +51,7 @@ def track_data(value=True):
 
 class Transaction(dict):
 	"""
-	A python :class:`dict` that implements all the necessities to manualy
+	A python :class:`dict` that implements all the necessities to manually
 	generate valid transactions.
 
 	>>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=2)
@@ -179,8 +201,9 @@ class Transaction(dict):
 				        cast(value)
 			dict.__setitem__(self, item, value)
 			# remove signatures and ids if an item other than signature or id is modified
-			if item not in ["signature", "signSignature", "secondSignature", "id"]:
+			if item not in ["signatures", "signature", "signSignature", "secondSignature", "id"]:
 				self.pop("signature", False)
+				self.pop("signatures", False)
 				self.pop("signSignature", False)
 				self.pop("secondSignature", False)
 				self.pop("id", False)
@@ -207,6 +230,10 @@ class Transaction(dict):
 
 	def setFees(self, value=None):
 		"""
+		Set ``fee`` field manually or according to inner parameters.
+
+		Args:
+			value (:class:`int`): fee value in ``statoshi`` to set manually
 		"""
 		if value:
 			fee = value
@@ -263,7 +290,7 @@ class Transaction(dict):
 	def signSignWithSecondSecret(self, secondSecret):
 		"""
 		Generate the ``signSignature`` field using second passphrase. The
-		associatedsecond public and private keys are stored till
+		associated second public and private keys are stored till
 		:func:`dposlib.blockchain.Transaction.unlink` is called.
 
 		Args:
@@ -272,25 +299,61 @@ class Transaction(dict):
 		Transaction.link(None, secondSecret)
 		self.signSign()
 
-	def multiSignWithSecret(self, secret):
-		self.multiSignWithKey(dposlib.core.crypto.getKeys(secret)["privateKey"])
+	def multiSignWithSecret(self, index, secret):
+		"""
+		Add a signature in ``signatures`` field according to given index and
+		passphrase.
+
+		Args:
+			index (:class:`int`): signature index
+			secret (:class:`str`): passphrase
+		"""
+		self.multiSignWithKey(index, dposlib.core.crypto.getKeys(secret)["privateKey"])
 
 	# sign function using crypto keys
 	def signWithKeys(self, publicKey, privateKey):
+		"""
+		Generate the ``signature`` field using public and private keys. They are
+		till :func:`dposlib.blockchain.Transaction.unlink` is called.
+
+		Args:
+			publicKey (:class:`str`): public key as hex string
+			privateKey (:class:`str`): private key as hex string
+		"""
 		Transaction._publicKey = publicKey
 		Transaction._privateKey = privateKey
 		self.sign()
 
 	def signSignWithKey(self, secondPrivateKey):
+		"""
+		Generate the ``signSignature`` field using second private key. It is 
+		stored till :func:`dposlib.blockchain.Transaction.unlink` is called.
+
+		Args:
+			secondPrivateKey (:class:`str`): second private key as hex string
+		"""
 		Transaction._secondPrivateKey = secondPrivateKey
 		self.signSign()
 
-	def multiSignWithKey(self, privateKey):
+	def multiSignWithKey(self, index, privateKey):
+		"""
+		Add a signature in ``signatures`` field according to given index and
+		privateKey.
+
+		Args:
+			index (:class:`int`): signature index
+			privateKey (:class:`str`): private key as hex string
+		"""
+		self.pop("id", False)
 		signature = dposlib.core.crypto.getSignature(self, privateKey)
-		if "signatures" in self:
-			self["signatures"].append(signature)
+		if "signatures" in self:			
+			n = len(self.signatures)
+			if n < index-1:
+				self.signatures.extend([None]*(index-1-n) + [signature])
+			else:
+				self.signatures[index-1] = signature
 		else:
-			self["signatures"] = [signature]
+			self["signatures"] = [None]*(index-1) + [signature]
 
 	# root sign function called by others
 	def sign(self):

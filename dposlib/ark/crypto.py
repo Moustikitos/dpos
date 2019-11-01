@@ -249,7 +249,7 @@ def getId(tx):
 
 	Return str
 	"""
-	return getIdFromBytes(getBytes(tx))
+	return getIdFromBytes(getBytes(tx, exclude_multi_sig=False))
 
 
 def getIdFromBytes(data):
@@ -264,7 +264,7 @@ def getIdFromBytes(data):
 	return hexlify(hashlib.sha256(data).digest())
 
 
-def getBytes(tx):
+def getBytes(tx, exclude_multi_sig=True):
 	"""
 	Hash transaction object into bytes data.
 
@@ -274,7 +274,7 @@ def getBytes(tx):
 	Return bytes sequence
 	"""
 	if tx.get("version", 0x01) >= 0x02:
-		return serialize(tx)
+		return serialize(tx, exclude_multi_sig=exclude_multi_sig)
 
 	buf = BytesIO()
 	# write type and timestamp
@@ -335,7 +335,7 @@ def getBytes(tx):
 # Reference: 
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-102.md
-def serialize(tx, version=None):
+def serialize(tx, version=None, exclude_multi_sig=True):
 	"""
 	Serialize transaction object.
 
@@ -376,10 +376,15 @@ def serialize(tx, version=None):
 		pack_bytes(buf, unhexlify(tx["signSignature"]))
 	elif "secondSignature" in tx:
 		pack_bytes(buf, unhexlify(tx["secondSignature"]))
-	if "signatures" in tx:
+
+	if "signatures" in tx and not exclude_multi_sig:
 		if version == 0x01:
 			pack("<B", buf, (0xff,))
-		pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
+		
+		sigs = tx["signatures"]
+		signatures = [(sigs.index(s)+1, s) for s in sigs if s != None]
+		print(signatures)
+		# pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
 	# id part
 	if "id" in tx:

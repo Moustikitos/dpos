@@ -91,7 +91,7 @@ def check_latency(peer):
 #################
 
 class EndPoint(object):
-	"""
+	r"""
 	This class is at the root of interaction with http JSON API.
 
 	Equivalent to https://explorer.ark.io:8443/api/delegates/arky API call:
