@@ -227,21 +227,31 @@ def registerAsDelegate(username, version=1):
 
 
 def upVote(*usernames, **kwargs):
+	try:
+		votes = ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+	except KeyError:
+		raise Exception("one of delegate %s does not exist" % ",".join(usernames))
+
 	return Transaction(
 		type=3,
 		version=kwargs.get("version", 1),
 		asset={
-			"votes": ["+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+			"votes": votes
 		},
 	)
 
 
 def downVote(*usernames, **kwargs):
+	try:
+		votes = ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+	except KeyError:
+		raise Exception("one of delegate %s does not exist" % ",".join(usernames))
+
 	return Transaction(
 		type=3,
 		version=kwargs.get("version", 1),
 		asset={
-			"votes": ["-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"] for username in usernames]
+			"votes": votes
 		},
 	)
 
@@ -290,10 +300,12 @@ def delegateResignation():
 	)
 
 
-htlcSecret = lambda s: hexlify(hashlib.sha256(
-	s if isinstance(s, bytes) else \
-	s.encode("utf-8")
-).digest()[:16])
+def htlcSecret(secret):
+	return hexlify(hashlib.sha256(
+		secret if isinstance(secret, bytes) else \
+		secret.encode("utf-8")
+	).digest()[:16])
+
 
 def htlcLock(amount, address, secret, expiration=24, vendorField=None):
 	return Transaction(

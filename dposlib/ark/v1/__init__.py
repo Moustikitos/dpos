@@ -121,7 +121,7 @@ def broadcastTransactions(*transactions, **params):
 		   report
 
 
-def transfer(amount, address, vendorField=None):
+def transfer(amount, address, vendorField=None, **trash):
 	return Transaction(
 		type=0,
 		amount=amount*100000000,
@@ -130,10 +130,10 @@ def transfer(amount, address, vendorField=None):
 	)
 
 
-def registerSecondSecret(secondSecret):
-	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
+def registerSecondSecret(secondSecret, **trash):
+	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"], **trash)
 
-def registerSecondPublicKey(secondPublicKey):
+def registerSecondPublicKey(secondPublicKey, **trash):
 	return Transaction(
 		type=1,
 		asset={
@@ -144,7 +144,7 @@ def registerSecondPublicKey(secondPublicKey):
 	)
 
 
-def registerAsDelegate(username):
+def registerAsDelegate(username, **trash):
 	return Transaction(
 		type=2,
 		asset={
@@ -155,7 +155,7 @@ def registerAsDelegate(username):
 	)
 
 
-def upVote(*usernames):
+def upVote(*usernames, **trash):
 	return Transaction(
 		type=3,
 		asset={
@@ -166,7 +166,7 @@ def upVote(*usernames):
 	)
 
 
-def downVote(*usernames):
+def downVote(*usernames, **trash):
 	return Transaction(
 		type=3,
 		asset={

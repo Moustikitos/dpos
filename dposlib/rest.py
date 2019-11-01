@@ -2,39 +2,49 @@
 # © Toons
 
 """
-`rest` module loads networks constants to `cfg` module and provides endpoints
-classes.
+:mod:`dposlib.rest` module cointains network loaders and provides
+:class:`dposlib.rest.EndPoint` root classes ``GET``, ``POST``, ``PUT`` and
+``DELETE``. :mod:`dposlib.rest` also creates a :mod:`dposlib.core` module
+containing ``cryptografic`` functions and 
+:class:`dposlib.blockchain.Transaction` builders.
 
 >>> from dposlib import rest
->>> rest.use("ark")
->>> # = 'https://explorer.ark.io:8443/api/delegates/arky'
->>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
-{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
-'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
-9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
-: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
-eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
-'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
-es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
->>> rest.GET.api.delegates.arky() # in blockchain connection, peer is not mandatory
-{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
-'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
-9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
-: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
-eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
-'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
-es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
-
-`rest` also creates a `core` module into `dposlib` package containing
-transactions functions and `crypto` module. 
-
 >>> import dposlib
+>>> rest.use("ark")
+True
 >>> dposlib.core.crypto.getKeys("secret")
 {'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de9\
 33', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf52\
 7a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
+>>> dposlib.core.transfer(1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE", u"\u2728 simple transfer vendorField")
+{
+  "amount": 100000000,
+  "asset": {},
+  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+  "type": 0,
+  "vendorField": "\u2728 simple transfer vendorField",
+  "version": 1
+}
+>>> dposlib.core.htlcLock(1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE", "my secret lock", expiration=12, vendorField=u"\u2728 simple htlcLock vendorField")
+{
+  "amount": 100000000,
+  "asset": {
+    "lock": {
+      "secretHash": "dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb",
+      "expiration": {
+        "type": 1,
+        "value": 82567745
+      }
+    }
+  },
+  "network": 23,
+  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+  "type": 8,
+  "typeGroup": 1,
+  "vendorField": "\u2728 simple htlcLock vendorField",
+  "version": 2
+}
 """
-
 
 import io
 import os
@@ -53,13 +63,18 @@ from dposlib import FROZEN, ROOT
 from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
 
-
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 
 
 def check_latency(peer):
 	"""
 	Returns latency in second for a given peer
+	
+	Args:
+		peer (:class:`str`): the peer in the scheme http(s)://ip:port
+
+	Returns:
+		:class:`float`: latency in seconds
 	"""
 
 	try:
@@ -76,6 +91,32 @@ def check_latency(peer):
 #################
 
 class EndPoint(object):
+	"""
+	This class is at the root of interaction with http JSON API.
+
+	Equivalent to https://explorer.ark.io:8443/api/delegates/arky API call:
+
+	>>> import rest
+	>>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
+	{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
+	'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
+	9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
+	: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
+	eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
+	'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
+	es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
+
+	Within a blockchain connection, peer is not mandatory:
+
+	>>> rest.GET.api.delegates.arky()
+	{'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE', \
+	'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e\
+	9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced': 163747, 'last'\
+	: {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe44f', 'h\
+	eight': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, 'human': \
+	'2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forged': {'fe\
+	es': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536}}}
+	"""
 
 	@staticmethod
 	def _manage_response(req, returnKey, error=None):
@@ -205,9 +246,12 @@ DELETE = EndPoint(method=EndPoint._DELETE)
 #  network selection  #
 #######################
 
-def load(family_name):
+def load(name):
 	"""
-	Loads a given blockchain package as `dposlib.core` module.
+	Loads a given blockchain package as ``dposlib.core`` module.
+
+	Args:
+		name (:class:`str`): package name to load
 	"""
 
 	if hasattr(sys.modules[__package__], "core"):
@@ -218,13 +262,13 @@ def load(family_name):
 		del sys.modules[__package__].core
 	# initialize blockchain familly package
 	try:
-		sys.modules[__package__].core = import_module('dposlib.{0}'.format(family_name))
+		sys.modules[__package__].core = import_module('dposlib.{0}'.format(name))
 	except ImportError as e:
-		raise Exception("%s package not found" % family_name)
+		raise Exception("%s package not found" % name)
 	else:
 		# delete real package name loaded to keep namespace clear
 		try:
-			sys.modules[__package__].__delattr__(family_name)
+			sys.modules[__package__].__delattr__(name)
 		except AttributeError:
 			pass
 		try:
@@ -237,8 +281,13 @@ def load(family_name):
 
 def use(network, **kwargs):
 	"""
-	Sets the blockchain parameters in the `cfg` module and initialize blockchain
-	package.
+	Sets the blockchain parameters in the ``cfg`` module and initialize
+	blockchain package. Network options can be created or overriden using
+	``**kwargs`` argument.
+
+	Args:
+		network (:class:`str`): network to initialize. Available networks are in
+		                        ``network`` folder		
 	"""
 
 	# clear data in cfg module and initialize with minimum vars
