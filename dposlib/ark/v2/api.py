@@ -7,6 +7,7 @@ import dposlib
 
 from dposlib.util.data import filter_dic, loadJson, dumpJson
 from dposlib.ark.v2.mixin import loadPages, deltas
+from dposlib.ark import ldgr
 
 
 class Wallet(dposlib.blockchain.Wallet):
@@ -23,34 +24,56 @@ class Wallet(dposlib.blockchain.Wallet):
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", {}).get("epoch"), reverse=True)][:limit]
 
 
-try:
-	from dposlib import ldgr
-except:
-	pass
-else:
-	class NanoS(Wallet, dposlib.blockchain.NanoS):
+class NanoS(Wallet):
 
-		def __init__(self, account, index, network=1, **kw):
-			# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-			self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
-				dposlib.rest.cfg.slip44,
-				getattr(dposlib.rest.cfg, "aip20", network),
-				account,
-				index
-			)
-			self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
-			self.debug = kw.pop("debug", False)
-			Wallet.__init__(self, self.address, **kw)
+	def __init__(self, account, index, network=1, **kw):
+		# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+		self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
+			dposlib.rest.cfg.slip44,
+			getattr(dposlib.rest.cfg, "aip20", network),
+			account,
+			index
+		)
+		self.address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath)))
+		self.debug = kw.pop("debug", False)
+		Wallet.__init__(self, self.address, **kw)
 
-		@staticmethod
-		def fromDerivationPath(derivationPath, **kw):
-			nanos = NanoS(0,0,0, **kw)
-			address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
-			nanos.address = address
-			nanos.derivationPath = derivationPath
-			nanos._Data__args = (address,)
-			nanos.update()
-			return nanos
+	@staticmethod
+	def fromDerivationPath(derivationPath, **kw):
+		nanos = NanoS(0,0,0, **kw)
+		address = dposlib.core.crypto.getAddress(ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath)))
+		nanos.address = address
+		nanos.derivationPath = derivationPath
+		nanos._Data__args = (address,)
+		nanos.update()
+		return nanos
+
+	def _finalizeTx(self, tx, fee=None, fee_included=False):
+		if "fee" not in tx or fee != None:
+			tx.setFees(fee)
+		tx.feeIncluded() if fee_included else tx.feeExcluded()
+
+		tx["senderId"] = self.address
+		if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
+			tx["recipientId"] = self.address
+
+		try:
+			ldgr.signTransaction(tx, self.derivationPath, self.debug)
+		except ldgr.ledgerblue.commException.CommException:
+			raise Exception("transaction cancelled")
+		
+		if self.secondPublicKey != None:
+			try:
+				keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+				while keys_2.get("publicKey", None) != self.secondPublicKey:
+					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+			except KeyboardInterrupt:
+				raise Exception("transaction cancelled")
+			else:
+				tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
+
+		tx.identify()
+		return tx
 
 
 class Delegate(dposlib.blockchain.Data):

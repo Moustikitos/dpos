@@ -452,38 +452,3 @@ class Wallet(Data):
 	def downVote(self, *usernames):
 		tx = dposlib.core.downVote(*usernames)
 		return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
-
-
-try:
-	from dposlib import ldgr
-except:
-	pass
-else:
-	class NanoS(Wallet):
-
-		def _finalizeTx(self, tx, fee=None, fee_included=False):
-			if "fee" not in tx or fee != None:
-				tx.setFees(fee)
-			tx.feeIncluded() if fee_included else tx.feeExcluded()
-
-			tx["senderId"] = self.address
-			if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
-				tx["recipientId"] = self.address
-
-			try:
-				ldgr.signTransaction(tx, self.derivationPath, self.debug)
-			except ldgr.ledgerblue.commException.CommException:
-				raise Exception("transaction cancelled")
-			
-			if self.secondPublicKey != None:
-				try:
-					keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
-					while keys_2.get("publicKey", None) != self.secondPublicKey:
-						keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
-				except KeyboardInterrupt:
-					raise Exception("transaction cancelled")
-				else:
-					tx["signSignature"] = dposlib.core.crypto.getSignature(tx, keys_2["privateKey"])
-
-			tx.identify()
-			return tx

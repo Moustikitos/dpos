@@ -127,7 +127,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
 ```
 
-### Ledger Nano S integration
+<!-- ### Ledger Nano S integration
 
 ```python
 >>> rest.use("d.ark")
@@ -162,7 +162,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   "vote": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933"
 }
 ```
-
+ -->
 ## Version
 
 ### 0.1.0

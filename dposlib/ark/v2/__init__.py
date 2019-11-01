@@ -183,6 +183,11 @@ def broadcastTransactions(*transactions, **params):
 
 
 def transfer(amount, address, vendorField=None, expiration=0, version=1):
+	if version > 1 and expiration > 0:
+		block_remaining = expiration*60*60//rest.cfg.blocktime
+		block_height = rest.GET.api.blockchain().get("data", {}).get("block", {}).get("height", -block_remaining)
+		expiration = int(block_height + block_remaining)
+
 	return Transaction(
 		type=0,
 		amount=amount*100000000,
