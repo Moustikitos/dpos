@@ -41,6 +41,7 @@ TYPING = {
 	"expiration": int,
 	"fee": int,
 	"id": str,
+	"MultiSignatureAddress": str,
 	"network":int,
 	"nonce": int,
 	"recipientId": str,
@@ -55,6 +56,7 @@ TYPING = {
 	"type": int,
 	"typeGroup": int,
 	"vendorField": str,
+	"vendorFieldHex": str,
 	"version": int,
 }
 

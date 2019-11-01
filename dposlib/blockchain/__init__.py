@@ -344,6 +344,9 @@ class Transaction(dict):
 			index (:class:`int`): signature index
 			privateKey (:class:`str`): private key as hex string
 		"""
+		if self.type != 4:
+			raise Exception("multisignature only allowed for transaction type 4")
+
 		self.pop("id", False)
 		signature = dposlib.core.crypto.getSignature(self, privateKey)
 		if "signatures" in self:			

@@ -359,7 +359,7 @@ def serialize(tx, version=None, exclude_multi_sig=True):
 	# common part
 	pack("<BBB", buf, (0xff, version, cfg.pubKeyHash))
 	if version >= 0x02:
-		pack("<IHQ", buf, (tx["typeGroup"], tx["type"], tx["nonce"],))
+		pack("<IHQ", buf, (tx.get("typeGroup", 1), tx["type"], tx["nonce"],))
 	else:
 		pack("<BI", buf, (tx["type"], tx["timestamp"],))
 	pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
@@ -380,11 +380,9 @@ def serialize(tx, version=None, exclude_multi_sig=True):
 	if "signatures" in tx and not exclude_multi_sig:
 		if version == 0x01:
 			pack("<B", buf, (0xff,))
-		
 		sigs = tx["signatures"]
-		signatures = [(sigs.index(s)+1, s) for s in sigs if s != None]
-		print(signatures)
-		# pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
+		signatures = [(sigs.index(s), s) for s in sigs if s != None]
+		pack_bytes(buf, b"".join([unhexlify("%x"%idx)+unhexlify(sig) for (idx,sig) in signatures]))
 
 	# id part
 	if "id" in tx:
@@ -465,7 +463,7 @@ def serializePayload(tx):
 			items = [(p["amount"], base58.b58decode_check(p["recipientId"])) for p in asset.get("payments", {})]
 		except:
 			raise Exception("error in recipientId address list")
-		result = pack("<H", buf, (len(items), ))
+		result = pack("<I", buf, (len(items), ))
 		for amount,address in items:
 			pack("<Q", buf, (amount, ))
 			pack_bytes(buf, address)
