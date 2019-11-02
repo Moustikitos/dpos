@@ -234,7 +234,8 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	message = hashlib.sha256(data).digest()
 	if len(signature) == 128:
 		verifier = ECSchnorr(hashlib.sha256, fmt="RAW")
-		return verifier.bip_verify(message, unhexlify(signature), publicKey)
+		return verifier.bcrypto410_verify(message, unhexlify(signature), publicKey)
+		# return verifier.bip_verify(message, unhexlify(signature), publicKey)
 	else:
 		verifier = ECDSA("DER")
 		return verifier.verify(message, unhexlify(signature), publicKey)
@@ -380,9 +381,7 @@ def serialize(tx, version=None, exclude_multi_sig=True):
 	if "signatures" in tx and not exclude_multi_sig:
 		if version == 0x01:
 			pack("<B", buf, (0xff,))
-		sigs = tx["signatures"]
-		signatures = [(sigs.index(s), s) for s in sigs if s != None]
-		pack_bytes(buf, b"".join([unhexlify("%x"%idx)+unhexlify(sig) for (idx,sig) in signatures]))
+		pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
 	# id part
 	if "id" in tx:

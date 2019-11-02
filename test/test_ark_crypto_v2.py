@@ -32,19 +32,8 @@ class TestArkCryptoV2(unittest.TestCase):
 			serialized = tx.pop("serialized", False)
 			id_ = tx.pop("id", False)
 			sig = tx.pop("signature", False)
-			sigs = tx.pop("signatures", False)
 			t = blockchain.Transaction(tx)
 			t.signature = sig
-			if sigs:
-				signatures = [None] * (max(int(s[:2], 16) for s in sigs)+1)
-				for elem in sigs:
-					print(int(elem[:2], 16), elem[2:])
-					signatures[int(elem[:2], 16)] = elem[2:] 
-				t.signatures = signatures
-			
 			computed = bin_.hexlify(dposlib.core.crypto.getBytes(t, exclude_multi_sig=not t['type'] == 4))
-			# print(serialized)
-			# print(computed)
-			# print(serialized == computed)
 			self.assertEqual(serialized, computed)
 			self.assertEqual(id_, dposlib.core.crypto.getId(t))

@@ -258,18 +258,25 @@ def downVote(*usernames, **kwargs):
 	)
 
 
+# https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md
 def registerMultiSignature(min, *publicKeys, **kwargs):
-	raise NotImplementedError("transaction type 4 not implemented yet")
-	# return Transaction(
-	# 	version=kwargs.get("version", 1),
-	# 	type=4,
-	# 	asset={
-	# 		"multiSignature": {
-	# 			"min": min,
-	# 			"publicKeys": publicKeys
-	# 		}
-	# 	},
-	# )
+	pkMin = crypto.getKeys(None, seed=unhexlify("%x" % min))["publicKey"]
+	P = crypto.hex2EcPublicKey(pkMin).W
+	for publicKey in publicKeys:
+		P = P.curve.add_point(P, crypto.hex2EcPublicKey(publicKey).W)
+	pkms = crypto.ecPublicKey2Hex(crypto.ECPublicKey(P))
+
+	return Transaction(
+		version=2,
+		type=4,
+		MultiSignatureAddress=crypto.getAddress(pkms),
+		asset={
+			"multiSignature": {
+				"min": min,
+				"publicKeys": publicKeys
+			}
+		},
+	)
 
 
 def registerIpfs(ipfs):

@@ -80,11 +80,14 @@ class Transaction(dict):
 	FMULT = 10000
 	FEESL = None
 
+	def _setNonce(self, publicKey):
+		self["nonce"] = int(dposlib.rest.GET.api.wallets(publicKey).get("data", {}).get("nonce", 0))+1
+
 	def _setSenderPublicKey(self, publicKey):
 		dict.__setitem__(self, "senderPublicKey", publicKey)
 		if self.get("version", 0x00) >= 0x02:
 			if "nonce" not in self:
-				self["nonce"] = int(dposlib.rest.GET.api.wallets(publicKey).get("data", {}).get("nonce", 0))+1
+				self._setNonce(publicKey)
 		if "timestamp" not in self:
 			self["timestamp"] = slots.getTime()
 
@@ -95,6 +98,21 @@ class Transaction(dict):
 			return os.path.join(dposlib.ROOT, ".registry", cfg.network, Transaction._publicKey)
 		else:
 			raise Exception("No public key found")
+
+	@staticmethod
+	def unlink():
+		"""
+		Remove public and private keys. This is equivalent to a wellet logout.
+		Once keys removed, no signature is possible.
+		"""
+		for attr in [
+			'_privateKey',
+			'_publicKey',
+			'_secondPublicKey',
+			'_secondPrivateKey'
+		]:
+			if hasattr(Transaction, attr):
+				delattr(Transaction, attr)
 
 	@staticmethod
 	def link(secret=None, secondSecret=None):
@@ -115,21 +133,6 @@ class Transaction(dict):
 				keys = dposlib.core.crypto.getKeys(secondSecret)
 				Transaction._secondPublicKey = keys["publicKey"]
 				Transaction._secondPrivateKey = keys["privateKey"]
-
-	@staticmethod
-	def unlink():
-		"""
-		Remove public and private keys. This is equivalent to a wellet logout.
-		Once keys removed, no signature is possible.
-		"""
-		for attr in [
-			'_privateKey',
-			'_publicKey',
-			'_secondPublicKey',
-			'_secondPrivateKey'
-		]:
-			if hasattr(Transaction, attr):
-				delattr(Transaction, attr)
 
 	@staticmethod
 	def useDynamicFee(value="avgFee"):
@@ -201,18 +204,17 @@ class Transaction(dict):
 				        cast(value)
 			dict.__setitem__(self, item, value)
 			# remove signatures and ids if an item other than signature or id is modified
-			if item not in ["signatures", "signature", "signSignature", "secondSignature", "id"]:
+			if item not in ["signatures", "signature", "signSignature", "secondSignature", "id"]: # 
 				self.pop("signature", False)
-				self.pop("signatures", False)
 				self.pop("signSignature", False)
 				self.pop("secondSignature", False)
 				self.pop("id", False)
 		# set internal private keys (secrets are not stored)
 		elif item == "secret":
-			Transaction.link(value)
+			self.link(value)
 			self._setSenderPublicKey(Transaction._publicKey)
 		elif item == "secondSecret":
-			Transaction.link(None, value)
+			self.link(None, value)
 		elif item == "privateKey":
 			Transaction._privateKey = str(value)
 		elif item == "secondPrivateKey":
@@ -284,7 +286,7 @@ class Transaction(dict):
 		Args:
 			secret (:class:`str`): passphrase
 		"""
-		Transaction.link(secret)
+		self.link(secret)
 		self.sign()
 
 	def signSignWithSecondSecret(self, secondSecret):
@@ -296,10 +298,10 @@ class Transaction(dict):
 		Args:
 			secondSecret (:class:`str`): second passphrase
 		"""
-		Transaction.link(None, secondSecret)
+		self.link(None, secondSecret)
 		self.signSign()
 
-	def multiSignWithSecret(self, index, secret):
+	def multiSignWithSecret(self, secret):
 		"""
 		Add a signature in ``signatures`` field according to given index and
 		passphrase.
@@ -308,7 +310,17 @@ class Transaction(dict):
 			index (:class:`int`): signature index
 			secret (:class:`str`): passphrase
 		"""
-		self.multiSignWithKey(index, dposlib.core.crypto.getKeys(secret)["privateKey"])
+		if self.type != 4:
+			raise Exception("multisignature only allowed for transaction type 4")
+
+		keys = dposlib.core.crypto.getKeys(secret)
+		try:
+			self.multiSignWithKey(
+				self.asset["multiSignature"]["publicKeys"].index(keys["publicKey"]),
+				keys["privateKey"]
+			)
+		except ValueError:
+			raise Exception("publicKey %s not allowed in this transaction" % keys["publicKey"])
 
 	# sign function using crypto keys
 	def signWithKeys(self, publicKey, privateKey):
@@ -348,15 +360,11 @@ class Transaction(dict):
 			raise Exception("multisignature only allowed for transaction type 4")
 
 		self.pop("id", False)
-		signature = dposlib.core.crypto.getSignature(self, privateKey)
-		if "signatures" in self:			
-			n = len(self.signatures)
-			if n < index-1:
-				self.signatures.extend([None]*(index-1-n) + [signature])
-			else:
-				self.signatures[index-1] = signature
-		else:
-			self["signatures"] = [None]*(index-1) + [signature]
+		if "fee" not in self:
+			self.setFees()
+		if "signatures" not in self:
+			self["signatures"] = [None] * len(self.asset["multiSignature"]["publicKeys"])
+		self["signatures"][index] = "%02x"%index + dposlib.core.crypto.getSignature(self, privateKey)
 
 	# root sign function called by others
 	def sign(self):
@@ -365,10 +373,12 @@ class Transaction(dict):
 		:func:`dposlib.blockchain.Transaction.link`.
 		"""
 		if hasattr(Transaction, "_privateKey"):
+			if "sendserPublicKey" not in self:
+				self._setSenderPublicKey(Transaction._publicKey)
 			address = dposlib.core.crypto.getAddress(Transaction._publicKey)
-			self._setSenderPublicKey(Transaction._publicKey)
-			self["senderId"] = address
-			if self["type"] in [1, 3, 4, 9] and "recipientId" not in self:
+			if self["type"] != 4:
+				self["senderId"] = address
+			if self["type"] in [1, 3, 9] and "recipientId" not in self:
 				self["recipientId"] = address
 			if "fee" not in self:
 				self.setFees()
@@ -410,7 +420,7 @@ class Transaction(dict):
 				see :func:`dposlib.blockchain.Transaction.feeIncluded`
 			    :func:`dposlib.blockchain.Transaction.feeExcluded`
 		"""
-		Transaction.link(secret, secondSecret)
+		self.link(secret, secondSecret)
 		if "fee" not in self or fee != None:
 			self.setFees(fee)
 		self.feeIncluded() if fee_included else self.feeExcluded()
