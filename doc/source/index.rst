@@ -13,6 +13,8 @@
 
    rest
    blockchain
+   ark.crypto
+   ark.ldgr
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^

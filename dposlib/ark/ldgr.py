@@ -21,7 +21,6 @@ PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
 def parseBip32Path(path):
 	"""
 	Parse a BIP44 derivation path.
-
 	https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 
 	Args:
@@ -48,8 +47,10 @@ def buildTxApdu(dongle_path, data):
 	Generate apdu from data. This apdu is to be sent into the ledger key.
 
 	Args:
-		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
-		data (:class:`bytes`): bytes value returned by :func:`dposlib.core.crypto.getBytes`
+		dongle_path (:class:`bytes`):
+			value returned by :func:`dposlib.ldgr.parseBip32Path`
+		data (:class:`bytes`):
+			bytes value returned by :func:`dposlib.core.crypto.getBytes`
 
 	Returns
 		:class:`bytes`: public key apdu data
@@ -77,7 +78,8 @@ def buildPkeyApdu(dongle_path):
 	Generate apdu to get public key from ledger key.
 
 	Args:
-		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
+		dongle_path (:class:`bytes`):
+			value returned by :func:`dposlib.ldgr.parseBip32Path`
 
 	Returns
 		:class:`bytes`: public key apdu data
@@ -93,8 +95,10 @@ def getPublicKey(dongle_path, debug=False):
 	Compute the public key associated to a derivation path.
 
 	Args:
-		dongle_path (:class:`bytes`): value returned by :func:`dposlib.ldgr.parseBip32Path`
-		debug (:class:`bool`): flag to activate debug messages from ledger key [default: False]
+		dongle_path (:class:`bytes`):
+			value returned by :func:`dposlib.ldgr.parseBip32Path`
+		debug (:class:`bool`):
+			flag to activate debug messages from ledger key [default: False]
 
 	Returns:
 		:class:`str`: hexadecimal compressed publicKey
@@ -114,7 +118,8 @@ def getSignature(data, dongle_path, debug=False):
 
 	Args:
 		data (:class:`bytes`):
-			transaction as bytes data returned by :func:`dposlib.core.crypto.getBytes`
+			transaction as bytes data returned by
+			:func:`dposlib.core.crypto.getBytes`
 		dongle_path (:class:`bytes`):
 			value returned by :func:`dposlib.ldgr.parseBip32Path`
 		debug (:class:`bool`):

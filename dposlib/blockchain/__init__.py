@@ -7,10 +7,10 @@ r"""
 classes.
 
 A blockchain have to be loaded first to use
-:class:`dposlib.blockchain.Transaction:
+:class:`dposlib.blockchain.Transaction`:
 
 >>> from dposlib import blockchain
->>> blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+>>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
   File "C:\Users\Bruno\Python\../GitHub/dpos\dposlib\blockchain\__init__.py", line 156, in __init__
@@ -19,14 +19,9 @@ Exception: no blockchain loaded
 >>> from dposlib import rest
 >>> rest.use("d.ark")
 True
->>> blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
-{
-  "amount": 1,
-  "asset": {},
-  "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
-  "type": 0,
-  "version": 1
-}
+>>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+>>> tx.amount
+1
 """
 
 import os

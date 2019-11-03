@@ -160,7 +160,6 @@ class TestEcdsaCrypto(unittest.TestCase):
 		dposlib.core.Transaction.unlink()
 
 	def test_transaction_sign(self):
-		dposlib.core.crypto.SCHNORR_SIG = False
 		dposlib.core.Transaction.link(self.secret, self.secondSecret)
 		tx = dposlib.core.Transaction(TestEcdsaCrypto.tx0_dict)
 		tx.sign()
@@ -172,13 +171,11 @@ class TestEcdsaCrypto(unittest.TestCase):
 		dposlib.core.Transaction.unlink()
 
 	def test_wif_sign(self):
-		dposlib.core.crypto.SCHNORR_SIG = False
 		keys = dposlib.core.crypto.getKeys(self.secret)
 		tx = dposlib.core.Transaction(TestEcdsaCrypto.tx0_dict)
 		self.assertEqual(dposlib.core.crypto.wifSignature(tx, keys["wif"]), TestEcdsaCrypto.signed_tx0_dict["signature"])
 
 	def test_transaction_check(self):
-		dposlib.core.crypto.SCHNORR_SIG = False
 		keys = dposlib.core.crypto.getKeys(self.secondSecret)
 		self.assertEqual(dposlib.core.crypto.checkTransaction(TestEcdsaCrypto.signed_tx0_dict), True)
 		self.assertEqual(dposlib.core.crypto.checkTransaction(TestEcdsaCrypto.signSigned_tx0_dict, keys["publicKey"]), True)
