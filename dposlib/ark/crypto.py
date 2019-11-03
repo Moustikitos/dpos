@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
+
 import binascii
 import hashlib
 import base58
@@ -18,24 +19,36 @@ SECP256K1 = Curve.get_curve("secp256k1")
 
 def ecPublicKey2Hex(ecpublickey):
 	"""
-	Convert an ecpy.keys.ECPublicKey to a hex string.
+	Encode and compress a public key.
 
-	Argument:
-	ecpublickey (ecpy.keys.ECPublicKey) -- an ecpy.keys.ECPublicKey instance
+	>>> puk = ecpy.keys.ECPrivateKey(1, curve=SECP256K1).get_public_key()
+	>>> print(puk)
+	<ECPublicKey
+		W: <Point
+		x: 79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+		y: 483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+		point on 'secp256k1' curve>>
+	>>> dposlib.core.crypto.ecPublicKey2Hex(puk)
+	'0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798'
 
-	Returns str
+	Args:
+		ecpublickey (:class:`ecpy.keys.ECPublicKey`): public key to encode
+
+	Returns:
+		:class:`str`: encoded public key
 	"""	
 	return hexlify(ecpublickey.W.to_bytes(compressed=True))
 
 
 def hex2EcPublicKey(pubkey):
 	"""
-	Convert a valid hex string public key to an ecpy.keys.ECPublicKey.
+	Decode and decompress a public key.
 
-	Argument:
-	pubkey (str) -- a valid hex string public key
+	Args:
+		pubkey (:class:`str`): an encoded public key
 
-	Returns ecpy.keys.ECPublicKey
+	Returns:
+		:class:`ecpy.keys.ECPublicKey`: public key
 	"""	
 	return ECPublicKey(Point.from_bytes(unhexlify(pubkey), SECP256K1))
 
@@ -45,12 +58,12 @@ def getKeys(secret, seed=None):
 	Generate keyring containing public key, signing and checking keys as
 	attribute.
 
-	Arguments:
-	secret (str or bytes) -- a human pass phrase
-	Keyword argument:
-	seed (byte) -- a sha256 sequence bytes (private key actualy)
+	Args:
+		secret (:class:`str` or :class:`bytes`): a human pass phrase
+		seed (:class:`byte`): bytes sequence
 
-	Return dict
+	Returns:
+		:class:`dict`: public, private and WIF keys
 	"""
 	if secret and not isinstance(secret, bytes): secret = secret.encode('utf-8')
 	seed = hashlib.sha256(secret).digest() if not seed else seed
@@ -65,29 +78,33 @@ def getKeys(secret, seed=None):
 	}
 
 
-def getAddressFromSecret(secret):
+def getAddressFromSecret(secret, marker=None):
 	"""
 	Computes ARK address from secret.
 
-	Argument:
-	secret (str) -- secret string
+	Args:
+		secret (:class:`str`): secret string
+		marker (:class:`int`): network marker (optional)
 	
-	Return str
+	Returns:
+		:class:`str`: the address
 	"""
-	return getAddress(getKeys(secret)["publicKey"])
+	return getAddress(getKeys(secret)["publicKey"], marker)
 
 
 def getAddress(publicKey, marker=None):
 	"""
 	Computes ARK address from publicKey.
 
-	Argument:
-	publicKey (str) -- public key string
-	Keyword argument:
-	marker (int) -- network marker (optional)
+	Args:
+		publicKey (:class:`str` or :class:`ecpy.keys.EcPublicKey`): public key
+		marker (:class:`int`): network marker (optional)
 
-	Return str
+	Returns:
+		:class:`str`: the address
 	"""
+	if isinstance(publicKey, ECPublicKey):
+		publicKey = ecPublicKey2Hex(publicKey)
 	if marker and isinstance(marker, int):
 		marker = hex(marker)[2:]
 	else:
@@ -102,10 +119,11 @@ def getWIF(seed):
 	"""
 	Computes WIF address from seed.
 
-	Argument:
-	seed (bytes) -- a sha256 sequence bytes
+	Args:
+		seed (:class:`bytes`): a sha256 sequence bytes
 
-	Return str
+	Returns:
+		:class:`str`: WIF address
 	"""
 	seed = unhexlify(cfg.wif) + seed[:32] + (b"\x01" if cfg.compressed else b"")
 	b58 = base58.b58encode_check(seed)
@@ -113,10 +131,33 @@ def getWIF(seed):
 
 
 def wifSignature(tx, wif):
+	"""
+	Generate transaction signature using private key.
+
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction description
+		wif (:class:`str`):
+			wif key
+
+	Returns:
+		:class:`str`: signature
+	"""
+
 	return wifSignatureFromBytes(getBytes(tx), wif)
 
 
 def wifSignatureFromBytes(data, wif):
+	"""
+	Generate signature from data using WIF key.
+
+	Args:
+		data (:class:`bytes`): bytes sequence
+		wif (:class:`str`): wif key
+
+	Returns:
+		:class:`str`: signature
+	"""
 	seed = base58.b58decode_check(wif)[1:33]
 	return getSignatureFromBytes(data, hexlify(seed))
 
@@ -125,26 +166,28 @@ def getSignature(tx, privateKey):
 	"""
 	Generate transaction signature using private key.
 
-	Arguments:
-	tx (dict) -- a transaction description
-	privateKey (str) -- a private key as hex string
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction description
+		privateKey (:class:`str`):
+			private key as hex string
 
-	Return str
+	Returns:
+		:class:`str`: signature
 	"""
 	return getSignatureFromBytes(getBytes(tx), privateKey)
 
 
 def getSignatureFromBytes(data, privateKey):
 	"""
-	Generate data signature using private key.
+	Generate signature from data using private key.
 
-	Arguments:
-	data (bytes) -- data in bytes
-	privateKey (str) -- a private key as hex string
-	Keyword argument:
-	schnorr (boolean) -- a flag to use schnorr signature
+	Args:
+		data (:class:`bytes`): bytes sequence
+		privateKey (:class:`str`): private key as hex string
 
-	Return str
+	Returns:
+		:class:`str`: signature as hex string
 	"""
 	privateKey = ECPrivateKey(int(privateKey, 16), SECP256K1)
 	message = hashlib.sha256(data).digest()
@@ -161,12 +204,14 @@ def checkTransaction(tx, secondPublicKey=None):
 	"""
 	Verify transaction validity.
 
-	Arguments:
-	tx (dict) -- transaction object
-	Keyword argument:
-	secondPublicKey (str) -- secondPublicKey to use
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction object
+		secondPublicKey (:class:`str`):
+			second public key to use if needed
 
-	Return bool
+	Returns:
+		:class:`bool`: true if transaction is valid
 	"""
 	checks = []
 	version = tx.get("version", 0x01)
@@ -205,14 +250,13 @@ def verifySignature(value, publicKey, signature):
 	"""
 	Verify signature.
 
-	Arguments:
-	value (str) -- value as hex string
-	publicKey (str) -- a public key as hex string
-	signature (str) -- a signature as hex string
-	Keyword argument:
-	schnorr (boolean) -- a flag to use schnorr verification
+	Args:
+		value (:class:`str`): value as hex string
+		publicKey (:class:`str`): public key as hex string
+		signature (:class:`str`): signature as hex string
 
-	Return bool
+	Returns:
+		:class:`bool`: true if signature matches the public key
 	"""
 	return verifySignatureFromBytes(unhexlify(value), publicKey, signature)
 
@@ -221,14 +265,13 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	"""
 	Verify signature.
 
-	Arguments:
-	data (bytes) -- data in bytes
-	publicKey (str) -- a public key as hex string
-	signature (str) -- a signature as hex string
-	Keyword argument:
-	schnorr (boolean) -- a flag to use schnorr verification
+	Args:
+		data (:class:`bytes`): data
+		publicKey (:class:`str`): public key as hex string
+		signature (:class:`str`): signature as hex string
 
-	Return bool
+	Returns:
+		:class:`bool`: true if signature matches the public key
 	"""
 	publicKey = hex2EcPublicKey(publicKey)
 	message = hashlib.sha256(data).digest()
@@ -245,10 +288,12 @@ def getId(tx):
 	"""
 	Generate transaction id.
 
-	Argument:
-	tx (dict) -- a transaction description
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction object
 
-	Return str
+	Returns:
+		:class:`str`: id as hex string
 	"""
 	return getIdFromBytes(getBytes(tx, exclude_multi_sig=False))
 
@@ -257,25 +302,28 @@ def getIdFromBytes(data):
 	"""
 	Generate data id.
 
-	Argument:
-	data (bytes) -- data in bytes
+	Args:
+		data (:class:`bytes`): data as bytes sequence
 
-	Return str
+	Returns:
+		:class:`str`: id as hex string
 	"""
 	return hexlify(hashlib.sha256(data).digest())
 
 
-def getBytes(tx, exclude_multi_sig=True):
+def getBytes(tx, **options):
 	"""
-	Hash transaction object into bytes data.
+	Hash transaction.
 
-	Argument:
-	tx (dict) -- transaction object
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction object
 
-	Return bytes sequence
+	Returns:
+		:class:`bytes`: bytes sequence
 	"""
 	if tx.get("version", 0x01) >= 0x02:
-		return serialize(tx, exclude_multi_sig=exclude_multi_sig)
+		return serialize(tx, **options)
 
 	buf = BytesIO()
 	# write type and timestamp
@@ -320,13 +368,14 @@ def getBytes(tx, exclude_multi_sig=True):
 		else:
 			raise Exception("transaction type %s not implemented" % typ)
 	# if there is a signature
-	if tx.get("signature", False):
+	if "signature" in tx and not options.get("exclude_sig", False):
 		pack_bytes(buf, unhexlify(tx["signature"]))
 	# if there is a second signature
-	if tx.get("signSignature", False):
-		pack_bytes(buf, unhexlify(tx["signSignature"]))
-	elif tx.get("secondSignature", False):
-		pack_bytes(buf, unhexlify(tx["secondSignature"]))
+	if not options.get("exclude_second_sig", False):
+		if tx.get("signSignature", False):
+			pack_bytes(buf, unhexlify(tx["signSignature"]))
+		elif tx.get("secondSignature", False):
+			pack_bytes(buf, unhexlify(tx["secondSignature"]))
 
 	result = buf.getvalue()
 	buf.close()
@@ -336,14 +385,16 @@ def getBytes(tx, exclude_multi_sig=True):
 # Reference: 
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-102.md
-def serialize(tx, version=None, exclude_multi_sig=True):
+def serialize(tx, version=None, **options):
 	"""
-	Serialize transaction object.
+	Serialize transaction.
 
-	Argument:
-	tx (dict) -- transaction object
+	Args:
+		tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+			transaction object
 
-	Return bytes sequence
+	Returns:
+		:class:`bytes`: bytes sequence
 	"""
 	buf = BytesIO()
 	version = tx.get("version", 0x01) if not version else version
@@ -371,14 +422,16 @@ def serialize(tx, version=None, exclude_multi_sig=True):
 	pack_bytes(buf, serializePayload(tx))
 
 	# signatures part
-	if "signature" in tx:
+	if "signature" in tx and not options.get("exclude_sig", False):
 		pack_bytes(buf, unhexlify(tx["signature"]))
-	if "signSignature" in tx:
-		pack_bytes(buf, unhexlify(tx["signSignature"]))
-	elif "secondSignature" in tx:
-		pack_bytes(buf, unhexlify(tx["secondSignature"]))
 
-	if "signatures" in tx and not exclude_multi_sig:
+	if not options.get("exclude_second_sig", False):
+		if "signSignature" in tx:
+			pack_bytes(buf, unhexlify(tx["signSignature"]))
+		elif "secondSignature" in tx:
+			pack_bytes(buf, unhexlify(tx["secondSignature"]))
+
+	if "signatures" in tx and not options.get("exclude_multi_sig", False):
 		if version == 0x01:
 			pack("<B", buf, (0xff,))
 		pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
