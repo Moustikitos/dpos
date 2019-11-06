@@ -12,7 +12,7 @@ python:
     - "3.8"
     - "3.8-dev"
     - "nightly"
-install: pip install -r requirements.txt
+install: pip install --user -r requirements.txt
 script: python -m unittest discover
 notifications:
     email:
