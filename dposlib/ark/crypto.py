@@ -158,7 +158,10 @@ def wifSignatureFromBytes(data, wif):
 	Returns:
 		:class:`str`: signature
 	"""
-	seed = base58.b58decode_check(wif)[1:33]
+	seed = base58.b58decode_check(
+		str(wif) if not isinstance(wif, bytes) else \
+		wif
+	)[1:33]
 	return getSignatureFromBytes(data, hexlify(seed))
 
 
@@ -453,6 +456,8 @@ def serializePayload(tx):
 	# transfer transaction
 	if _type == 0:
 		try:
+			recipientId = str(tx["recipientId"]) if not isinstance(tx["recipientId"], bytes) else \
+			              tx["recipientId"]
 			recipientId = base58.b58decode_check(tx["recipientId"])
 		except:
 			raise Exception("no recipientId defined")
@@ -504,15 +509,20 @@ def serializePayload(tx):
 	# IPFS
 	elif _type == 5:
 		try:
-			data = base58.b58decode(asset["ipfs"])
-		except:
-			raise Exception("bad ipfs autentification")
+			ipfs = str(asset["ipfs"]) if not isinstance(asset["ipfs"], bytes) else \
+			       asset["ipfs"]
+			data = base58.b58decode(ipfs)
+		except Exception as e:
+			raise Exception("bad ipfs autentification\n%r" % e)
 		pack_bytes(buf, data)
 
 	# multipayment
 	elif _type == 6:
 		try:
-			items = [(p["amount"], base58.b58decode_check(p["recipientId"])) for p in asset.get("payments", {})]
+			items = [(p["amount"], base58.b58decode_check(
+				str(p["recipientId"]) if not isinstance(p["recipientId"], bytes) else \
+				p["recipientId"]
+			)) for p in asset.get("payments", {})]
 		except:
 			raise Exception("error in recipientId address list")
 		result = pack("<I", buf, (len(items), ))
@@ -527,7 +537,9 @@ def serializePayload(tx):
 	# HTLC lock
 	elif _type == 8:
 		try:
-			recipientId = base58.b58decode_check(tx["recipientId"])
+			recipientId = str(tx["recipientId"]) if not isinstance(tx["recipientId"], bytes) else \
+			              tx["recipientId"]
+			recipientId = base58.b58decode_check(recipientId)
 		except:
 			raise Exception("no recipientId defined")
 		lock = asset.get("lock", False)
