@@ -264,7 +264,7 @@ def load(name):
 	try:
 		sys.modules[__package__].core = import_module('dposlib.{0}'.format(name))
 	except ImportError as e:
-		raise Exception("%s package not found" % name)
+		raise Exception("%s package not founde\n%r" % (name, e))
 	else:
 		# delete real package name loaded to keep namespace clear
 		try:
