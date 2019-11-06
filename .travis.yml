@@ -4,7 +4,7 @@ before_install:
     - sudo apt-get install python-pip python3-pip
     - sudo apt-get install libudev-dev libusb-1.0.0-dev
 language: python
-sudo: false
+sudo: true
 python:
     - "2.7"
     - "3.6"
