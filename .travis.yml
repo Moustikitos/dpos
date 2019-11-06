@@ -18,4 +18,4 @@ script:
     - pytest
 notifications:
     email:
-        - moustiktos@gmail.com
+        - moustikitos@gmail.com
