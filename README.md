@@ -24,14 +24,14 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ## Available network
 
-  - [x] Ark (transaction type `0`, `1`, `2` & `3`)
+  - [x] Ark forks (transaction type `0`, `1`, `2` & `3`)
+    + [x] Persona : `persona`
+    + [x] Ripa : `ripa`
+    + [x] Phantom : `phantom`
+    + [x] Qredit : `qredit`
+  - [X] Ark-core 2.6 (transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9`, `10`)
     * mainet : `ark`
     * devnet : `d.ark`
-    * forks
-      + [x] Persona : `persona`
-      + [x] Ripa : `ripa`
-      + [x] Phantom : `phantom`
-      + [x] Qredit : `qredit`
   - [x] Lisk
     * mainet : `lisk`
     * testnet : `t.lisk`
@@ -144,13 +144,13 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 "44'/1'/1'/0'/0"
 >>> ldg.send(1, "DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7")
 ```
-<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/ledger_confirm.png" />
+<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/doc/static/ledger_confirm.png" />
 
 ```python
 {'data': {'accept': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'broadcast': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'excess': [], 'invalid': []}}
 >>> ldg.upVote("darktoons")
 ```
-<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/ledger_confirm.png" />
+<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/doc/static/ledger_confirm.png" />
 
 ```python
 {'data': {'accept': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'broadcast': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'excess': [], 'invalid': []}}
