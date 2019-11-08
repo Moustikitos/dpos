@@ -112,7 +112,7 @@ def rand_k():
             return k
 
 # See https://tools.ietf.org/html/rfc6979#section-3.2
-def rfc6979_k(msg, secret, V=None):
+def rfc6979_k(msg, secret0, V=None):
     hasher = hashlib.sha256
     if (V == None):
         # a.  Process m through the hash function H, yielding: h1 = H(m)
@@ -124,7 +124,7 @@ def rfc6979_k(msg, secret, V=None):
         # c. Set: K = 0x00 0x00 0x00 ... 0x00
         K = b'\x00'*hsize
         # d. Set: K = HMAC_K(V || 0x00 || int2octets(x) || bits2octets(h1))
-        x = secret.to_bytes(hsize, 'big')
+        x = secret0 #bytes_from_int(secret) #secret.to_bytes(hsize, 'big')
         K = hmac.new(K, V + b'\x00' + x + h1, hasher).digest()
         # e. Set: V = HMAC_K(V)
         V = hmac.new(K, V,hasher).digest()

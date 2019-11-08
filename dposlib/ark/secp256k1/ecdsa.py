@@ -21,7 +21,7 @@ def sign(msg, secret0, k=None, canonical=True):
 def rfc6979_sign(msg, secret0, canonical=True):
     V = None
     for i in range(1, 10):
-        k, V = rfc6979_k(msg, int_from_bytes(secret0), V)
+        k, V = rfc6979_k(msg, secret0, V)
         sig = sign(msg, secret0, k, canonical)
         if sig:
             return sig

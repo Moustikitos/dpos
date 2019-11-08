@@ -101,7 +101,6 @@ class TestEcdsaCrypto(unittest.TestCase):
 		)
 
 	def test_schnorr_signature(self):
-		dposlib.core.crypto.SCHNORR_SIG = True
 		keys = dposlib.core.crypto.getKeys(self.secret)
 		message = "test message".encode("utf-8")
 		signature = dposlib.core.crypto.getSignatureFromBytes(message, keys["privateKey"])
@@ -109,7 +108,6 @@ class TestEcdsaCrypto(unittest.TestCase):
 			True,
 			dposlib.core.crypto.verifySignatureFromBytes(message, keys["publicKey"], signature)
 		)
-		dposlib.core.crypto.SCHNORR_SIG = False
 
 	def test_get_id(self):
 		self.assertEqual(

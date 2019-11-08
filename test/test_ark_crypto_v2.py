@@ -35,5 +35,5 @@ class TestArkCryptoV2(unittest.TestCase):
 			t = blockchain.Transaction(tx)
 			t.signature = sig
 			computed = bin_.hexlify(dposlib.core.crypto.getBytes(t, exclude_multi_sig=not t['type'] == 4))
-			self.assertEqual(serialized, computed)
+			self.assertEqual(str(serialized), computed)
 			self.assertEqual(id_, dposlib.core.crypto.getId(t))

@@ -183,8 +183,7 @@ def getSignatureFromBytes(data, privateKey):
 	Returns:
 		:class:`str`: signature as hex string
 	"""
-	secret0 = privateKey if isinstance(privateKey, bytes) else \
-	          unhexlify(privateKey)
+	secret0 = unhexlify(privateKey)
 	msg = secp256k1.hash_sha256(data)
 	if bytearray(data)[0] == 0xff:
 		return hexlify(schnorr.bcrypto410_sign(msg, secret0))
