@@ -12,7 +12,7 @@ from dposlib.util import bin as bin_
 from dposlib.util import data
 
 
-class TestArkCryptoV2(unittest.TestCase):
+class TestArkAip11(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(self):

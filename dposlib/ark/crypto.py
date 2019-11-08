@@ -12,42 +12,6 @@ from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 from dposlib.ark.secp256k1 import schnorr, ecdsa
 
 
-# def ecPublicKey2Hex(ecpublickey):
-# 	"""
-# 	Encode and compress a public key.
-
-# 	>>> puk = ecpy.keys.ECPrivateKey(1, curve=SECP256K1).get_public_key()
-# 	>>> print(puk)
-# 	<ECPublicKey
-# 		W: <Point
-# 		x: 79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
-# 		y: 483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
-# 		point on 'secp256k1' curve>>
-# 	>>> dposlib.core.crypto.ecPublicKey2Hex(puk)
-# 	'0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798'
-
-# 	Args:
-# 		ecpublickey (:class:`ecpy.keys.ECPublicKey`): public key to encode
-
-# 	Returns:
-# 		:class:`str`: encoded public key
-# 	"""	
-# 	return hexlify(ecpublickey.W.to_bytes(compressed=True))
-
-
-# def hex2EcPublicKey(pubkey):
-# 	"""
-# 	Decode and decompress a public key.
-
-# 	Args:
-# 		pubkey (:class:`str`): an encoded public key
-
-# 	Returns:
-# 		:class:`ecpy.keys.ECPublicKey`: public key
-# 	"""
-# 	return ECPublicKey(Point.from_bytes(unhexlify(pubkey), SECP256K1))
-
-
 def getKeys(secret, seed=None):
 	"""
 	Generate keyring containing public key, signing and checking keys as
