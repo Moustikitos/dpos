@@ -28,6 +28,7 @@ kw = {
 		"dposlib",
 		"dposlib.util",
 		"dposlib.ark",
+		"dposlib.ark.secp256k1",
 		"dposlib.ark.v1",
 		"dposlib.ark.v2",
 		"dposlib.lisk",
@@ -44,7 +45,6 @@ kw = {
 		"ledgerblue"
 	],
 	"dependency_links": [
-		"https://github.com/Moustikitos/ECPy/archive/ark-core-2.6.zip"
 	],
 	"license": "Copyright 2018, MIT licence",
 	"classifiers": [

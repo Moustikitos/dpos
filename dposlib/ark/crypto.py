@@ -5,52 +5,47 @@ import binascii
 import hashlib
 import base58
 
-from ecpy.curves import Curve, Point
-from ecpy.keys import ECPublicKey, ECPrivateKey
-from ecpy.ecdsa import ECDSA
-from ecpy.ecschnorr import ECSchnorr
-
 from dposlib import BytesIO
+from dposlib.ark import secp256k1
 from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
-
-SECP256K1 = Curve.get_curve("secp256k1")
-
-
-def ecPublicKey2Hex(ecpublickey):
-	"""
-	Encode and compress a public key.
-
-	>>> puk = ecpy.keys.ECPrivateKey(1, curve=SECP256K1).get_public_key()
-	>>> print(puk)
-	<ECPublicKey
-		W: <Point
-		x: 79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
-		y: 483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
-		point on 'secp256k1' curve>>
-	>>> dposlib.core.crypto.ecPublicKey2Hex(puk)
-	'0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798'
-
-	Args:
-		ecpublickey (:class:`ecpy.keys.ECPublicKey`): public key to encode
-
-	Returns:
-		:class:`str`: encoded public key
-	"""	
-	return hexlify(ecpublickey.W.to_bytes(compressed=True))
+from dposlib.ark.secp256k1 import schnorr, ecdsa
 
 
-def hex2EcPublicKey(pubkey):
-	"""
-	Decode and decompress a public key.
+# def ecPublicKey2Hex(ecpublickey):
+# 	"""
+# 	Encode and compress a public key.
 
-	Args:
-		pubkey (:class:`str`): an encoded public key
+# 	>>> puk = ecpy.keys.ECPrivateKey(1, curve=SECP256K1).get_public_key()
+# 	>>> print(puk)
+# 	<ECPublicKey
+# 		W: <Point
+# 		x: 79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+# 		y: 483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+# 		point on 'secp256k1' curve>>
+# 	>>> dposlib.core.crypto.ecPublicKey2Hex(puk)
+# 	'0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798'
 
-	Returns:
-		:class:`ecpy.keys.ECPublicKey`: public key
-	"""	
-	return ECPublicKey(Point.from_bytes(unhexlify(pubkey), SECP256K1))
+# 	Args:
+# 		ecpublickey (:class:`ecpy.keys.ECPublicKey`): public key to encode
+
+# 	Returns:
+# 		:class:`str`: encoded public key
+# 	"""	
+# 	return hexlify(ecpublickey.W.to_bytes(compressed=True))
+
+
+# def hex2EcPublicKey(pubkey):
+# 	"""
+# 	Decode and decompress a public key.
+
+# 	Args:
+# 		pubkey (:class:`str`): an encoded public key
+
+# 	Returns:
+# 		:class:`ecpy.keys.ECPublicKey`: public key
+# 	"""
+# 	return ECPublicKey(Point.from_bytes(unhexlify(pubkey), SECP256K1))
 
 
 def getKeys(secret, seed=None):
@@ -65,15 +60,13 @@ def getKeys(secret, seed=None):
 	Returns:
 		:class:`dict`: public, private and WIF keys
 	"""
-	if secret and not isinstance(secret, bytes): secret = secret.encode('utf-8')
-	seed = hashlib.sha256(secret).digest() if not seed else seed
-	hex_seed = hexlify(seed)
-	privateKey = ECPrivateKey(int(hex_seed, 16), SECP256K1)
-	publicKey = privateKey.get_public_key()
+	if secret and not seed:
+		seed = secp256k1.hash_sha256(secret if isinstance(secret, bytes) else secret.encode())
+	publicKey = secp256k1.PublicKey.from_int(secp256k1.int_from_bytes(seed))
 
 	return {
-		"publicKey": ecPublicKey2Hex(publicKey),
-		"privateKey": hex_seed,
+		"publicKey": hexlify(publicKey.encode()),
+		"privateKey": hexlify(seed),
 		"wif": getWIF(seed)
 	}
 
@@ -97,14 +90,12 @@ def getAddress(publicKey, marker=None):
 	Computes ARK address from publicKey.
 
 	Args:
-		publicKey (:class:`str` or :class:`ecpy.keys.EcPublicKey`): public key
+		publicKey (:class:`str`): public key
 		marker (:class:`int`): network marker (optional)
 
 	Returns:
 		:class:`str`: the address
 	"""
-	if isinstance(publicKey, ECPublicKey):
-		publicKey = ecPublicKey2Hex(publicKey)
 	if marker and isinstance(marker, int):
 		marker = hex(marker)[2:]
 	else:
@@ -192,15 +183,13 @@ def getSignatureFromBytes(data, privateKey):
 	Returns:
 		:class:`str`: signature as hex string
 	"""
-	privateKey = ECPrivateKey(int(privateKey, 16), SECP256K1)
-	message = hashlib.sha256(data).digest()
+	secret0 = privateKey if isinstance(privateKey, bytes) else \
+	          unhexlify(privateKey)
+	msg = secp256k1.hash_sha256(data)
 	if bytearray(data)[0] == 0xff:
-		signer = ECSchnorr(hashlib.sha256, fmt="RAW")
-		return hexlify(signer.bcrypto410_sign(message, privateKey))
-		# return hexlify(signer.bip_sign(message, privateKey))
+		return hexlify(schnorr.bcrypto410_sign(msg, secret0))
 	else:
-		signer = ECDSA("DER")
-		return hexlify(signer.sign_rfc6979(message, privateKey, hashlib.sha256, canonical=True))
+		return hexlify(ecdsa.rfc6979_sign(msg, secret0, canonical=True))
 
 
 def checkTransaction(tx, secondPublicKey=None):
@@ -276,15 +265,13 @@ def verifySignatureFromBytes(data, publicKey, signature):
 	Returns:
 		:class:`bool`: true if signature matches the public key
 	"""
-	publicKey = hex2EcPublicKey(publicKey)
-	message = hashlib.sha256(data).digest()
+	pubkey = unhexlify(publicKey)
+	msg = secp256k1.hash_sha256(data)
+	sig = unhexlify(signature)
 	if len(signature) == 128:
-		verifier = ECSchnorr(hashlib.sha256, fmt="RAW")
-		return verifier.bcrypto410_verify(message, unhexlify(signature), publicKey)
-		# return verifier.bip_verify(message, unhexlify(signature), publicKey)
+		return schnorr.bcrypto410_verify(msg, pubkey, sig)
 	else:
-		verifier = ECDSA("DER")
-		return verifier.verify(message, unhexlify(signature), publicKey)
+		return ecdsa.verify(msg, pubkey, sig)
 
 
 def getId(tx):
@@ -311,7 +298,7 @@ def getIdFromBytes(data):
 	Returns:
 		:class:`str`: id as hex string
 	"""
-	return hexlify(hashlib.sha256(data).digest())
+	return hexlify(secp256k1.hash_sha256(data))
 
 
 def getBytes(tx, **options):

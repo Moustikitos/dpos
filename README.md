@@ -24,21 +24,21 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ## Available network
 
-  - [x] Ark forks (transaction type `0`, `1`, `2` & `3`)
+  - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9`, `10`)
+    * [X] mainet : `ark`
+    * [X] devnet : `d.ark`
+  - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
     + [x] Persona : `persona`
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`
     + [x] Qredit : `qredit`
-  - [X] Ark-core 2.6 (transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9`, `10`)
-    * mainet : `ark`
-    * devnet : `d.ark`
-  - [x] Lisk
-    * mainet : `lisk`
-    * testnet : `t.lisk`
-    * forks
-      + [x] shift (transaction type `0`, `1` and `3`)
-        - mainnet : `shift`
-        - testnet : `t.shift`
+  - Lisk (`API` only)
+    * [x] mainet : `lisk`
+    * [x] testnet : `t.lisk`
+  - Lisk forks
+    + [x] shift (`API`+ transaction type `0`, `1` and `3`)
+      - mainnet : `shift`
+      - testnet : `t.shift`
 
 ## Main features
 
@@ -57,6 +57,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### Fast way to interact with blockchain
 ```python
 >>> import dposlib
+>>> rest.use("d.ark")
 >>> # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
 >>> tx = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "message")
 >>> # sign tx with secret and [optional second secret]
@@ -86,6 +87,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### Network API
 
 ```python
+>>> import dposlib
 >>> rest.use("ark")
 >>> dlgt = dposlib.core.api.Delegate("arky") # get delegate by username
 >>> dlgt.forged()
@@ -233,9 +235,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 ### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [X] Ark 2.6 compatibility
-  - [X] ecdsa replaced by ecpy
-  - [X] Schnorr signature
-  - [X] HTLC implementation
+  - [X] builtin secp256k1 replaced ecdsa lib
 
 ## TODO
   - [ ] doc writing

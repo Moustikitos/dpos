@@ -1,6 +1,5 @@
 future
 requests
-git+https://github.com/Moustikitos/ecpy.git@ark-core-2.6
 pynacl
 pytz
 base58
