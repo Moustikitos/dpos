@@ -46,14 +46,30 @@ def bcrypto410_verify(msg, pubkey, sig):
 
     return True
 
+# Note that bip schnorr uses a very different public key format (32 bytes) than
+# the ones used by existing systems (which typically use elliptic curve points
+# as public keys, 33-byte or 65-byte encodings of them). A side effect is that
+# ``PubKey(sk) = PubKey(bytes(n-int(sk))``, so every public key has two
+# corresponding private keys.
+
 def bytes_from_point(P):
+    """
+    Encode a public key as defined in bip schnorr spec.
+
+    Args:
+        P (:class:`PublicKey`):
+    Returns:
+        pubkeyB (:class:`bytes`): encoded public key 
+    """
     return bytes_from_int(x(P))
 
-def point_from_bytes(b):
-    x = int_from_bytes(b)
-    y_sq = (pow(x, 3, p) + 7) % p
-    y = pow(y_sq, (p + 1) // 4, p)
-    if pow(y, 2, p) != y_sq:
+def point_from_bytes(pubkeyB):
+    """
+    Decode a public key as defined in bip schnorr spec.
+    """
+    x = int_from_bytes(pubkeyB)
+    y = y_from_x(x)
+    if not y:
         return None
     return [x, y]
 

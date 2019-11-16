@@ -3,7 +3,6 @@
 
 import unittest
 import dposlib
-
 from dposlib import rest
 
 
@@ -18,6 +17,7 @@ class TestDposApi(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
+
         # secrets used for testing
         self.secret = "secret"
         self.secondSecret = "secondSecret"
