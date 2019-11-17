@@ -5,10 +5,6 @@
 	"minversion": "2.1",
     "aip20": 0,
 
-	"wif": "aa",
-	"marker": "17",
-	"slip44": "111",
-
 	"bip32": {
 		"private": 76066276,
 		"public": 76067358

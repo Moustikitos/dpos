@@ -28,6 +28,9 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
     * [X] mainet : `ark`
     * [X] devnet : `d.ark`
   - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
+    + [x] Internet of People
+      * [X] mainet : `iop`
+      * [X] devnet : `d.iop`
     + [x] Persona : `persona`
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`
@@ -234,8 +237,10 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [x] rest `returnKey` behaviour improvement
 
 ### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [X] flake8 compliancy
   - [X] Ark 2.6 compatibility
   - [X] builtin secp256k1 replaced ecdsa lib
+  - [X] added `iop` mainnet and devnet
 
 ## TODO
   - [ ] doc writing
