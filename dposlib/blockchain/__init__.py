@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-r"""
+"""
 :mod:`dposlib.blockchain` package provides
 :class:`dposlib.blockchain.Transaction` and :class:`dposlib.blockchain.Wallet`
 classes.
@@ -10,16 +10,19 @@ A blockchain have to be loaded first to use
 :class:`dposlib.blockchain.Transaction`:
 
 >>> from dposlib import blockchain
->>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+>>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7\
+gvZNiRJ7qLk", version=1)
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "C:\Users\Bruno\Python\../GitHub/dpos\dposlib\blockchain\__init__.py", line 156, in __init__
+  File "C:/Users/Bruno/Python/../GitHub/dpos/dposlib/blockchain/__init__.py", \
+line 156, in __init__
     raise Exception("no blockchain loaded")
 Exception: no blockchain loaded
 >>> from dposlib import rest
 >>> rest.use("d.ark")
 True
->>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=1)
+>>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7\
+gvZNiRJ7qLk", version=1)
 >>> tx.amount
 1
 """
@@ -48,7 +51,8 @@ class Transaction(dict):
     A python :class:`dict` that implements all the necessities to manually
     generate valid transactions.
 
-    >>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", version=2)
+    >>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh\
+    2Lf7gvZNiRJ7qLk", version=2)
     >>> tx.finalize("my first secret", "my second secret")
     >>> tx
     {
@@ -60,9 +64,13 @@ class Transaction(dict):
       "nonce": 1,
       "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
       "senderId": "DC2eLmJittfkGBHvzeTVc7FdvrktsiUdQA",
-      "senderPublicKey": "02eecdefbd79d701c4707d6d2b6fe13a50e00b9ead3ec04df6fcd340cb373b6f08",
-      "signSignature": "7910d691f918930b25cf3358cb11b42fd8f8c683a8c8e1e0ff827bdb134d36233cdbbd3a086cba25f1e0ea9fc6233dbc3258194a6847b1e7f125cb6acb70d6b9",
-      "signature": "6774c2b5345a897107ed6800ae2972d406bb50cc4eb0880aca50219823aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
+      "senderPublicKey": "02eecdefbd79d701c4707d6d2b6fe13a50e00b9ead3ec04df6fc\
+    d340cb373b6f08",
+      "signSignature": "7910d691f918930b25cf3358cb11b42fd8f8c683a8c8e1e0ff827b\
+    db134d36233cdbbd3a086cba25f1e0ea9fc6233dbc3258194a6847b1e7f125cb6acb70d6b9\
+    ",
+      "signature": "6774c2b5345a897107ed6800ae2972d406bb50cc4eb0880aca50219823\
+    aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
       "timestamp": 82534292,
       "type": 0,
       "typeGroup": 1,

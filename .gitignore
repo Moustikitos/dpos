@@ -106,3 +106,6 @@ venv.bak/
 simple_history.html
 .registry/
 *.whk
+
+# Visual Studio Code
+.vscode

@@ -13,6 +13,7 @@
 
    rest
    blockchain
+   ark.secp256k1
    ark.crypto
    ark.ldgr
 
