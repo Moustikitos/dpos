@@ -74,8 +74,42 @@ class Transaction(dict):
     FMULT = 10000
     FEESL = None
 
+    def _compute_fee(self, value=None):
+        try:
+            return int(value)
+        except ValueError:
+            static_value = getattr(cfg, "fees", {})\
+                .get("staticFees", getattr(cfg, "fees", {}))\
+                .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
+            if Transaction.DFEES:
+                feesl = value if isinstance(value, str) else\
+                        Transaction.FEESL
+                # use fee statistics if FEESL is not None
+                # if Transaction.FEESL is not None:
+                if feesl is not None:
+                    # if fee statistics not found, return static fee value
+                    fee = cfg.feestats.get(self["type"], {})\
+                          .get(feesl, static_value)
+                # else compute fees using fee multiplier and tx size
+                else:
+                    fee = dposlib.core.computeDynamicFees(self)
+            else:
+                # k is 0 or signature number in case of multisignature
+                # registration
+                k = len(
+                    self.get("asset", {})
+                    .get("multisignature", {})
+                    .get("publicKeys", [])
+                )
+                fee = static_value * (1+k)
+            return int(fee)
+
     def _setNonce(self, publicKey):
-        self["nonce"] = int(dposlib.rest.GET.api.wallets(publicKey).get("data", {}).get("nonce", 0))+1
+        self["nonce"] = int(
+            dposlib.rest.GET.api.wallets(publicKey)
+            .get("data", {})
+            .get("nonce", 0)
+        )+1
 
     def _setSenderPublicKey(self, publicKey):
         dict.__setitem__(self, "senderPublicKey", publicKey)
@@ -89,7 +123,9 @@ class Transaction(dict):
     def path():
         """Return current registry path."""
         if hasattr(Transaction, "_publicKey"):
-            return os.path.join(dposlib.ROOT, ".registry", cfg.network, Transaction._publicKey)
+            return os.path.join(
+                dposlib.ROOT, ".registry", cfg.network, Transaction._publicKey
+            )
         else:
             raise Exception("No public key found")
 
@@ -111,8 +147,8 @@ class Transaction(dict):
     @staticmethod
     def link(secret=None, secondSecret=None):
         """
-        Save public and private keys derived from secrets. This is equivalent to
-        wallet login. it limits number of secret keyboard entries.
+        Save public and private keys derived from secrets. This is equivalent
+        to wallet login. it limits number of secret keyboard entries.
 
         Args:
             secret (:class:`str`): passphrase
@@ -147,7 +183,8 @@ class Transaction(dict):
             elif value in ["maxFee", "avgFee", "minFee"]:
                 Transaction.FEESL = value
         else:
-            raise Exception("Dynamic fees can not be set on %s network" % cfg.network)
+            raise Exception("Dynamic fees can not be set on %s network" %
+                            cfg.network)
     setDynamicFee = useDynamicFee
 
     @staticmethod
@@ -160,11 +197,15 @@ class Transaction(dict):
     def load(txid):
         """Loads the transaction identified by txid from registry."""
         data = loadJson(Transaction.path())[txid]
-        data["senderId"] = dposlib.core.crypto.getAddress(data["senderPublicKey"], marker=data.pop("network", False))
+        data["senderId"] = dposlib.core.crypto.getAddress(
+            data["senderPublicKey"], marker=data.pop("network", False)
+        )
         return Transaction(data)
 
     def __repr__(self):
-        return json.dumps(OrderedDict(sorted(self.items(), key=lambda e:e[0])), indent=2)
+        return json.dumps(
+            OrderedDict(sorted(self.items(), key=lambda e: e[0])), indent=2
+        )
 
     def __init__(self, *args, **kwargs):
         if not hasattr(dposlib, "core"):
@@ -176,14 +217,15 @@ class Transaction(dict):
         if version >= 0x1:
             self["version"] = version
         if version >= 0x2:
-            self["typeGroup"] = data.pop("typeGroup", 1) # default typeGroup is 1 (Ark core)
+            # default typeGroup is 1 (Ark core)
+            self["typeGroup"] = data.pop("typeGroup", 1)
             self["network"] = cfg.pubKeyHash
 
-        self["amount"] = data.pop("amount", 0) # amount is required field
-        self["type"] = data.pop("type", 0) # default type is 0 (transfer)
-        self["asset"] = data.pop("asset", {}) # put asset value if no one given
+        self["amount"] = data.pop("amount", 0)  # amount is required field
+        self["type"] = data.pop("type", 0)  # default type is 0 (transfer)
+        self["asset"] = data.pop("asset", {})  # if no one given
 
-        for key, value in [(k, v) for k, v in data.items() if v != None]:
+        for key, value in [(k, v) for k, v in data.items() if v is not None]:
             self[key] = value
 
         if hasattr(Transaction, "_publicKey"):
@@ -194,14 +236,15 @@ class Transaction(dict):
         if item in dposlib.core.TYPING.keys():
             cast = dposlib.core.TYPING[item]
             if item == "fee":
-                self.setFees(value)
-            else:
-                if not isinstance(value, cast):
-                    value = value.decode("utf-8") if item == "vendorField" else \
-                            cast(value)
-                dict.__setitem__(self, item, value)
-            # remove signatures and ids if an item other than signature or id is modified
-            if item not in ["signatures", "signature", "signSignature", "secondSignature", "id"]:
+                value = self._compute_fee(value)  # self.setFee(value)
+            elif not isinstance(value, cast):
+                value = cast(value) if item != "vendorField" else \
+                        value.decode("utf-8")
+            dict.__setitem__(self, item, value)
+            # remove signatures and ids if an item other than signature or id
+            # is modified
+            if item not in ["signatures", "signature", "signSignature",
+                            "secondSignature", "id"]:
                 self.pop("signature", False)
                 self.pop("signSignature", False)
                 self.pop("secondSignature", False)
@@ -217,43 +260,30 @@ class Transaction(dict):
         elif item == "secondPrivateKey":
             Transaction._secondPrivateKey = str(value)
         else:
-            raise AttributeError("field '%s' not allowed in '%s' class" % (item, self.__class__.__name__))
+            raise AttributeError(
+                "field '%s' not allowed in '%s' class" %
+                (item, self.__class__.__name__)
+            )
     __setattr__ = __setitem__
 
     def __getattr__(self, attr):
         _attr = dict.get(self, attr, self.__dict__.get(attr, False))
-        if _attr == False:
-            raise AttributeError("'%s' object has no field '%s'" % (self.__class__.__name__, attr))
+        if _attr is False:
+            raise AttributeError(
+                "'%s' object has no field '%s'" %
+                (self.__class__.__name__, attr)
+            )
         else:
             return _attr
 
-    def setFees(self, value=None):
+    def setFee(self, value=None):
         """
         Set ``fee`` field manually or according to inner parameters.
 
         Args:
             value (:class:`int`): fee value in ``statoshi`` to set manually
         """
-        if value != None:
-            fee = value
-        else:
-            static_value = getattr(cfg, "fees", {})\
-                           .get("staticFees", getattr(cfg, "fees", {}))\
-                           .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
-            if Transaction.DFEES:
-                # use fee statistics if FEESL is not None
-                if Transaction.FEESL != None:
-                    # if fee statistics not found, return static fee value
-                    fee = cfg.feestats.get(self["type"], {}).get(Transaction.FEESL, static_value)
-                # else compute fees using fee multiplier and tx size
-                else:
-                    fee = dposlib.core.computeDynamicFees(self)
-            else:
-                # k is 0 or signature number in case of multisignature registration
-                k = len(self.get("asset", {}).get("multisignature", {}).get("publicKeys", []))
-                fee = static_value * (1+k)
-        dict.__setitem__(self, "fee", int(fee))
-        return fee
+        self.fee = self._compute_fee(value)
 
     def feeIncluded(self):
         """
@@ -277,8 +307,8 @@ class Transaction(dict):
     # sign functions using passphrases
     def signWithSecret(self, secret):
         """
-        Generate the ``signature`` field using passphrase. The associated public
-        and private keys are stored till
+        Generate the ``signature`` field using passphrase. The associated
+        public and private keys are stored till
         :func:`dposlib.blockchain.Transaction.unlink` is called.
 
         Args:
@@ -309,22 +339,28 @@ class Transaction(dict):
             secret (:class:`str`): passphrase
         """
         if self.type != 4:
-            raise Exception("multisignature only allowed for transaction type 4")
+            raise Exception(
+                "multisignature only allowed for transaction type 4"
+            )
 
         keys = dposlib.core.crypto.getKeys(secret)
         try:
             self.multiSignWithKey(
-                self.asset["multiSignature"]["publicKeys"].index(keys["publicKey"]),
-                keys["privateKey"]
+                self.asset["multiSignature"]["publicKeys"].index(
+                    keys["publicKey"]
+                ), keys["privateKey"]
             )
         except ValueError:
-            raise Exception("publicKey %s not allowed in this transaction" % keys["publicKey"])
+            raise Exception(
+                "publicKey %s not allowed in this transaction" %
+                keys["publicKey"]
+            )
 
     # sign function using crypto keys
     def signWithKeys(self, publicKey, privateKey):
         """
-        Generate the ``signature`` field using public and private keys. They are
-        till :func:`dposlib.blockchain.Transaction.unlink` is called.
+        Generate the ``signature`` field using public and private keys. They
+        are till :func:`dposlib.blockchain.Transaction.unlink` is called.
 
         Args:
             publicKey (:class:`str`): public key as hex string
@@ -336,7 +372,7 @@ class Transaction(dict):
 
     def signSignWithKey(self, secondPrivateKey):
         """
-        Generate the ``signSignature`` field using second private key. It is 
+        Generate the ``signSignature`` field using second private key. It is
         stored till :func:`dposlib.blockchain.Transaction.unlink` is called.
 
         Args:
@@ -355,14 +391,18 @@ class Transaction(dict):
             privateKey (:class:`str`): private key as hex string
         """
         if self.type != 4:
-            raise Exception("multisignature only allowed for transaction type 4")
+            raise Exception(
+                "multisignature only allowed for transaction type 4"
+            )
 
         self.pop("id", False)
         if "fee" not in self:
-            self.setFees()
+            self.setFee()
         if "signatures" not in self:
-            self["signatures"] = [None] * len(self.asset["multiSignature"]["publicKeys"])
-        self["signatures"][index] = "%02x"%index + dposlib.core.crypto.getSignature(self, privateKey)
+            self["signatures"] = \
+                [None] * len(self.asset["multiSignature"]["publicKeys"])
+        self["signatures"][index] = \
+            "%02x" % index + dposlib.core.crypto.getSignature(self, privateKey)
 
     # root sign function called by others
     def sign(self):
@@ -379,8 +419,10 @@ class Transaction(dict):
             if self["type"] in [1, 3, 9] and "recipientId" not in self:
                 self["recipientId"] = address
             if "fee" not in self:
-                self.setFees()
-            self["signature"] = dposlib.core.crypto.getSignature(self, Transaction._privateKey)
+                self.setFee()
+            self["signature"] = dposlib.core.crypto.getSignature(
+                self, Transaction._privateKey
+            )
         else:
             raise Exception("orphan transaction can not sign itsef")
 
@@ -393,7 +435,9 @@ class Transaction(dict):
         """
         if "signature" in self:
             try:
-                self["signSignature"] = dposlib.core.crypto.getSignature(self, Transaction._secondPrivateKey)
+                self["signSignature"] = dposlib.core.crypto.getSignature(
+                    self, Transaction._secondPrivateKey
+                )
             except AttributeError:
                 raise Exception("no second private Key available")
         else:
@@ -406,7 +450,8 @@ class Transaction(dict):
         else:
             raise Exception("transaction not signed")
 
-    def finalize(self, secret=None, secondSecret=None, fee=None, fee_included=False):
+    def finalize(self, secret=None, secondSecret=None,
+                 fee=None, fee_included=False):
         """
         Finalize a transaction by setting ``fee``, signatures and ``id``.
 
@@ -419,8 +464,8 @@ class Transaction(dict):
                 :func:`dposlib.blockchain.Transaction.feeExcluded`
         """
         self.link(secret, secondSecret)
-        if "fee" not in self or fee != None:
-            self.setFees(fee)
+        if "fee" not in self or fee is not None:
+            self["fee"] = fee
         self.feeIncluded() if fee_included else self.feeExcluded()
         self.sign()
         if hasattr(Transaction, "_secondPrivateKey"):
@@ -443,7 +488,7 @@ class Transaction(dict):
             raise Exception("transaction is not finalized")
 
 
-###### API
+# API
 class Data:
 
     REF = set()
@@ -458,8 +503,17 @@ class Data:
                 return func(*args, **kw)
             elif not hasattr(obj, "address"):
                 raise Exception("not a wallet")
-            elif (obj.publicKey == None and dposlib.core.crypto.getAddress(getattr(Transaction, "_publicKey", " ")) == obj.address) or \
-                 (getattr(Transaction, "_publicKey", None) == obj.publicKey and getattr(Transaction, "_secondPublicKey", None) == obj.secondPublicKey):
+            elif (
+                obj.publicKey is None and
+                dposlib.core.crypto.getAddress(
+                    getattr(Transaction, "_publicKey", " ")
+                ) == obj.address
+            ) or (
+                getattr(Transaction, "_publicKey", None) == obj.publicKey and
+                getattr(
+                    Transaction, "_secondPublicKey", None
+                ) == obj.secondPublicKey
+            ):
                 return func(*args, **kw)
             else:
                 raise Exception("wallet not linked yet or publicKey mismatch")
@@ -493,14 +547,20 @@ class Data:
             self.track()
 
     def __repr__(self):
-        return json.dumps(OrderedDict(sorted(self.__dict.items(), key=lambda e:e[0])), indent=2)
+        return json.dumps(
+            OrderedDict(
+                sorted(self.__dict.items(), key=lambda e: e[0])
+            ), indent=2
+        )
 
     def __getattr__(self, attr):
         if attr in self.__dict:
             return self.__dict[attr]
         else:
-            try: return Data.__getattribute__(attr)
-            except: return None
+            try:
+                return Data.__getattribute__(attr)
+            except Exception:
+                return None
 
     def _get_result(self):
         if dposlib.rest.cfg.familly == "lisk.v10":
@@ -521,7 +581,7 @@ class Data:
     def track(self):
         try:
             Data.REF.add(weakref.ref(self))
-        except:
+        except Exception:
             pass
 
 
@@ -531,8 +591,8 @@ class Wallet(Data):
 
     ark_tx_v2 = property(
         lambda w: Wallet.ARK_TX_VERSION,
-        lambda w,v: setattr(Wallet, "ARK_TX_VERSION", bool(v)),
-        None, 
+        lambda w, v: setattr(Wallet, "ARK_TX_VERSION", bool(v)),
+        None,
         ""
     )
 
@@ -542,23 +602,31 @@ class Wallet(Data):
         self.unlink()
         try:
             keys = dposlib.core.crypto.getKeys(
-                secret if secret != None else \
+                secret if secret is not None else
                 getpass.getpass("secret > ")
             )
-            if self.publicKey == None: # uncreated wallet
-                while dposlib.core.crypto.getAddress(keys.get("publicKey", None)) != self.address:
-                    keys = dposlib.core.crypto.getKeys(getpass.getpass("secret > "))
+            if self.publicKey is None:  # uncreated wallet
+                while dposlib.core.crypto.getAddress(
+                    keys.get("publicKey", None)
+                ) != self.address:
+                    keys = dposlib.core.crypto.getKeys(
+                        getpass.getpass("secret > ")
+                    )
             else:
                 while keys.get("publicKey", None) != self.publicKey:
-                    keys = dposlib.core.crypto.getKeys(getpass.getpass("secret > "))
+                    keys = dposlib.core.crypto.getKeys(
+                        getpass.getpass("secret > ")
+                    )
 
-            if self.secondPublicKey != None:
+            if self.secondPublicKey is not None:
                 keys_2 = dposlib.core.crypto.getKeys(
-                    secondSecret if secondSecret != None else \
+                    secondSecret if secondSecret is not None else
                     getpass.getpass("second secret > ")
                 )
                 while keys_2.get("publicKey", None) != self.secondPublicKey:
-                    keys_2 = dposlib.core.crypto.getKeys(getpass.getpass("second secret > "))
+                    keys_2 = dposlib.core.crypto.getKeys(
+                        getpass.getpass("second secret > ")
+                    )
             else:
                 keys_2 = {}
 
@@ -586,30 +654,45 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def send(self, amount, address, vendorField=None, fee_included=False):
-        tx = dposlib.core.transfer(amount, address, vendorField, version=2 if Wallet.ARK_TX_VERSION else 1)
-        return dposlib.core.broadcastTransactions(self._finalizeTx(tx, fee_included=fee_included))
+        tx = dposlib.core.transfer(
+            amount, address, vendorField,
+            version=2 if Wallet.ARK_TX_VERSION else 1
+        )
+        return dposlib.core.broadcastTransactions(
+            self._finalizeTx(tx, fee_included=fee_included)
+        )
 
     @Data.wallet_islinked
     def registerSecondSecret(self, secondSecret):
-        tx = dposlib.core.registerSecondSecret(secondSecret, version=2 if Wallet.ARK_TX_VERSION else 1)
+        tx = dposlib.core.registerSecondSecret(
+            secondSecret, version=2 if Wallet.ARK_TX_VERSION else 1
+        )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerSecondPublicKey(self, secondPublicKey):
-        tx = dposlib.core.registerSecondPublicKey(secondPublicKey, version=2 if Wallet.ARK_TX_VERSION else 1)
+        tx = dposlib.core.registerSecondPublicKey(
+            secondPublicKey, version=2 if Wallet.ARK_TX_VERSION else 1
+        )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerAsDelegate(self, username):
-        tx = dposlib.core.registerAsDelegate(username, version=2 if Wallet.ARK_TX_VERSION else 1)
+        tx = dposlib.core.registerAsDelegate(
+            username, version=2 if Wallet.ARK_TX_VERSION else 1
+        )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def upVote(self, *usernames):
-        tx = dposlib.core.upVote(*usernames, version=2 if Wallet.ARK_TX_VERSION else 1)
+        tx = dposlib.core.upVote(
+            *usernames, version=2 if Wallet.ARK_TX_VERSION else 1
+        )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def downVote(self, *usernames):
-        tx = dposlib.core.downVote(*usernames, version=2 if Wallet.ARK_TX_VERSION else 1)
+        tx = dposlib.core.downVote(
+            *usernames, version=2 if Wallet.ARK_TX_VERSION else 1
+        )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
