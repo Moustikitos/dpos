@@ -45,11 +45,11 @@ def buildTxApdu(dongle_path, data):
 
     Args:
         dongle_path (:class:`bytes`):
-            value returned by :func:`dposlib.ldgr.parseBip32Path`
+            value returned by :func:`dposlib.ark.ldgr.parseBip32Path`
         data (:class:`bytes`):
-            bytes value returned by :func:`dposlib.core.crypto.getBytes`
+            bytes value returned by :func:`dposlib.ark.crypto.getBytes`
 
-    Returns
+    Returns:
         :class:`bytes`: public key apdu data
     """
 
@@ -78,7 +78,7 @@ def buildPkeyApdu(dongle_path):
 
     Args:
         dongle_path (:class:`bytes`):
-            value returned by :func:`dposlib.ldgr.parseBip32Path`
+            value returned by :func:`dposlib.ark.ldgr.parseBip32Path`
 
     Returns
         :class:`bytes`: public key apdu data
@@ -95,7 +95,7 @@ def getPublicKey(dongle_path, debug=False):
 
     Args:
         dongle_path (:class:`bytes`):
-            value returned by :func:`dposlib.ldgr.parseBip32Path`
+            value returned by :func:`dposlib.ark.ldgr.parseBip32Path`
         debug (:class:`bool`):
             flag to activate debug messages from ledger key [default: False]
 
@@ -118,9 +118,9 @@ def getSignature(data, dongle_path, debug=False):
     Args:
         data (:class:`bytes`):
             transaction as bytes data returned by
-            :func:`dposlib.core.crypto.getBytes`
+            :func:`dposlib.ark.crypto.getBytes`
         dongle_path (:class:`bytes`):
-            value returned by :func:`dposlib.ldgr.parseBip32Path`
+            value returned by :func:`dposlib.ark.ldgr.parseBip32Path`
         debug (:class:`bool`):
             flag to activate debug messages from ledger key
 
