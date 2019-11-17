@@ -1,5 +1,4 @@
 # -*- encoding:utf-8 -*-
-# TODO : raise exception for each return None
 
 from . import *
 
@@ -10,13 +9,17 @@ def sign(msg, secret0, k=None, canonical=True):
     invk = pow(k, n-2, n)
 
     r = Q.x % n
-    if r == 0: return None
+    if r == 0:
+        return None
 
     s = (invk * (int_from_bytes(msg) + int_from_bytes(secret0) * r)) % n
-    if s == 0: return None
-    if canonical and (s > (n//2)): s = n-s
+    if s == 0:
+        return None
+    if canonical and (s > (n//2)):
+        s = n-s
 
     return der_from_sig(r, s)
+
 
 def rfc6979_sign(msg, secret0, canonical=True):
     V = None
@@ -27,9 +30,11 @@ def rfc6979_sign(msg, secret0, canonical=True):
             return sig
     return None
 
+
 def verify(msg, pubkey, sig):
     r, s = Signature.der_decode(sig)
-    if r == None or r > n or s > n: return False
+    if r is None or r > n or s > n:
+        return False
 
     h = int_from_bytes(msg)
     c = pow(s, n-2, n)

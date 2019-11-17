@@ -10,15 +10,21 @@ def bcrypto410_sign(msg, seckey0):
 
     seckey = int_from_bytes(seckey0)
     if not (1 <= seckey <= n - 1):
-        raise ValueError('The secret key must be an integer in the range 1..n-1.')
+        raise ValueError(
+            'The secret key must be an integer in the range 1..n-1.'
+        )
 
     k0 = int_from_bytes(hash_sha256(seckey0 + msg)) % n
     if k0 == 0:
-        raise RuntimeError('Failure. This happens only with negligible probability.')
+        raise RuntimeError(
+            'Failure. This happens only with negligible probability.'
+        )
 
     R = G * k0
     Rraw = bytes_from_int(R.x)
-    e = int_from_bytes(hash_sha256(Rraw + encoded_from_point(G*seckey) + msg)) % n
+    e = int_from_bytes(
+        hash_sha256(Rraw + encoded_from_point(G*seckey) + msg)
+    ) % n
 
     seckey %= n
     k0 %= n
@@ -29,6 +35,7 @@ def bcrypto410_sign(msg, seckey0):
 
     return Rraw + bytes_from_int(s)
 
+
 def bcrypto410_verify(msg, pubkey, sig):
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
@@ -37,10 +44,11 @@ def bcrypto410_verify(msg, pubkey, sig):
 
     P = PublicKey.decode(pubkey)
     r, s = Signature.raw_decode(sig)
-    if r >= p or s >= n: return False
+    if r >= p or s >= n:
+        return False
 
     e = int_from_bytes(hash_sha256(sig[0:32] + pubkey + msg)) % n
-    R = Point(*(G*s + point_mul(P, n-e))) # P*(n-e) does not work...
+    R = Point(*(G*s + point_mul(P, n-e)))  # P*(n-e) does not work...
     if R is None or not is_quad(R.y) or R.x != r:
         return False
 
@@ -52,6 +60,7 @@ def bcrypto410_verify(msg, pubkey, sig):
 # ``PubKey(sk) = PubKey(bytes(n-int(sk))``, so every public key has two
 # corresponding private keys.
 
+
 def bytes_from_point(P):
     """
     Encode a public key as defined in bip schnorr spec.
@@ -59,9 +68,10 @@ def bytes_from_point(P):
     Args:
         P (:class:`PublicKey`):
     Returns:
-        pubkeyB (:class:`bytes`): encoded public key 
+        pubkeyB (:class:`bytes`): encoded public key
     """
     return bytes_from_int(x(P))
+
 
 def point_from_bytes(pubkeyB):
     """
@@ -73,27 +83,37 @@ def point_from_bytes(pubkeyB):
         return None
     return [x, y]
 
+
 def sign(msg, seckey0):
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
 
     seckey0 = int_from_bytes(seckey0)
     if not (1 <= seckey0 <= n - 1):
-        raise ValueError('The secret key must be an integer in the range 1..n-1.')
+        raise ValueError(
+            'The secret key must be an integer in the range 1..n-1.'
+        )
 
     P = G*seckey0
     seckey = seckey0 if is_quad(P.y) else n - seckey0
 
-    k0 = int_from_bytes(tagged_hash("BIPSchnorrDerive", bytes_from_int(seckey) + msg)) % n
+    k0 = int_from_bytes(
+        tagged_hash("BIPSchnorrDerive", bytes_from_int(seckey) + msg)
+    ) % n
     if k0 == 0:
-        raise RuntimeError('Failure. This happens only with negligible probability.')
+        raise RuntimeError(
+            'Failure. This happens only with negligible probability.'
+        )
 
     R = G*k0
     k = n - k0 if not is_quad(R.y) else k0
     r = bytes_from_point(R)
-    e = int_from_bytes(tagged_hash("BIPSchnorr", r + bytes_from_point(P) + msg)) % n
+    e = int_from_bytes(
+        tagged_hash("BIPSchnorr", r + bytes_from_point(P) + msg)
+    ) % n
 
     return r + bytes_from_int((k + e * seckey) % n)
+
 
 def verify(msg, pubkey, sig):
     if len(msg) != 32:
@@ -112,7 +132,7 @@ def verify(msg, pubkey, sig):
         return False
 
     e = int_from_bytes(tagged_hash("BIPSchnorr", sig[0:32] + pubkey + msg)) % n
-    R = Point(*(G*s + point_mul(P, n-e))) # P*(n-e) does not work...
+    R = Point(*(G*s + point_mul(P, n-e)))  # P*(n-e) does not work...
     if R is None or not is_quad(R.y) or R.x != r:
         return False
 
