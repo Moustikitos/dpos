@@ -19,7 +19,8 @@ if PY3:
     import io
     BytesIO = io.BytesIO
 else:
-    from cStringIO import StringIO as BytesIO
+    from cStringIO import StringIO
+    BytesIO = StringIO
 
 # dposlib can be embeded in a frozen app
 FROZEN = \
@@ -37,6 +38,6 @@ else:
     # deal the HOME directory according to OS
     try:
         HOME = os.path.join(os.environ["HOMEDRIVE"], os.environ["HOMEPATH"])
-    except:
+    except Exception:
         HOME = os.environ.get("HOME", ROOT)
     LOGNAME = os.path.normpath(os.path.join(HOME, "." + __name__))
