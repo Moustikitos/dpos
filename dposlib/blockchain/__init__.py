@@ -549,7 +549,7 @@ class Data:
         self.__args = args
         self.__dict = self._get_result()
 
-        if Data.EVENT == False:
+        if Data.EVENT is False:
             Data.EVENT = self.heartbeat()
         if track:
             self.track()
@@ -651,7 +651,7 @@ class Wallet(Data):
             return True
 
     def setFeeLevel(self, fee_level=None):
-        if fee_level == None:
+        if fee_level is None:
             Transaction.useStaticFee()
         else:
             Transaction.useDynamicFee(fee_level)

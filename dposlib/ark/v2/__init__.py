@@ -16,6 +16,7 @@ from dposlib.ark import crypto
 from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, slots, Transaction
 from dposlib.util.asynch import setInterval
+from dposlib.util.data import loadJson
 from dposlib.util.bin import hexlify, unhexlify
 
 
@@ -93,7 +94,7 @@ def init():
     # if no network connection, load basic confivuration from local folder
     else:
         cfg.hotmode = False
-        data = api.loadJson(
+        data = loadJson(
             os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg")
         )
 
@@ -144,7 +145,7 @@ def init():
                     os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee")
                 )
             else:
-                fees = api.loadJson(
+                fees = loadJson(
                     os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee")
                 )
             cfg.feestats = dict([

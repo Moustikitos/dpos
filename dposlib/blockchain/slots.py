@@ -19,6 +19,8 @@ def getTimestamp(**kw):
 def getTime(time=None):
     delta = (datetime.now(pytz.UTC) if not time else time) - cfg.begintime
     return delta.total_seconds()
+
+
 getEpoch = getTime
 
 
