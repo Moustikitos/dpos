@@ -52,7 +52,7 @@ class Transaction(dict):
     generate valid transactions.
 
     >>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh\
-    2Lf7gvZNiRJ7qLk", version=2)
+2Lf7gvZNiRJ7qLk", version=2)
     >>> tx.finalize("my first secret", "my second secret")
     >>> tx
     {
@@ -65,12 +65,11 @@ class Transaction(dict):
       "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
       "senderId": "DC2eLmJittfkGBHvzeTVc7FdvrktsiUdQA",
       "senderPublicKey": "02eecdefbd79d701c4707d6d2b6fe13a50e00b9ead3ec04df6fc\
-    d340cb373b6f08",
+d340cb373b6f08",
       "signSignature": "7910d691f918930b25cf3358cb11b42fd8f8c683a8c8e1e0ff827b\
-    db134d36233cdbbd3a086cba25f1e0ea9fc6233dbc3258194a6847b1e7f125cb6acb70d6b9\
-    ",
+db134d36233cdbbd3a086cba25f1e0ea9fc6233dbc3258194a6847b1e7f125cb6acb70d6b9",
       "signature": "6774c2b5345a897107ed6800ae2972d406bb50cc4eb0880aca50219823\
-    aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
+aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
       "timestamp": 82534292,
       "type": 0,
       "typeGroup": 1,

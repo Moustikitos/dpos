@@ -80,7 +80,7 @@ def buildPkeyApdu(dongle_path):
         dongle_path (:class:`bytes`):
             value returned by :func:`dposlib.ark.ldgr.parseBip32Path`
 
-    Returns
+    Returns:
         :class:`bytes`: public key apdu data
     """
 

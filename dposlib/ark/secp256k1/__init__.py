@@ -32,9 +32,9 @@ Variables:
 import hmac
 import random
 import hashlib
-import binascii
 
 from builtins import int, bytes, pow
+
 
 p = int(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
 n = int(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141)
@@ -317,21 +317,58 @@ def rfc6979_k(msg, secret0, V=None):
 
 
 class Point(list):
+    """
+    ``secp256k1`` point . Initialization can be done with sole ``x`` value.
+    :class:`Point` overrides ``*`` and ``+`` operators which accepts
+    :class:`list` as argument and returns :class:`Point`. It extends
+    :class:`list` and allows item access using ``__getattr__``/``__setattr__``
+    operators.
+
+    >>> from dposlib.ark import secp256k1
+    >>> G = secp256k1.Point(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D9\
+59F2815B16F81798)
+    >>> G
+    [5506626302227734366957871889516853432625060345377759417550018736038911672\
+9240, 326705100207588169780830851305070431844712733806592432759389043357573374\
+82424]
+    >>> G.y
+    32670510020758816978083085130507043184471273380659243275938904335757337482\
+424
+    >>> G + G
+    [8956589192654700423125292042593569236064414582962220983368432991329718898\
+6597, 121583992996938303229678086127133986361553678870416281767988719547883716\
+53930]
+    >>> 2 * G
+    [8956589192654700423125292042593569236064414582962220983368432991329718898\
+6597, 121583992996938303229678086127133986361553678870416281767988719547883716\
+53930]
+    >>> type(2 * G)
+    <class 'dposlib.ark.secp256k1.Point'>
+
+    Parameters:
+        x (:class:`int`): abscissa
+        y (:class:`int`): ordinate
+    """
+
     x = property(
         lambda cls: list.__getitem__(cls, 0),
-        lambda cls, v: list.__setitem__(cls, 0, int(v)),
+        lambda cls, v: [
+            list.__setitem__(cls, 0, int(v)),
+            list.__setitem__(cls, 1, y_from_x(int(v)))
+        ],
         None, ""
     )
     y = property(
         lambda cls: list.__getitem__(cls, 1),
-        lambda cls, v: list.__setitem__(cls, 1, int(v)),
-        None, ""
+        None, None, ""
     )
 
     def __init__(self, *xy):
-        if len(xy) == 1:
-            xy[1] = y_from_x(int(xy[0]))
-        list.__init__(self, [int(e) for e in xy[:2]])
+        if len(xy) == 0:
+            xy = (0, None)
+        elif len(xy) == 1:
+            xy += (y_from_x(int(xy[0])), )
+        list.__init__(self, [int(e) if e is not None else e for e in xy[:2]])
 
     def __mul__(self, k):
         if isinstance(k, int):
@@ -349,17 +386,35 @@ class Point(list):
 
     @staticmethod
     def decode(encoded):
-        encoded = encoded if isinstance(encoded, bytes) else\
-                  encoded.encode("utf-8")
+        """
+        See :func:`dposlib.ark.secp256k1.point_from_encoded`.
+        """
+        encoded = \
+            encoded if isinstance(encoded, bytes) else \
+            encoded.encode("utf-8")
         return Point(*point_from_encoded(encoded))
 
     def encode(self):
+        """
+        See :func:`dposlib.ark.secp256k1.encoded_from_point`.
+        """
         return encoded_from_point(self)
 
 
 class PublicKey(Point):
+    """
+    :class:`Point` extension providing other initialization methods.
+    """
+
     @staticmethod
     def from_int(value):
+        """
+        >>> secp256k1.PublicKey.from_int(secp256k1.int_from_bytes(secp256k1.ha\
+sh_sha256("secret")))
+        [724471163557613172412942942796613800667477215476708463759021099077967\
+09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
+900207393]
+        """
         if (1 <= value <= n - 1):
             return PublicKey(*(G * int(value)))
         else:
@@ -368,41 +423,27 @@ class PublicKey(Point):
             )
 
     @staticmethod
+    def from_seed(seed):
+        """
+        >>> secp256k1.PublicKey.from_seed(secp256k1.hash_sha256("secret"))
+        [724471163557613172412942942796613800667477215476708463759021099077967\
+09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
+900207393]
+        """
+        return PublicKey.from_int(int_from_bytes(seed))
+
+    @staticmethod
     def from_secret(secret):
-        secret0 = secret.encode("utf-8") if not isinstance(secret, bytes) else\
-                  secret
-        return PublicKey.from_int(int_from_bytes(hash_sha256(secret0)))
+        """
+        >>> secp256k1.PublicKey.from_secret("secret")
+        [724471163557613172412942942796613800667477215476708463759021099077967\
+09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
+900207393]
+        """
+        secret = \
+            secret.encode("utf-8") if not isinstance(secret, bytes) else \
+            secret
+        return PublicKey.from_seed(hash_sha256(secret))
 
 
-class Signature(list):
-    r = property(lambda cls: list.__getitem__(cls, 0), None, None, "")
-    s = property(lambda cls: list.__getitem__(cls, 1), None, None, "")
-
-    def __init__(self, *rs):
-        list.__init__(self, [int(e) for e in rs])
-
-    def raw(self):
-        return bytes_from_int(self.r) + bytes_from_int(self.s)
-
-    def der(self):
-        return der_from_sig(*self)
-
-    @staticmethod
-    def raw_decode(raw):
-        raw = raw if isinstance(raw, bytes) else binascii.unhexlify(raw)
-        length = len(raw) // 2
-        return Signature(
-            int_from_bytes(raw[:length]),
-            int_from_bytes(raw[length:]),
-        )
-
-    @staticmethod
-    def der_decode(der):
-        der = der if isinstance(der, bytes) else binascii.unhexlify(der)
-        return Signature(*sig_from_der(der))
-
-
-G = Point(
-    0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798,
-    0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8
-)
+G = Point(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)

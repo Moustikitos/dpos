@@ -102,26 +102,26 @@ class EndPoint(object):
     >>> import rest
     >>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
     {'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88v\
-    WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
-    110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
-     163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
-    5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
-    x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
-    proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
-    , 'total': 32855146323536}}}
+WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
+110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
+163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
+5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
+x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
+proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
+, 'total': 32855146323536}}}
 
     Within a blockchain connection, peer is not mandatory:
 
     >>> rest.GET.api.delegates.arky()
     {'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88v\
-    WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
-    110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
-     163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
-    5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
-    x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
-    proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
-    , 'total': 32855146323536}}}
-    """
+WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
+110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
+163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
+5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
+x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
+proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
+, 'total': 32855146323536}}}
+"""
 
     @staticmethod
     def _manage_response(req, returnKey, error=None):

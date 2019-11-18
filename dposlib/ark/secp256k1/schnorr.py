@@ -43,7 +43,7 @@ def bcrypto410_verify(msg, pubkey, sig):
         raise ValueError('The signature must be a 64-byte array.')
 
     P = PublicKey.decode(pubkey)
-    r, s = Signature.raw_decode(sig)
+    r, s = int_from_bytes(sig[:32]), int_from_bytes(sig[32:])
     if r >= p or s >= n:
         return False
 
@@ -53,6 +53,7 @@ def bcrypto410_verify(msg, pubkey, sig):
         return False
 
     return True
+
 
 # Note that bip schnorr uses a very different public key format (32 bytes) than
 # the ones used by existing systems (which typically use elliptic curve points
@@ -127,7 +128,7 @@ def verify(msg, pubkey, sig):
     if (P is None):
         return False
 
-    r, s = Signature.raw_decode(sig)
+    r, s = int_from_bytes(sig[:32]), int_from_bytes(sig[32:])
     if (r >= p or s >= n):
         return False
 

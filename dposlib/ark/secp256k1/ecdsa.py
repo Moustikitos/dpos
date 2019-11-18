@@ -32,7 +32,7 @@ def rfc6979_sign(msg, secret0, canonical=True):
 
 
 def verify(msg, pubkey, sig):
-    r, s = Signature.der_decode(sig)
+    r, s = sig_from_der(sig)
     if r is None or r > n or s > n:
         return False
 
