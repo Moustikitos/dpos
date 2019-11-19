@@ -13,4 +13,4 @@ formats:
 python:
   version: 2.7
   install:
-    - method: setuptools
+    - requirements: requirements.txt
