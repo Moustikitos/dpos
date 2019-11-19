@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
+__CFG__ = "api/node/configuration"
+__FEE__ = "api/node/fees"
+
+
 
 import os
 import pytz
@@ -105,7 +109,7 @@ class Config(object):
 
         self.constants = cfg.get("constants", {})
         self.data = cfg.get("data", {})
-        
+
         if len(self.data):
             self.headers["nethash"] = self.data["nethash"]
 
