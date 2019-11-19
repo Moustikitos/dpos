@@ -13,5 +13,5 @@ formats:
 python:
   version: 2.7
   install:
-    - requirements: requirements.txt
+    - requirements: ./requirements.txt
     - method: pip

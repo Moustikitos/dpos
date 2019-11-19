@@ -5,7 +5,6 @@ __CFG__ = "api/node/configuration"
 __FEE__ = "api/node/fees"
 
 
-
 import os
 import pytz
 import hashlib
