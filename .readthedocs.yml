@@ -5,7 +5,7 @@ version: 2
 
 sphinx:
   builder: html
-  configuration: doc/sources/conf.py
+  configuration: doc/source/conf.py
 
 formats:
   - htmlzip
