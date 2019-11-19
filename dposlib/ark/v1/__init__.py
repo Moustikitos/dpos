@@ -14,6 +14,7 @@ from dposlib.blockchain import cfg, Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson, dumpJson
 
+cfg.headers["API-Version"] = "1"
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
@@ -69,7 +70,6 @@ def init():
 	crypto.SCHNORR_SIG = False
 	
 	cfg.begintime = datetime(*cfg.begintime, tzinfo=pytz.UTC)
-	cfg.headers["API-Version"] = "1"
 
 	if len(cfg.peers):
 		network = rest.GET.api.loader.autoconfigure().get("network", {})
@@ -132,6 +132,7 @@ def transfer(amount, address, vendorField=None, **trash):
 
 def registerSecondSecret(secondSecret, **trash):
 	return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"], **trash)
+
 
 def registerSecondPublicKey(secondPublicKey, **trash):
 	return Transaction(

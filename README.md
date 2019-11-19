@@ -35,14 +35,14 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`
     + [x] Qredit : `qredit`
-  - Lisk (`API` only)
+<!--   - Lisk (`API` only)
     * [x] mainet : `lisk`
     * [x] testnet : `t.lisk`
   - Lisk forks
     + [x] shift (`API`+ transaction type `0`, `1` and `3`)
       - mainnet : `shift`
       - testnet : `t.shift`
-
+ -->
 ## Main features
 
 ### An intuitive REST API
@@ -84,8 +84,6 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 >>> rest.POST.api.transactions(transactions=[tx])
 {'data': {'accept': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'broadcast': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'excess': [], 'invalid': []}}
 ```
-
-[See more about transactions](doc/transaction.md)
 
 ### Network API
 
@@ -168,6 +166,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 }
 ```
  -->
+
 ## Version
 
 ### 0.1.0
@@ -241,9 +240,13 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
   - [X] Ark 2.6 compatibility
   - [X] builtin secp256k1 replaced ecdsa lib
   - [X] added `iop` mainnet and devnet
+  - [X] Lisk and forks dev stopped
+  - [X] optional `ldgr` import
+
+## ONGOING
+  - [ ] doc writing
+  - [ ] unittest deployment
 
 ## TODO
-  - [ ] doc writing
-  - [ ] unittest
   - [ ] CLI
  

@@ -9,7 +9,7 @@ import pytz
 
 def getTimestamp(**kw):
     """
-    return blockchain timestamp from datetime keyword arument.
+    return blockchain timestamp from timedelta given as keyword arument.
     >>> getTimestamp(days=6, hours=4, minutes=20)
     """
     delta = timedelta(**kw)

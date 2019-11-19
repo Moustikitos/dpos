@@ -8,7 +8,11 @@ import dposlib
 
 from dposlib.util.data import filter_dic, dumpJson
 from dposlib.ark.v2.mixin import loadPages, deltas
-from dposlib.ark import ldgr
+try:
+    from dposlib.ark import ldgr
+    LEDGERBLUE = True
+except ImportError:
+    LEDGERBLUE = False
 
 deltas = deltas
 GET = dposlib.rest.GET
@@ -42,66 +46,67 @@ class Wallet(dposlib.blockchain.Wallet):
         ][:limit]
 
 
-class NanoS(Wallet):
+if LEDGERBLUE:
+    class NanoS(Wallet):
 
-    def __init__(self, account, index, network=1, **kw):
-        # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
-        self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
-            dposlib.rest.cfg.slip44,
-            getattr(dposlib.rest.cfg, "aip20", network),
-            account,
-            index
-        )
-        self.address = dposlib.core.crypto.getAddress(
-            ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath))
-        )
-        self.debug = kw.pop("debug", False)
-        Wallet.__init__(self, self.address, **kw)
+        def __init__(self, account, index, network=1, **kw):
+            # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+            self.derivationPath = "44'/%s'/%s'/%s'/%s" % (
+                dposlib.rest.cfg.slip44,
+                getattr(dposlib.rest.cfg, "aip20", network),
+                account,
+                index
+            )
+            self.address = dposlib.core.crypto.getAddress(
+                ldgr.getPublicKey(ldgr.parseBip32Path(self.derivationPath))
+            )
+            self.debug = kw.pop("debug", False)
+            Wallet.__init__(self, self.address, **kw)
 
-    @staticmethod
-    def fromDerivationPath(derivationPath, **kw):
-        nanos = NanoS(0, 0, 0, **kw)
-        address = dposlib.core.crypto.getAddress(
-            ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath))
-        )
-        nanos.address = address
-        nanos.derivationPath = derivationPath
-        nanos._Data__args = (address,)
-        nanos.update()
-        return nanos
+        @staticmethod
+        def fromDerivationPath(derivationPath, **kw):
+            nanos = NanoS(0, 0, 0, **kw)
+            address = dposlib.core.crypto.getAddress(
+                ldgr.getPublicKey(ldgr.parseBip32Path(derivationPath))
+            )
+            nanos.address = address
+            nanos.derivationPath = derivationPath
+            nanos._Data__args = (address,)
+            nanos.update()
+            return nanos
 
-    def _finalizeTx(self, tx, fee=None, fee_included=False):
-        if "fee" not in tx or fee is not None:
-            tx.setFees(fee)
-        tx.feeIncluded() if fee_included else tx.feeExcluded()
+        def _finalizeTx(self, tx, fee=None, fee_included=False):
+            if "fee" not in tx or fee is not None:
+                tx.setFees(fee)
+            tx.feeIncluded() if fee_included else tx.feeExcluded()
 
-        tx["senderId"] = self.address
-        if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
-            tx["recipientId"] = self.address
+            tx["senderId"] = self.address
+            if tx["type"] in [1, 3, 4] and "recipientId" not in tx:
+                tx["recipientId"] = self.address
 
-        try:
-            ldgr.signTransaction(tx, self.derivationPath, self.debug)
-        except ldgr.ledgerblue.commException.CommException:
-            raise Exception("transaction cancelled")
-
-        if self.secondPublicKey is not None:
             try:
-                keys_2 = dposlib.core.crypto.getKeys(
-                    getpass.getpass("second secret > ")
-                )
-                while keys_2.get("publicKey", None) != self.secondPublicKey:
+                ldgr.signTransaction(tx, self.derivationPath, self.debug)
+            except ldgr.ledgerblue.commException.CommException:
+                raise Exception("transaction cancelled")
+
+            if self.secondPublicKey is not None:
+                try:
                     keys_2 = dposlib.core.crypto.getKeys(
                         getpass.getpass("second secret > ")
                     )
-            except KeyboardInterrupt:
-                raise Exception("transaction cancelled")
-            else:
-                tx["signSignature"] = dposlib.core.crypto.getSignature(
-                    tx, keys_2["privateKey"]
-                )
+                    while keys_2.get("publicKey", None) != self.secondPublicKey:
+                        keys_2 = dposlib.core.crypto.getKeys(
+                            getpass.getpass("second secret > ")
+                        )
+                except KeyboardInterrupt:
+                    raise Exception("transaction cancelled")
+                else:
+                    tx["signSignature"] = dposlib.core.crypto.getSignature(
+                        tx, keys_2["privateKey"]
+                    )
 
-        tx.identify()
-        return tx
+            tx.identify()
+            return tx
 
 
 class Delegate(dposlib.blockchain.Data):
@@ -116,7 +121,7 @@ class Delegate(dposlib.blockchain.Data):
         return Wallet(self.address)
 
     def forged(self):
-        return filter_dic(self._Data__dict["forged"])
+        return self._Data__dict["forged"]
 
     def voters(self):
         voters = loadPages(GET.api.delegates.__getattr__(self.username).voters)
@@ -130,8 +135,9 @@ class Delegate(dposlib.blockchain.Data):
 
     def lastBlocks(self, limit=50):
         return loadPages(
-            GET.api.delegates.__getattr__(self.username).blocks
-        )[:limit]
+            GET.api.delegates.__getattr__(self.username).blocks,
+            limit=limit
+        )
 
     def lastBlock(self):
         if self.blocks.get("last", False):

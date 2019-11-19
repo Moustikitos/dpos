@@ -105,7 +105,7 @@ aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
                 # registration
                 k = len(
                     self.get("asset", {})
-                    .get("multisignature", {})
+                    .get("multiSignature", {})
                     .get("publicKeys", [])
                 )
                 fee = static_value * (1+k)

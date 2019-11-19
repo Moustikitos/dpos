@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-# api endpoint to locate blockchain configuration
-__CFG__ = "api/node/configuration"
-__FEE__ = "api/node/fees"
 
 import os
 import pytz
@@ -19,6 +16,7 @@ from dposlib.util.asynch import setInterval
 from dposlib.util.data import loadJson
 from dposlib.util.bin import hexlify, unhexlify
 
+cfg.headers["API-Version"] = "2"
 
 DAEMON_PEERS = None
 TRANSACTIONS = {
@@ -60,6 +58,63 @@ TYPING = {
 }
 
 
+class Config(object):
+
+    # api endpoint to locate blockchain configuration and fees
+    CFG = "api/node/configuration"
+    FEE = "api/node/fees"
+
+    begintime = property(
+        lambda cls: pytz.utc.localize(
+            datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
+        ),
+        None, None, ""
+    )
+    pubKeyHash = property(
+        lambda cls: cls.data.get("version", None), None, None, ""
+    )
+    explorer = property(
+        lambda cls: cls.data.get("explorer", None), None, None, ""
+    )
+    symbol = property(lambda cls: cls.data.get("symbol", None), None, None, "")
+    token = property(lambda cls: cls.data.get("token", None), None, None, "")
+    ports = property(
+        lambda cls: dict(
+            [k.split("/")[-1], v] for k, v in cls.data["ports"].items()
+        ),
+        None, None, ""
+    )
+
+    def __init__(self, peer=None):
+        cfg_path = os.path.join(dposlib.ROOT, ".cold", __name__+".cfg")
+        fee_path = os.path.join(dposlib.ROOT, ".cold", __name__+".fee")
+
+        self.headers = {
+            "Content-Type": "application/json",
+            "API-Version": "2"
+        }
+
+        if peer is not None:
+            self.cfg = rest.GET(*Config.CFG.split("/"), peer=peer)
+            self.fee = rest.GET(*Config.FEE.split("/"), peer=peer)
+            api.dumpJson(self.cfg, cfg_path)
+            api.dumpJson(self.fee, fee_path)
+        else:
+            self.cfg = loadJson(cfg_path)
+            self.fee = loadJson(fee_path)
+
+        self.constants = cfg.get("constants", {})
+        self.data = cfg.get("data", {})
+        
+        if len(self.data):
+            self.headers["nethash"] = self.data["nethash"]
+
+    def _getter(self, attr, path):
+        if not hasattr(self, "_" + attr):
+            setattr(self, "_" + attr, getattr(self, attr))
+        return getattr(self, "_" + attr)
+
+
 def select_peers():
     api_port = cfg.ports["core-api"]
     peers = []
@@ -83,7 +138,6 @@ def rotate_peers():
 
 def init():
     global DAEMON_PEERS
-    cfg.headers["API-Version"] = "2"
 
     if len(cfg.peers):
         data = rest.GET(*__CFG__.split("/")).get("data", {})

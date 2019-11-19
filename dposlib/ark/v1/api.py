@@ -6,6 +6,11 @@ import dposlib
 
 from dposlib.ark.v1.mixin import loadPages, deltas
 from dposlib.util.data import filter_dic
+try:
+    from dposlib.ark import ldgr
+    LEDGERBLUE = True
+except ImportError:
+    LEDGERBLUE = False
 
 
 class Wallet(dposlib.blockchain.Wallet):
@@ -18,12 +23,9 @@ class Wallet(dposlib.blockchain.Wallet):
 		sent = loadPages(dposlib.rest.GET.api.transactions, "transactions", senderId=self.address, orderBy="timestamp:desc", limit=limit)
 		return [filter_dic(dic) for dic in sorted(received+sent, key=lambda e:e.get("timestamp", None), reverse=True)[:limit]]
 
-try:
-	from dposlib import ldgr
-except:
-	pass
-else:
-	class NanoS(Wallet, dposlib.blockchain.NanoS):
+
+if LEDGERBLUE:
+	class NanoS(Wallet):
 
 		def __init__(self, network, account, index, **kw):
 			# aip20 : https://github.com/ArkEcosystem/AIPs/issues/29

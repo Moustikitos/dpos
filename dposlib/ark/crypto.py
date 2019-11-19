@@ -193,17 +193,13 @@ def checkTransaction(tx, secondPublicKey=None):
     signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
     if signature:
         checks.append(verifySignatureFromBytes(
-            _ser(tx, version),
-            publicKey,
-            signature
+            _ser(tx, version), publicKey, signature
         ))
     # add signature and then check second signature if any
     tx["signature"] = signature
     if signSignature and secondPublicKey:
         checks.append(verifySignatureFromBytes(
-            _ser(tx, version),
-            secondPublicKey,
-            signSignature
+            _ser(tx, version), secondPublicKey, signSignature
         ))
     return False not in checks
 

@@ -43,7 +43,7 @@ class DataIterator:
                     raise Exception("Too much unsuccesfull tries")
 
 
-def loadPages(endpoint, pages=False, nb_tries=10, limit=False, **kx):
+def loadPages(endpoint, pages=False, nb_tries=10, limit=False, **kw):
     data_iterator = DataIterator(endpoint, nb_tries)
     data = []
     while True:

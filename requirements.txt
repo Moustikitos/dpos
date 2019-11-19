@@ -1,6 +1,4 @@
 future
 requests
-pynacl
 pytz
 base58
-ledgerblue

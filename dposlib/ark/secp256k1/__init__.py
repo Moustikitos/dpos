@@ -15,15 +15,11 @@ rr/reference.py>`_
 Variables:
   - ``secret`` (:class:`str`):     passphrase
   - ``secret0`` (:class:`bytes`):  private key
-  - ``privateKey`` (:class:`str`): hexlified private key
-  - ``P`` (:class:`PublicKey`):    public key as ``secp256k1`` curve point
+  - ``P`` (:class:`list`):         public key as ``secp256k1`` curve point
   - ``pubkey`` (:class:`bytes`):   compressed - encoded public key
   - ``pubkeyB`` (:class:`bytes`):  compressed - encoded public key according
     to bip schnorr spec
-  - ``publicKey`` (:class:`str`):  hexlified compressed - encoded public key
-  - ``publicKeyB`` (:class:`str`): hexlified compressed - encoded public key
     according to bip schnorr spec
-  - ``message`` (:class:`str`):    message to sign as string
   - ``msg`` (:class:`bytes`):      sha256 hash of message to sign
   - Uppercase variables refer to points on the curve with equation ``y²=x³+7``
     over the integers modulo p
@@ -43,17 +39,19 @@ n = int(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141)
 def hash_sha256(b):
     """
     Args:
-        b (:class:`bytes`): bytes sequence to be hashed
+        b (:class:`bytes` or :class:`str`): sequence to be hashed
     Returns:
         :class:`bytes`: sha256 hash
     """
-    return hashlib.sha256(b).digest()
+    return hashlib.sha256(
+        b if isinstance(b, bytes) else b.encode("utf-8")
+    ).digest()
 
 
 # precomputed hashtag
 HASHED_TAGS = {
-    "BIPSchnorrDerive": hash_sha256("BIPSchnorrDerive".encode("utf-8")),
-    "BIPSchnorr": hash_sha256("BIPSchnorr".encode("utf-8")),
+    "BIPSchnorrDerive": hash_sha256("BIPSchnorrDerive"),
+    "BIPSchnorr": hash_sha256("BIPSchnorr"),
 }
 
 
@@ -70,7 +68,7 @@ def tagged_hash(tag, msg):
     """
     tag_hash = HASHED_TAGS.get(tag, False)
     if not tag_hash:
-        tag_hash = hash_sha256(tag.encode("utf-8"))
+        tag_hash = hash_sha256(tag)
         HASHED_TAGS[tag] = tag_hash
     return hash_sha256(tag_hash + tag_hash + msg)
 
@@ -175,7 +173,7 @@ def encoded_from_point(P):
       * ``bytes(3) || bytes(x)`` if y is odd
 
     Args:
-        P (:class:`Point`): ``secp256k1`` point
+        P (:class:`list`): ``secp256k1`` point
     Returns:
         :class:`bytes`: compressed and encoded point
     """
@@ -385,14 +383,11 @@ class Point(list):
     __radd__ = __add__
 
     @staticmethod
-    def decode(encoded):
+    def decode(pubkey):
         """
         See :func:`dposlib.ark.secp256k1.point_from_encoded`.
         """
-        encoded = \
-            encoded if isinstance(encoded, bytes) else \
-            encoded.encode("utf-8")
-        return Point(*point_from_encoded(encoded))
+        return Point(*point_from_encoded(pubkey))
 
     def encode(self):
         """
@@ -440,9 +435,6 @@ sh_sha256("secret")))
 09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
 900207393]
         """
-        secret = \
-            secret.encode("utf-8") if not isinstance(secret, bytes) else \
-            secret
         return PublicKey.from_seed(hash_sha256(secret))
 
 

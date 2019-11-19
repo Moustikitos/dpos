@@ -40,6 +40,7 @@ def verify(msg, pubkey, sig):
     c = pow(s, n-2, n)
 
     u1G = G * ((h*c) % n)
+    # u2Q = PublicKey.decode(pubkey) * ((r*c) % n)
     u2Q = point_mul(PublicKey.decode(pubkey), ((r*c) % n))
     GQ = u1G + u2Q
 

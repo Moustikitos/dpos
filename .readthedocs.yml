@@ -1,0 +1,17 @@
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+version: 2
+
+sphinx:
+  builder: html
+  configuration: doc/sources/conf.py
+
+formats:
+  - htmlzip
+
+python:
+  version: 2.7
+  install:
+    - requirements: requirements.txt
+    - method: pip
