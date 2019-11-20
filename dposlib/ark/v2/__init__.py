@@ -113,7 +113,7 @@ def init(seed=None):
     cfg.marker = "%x" % data["version"]
     cfg.pubkeyHash = data["version"]
     cfg.token = data["token"]
-    cfg.symbol = unicode(data["symbol"])
+    cfg.symbol = data["symbol"]
     cfg.ports = dict(
         [k.split("/")[-1], v] for k, v in data["ports"].items()
     )
