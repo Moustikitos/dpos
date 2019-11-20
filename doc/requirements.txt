@@ -1,3 +1,2 @@
 recommonmark
 sphinxcontrib-napoleon
-ledgerblue
