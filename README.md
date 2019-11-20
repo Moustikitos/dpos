@@ -1,10 +1,11 @@
 > `dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
 [![Build Status](https://travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://travis-ci.com/Moustikitos/dpos)
+[![Sphinx Status](https://readthedocs.org/projects/dpos/badge/?version=latest)](https://dpos.readthedocs.io/en/latest/?badge=latest)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
-[![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
-[![PyPI download total](https://img.shields.io/pypi/dm/dposlib.svg)](https://pypistats.org/packages/dposlib)
+[![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags)
+[![Downloads](https://pepy.tech/badge/dposlib/week)](https://pepy.tech/project/dposlib/week)
 
 ### Support this project
 

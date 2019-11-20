@@ -17,7 +17,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
-
+with open("../VERSION") as f1:
+    version = f1.read().strip()
 project = 'dposlib'
 copyright = '2016-2019, Toons'
 author = 'Toons'

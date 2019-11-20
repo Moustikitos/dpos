@@ -145,6 +145,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
                 data = tmp
                 if isinstance(tmp, dict):
                     data = filter_dic(tmp)
+                elif isinstance(tmp, list):
+                    data = [filter_dic(e) for e in data]
 
         return data
 

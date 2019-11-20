@@ -27,7 +27,7 @@ class Signature(list):
         None, None, ""
     )
 
-    der =property(
+    der = property(
         lambda cls: cls._der_getter(),
         lambda cls, v: setattr(cls, "_der", v),
         None, ""
@@ -49,8 +49,9 @@ class Signature(list):
 
     def _raw_getter(cls):
         if not hasattr(cls, "_raw"):
-            setattr(cls, "_raw",
-                secp256k1.bytes_from_int(cls[0]) + 
+            setattr(
+                cls, "_raw",
+                secp256k1.bytes_from_int(cls[0]) +
                 secp256k1.bytes_from_int(cls[1])
             )
         return getattr(cls, "_raw")
@@ -80,7 +81,7 @@ class Signature(list):
 
     @staticmethod
     def from_raw(raw):
-        raw = unhexlify(raw)
+        # raw = unhexlify(raw)
         length = len(raw) // 2
         sig = Signature(
             secp256k1.int_from_bytes(raw[:length]),
@@ -91,21 +92,23 @@ class Signature(list):
 
     @staticmethod
     def from_der(der):
-        der = unhexlify(der)
+        # der = unhexlify(der)
         sig = Signature(*secp256k1.sig_from_der(der))
         sig._der = der
         return sig
 
     @staticmethod
     def ecdsa_sign(message, privateKey, canonical=True):
-        return Signature.der_decode(
-            ecdsa.sign(secp256k1.hash_sha256(message), unhexlify(privateKey)),
-            canonical=canonical
+        return Signature.from_der(
+            ecdsa.sign(
+                secp256k1.hash_sha256(message), unhexlify(privateKey),
+                canonical=canonical
+            )
         )
 
     @staticmethod
     def ecdsa_rfc6979_sign(message, privateKey, canonical=True):
-        return Signature.der_decode(
+        return Signature.from_der(
             ecdsa.rfc6979_sign(
                 secp256k1.hash_sha256(message), unhexlify(privateKey),
                 canonical=canonical
@@ -114,7 +117,7 @@ class Signature(list):
 
     @staticmethod
     def b410_schnorr_sign(message, privateKey):
-        return Signature.raw_decode(
+        return Signature.from_raw(
             schnorr.bcrypto410_sign(
                 secp256k1.hash_sha256(message), unhexlify(privateKey)
             )
@@ -122,7 +125,7 @@ class Signature(list):
 
     @staticmethod
     def schnorr_sign(message, privateKey):
-        return Signature.raw_decode(
+        return Signature.from_raw(
             schnorr.sign(
                 secp256k1.hash_sha256(message), unhexlify(privateKey)
             )
