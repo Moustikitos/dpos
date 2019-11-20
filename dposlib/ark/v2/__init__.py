@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-__CFG__ = "api/node/configuration"
-__FEE__ = "api/node/fees"
-
 
 import os
 import pytz
@@ -22,6 +19,7 @@ from dposlib.util.bin import hexlify, unhexlify
 cfg.headers["API-Version"] = "2"
 
 DAEMON_PEERS = None
+CONFIG = FEES = {}
 TRANSACTIONS = {
     0: "transfer",
     1: "secondSignature",
@@ -61,73 +59,15 @@ TYPING = {
 }
 
 
-class Config(object):
-
-    # api endpoint to locate blockchain configuration and fees
-    CFG = "api/node/configuration"
-    FEE = "api/node/fees"
-
-    begintime = property(
-        lambda cls: pytz.utc.localize(
-            datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
-        ),
-        None, None, ""
-    )
-    pubKeyHash = property(
-        lambda cls: cls.data.get("version", None), None, None, ""
-    )
-    explorer = property(
-        lambda cls: cls.data.get("explorer", None), None, None, ""
-    )
-    symbol = property(lambda cls: cls.data.get("symbol", None), None, None, "")
-    token = property(lambda cls: cls.data.get("token", None), None, None, "")
-    ports = property(
-        lambda cls: dict(
-            [k.split("/")[-1], v] for k, v in cls.data["ports"].items()
-        ),
-        None, None, ""
-    )
-
-    def __init__(self, peer=None):
-        cfg_path = os.path.join(dposlib.ROOT, ".cold", __name__+".cfg")
-        fee_path = os.path.join(dposlib.ROOT, ".cold", __name__+".fee")
-
-        self.headers = {
-            "Content-Type": "application/json",
-            "API-Version": "2"
-        }
-
-        if peer is not None:
-            self.cfg = rest.GET(*Config.CFG.split("/"), peer=peer)
-            self.fee = rest.GET(*Config.FEE.split("/"), peer=peer)
-            api.dumpJson(self.cfg, cfg_path)
-            api.dumpJson(self.fee, fee_path)
-        else:
-            self.cfg = loadJson(cfg_path)
-            self.fee = loadJson(fee_path)
-
-        self.constants = cfg.get("constants", {})
-        self.data = cfg.get("data", {})
-
-        if len(self.data):
-            self.headers["nethash"] = self.data["nethash"]
-
-    def _getter(self, attr, path):
-        if not hasattr(self, "_" + attr):
-            setattr(self, "_" + attr, getattr(self, attr))
-        return getattr(self, "_" + attr)
-
-
-def select_peers():
+def _select_peers():
     api_port = cfg.ports["core-api"]
     peers = []
     candidates = rest.GET.api.peers().get("data", [])
     for candidate in candidates:
         peer = "http://%s:%s" % (candidate["ip"], api_port)
-        if candidate.get("version", "") > cfg.minversion:
-            synced = rest.GET.api.node.status(peer=peer).get("data")
-            if isinstance(synced, dict) and synced.get("synced", False):
-                peers.append(peer)
+        synced = rest.GET.api.node.status(peer=peer).get("data")
+        if isinstance(synced, dict) and synced.get("synced", False):
+            peers.append(peer)
         if len(peers) >= cfg.broadcast:
             break
     if len(peers):
@@ -135,93 +75,108 @@ def select_peers():
 
 
 @setInterval(30)
-def rotate_peers():
-    select_peers()
+def _rotate_peers():
+    _select_peers()
 
 
-def init():
-    global DAEMON_PEERS
-
+def _get_network_config(endpoint, seed=None):
+    # if network connection
     if len(cfg.peers):
-        data = rest.GET(*__CFG__.split("/")).get("data", {})
-        cfg.hotmode = True
-        api.dumpJson(
-            data, os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg")
-        )
-    # if no network connection, load basic confivuration from local folder
+        config = rest.GET(*endpoint.split("/"), peer=seed)
+        api.dumpJson(config, os.path.join(
+            dposlib.ROOT, ".cold",
+            cfg.network + "." + endpoint.replace("/", ".")
+        ))
+    # if no network connection, load basic configuration from local folder
     else:
-        cfg.hotmode = False
-        data = loadJson(
-            os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.cfg")
-        )
+        config = loadJson(os.path.join(
+            dposlib.ROOT, ".cold",
+            cfg.network + "." + endpoint.replace("/", ".")
+        ))
+    return config
 
+
+def init(seed=None):
+    global DAEMON_PEERS, CONFIG, FEES
+
+    CONFIG = _get_network_config("api/node/configuration", seed=seed)
     # no network connetcion neither local configuration files
-    if data == {}:
-        raise Exception("Initialization error")
-    else:
-        cfg.marker = hex(data["version"])[2:]
-        cfg.pubKeyHash = data["version"]
-        cfg.token = data["token"]
-        cfg.symbol = data["symbol"]
-        cfg.ports = dict(
-            [k.split("/")[-1], v] for k, v in data["ports"].items()
-        )
-        cfg.headers["nethash"] = data["nethash"]
-        cfg.explorer = data["explorer"]
+    if "data" not in CONFIG:
+        raise Exception("no data available")
 
-        constants = data["constants"]
-        cfg.delegate = constants["activeDelegates"]
-        cfg.maxlimit = constants["block"]["maxTransactions"]
-        cfg.maxTransactions = constants["block"]["maxTransactions"]
-        cfg.blocktime = constants["blocktime"]
-        cfg.begintime = pytz.utc.localize(
-            datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
-        )
-        cfg.blockreward = constants["reward"]/100000000.
-        cfg.fees = constants["fees"]
+    data = CONFIG.get("data", {})
+    constants = data["constants"]
 
-        # dynamic fee management
-        # on v2.0 dynamicFees are in "fees" field
-        cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
-        # on v2.1 dynamicFees are in "transactionPool" field
-        cfg.doffsets.update(
-            data.get("transactionPool", {})
-            .get("dynamicFees", {})
-            .get("addonBytes", {})
-        )
-        # before ark v2.4 dynamicFees statistics are in "feeStatistics" field
-        cfg.feestats = dict(
-            [i["type"], i["fees"]] for i in data.get("feeStatistics", {})
-        )
-        # since ark v2.4 fee statistic moved to ~/api/node/fees endpoint
-        if cfg.feestats == {}:
-            if len(cfg.peers):
-                fees = rest.GET(*__FEE__.split("/"))
-                api.dumpJson(
-                    fees,
-                    os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee")
-                )
-            else:
-                fees = loadJson(
-                    os.path.join(dposlib.ROOT, ".cold", cfg.network+".v2.fee")
-                )
+    # -- root configuration ---------------------------------------------------
+    cfg.headers["nethash"] = data["nethash"]
+    cfg.explorer = data["explorer"]
+    cfg.marker = "%x" % data["version"]
+    cfg.pubkeyHash = data["version"]
+    cfg.token = data["token"]
+    cfg.symbol = unicode(data["symbol"])
+    cfg.ports = dict(
+        [k.split("/")[-1], v] for k, v in data["ports"].items()
+    )
+    cfg.activeDelegates = constants["activeDelegates"]
+    cfg.maxTransactions = constants["block"]["maxTransactions"]
+    cfg.blocktime = constants["blocktime"]
+    cfg.begintime = pytz.utc.localize(
+        datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
+    )
+    cfg.blockReward = float(constants["reward"])/100000000
+    # since ark v2.4 wif and slip44 are provided by network
+    if "wif" in data:
+        cfg.wif = "%x" % data["wif"]
+    if "slip44" in data:
+        cfg.slip44 = str(data["slip44"])
+
+    # -- static fee management ------------------------------------------------
+    cfg.fees = constants["fees"]
+
+    # -- dynamic fee management -----------------------------------------------
+    # on v2.0 dynamicFees are in "fees" field
+    cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
+    # on v2.1 dynamicFees are in "transactionPool" field
+    cfg.doffsets.update(
+        data.get("transactionPool", {})
+        .get("dynamicFees", {})
+        .get("addonBytes", {})
+    )
+    # before ark v2.4 dynamicFees statistics are in "feeStatistics" field
+    cfg.feestats = dict(
+        [i["type"], int(i["fees"])] for i in data.get("feeStatistics", {})
+    )
+    # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
+    if cfg.feestats == {}:
+        FEES = _get_network_config(
+            "api/node/fees", seed=seed
+        ).get("data", False)
+        if isinstance(FEES, list):
             cfg.feestats = dict([
                 int(i["type"]), {
                     "avgFee": int(i["avg"]),
                     "minFee": int(i["min"]),
-                    "maxFee": int(i["min"]),
+                    "maxFee": int(i["max"]),
                 }
-            ] for i in fees.get("data", []))
+            ] for i in FEES)
+        # since ark v2.6 fee statistic structure is a dictionary
+        elif isinstance(FEES, dict):
+            NUM = dict([v, k] for k, v in TRANSACTIONS.items())
+            cfg.feestats = dict([
+                NUM[k], {
+                    "avgFee": int(v["avg"]),
+                    "minFee": int(v["min"]),
+                    "maxFee": int(v["max"]),
+                }
+            ] for k, v in FEES.get("1", {}).items())
+    # activate dynamic fees
+    Transaction.useDynamicFee()
+    # -- network connection management ----------------------------------------
+    # change peers every 30 seconds
+    if getattr(cfg, "hotmode", False):
+        DAEMON_PEERS = _rotate_peers()
 
-        # since ark v2.4 wif and slip44 are provided by network
-        if "wif" in data:
-            cfg.wif = hex(data["wif"])[2:]
-        if "slip44" in data:
-            cfg.slip44 = str(data["slip44"])
-
-        if len(cfg.peers):
-            DAEMON_PEERS = rotate_peers()
-        Transaction.useDynamicFee()
+    return True
 
 
 def stop():
@@ -249,23 +204,14 @@ def computeDynamicFees(tx):
 
 
 def broadcastTransactions(*transactions, **params):
-    serialized = params.pop("serialized", False)
-    chunk_size = params.pop("chunk_size", 20)
+    chunk_size = params.pop("chunk_size", cfg.maxTransactions)
     report = []
-    if serialized:
-        transactions = [crypto.serialize(tx) for tx in transactions]
-        for chunk in [
-            transactions[i:i+chunk_size] for i in
-            range(0, len(transactions), chunk_size)
-        ]:
-            pass
-    else:
-        for chunk in [
-            transactions[i:i+chunk_size] for i in
-            range(0, len(transactions), chunk_size)
-        ]:
-            response = rest.POST.api.transactions(transactions=chunk)
-            report.append(response)
+    for chunk in [
+        transactions[i:i+chunk_size] for i in
+        range(0, len(transactions), chunk_size)
+    ]:
+        response = rest.POST.api.transactions(transactions=chunk)
+        report.append(response)
     return \
         None if len(report) == 0 else \
         report[0] if len(report) == 1 else \
@@ -275,10 +221,11 @@ def broadcastTransactions(*transactions, **params):
 def transfer(amount, address, vendorField=None, expiration=0, version=1):
     if version > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
-        block_height = \
-            rest.GET.api.blockchain().get("data", {}).get("block", {})\
-            .get("height", -block_remaining)
-        expiration = int(block_height + block_remaining)
+        expiration = int(
+            rest.GET.api.blockchain()
+            .get("data", {}).get("block", {}).get("height", -block_remaining) +
+            block_remaining
+        )
 
     return Transaction(
         type=0,

@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 project = 'dposlib'
 copyright = '2016-2019, Toons'
 author = 'Toons'
+master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
 release = '0.2.3'

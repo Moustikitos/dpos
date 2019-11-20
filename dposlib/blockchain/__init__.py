@@ -116,7 +116,7 @@ aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
             dposlib.rest.GET.api.wallets(publicKey)
             .get("data", {})
             .get("nonce", 0)
-        )+1
+        ) + 1
 
     def _setSenderPublicKey(self, publicKey):
         dict.__setitem__(self, "senderPublicKey", publicKey)
@@ -226,7 +226,7 @@ aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
         if version >= 0x2:
             # default typeGroup is 1 (Ark core)
             self["typeGroup"] = data.pop("typeGroup", 1)
-            self["network"] = cfg.pubKeyHash
+            self["network"] = cfg.pubkeyHash
 
         self["amount"] = data.pop("amount", 0)  # amount is required field
         self["type"] = data.pop("type", 0)  # default type is 0 (transfer)

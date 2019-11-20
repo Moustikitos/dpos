@@ -82,9 +82,7 @@ def getWIF(seed):
     Returns:
         :class:`str`: WIF address
     """
-    seed = unhexlify(cfg.wif) + \
-        seed[:32] + \
-        (b"\x01" if cfg.compressed else b"")
+    seed = unhexlify(cfg.wif) + seed[:32] + b"\x01"  # \x01 because compressed
     b58 = base58.b58encode_check(seed)
     return str(b58.decode('utf-8') if isinstance(b58, bytes) else b58)
 
@@ -367,7 +365,7 @@ def serialize(tx, version=None, **options):
     vendorField = vendorField[:255]
 
     # common part
-    pack("<BBB", buf, (0xff, version, cfg.pubKeyHash))
+    pack("<BBB", buf, (0xff, version, cfg.pubkeyHash))
     if version >= 0x02:
         pack("<IHQ", buf, (tx.get("typeGroup", 1), tx["type"], tx["nonce"],))
     else:

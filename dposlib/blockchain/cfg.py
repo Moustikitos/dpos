@@ -5,6 +5,7 @@
 This module stores blockchain parameters.
 """
 
-headers = {
-    "Content-Type": "application/json"
-}
+headers = {"Content-Type": "application/json"}
+timeout = 5
+verify = True
+peers = []

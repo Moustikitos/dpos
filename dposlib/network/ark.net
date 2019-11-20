@@ -2,13 +2,7 @@
     "familly": "ark.v2",
     "maxvotepertx": 1,
     "maxvote": 1,
-    "minversion": "2.1",
     "aip20": 0,
-
-    "bip32": {
-        "private": 76066276,
-        "public": 76067358
-    },
 
     "seeds": [
         "https://explorer.ark.io:8443"

@@ -16,7 +16,7 @@ BHEX = re.compile(b"^[0-9a-fA-F]$")
 
 def intasb(i):
     # int as byte conversion
-    return unhexlify(hex(i)[2:])
+    return unhexlify("%x" % i)
 
 
 def basint(e):

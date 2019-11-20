@@ -64,12 +64,12 @@ import requests
 from importlib import import_module
 from dposlib import FROZEN, ROOT
 from dposlib.blockchain import cfg
-from dposlib.util.data import filter_dic
+from dposlib.util.data import filter_dic, loadJson
 
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 
 
-def check_latency(peer):
+def checkLatency(peer):
     """
     Returns latency in second for a given peer
 
@@ -102,25 +102,25 @@ class EndPoint(object):
     >>> import rest
     >>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
     {'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88v\
-WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
-110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
-163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
-5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
-x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
-proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
-, 'total': 32855146323536}}}
+WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d\
+60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':163747, \
+'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe4\
+4f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, '\
+human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forg\
+ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
+}}}
 
     Within a blockchain connection, peer is not mandatory:
 
     >>> rest.GET.api.delegates.arky()
     {'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88v\
-WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe\
-110d60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':\
-163747, 'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf90\
-5142b29138fe44f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'uni\
-x': 1559045152, 'human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'ap\
-proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
-, 'total': 32855146323536}}}
+WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d\
+60a15e9', 'votes': 149574938227265, 'rank': 26, 'blocks': {'produced':163747, \
+'last': {'id': '2824b47ba98d4af6dce4c8d548003d2da237777f8aee5cf905142b29138fe4\
+4f', 'height': 8482466, 'timestamp': {'epoch': 68943952, 'unix': 1559045152, '\
+human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forg\
+ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
+}}}
 """
 
     @staticmethod
@@ -154,7 +154,7 @@ proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
         # using a returnKey that match the field name
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop('peer', False)
-        peer = peer if peer else random.choice(cfg.peers)
+        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
             req = requests.get(
                 peer + "/".join(args),
@@ -175,7 +175,7 @@ proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
         headers = kwargs.pop("headers", cfg.headers)
-        peer = peer if peer else random.choice(cfg.peers)
+        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
             req = requests.post(
                 peer + "/".join(args),
@@ -193,7 +193,7 @@ proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
     def _PUT(*args, **kwargs):
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
-        peer = peer if peer else random.choice(cfg.peers)
+        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
             req = requests.put(
                 peer + "/".join(args),
@@ -211,7 +211,7 @@ proval': 1.19}, 'forged': {'fees': 390146323536, 'rewards': 32465000000000\
     def _DELETE(*args, **kwargs):
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
-        peer = peer if peer else random.choice(cfg.peers)
+        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
             req = requests.delete(
                 peer + "/".join(args),
@@ -287,12 +287,10 @@ def load(name):
             sys.modules[__package__].__delattr__(name)
         except AttributeError:
             pass
-        try:
-            sys.modules[__package__].core.init()
-        except Exception:
-            cfg.hotmode = False
-            sys.stdout.write("Network connection disabled\n")
-    return cfg.hotmode
+        # try:
+        sys.modules[__package__].core.init()
+        # except Exception as e:
+        #     raise Exception("package initialization error\n%r" % e)
 
 
 def use(network, **kwargs):
@@ -306,53 +304,34 @@ def use(network, **kwargs):
                                 in ``network`` folder
     """
 
-    # clear data in cfg module and initialize with minimum vars
+    # clear data in cfg module
     [cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]
+
+    # initialize minimum values
     cfg.verify = \
         os.path.join(os.path.dirname(sys.executable), 'cacert.pem') if FROZEN \
-        else True
-    cfg.timeout = 5
-    cfg.network = None
-    cfg.hotmode = False
-    cfg.broadcast = 10
-    cfg.compressed = True
-    cfg.minversion = "1.0"
+        else True  # activate https for requests lib
     cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
     cfg.headers = {"Content-Type": "application/json"}
+    cfg.broadcast = 10     # maximum peer to use
+    cfg.timeout = 5        # global timeout used within requests calls
+    cfg.hotmode = False    # offline mode set
+    cfg.network = network  # network name set
+    cfg.peers = []         # peer list
 
-    # try to load network.net configuration
-    path = os.path.join(ROOT, "network", network + ".net")
-    if os.path.exists(path):
-        with io.open(
-            os.path.join(ROOT, "network", network + ".net"), encoding='utf8'
-        ) as f:
-            data = json.load(f)
-    else:
-        raise Exception(
-            '"{}" blockchain parameters does not exist'.format(network)
-        )
-
+    # load network.net configuration
+    data = loadJson(os.path.join(ROOT, "network", network + ".net"))
     # override some options if given
     data.update(**kwargs)
 
-    # connect with network to create peer nodes
-    # seed is a complete url
-    cfg.peers = []
-    # if data.get("seeds", False):
+    # connect with first available seed
     for seed in data.pop("seeds", []):
-        if check_latency(seed):
+        if checkLatency(seed):
             cfg.peers.append(seed)
+            cfg.hotmode = True
             break
-    if not len(cfg.peers):
-        port = data.get("port", 22)
-        for peer in data.pop("peers", []):
-            peer = "http://{0}:{1}".format(peer, port)
-            if check_latency(peer):
-                cfg.peers = [peer]
-                break
 
     cfg.__dict__.update(data)
-    cfg.network = network
     load(cfg.familly)
 
     return cfg.hotmode

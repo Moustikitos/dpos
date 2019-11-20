@@ -3,7 +3,7 @@
 
 """
 `dposlib` is a package providing REST API and to interact with ark and ark
-forks blockchain.
+forks.
 
 It is designed to run with both python 2.x and 3.x.
 """
@@ -32,7 +32,6 @@ if FROZEN:
     HOME = ROOT = os.path.normpath(
         os.path.abspath(os.path.dirname(sys.executable))
     )
-    LOGNAME = os.path.join(ROOT, __name__ + ".log")
 else:
     ROOT = os.path.normpath(os.path.abspath(os.path.dirname(__file__)))
     # deal the HOME directory according to OS
@@ -40,4 +39,3 @@ else:
         HOME = os.path.join(os.environ["HOMEDRIVE"], os.environ["HOMEPATH"])
     except Exception:
         HOME = os.environ.get("HOME", ROOT)
-    LOGNAME = os.path.normpath(os.path.join(HOME, "." + __name__))

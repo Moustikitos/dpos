@@ -2,17 +2,11 @@
     "familly": "ark.v2",
     "maxvotepertx": 1,
     "maxvote": 1,
-    "minversion": "2.0",
     "aip20": 0,
 
     "wif": "aa",
     "marker": "37",	
     "slip44": "111",
-
-    "bip32": {
-        "private": 70615956,
-        "public": 70617039
-    },
 
     "seeds": [
         "https://explorer.persona.im:8443"
