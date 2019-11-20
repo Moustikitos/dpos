@@ -65,6 +65,40 @@ Simplicity of ``REST`` API::
     >>> crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
     '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 
+``dposlib.ark.v2`` package provides :class:`Transaction` and its associated
+builders::
+
+    >>> from dposlib import rest
+    >>> rest.use("d.ark")
+    True
+    >>> from dposlib.ark.v2 import *
+    >>> tx = transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"simple message with sparkle \u2728", version=2)
+    >>> tx.finalize("first secret", "second secret")
+    >>> tx
+    {
+        "amount": 100000000,
+        "asset": {},
+        "expiration": 0,
+        "fee": 4013642,
+        "id": "041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38",
+        "network": 30,
+        "nonce": 377,
+        "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+        "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+        "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+        "signSignature": "3d29356c77b63c2d6ce679dad95961b40ea606823bf729a158df5c8378c79c5588ad675ee147a7f77b18518c5bdf9b1a73567d72c3af0bfbe22043b9e1a95e6f",
+        "signature": "871ac31e7bad08b684b27f1b8a4b9f9f760bb32d1d36cc03e03872edc6070f8d9fec2621ea87e2ea0ae7750e0e7a5db52f39b32e05af76a4331a92e17dbe9f4a",
+        "timestamp": 84186531,
+        "type": 0,
+        "typeGroup": 1,
+        "vendorField": "simple message with sparkle \u2728",
+        "version": 2
+    }
+    >>> broadcastTransactions(tx)
+    {u'data': {u'broadcast': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'invalid': [], u'accept': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'excess': []}}
+
+`See the transaction in devnet explorer <https://dexplorer.ark.io/transaction/041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38>`_
+
 -------------------------------------------------------------------------------
 
 Indices and tables

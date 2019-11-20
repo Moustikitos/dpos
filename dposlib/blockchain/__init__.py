@@ -84,7 +84,7 @@ aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
     def _compute_fee(self, value=None):
         try:
             return int(value)
-        except ValueError:
+        except Exception:
             static_value = getattr(cfg, "fees", {})\
                 .get("staticFees", getattr(cfg, "fees", {}))\
                 .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
@@ -244,9 +244,11 @@ aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
             cast = dposlib.core.TYPING[item]
             if item == "fee":
                 value = self._compute_fee(value)  # self.setFee(value)
+            elif item == "vendorField":
+                value = value.decode("utf-8") if isinstance(value, bytes)\
+                        else value
             elif not isinstance(value, cast):
-                value = cast(value) if item != "vendorField" else \
-                        value.decode("utf-8")
+                value = cast(value)
             dict.__setitem__(self, item, value)
             # remove signatures and ids if an item other than signature or id
             # is modified
