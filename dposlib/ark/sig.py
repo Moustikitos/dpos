@@ -10,10 +10,9 @@ Variables:
   - ``message`` (:class:`str`):    message to sign as string
 """
 
-import .secp256k1
-
-from secp256k1 import ecdsa, schnorr
-from dposlib.util.bin import hexlify, unhexlify
+from dposlib.ark import secp256k1
+from dposlib.ark.secp256k1 import ecdsa, schnorr
+from dposlib.util.bin import unhexlify
 
 
 class Signature(list):

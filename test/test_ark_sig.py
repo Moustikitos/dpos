@@ -3,9 +3,9 @@
 
 import unittest
 
-from dposlib import rest
-from dposlib.ark.sig import Signature, hexlify, unhexlify
 from dposlib.ark import secp256k1
+from dposlib.ark.sig import Signature
+from dposlib.util.bin import hexlify, unhexlify
 
 
 class TestArkSig(unittest.TestCase):
