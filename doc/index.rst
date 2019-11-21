@@ -100,15 +100,8 @@ class and its associated builders::
 
 .. toctree::
     :maxdepth: 2
-    :includehidden:
+    :hidden:
 
     quickstart
     install
     code
-
-.. Indices and tables
-.. ^^^^^^^^^^^^^^^^^^
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
