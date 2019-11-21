@@ -12,21 +12,19 @@
 #
 import os
 import sys
-print(os.path.abspath('../..'))
+
 sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
 with open("../VERSION") as f1:
-    version = f1.read().strip()
+    version = release = f1.read().strip()
 project = 'dposlib'
 copyright = '2016-2019, Toons'
 author = 'Toons'
+
+# The master toctree document.
 master_doc = 'index'
-
-# The full version, including alpha/beta/rc tags
-release = '0.2.3'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -34,7 +32,10 @@ release = '0.2.3'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
     'sphinxcontrib.napoleon',
     'recommonmark'
 ]
@@ -42,10 +43,14 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+# The suffix(es) of source filenames.
+# You can specify multiple suffix as a list of string:
+source_suffix = ['.rst', '.md']
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ["_build"]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -58,3 +63,18 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Custom sidebar templates, maps document names to template names.
+html_sidebars = {}
+
+# Theme options are theme-specific and customize the look and feel of a theme
+# further.  For a list of options available for each theme, see the
+# documentation.
+html_theme_options = {
+    "show_powered_by": False,
+    "github_user": "dposlib",
+    "github_repo": "dposlib",
+    "github_banner": True,
+    "show_related": False,
+    "note_bg": "#FFF59C",
+}

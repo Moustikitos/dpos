@@ -29,7 +29,6 @@ kw = {
         "dposlib.util",
         "dposlib.ark",
         "dposlib.ark.secp256k1",
-        "dposlib.ark.v1",
         "dposlib.ark.v2",
         "dposlib.blockchain",
     ],

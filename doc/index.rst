@@ -3,18 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-============================
-dposlib: Ark API for Humans
-============================
+=============================
+ dposlib: Ark API for Humans
+=============================
 
-Release v\ |version|. (:ref:`Installation <install>`)
+Release v\ |version| - (:ref:`Installation <install>`)
 
 .. image:: https://pepy.tech/badge/dposlib/week
     :target: https://pepy.tech/project/dposlib/week
 
 .. image:: https://img.shields.io/pypi/v/dposlib.svg
     :target: https://pypi.python.org/pypi/dposlib
-    
+
 .. image:: https://readthedocs.org/projects/dpos/badge/?version=latest
     :target: https://dpos.readthedocs.io/en/latest/?badge=latest
 
@@ -36,10 +36,7 @@ Simplicity of ``REST`` API::
     >>> # using returnKey arktoshi values are converted to ark
     >>> rest.GET.api.transactions(peer="https://explorer.ark.io:8443", returnKey="data")[0]
     {u'fee': 0.00816, u'type': 0, u'sender': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY', u'timestamp': {u'epoch': 84182307, u'unix': 1574283507, u'human': u'2019-11-20T20:58:27.000Z'}, u'blockId': u'a1b305a87217c2f622a922a97a778c677f7dbd23031dae42e3b494883b855a70', u'vendorField': u'Payout from arkmoon', u'senderPublicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'amount': 20.52064264, u'version': 1, u'signSignature': u'304402200ac41802f33a5f377975efc9ebf39a666a9d76c2facb8773783289df7f6a9cd302206c5d2aed3359d3858fb3f4d5fc2a76952eb518cf9d242bb91fd11c0801e4ea4e', u'confirmations': 21, u'signature': u'3045022100dc6dbaa4b056f10268b587da290900725246e3239df1fa3e3c53445da36f03ee02206d57bbdff6d7f9ebca719a41112f23128f1a84161dd82597d63351e3c4d868b0', u'recipient': u'AXPLW2TzBsXcPiaeVGBSELEAXj4RPaWNjB', u'id': u'efeab09925c3347b4a18854a9192d7d722ee32850a7bf91d57628cb77714192e'}
-
-``peer`` keyword is not mandatory when a blockchain is linked using
-``rest.use`` directive::
-
+    >>> # peer keyword is not mandatory when a blockchain is linked using rest.use directive
     >>> rest.use("ark")
     >>> # ~ GET /api/blocks endpoint
     >>> rest.GET.api.blocks(returnKey="data")[0]
@@ -65,8 +62,8 @@ Simplicity of ``REST`` API::
     >>> crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
     '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 
-``dposlib.ark.v2`` package provides :class:`Transaction` and its associated
-builders::
+``dposlib.ark.v2`` package provides :class:`dposlib.blockchain.Transaction` 
+class and its associated builders::
 
     >>> from dposlib import rest
     >>> rest.use("d.ark")
@@ -101,9 +98,17 @@ builders::
 
 -------------------------------------------------------------------------------
 
-Indices and tables
-^^^^^^^^^^^^^^^^^^
+.. toctree::
+    :maxdepth: 2
+    :includehidden:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    quickstart
+    install
+    code
+
+.. Indices and tables
+.. ^^^^^^^^^^^^^^^^^^
+
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`

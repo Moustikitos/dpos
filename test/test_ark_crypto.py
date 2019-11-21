@@ -8,7 +8,7 @@ from dposlib import rest
 from dposlib.util import bin as bin_
 
 
-class TestEcdsaCrypto(unittest.TestCase):
+class TestArkCrypto(unittest.TestCase):
 
     tx0_dict = {
         "amount": 100000000,
@@ -76,16 +76,6 @@ class TestEcdsaCrypto(unittest.TestCase):
         "09227fc5c930440220387162239898ddf2abbbf5147c731c04ad7ea6dd3f019c1f16"\
         "97f23b2d94873202200a224d7d5e80829eaa6bb269ab73eec74f90b3dd987b5d485d"\
         "93284878ab3ea5"
-
-    def createTx0(self):
-        # create a tx with fixed timestamp and dynamic fees values
-        tx0 = dposlib.core.transfer(
-            1, "DMzZgqGrZkmyPGgUTULSw1XWPrbj9dVwM3",
-            vendorField="unitest: tx with simple signature")
-        tx0.useDynamicFee(1000)
-        tx0["timestamp"] = rest.cfg.begintime.toordinal()
-        tx0.setFees()
-        return tx0
 
     @classmethod
     def setUpClass(self):

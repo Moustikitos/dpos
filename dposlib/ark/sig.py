@@ -60,14 +60,14 @@ class Signature(list):
         return ecdsa.verify(
             secp256k1.hash_sha256(message),
             secp256k1.Point.decode(unhexlify(publicKey)).encode(),
-            self.der()
+            self.der
         )
 
     def b410_schnorr_verify(self, message, publicKey):
         return schnorr.bcrypto410_verify(
             secp256k1.hash_sha256(message),
             secp256k1.Point.decode(unhexlify(publicKey)).encode(),
-            self.raw()
+            self.raw
         )
 
     def schnorr_verify(self, message, publicKey):
@@ -76,12 +76,11 @@ class Signature(list):
             schnorr.bytes_from_point(
                 secp256k1.Point.decode(unhexlify(publicKey))
             ),
-            self.raw()
+            self.raw
         )
 
     @staticmethod
     def from_raw(raw):
-        # raw = unhexlify(raw)
         length = len(raw) // 2
         sig = Signature(
             secp256k1.int_from_bytes(raw[:length]),
@@ -92,7 +91,6 @@ class Signature(list):
 
     @staticmethod
     def from_der(der):
-        # der = unhexlify(der)
         sig = Signature(*secp256k1.sig_from_der(der))
         sig._der = der
         return sig

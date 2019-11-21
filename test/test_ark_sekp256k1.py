@@ -69,7 +69,7 @@ class TestArkSecp256k1V2(unittest.TestCase):
             ecdsa.verify(msg, pu_key, ecdsa.sign(msg, pr_key, canonical=False))
         )
 
-    def testSecp256k1Ecdsa(self):
+    def testSecp256k1Rfc6979Ecdsa(self):
         msg = secp256k1.hash_sha256("message to sign".encode())
         pr_key = secp256k1.hash_sha256("secret".encode())
         pu_key = secp256k1.encoded_from_point(
