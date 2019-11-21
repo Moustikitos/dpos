@@ -1,4 +1,3 @@
-
 =============================
  dposlib: Ark API for Humans
 =============================
@@ -98,6 +97,7 @@ class and its associated builders::
     :maxdepth: 2
     :hidden:
 
-    quickstart
     install
-    code
+    core
+    secp256k1
+    sig
