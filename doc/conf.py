@@ -72,8 +72,8 @@ html_sidebars = {}
 # documentation.
 html_theme_options = {
     "show_powered_by": False,
-    "github_user": "dposlib",
-    "github_repo": "dposlib",
+    "github_user": "Moustikitos",
+    "github_repo": "dpos",
     "github_banner": True,
     "show_related": False,
     "note_bg": "#FFF59C",
