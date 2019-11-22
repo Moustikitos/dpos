@@ -50,31 +50,6 @@ class Transaction(dict):
     """
     A python :class:`dict` that implements all the necessities to manually
     generate valid transactions.
-
-    >>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh\
-2Lf7gvZNiRJ7qLk", version=2)
-    >>> tx.finalize("my first secret", "my second secret")
-    >>> tx
-    {
-      "amount": 1,
-      "asset": {},
-      "fee": 697600632,
-      "id": "1b93721fb48b9a83de0ca66ead93d1e901d82d6a472e72227348bfb0d8db9be5",
-      "network": 30,
-      "nonce": 1,
-      "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
-      "senderId": "DC2eLmJittfkGBHvzeTVc7FdvrktsiUdQA",
-      "senderPublicKey": "02eecdefbd79d701c4707d6d2b6fe13a50e00b9ead3ec04df6fc\
-d340cb373b6f08",
-      "signSignature": "7910d691f918930b25cf3358cb11b42fd8f8c683a8c8e1e0ff827b\
-db134d36233cdbbd3a086cba25f1e0ea9fc6233dbc3258194a6847b1e7f125cb6acb70d6b9",
-      "signature": "6774c2b5345a897107ed6800ae2972d406bb50cc4eb0880aca50219823\
-aff9cfec73b59711d88a4d571508d6b262eac79181cadb0b94015226c4994e02c4af0c",
-      "timestamp": 82534292,
-      "type": 0,
-      "typeGroup": 1,
-      "version": 2
-    }
     """
 
     DFEES = False
@@ -563,13 +538,13 @@ class Data:
         )
 
     def __getattr__(self, attr):
-        if attr in self.__dict:
-            return self.__dict[attr]
-        else:
-            try:
-                return Data.__getattribute__(attr)
-            except Exception:
-                return None
+        try:
+            return Data.__getattribute__(attr)
+        except Exception:
+            if attr in self.__dict:
+                return self.__dict[attr]
+            else:
+                raise AttributeError("field '%s' can not be found" % attr)
 
     def _get_result(self):
         if dposlib.rest.cfg.familly == "lisk.v10":
@@ -595,6 +570,10 @@ class Data:
 
 
 class Wallet(Data):
+    """
+    This abstract class gives basic interface to wallet interaction within
+    blockchain.
+    """
 
     ARK_TX_VERSION = False
 
@@ -608,6 +587,8 @@ class Wallet(Data):
     unlink = staticmethod(Transaction.unlink)
 
     def link(self, secret=None, secondSecret=None):
+        """
+        """
         self.unlink()
         try:
             keys = dposlib.core.crypto.getKeys(

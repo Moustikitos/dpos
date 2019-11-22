@@ -97,6 +97,8 @@ def _get_network_config(endpoint, seed=None):
 
 
 def init(seed=None):
+    """
+    """
     global DAEMON_PEERS, CONFIG, FEES
 
     CONFIG = _get_network_config("api/node/configuration", seed=seed)
@@ -180,6 +182,9 @@ def init(seed=None):
 
 
 def stop():
+    """
+    Stop daemon initialized by ``init`` call.
+    """
     global DAEMON_PEERS
     if DAEMON_PEERS is not None:
         DAEMON_PEERS.set()

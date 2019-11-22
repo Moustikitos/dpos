@@ -98,6 +98,7 @@ class and its associated builders::
     :hidden:
 
     install
-    core
     secp256k1
-    sig
+    rest
+    core
+    api

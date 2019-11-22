@@ -2,16 +2,23 @@
 # © Toons
 
 """
-:mod:`dposlib.rest` module cointains network loaders and provides
-:class:`dposlib.rest.EndPoint` root classes ``GET``, ``POST``, ``PUT`` and
-``DELETE``. :mod:`dposlib.rest` also creates a :mod:`dposlib.core` module
-containing ``cryptografic`` functions and
+:mod:`dposlib.rest` module cointains network loaders and provides root
+:class:`dposlib.rest.EndPoint` ``GET``, ``POST``, ``PUT`` and
+``DELETE``. See `Ark API documentation <https://api.ark.dev/public-rest-api/ge\
+tting-started>`_
+to see how to use http calls.
+
+:mod:`dposlib.rest` also creates a `dposlib.core <core.html>`_ module containing
+:mod:`dposlib.ark.crypto`, :mod:`dposlib.ark.v2.api` module and
 :class:`dposlib.blockchain.Transaction` builders.
 
 >>> from dposlib import rest
->>> import dposlib
 >>> rest.use("ark")
 True
+>>> import dposlib
+>>> dlgt = dposlib.core.api.Delegate("arky")
+>>> dlgt.forged
+{u'rewards': 397594.0, u'total': 401908.71166083, u'fees': 4314.71166083}
 >>> dposlib.core.crypto.getKeys("secret")
 {'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de\
 933', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf\
@@ -74,7 +81,7 @@ def checkLatency(peer):
     Returns latency in second for a given peer
 
     Args:
-        peer (:class:`str`): the peer in the scheme http(s)://ip:port
+        peer (:class:`str`): the peer in the scheme http(s)://[ip]:[port]
 
     Returns:
         :class:`float`: latency in seconds
@@ -95,11 +102,12 @@ def checkLatency(peer):
 
 class EndPoint(object):
     """
-    This class is at the root of interaction with http JSON API.
+    This class is at the root of interaction with http JSON API. Build the
+    endpoint concatening multiple attributes, named accordingly to endpoint
+    path, and call the last one.
 
     Equivalent to https://explorer.ark.io:8443/api/delegates/arky API call:
 
-    >>> import rest
     >>> rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
     {'data': {'username': 'arky', 'address': 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88v\
 WE', 'publicKey': '030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d\
@@ -264,7 +272,9 @@ DELETE = EndPoint(method=EndPoint._DELETE)
 
 def load(name):
     """
-    Loads a given blockchain package as ``dposlib.core`` module.
+    Loads a given blockchain package as ``dposlib.core`` module. A valid
+    blockchain package must provide ``init(peer=None)`` and ``stop()``
+    definitions.
 
     Args:
         name (:class:`str`): package name to load
@@ -289,10 +299,10 @@ def load(name):
             sys.modules[__package__].__delattr__(name)
         except AttributeError:
             pass
-        # try:
-        sys.modules[__package__].core.init()
-        # except Exception as e:
-        #     raise Exception("package initialization error\n%r" % e)
+        try:
+            sys.modules[__package__].core.init()
+        except Exception as e:
+            raise Exception("package initialization error\n%r" % e)
 
 
 def use(network, **kwargs):

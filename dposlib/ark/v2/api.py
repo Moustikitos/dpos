@@ -91,18 +91,18 @@ if LEDGERBLUE:
 
             if self.secondPublicKey is not None:
                 try:
-                    keys_2 = dposlib.core.crypto.getKeys(
+                    k2 = dposlib.core.crypto.getKeys(
                         getpass.getpass("second secret > ")
                     )
-                    while keys_2.get("publicKey", None) != self.secondPublicKey:
-                        keys_2 = dposlib.core.crypto.getKeys(
+                    while k2.get("publicKey", None) != self.secondPublicKey:
+                        k2 = dposlib.core.crypto.getKeys(
                             getpass.getpass("second secret > ")
                         )
                 except KeyboardInterrupt:
                     raise Exception("transaction cancelled")
                 else:
                     tx["signSignature"] = dposlib.core.crypto.getSignature(
-                        tx, keys_2["privateKey"]
+                        tx, k2["privateKey"]
                     )
 
             tx.identify()
@@ -111,57 +111,55 @@ if LEDGERBLUE:
 
 class Delegate(dposlib.blockchain.Data):
 
+    wallet = property(lambda cls: Wallet(cls.address), None, None, "")
+    voters = property(
+        lambda cls: list(sorted(
+            [
+                filter_dic(dic) for dic in
+                loadPages(GET.api.delegates.__getattr__(cls.username).voters)
+            ],
+            key=lambda e: e["balance"],
+            reverse=True
+        )),
+        None, None, ""
+    )
+    lastBlock = property(
+        lambda cls: Block(cls.blocks["last"]["id"]), None, None, ""
+    )
+
     def __init__(self, username, **kw):
         dposlib.blockchain.Data.__init__(
             self, GET.api.delegates, username,
             **dict({"returnKey": "data"}, **kw)
         )
 
-    def getWallet(self):
-        return Wallet(self.address)
-
-    def forged(self):
-        return self._Data__dict["forged"]
-
-    def voters(self):
-        voters = loadPages(GET.api.delegates.__getattr__(self.username).voters)
-        return list(
-            sorted(
-                [filter_dic(dic) for dic in voters],
-                key=lambda e: e["balance"],
-                reverse=True
-            )
-        )
-
-    def lastBlocks(self, limit=50):
+    def getRecentBlocks(self, limit=50):
         return loadPages(
             GET.api.delegates.__getattr__(self.username).blocks,
             limit=limit
         )
 
-    def lastBlock(self):
-        if self.blocks.get("last", False):
-            return Block(self.blocks["last"]["id"])
-
 
 class Block(dposlib.blockchain.Data):
 
-    def __init__(self, blk_id, **kw):
-        dposlib.blockchain.Data.__init__(
-            self, GET.api.blocks, blk_id,
-            **dict({"returnKey": "data"}, **kw)
-        )
+    previous = property(
+        lambda cls: Block(cls._Data__dict["previous"]),
+        None, None, ""
+    )
 
-    def previous(self):
-        return Block(self._Data__dict["previous"])
-
-    def transactions(self):
-        return [
+    transactions = property(
+        lambda cls: [
             filter_dic(dic) for dic in loadPages(
-                GET.api.blocks.__getattr__(self.id).transactions,
+                GET.api.blocks.__getattr__(cls.id).transactions,
                 limit=False
             )
-        ]
+        ], None, None, ""
+    )
+
+    def __init__(self, blk_id, **kw):
+        dposlib.blockchain.Data.__init__(
+            self, GET.api.blocks, blk_id, **dict({"returnKey": "data"}, **kw)
+        )
 
 
 class Webhook(dposlib.blockchain.Data):
