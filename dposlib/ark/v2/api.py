@@ -19,7 +19,9 @@ GET = dposlib.rest.GET
 
 
 class Wallet(dposlib.blockchain.Wallet):
-
+    # TODO: set delegate property
+    # TODO: add transactions 5 - 10
+    
     def __init__(self, address, **kw):
         dposlib.blockchain.Data.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)

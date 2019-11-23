@@ -474,6 +474,10 @@ class Transaction(dict):
 
 # API
 class Data:
+    """
+    This abstract class gives basic interface to json interaction within
+    blockchain.
+    """
 
     REF = set()
     EVENT = False
@@ -570,10 +574,6 @@ class Data:
 
 
 class Wallet(Data):
-    """
-    This abstract class gives basic interface to wallet interaction within
-    blockchain.
-    """
 
     ARK_TX_VERSION = False
 
@@ -581,7 +581,7 @@ class Wallet(Data):
         lambda w: Wallet.ARK_TX_VERSION,
         lambda w, v: setattr(Wallet, "ARK_TX_VERSION", bool(v)),
         None,
-        ""
+        "Activate or deactivate transaction version 2"
     )
 
     unlink = staticmethod(Transaction.unlink)

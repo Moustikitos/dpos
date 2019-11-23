@@ -4,15 +4,9 @@
  API
 =====
 
-Json interface
---------------
+The abstract :class:`Data`
+--------------------------
 
-.. automodule:: dposlib.ark.v2.api
+.. autoclass:: dposlib.blockchain.Data
     :members:
 
-
-Advanced signature use
-----------------------
-
-.. automodule:: dposlib.ark.sig
-    :members:
