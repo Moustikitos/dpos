@@ -22,12 +22,6 @@ sudo apt-get install python-setuptools python3-setuptools
 sudo apt-get install python-pip python3-pip
 ```
 
-## if you want to use `dposlib.ark.ldgr` module
-
-```bash
-sudo apt-get install libudev-dev libusb-1.0.0-dev
-```
-
 ## Available network
 
   - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9` & `10`)
@@ -89,12 +83,12 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ```python
 >>> import dposlib
 >>> rest.use("ark")
->>> dlgt = dposlib.core.api.Delegate("arky") # get delegate by username
->>> dlgt.forged()
+>>> dlgt = dposlib.core.api.Delegate("arky")  # get delegate by username
+>>> dlgt.forged
 {'fees': 3294.7, 'forged': 227230.7, 'rewards': 223936.0}
 >>> dlgt.address
 'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE'
->>> blk = dlgt.lastBlock() # get last forged block
+>>> blk = dlgt.lastBlock  # get last forged block
 >>> blk
 {
   "blockSignature": "304402200a496a628c2741537538f0492f9d683d3c4f1b30c8dd03c33ad8fbe79d08b6eb02206cdec7e1210db53a3ca22da30912479ff3644d3a1ed1d878417d5965f34dfd6d",
@@ -131,10 +125,18 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
 <!-- ### Ledger Nano S integration
 
+If you want to use `dposlib.ark.ldgr` module, you need to install ledgerblue
+package and its dependencies:
+
+```bash
+sudo apt-get install libudev-dev libusb-1.0.0-dev
+pip install ledgerblue
+```
+
 ```python
->>> rest.use("d.ark")
+>>> rest.use("dark")
 >>> # 1,0,0 = devnet, account, index
->>> ldg = dposlib.core.api.NanoS(1,0,0)
+>>> ldg = dposlib.core.api.NanoS(1, 0, 0)
 >>> ldg
 {
   "address": "DEVx3osw9Rj1wZhoUf2dMbPmmUN9P3XFpb",
