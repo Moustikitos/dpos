@@ -83,6 +83,7 @@ celerybeat-schedule
 
 # Environments
 .env
+.old
 .venv
 **/cold/*.py
 !**/cold/__init__.py

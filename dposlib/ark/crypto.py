@@ -92,7 +92,7 @@ def wifSignature(tx, wif):
     Generate transaction signature using private key.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction description
         wif (:class:`str`):
             wif key
@@ -127,7 +127,7 @@ def getSignature(tx, privateKey):
     Generate transaction signature using private key.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction description
         privateKey (:class:`str`):
             private key as hex string
@@ -162,7 +162,7 @@ def checkTransaction(tx, secondPublicKey=None):
     Verify transaction validity.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction object
         secondPublicKey (:class:`str`):
             second public key to use if needed
@@ -243,7 +243,7 @@ def getId(tx):
     Generate transaction id.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction object
 
     Returns:
@@ -270,7 +270,7 @@ def getBytes(tx, **options):
     Hash transaction.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction object
 
     Returns:
@@ -345,7 +345,7 @@ def serialize(tx, version=None, **options):
     Serialize transaction.
 
     Args:
-        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+        tx (:class:`dict` or :class:`Transaction`):
             transaction object
 
     Returns:

@@ -83,4 +83,5 @@ html_theme_options = {
     "github_banner": False,
     "show_related": False,
     "note_bg": "#FFF59C",
+    "fixed_sidebar": True
 }

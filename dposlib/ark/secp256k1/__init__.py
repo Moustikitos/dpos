@@ -62,6 +62,7 @@ Variables:
 
 import hmac
 import random
+import future
 import hashlib
 
 from builtins import int, bytes, pow
@@ -399,13 +400,13 @@ class Point(list):
     @staticmethod
     def decode(pubkey):
         """
-        See :func:`dposlib.ark.secp256k1.point_from_encoded`.
+        See :func:`point_from_encoded`.
         """
         return Point(*point_from_encoded(pubkey))
 
     def encode(self):
         """
-        See :func:`dposlib.ark.secp256k1.encoded_from_point`.
+        See :func:`encoded_from_point`.
         """
         return encoded_from_point(self)
 

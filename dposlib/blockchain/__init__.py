@@ -293,7 +293,7 @@ class Transaction(dict):
         """
         Generate the ``signature`` field using passphrase. The associated
         public and private keys are stored till
-        :func:`dposlib.blockchain.Transaction.unlink` is called.
+        :func:`unlink` is called.
 
         Args:
             secret (:class:`str`): passphrase
@@ -305,7 +305,7 @@ class Transaction(dict):
         """
         Generate the ``signSignature`` field using second passphrase. The
         associated second public and private keys are stored till
-        :func:`dposlib.blockchain.Transaction.unlink` is called.
+        :func:`unlink` is called.
 
         Args:
             secondSecret (:class:`str`): second passphrase
@@ -344,7 +344,7 @@ class Transaction(dict):
     def signWithKeys(self, publicKey, privateKey):
         """
         Generate the ``signature`` field using public and private keys. They
-        are till :func:`dposlib.blockchain.Transaction.unlink` is called.
+        are till :func:`unlink` is called.
 
         Args:
             publicKey (:class:`str`): public key as hex string
@@ -357,7 +357,7 @@ class Transaction(dict):
     def signSignWithKey(self, secondPrivateKey):
         """
         Generate the ``signSignature`` field using second private key. It is
-        stored till :func:`dposlib.blockchain.Transaction.unlink` is called.
+        stored till :func:`unlink` is called.
 
         Args:
             secondPrivateKey (:class:`str`): second private key as hex string
@@ -392,7 +392,7 @@ class Transaction(dict):
     def sign(self):
         """
         Generate the ``signature`` field. Private key have to be set first. See
-        :func:`dposlib.blockchain.Transaction.link`.
+        :func:`link`.
         """
         if hasattr(Transaction, "_privateKey"):
             if "sendserPublicKey" not in self:
@@ -415,7 +415,7 @@ class Transaction(dict):
         """
         Generate the ``signSignature`` field. Transaction have to be signed and
         second  private key have to be set first. See
-        :func:`dposlib.blockchain.Transaction.link`.
+        :func:`link`.
         """
         if "signature" in self:
             try:
@@ -444,8 +444,8 @@ class Transaction(dict):
             secondSecret (:class:`str`): second passphrase
             fee (:class:`int`): manually set fee value in ``satoshi``
             fee_included (:class:`bool`):
-                see :func:`dposlib.blockchain.Transaction.feeIncluded`
-                :func:`dposlib.blockchain.Transaction.feeExcluded`
+                see :func:`feeIncluded`
+                :func:`feeExcluded`
         """
         self.link(secret, secondSecret)
         if "fee" not in self or fee is not None:
