@@ -3,3 +3,41 @@
 ===============
  Code snippets
 ===============
+
+Advanced Crypto
+---------------
+
+Public key is a point on ``secp256k1`` curve defined by the multiplication of a
+scalar with the curve generator point. Scalar used in such a process is called
+the private key.
+
+>>> from dposlib.ark import secp256k1 as curve
+>>> curve.G  # curve generator point
+[55066263022277343669578718895168534326250603453777594175500187360389116729240, 32670510020758816978083085130507043184471273380659243275938904335757337482424]
+>>> 12 * curve.G
+[94111259592240215275188773285036844871058226277992966241101117022315524122714, 76870767327212528811304566602812752860184934880685532702451763239157141742375]
+
+In this example, ``12`` is the private key. In Ark blockchain, private key is
+an hexlified 32-bytes-length sequence. Public key is encoded as hex string. 
+
+>>> from dposlib.util.bin import hexlify
+>>> puk = hexlify((12 * curve.G).encode())
+>>> puk
+'03d01115d548e7561b15c38f004d734633687cf4419620095bc5b0f47070afe85a'
+>>> prk = hexlify(secp256k1.bytes_from_int(12))
+>>> prk
+'000000000000000000000000000000000000000000000000000000000000000c'
+
+You can use :mod:`dposlib.ark.sig` module to issue and check signatures.
+
+>>> from dposlib.ark.sig import Signature 
+>>> sig1 = Signature.ecdsa_rfc6979_sign("simple message", prk)  # ark-core <= 2.5
+>>> hexlify(sig1.der)
+'3045022100dcdf549f3904eaec24af8aff6fc790429d0ed98e2ec38919db85ffa23e80fb2902201018d303a10c589abfacfc8cd51514d93a5b1484b0c11049765857f2dd6caa1f'
+>>> sig2 = Signature.b410_schnorr_sign("simple message", prk)  # ark-core >= 2.6
+>>> hexlify(sig2.raw)
+'5ed1dfd2923f8434bac014f4b0214f8e69730f9b9c7a859d05ec6897fc3e42d7171857d8a2c8bb18fb2358bd02baad85672e9efa79c603231ab876a1c22b133a'
+>>> sig1.ecdsa_verify("simple message", puk)
+True
+>>> sig2.b410_schnorr_verify("simple message", puk)
+True

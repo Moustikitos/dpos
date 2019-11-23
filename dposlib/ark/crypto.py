@@ -39,7 +39,7 @@ def getKeys(secret, seed=None):
 
 def getAddressFromSecret(secret, marker=None):
     """
-    Computes ARK address from secret.
+    Compute ARK address from secret.
 
     Args:
         secret (:class:`str`): secret string
@@ -53,7 +53,7 @@ def getAddressFromSecret(secret, marker=None):
 
 def getAddress(publicKey, marker=None):
     """
-    Computes ARK address from publicKey.
+    Compute ARK address from publicKey.
 
     Args:
         publicKey (:class:`str`): public key
@@ -74,7 +74,7 @@ def getAddress(publicKey, marker=None):
 
 def getWIF(seed):
     """
-    Computes WIF address from seed.
+    Compute WIF address from seed.
 
     Args:
         seed (:class:`bytes`): a sha256 sequence bytes

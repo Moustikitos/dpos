@@ -17,12 +17,16 @@ Crypto utils
 .. automodule:: dposlib.ark.crypto
     :members:
 
+Signature utils
+---------------
 
-Transaction Utils
------------------
+.. automodule:: dposlib.ark.sig
+    :members:
 
-.. autofunction:: dposlib.ark.v2.computeDynamicFees
-.. autofunction:: dposlib.ark.v2.broadcastTransactions
+Transaction builders
+--------------------
+
+.. autofunction:: dposlib.ark.v2.transfer
 .. autofunction:: dposlib.ark.v2.registerSecondSecret
 .. autofunction:: dposlib.ark.v2.registerSecondPublicKey
 .. autofunction:: dposlib.ark.v2.registerAsDelegate

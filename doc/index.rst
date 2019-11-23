@@ -7,10 +7,10 @@ Release v\ |version| - (:ref:`Installation <install>`)
 .. image:: https://pepy.tech/badge/dposlib/week
     :target: https://pepy.tech/project/dposlib/week
 
-.. image:: https://img.shields.io/pypi/v/dposlib.svg
+.. image:: https://img.shields.io/pypi/pyversions/dposlib.svg
     :target: https://pypi.python.org/pypi/dposlib
 
-.. image:: https://img.shields.io/pypi/pyversions/dposlib.svg
+.. image:: https://img.shields.io/pypi/v/dposlib.svg
     :target: https://pypi.python.org/pypi/dposlib
 
 :mod:`dposlib` is a simple package providing efficient API to interact with Ark

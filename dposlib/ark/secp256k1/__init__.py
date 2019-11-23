@@ -418,6 +418,14 @@ class PublicKey(Point):
 
     @staticmethod
     def from_int(value):
+        """
+        Compute a public key from :class:`int` value.
+
+        Arguments:
+            value (:class:`int`): scalar to use
+        Returns:
+            :class:`PublicKey`: the public key
+        """
         if (1 <= value <= n - 1):
             return PublicKey(*(G * int(value)))
         else:
@@ -427,10 +435,26 @@ class PublicKey(Point):
 
     @staticmethod
     def from_seed(seed):
+        """
+        Compute a public key from :class:`bytes` value.
+
+        Arguments:
+            value (:class:`bytes`): bytes sequence to use
+        Returns:
+            :class:`PublicKey`: the public key
+        """
         return PublicKey.from_int(int_from_bytes(seed))
 
     @staticmethod
     def from_secret(secret):
+        """
+        Compute a public key from secret passphrase.
+
+        Arguments:
+            value (:class:`str`): secret passphrase to use
+        Returns:
+            :class:`PublicKey`: the public key
+        """
         return PublicKey.from_seed(hash_sha256(secret))
 
 
