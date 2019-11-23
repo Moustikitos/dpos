@@ -57,7 +57,7 @@ sudo apt-get install python-pip python3-pip
 >>> # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
 >>> tx = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "message")
 >>> # sign tx with secret and [optional second secret]
->>> tx.finalize("secret", "secondSecret")
+>>> tx.finalize("first secret", "second secret")
 >>> tx
 {
   "amount": 100000000,
