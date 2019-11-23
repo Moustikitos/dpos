@@ -41,7 +41,7 @@ sudo apt-get install python-pip python3-pip
 ### An intuitive REST API
 ```python
 >>> from dposlib import rest
->>> rest.use("d.ark")
+>>> rest.use("dark")
 >>> # ~/api/delegates/darktoons endpoint
 >>> rest.GET.api.delegates.darktoons()
 {'data': {'username': 'darktoons', 'address': 'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', 'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'votes': 9385785081642, 'rank': 45, 'blocks': {'produced': 32015, 'last': {'id': '9d5085e503e09c656152b541bc243155f560347aa8b377d3f2f9a1cb71900d90', 'height': 2544602, 'timestamp': {'epoch': 69406864, 'unix': 1559508064, 'human': '2019-06-02T20:41:04.000Z'}}}, 'production': {'approval': 0.07}, 'forged': {'fees': 14640580130, 'rewards': 6403000000000, 'total': 6417640580130}}}
@@ -53,7 +53,7 @@ sudo apt-get install python-pip python3-pip
 ### Fast way to interact with blockchain
 ```python
 >>> import dposlib
->>> rest.use("d.ark")
+>>> rest.use("dark")
 >>> # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
 >>> tx = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", "message")
 >>> # sign tx with secret and [optional second secret]
