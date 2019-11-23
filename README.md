@@ -22,7 +22,7 @@ sudo apt-get install python-setuptools python3-setuptools
 sudo apt-get install python-pip python3-pip
 ```
 
-## if you want to use `dposlib.ark.ledgr` module
+## if you want to use `dposlib.ark.ldgr` module
 
 ```bash
 sudo apt-get install libudev-dev libusb-1.0.0-dev
@@ -237,11 +237,11 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [X] flake8 compliancy
   - [X] Ark 2.6 compatibility
-  - [X] removed package resoureces dependencies
+  - [X] removed package resources dependencies
   - [X] builtin secp256k1 replaced ecdsa lib
   - [X] added `iop` mainnet and devnet
   - [X] Lisk and forks dev stopped
-  - [X] optional `ldgr` import
+  - [X] `ldgr` import now optional
 
 ## ONGOING
   - [ ] doc writing
