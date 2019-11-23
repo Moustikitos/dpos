@@ -20,12 +20,17 @@
 sudo apt-get install python python-dev python3 python3-dev
 sudo apt-get install python-setuptools python3-setuptools
 sudo apt-get install python-pip python3-pip
+```
+
+## if you want to use `dposlib.ark.ledgr` module
+
+```bash
 sudo apt-get install libudev-dev libusb-1.0.0-dev
 ```
 
 ## Available network
 
-  - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9`, `10`)
+  - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9` & `10`)
     * [X] mainet : `ark`
     * [X] devnet : `dark`
   - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
@@ -36,14 +41,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`
     + [x] Qredit : `qredit`
-<!--   - Lisk (`API` only)
-    * [x] mainet : `lisk`
-    * [x] testnet : `t.lisk`
-  - Lisk forks
-    + [x] shift (`API`+ transaction type `0`, `1` and `3`)
-      - mainnet : `shift`
-      - testnet : `t.shift`
- -->
+
 ## Main features
 
 ### An intuitive REST API
@@ -239,6 +237,7 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 ### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [X] flake8 compliancy
   - [X] Ark 2.6 compatibility
+  - [X] removed package resoureces dependencies
   - [X] builtin secp256k1 replaced ecdsa lib
   - [X] added `iop` mainnet and devnet
   - [X] Lisk and forks dev stopped
