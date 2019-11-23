@@ -30,4 +30,3 @@ Where ``<branch>`` can be:
   * a commit number
   * a repo branch name
   * a release number
-

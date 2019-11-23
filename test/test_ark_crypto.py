@@ -83,7 +83,7 @@ class TestArkCrypto(unittest.TestCase):
         self.secret = "secret"
         self.secondSecret = "secondSecret"
         # initialize on ark devnet
-        rest.use("d.ark")
+        rest.use("dark")
 
     def test_get_address(self):
         self.assertEqual(

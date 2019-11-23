@@ -27,11 +27,11 @@ sudo apt-get install libudev-dev libusb-1.0.0-dev
 
   - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `5`, `6`, `7`, `8`, `9`, `10`)
     * [X] mainet : `ark`
-    * [X] devnet : `d.ark`
+    * [X] devnet : `dark`
   - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
     + [x] Internet of People
       * [X] mainet : `iop`
-      * [X] devnet : `d.iop`
+      * [X] devnet : `diop`
     + [x] Persona : `persona`
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`

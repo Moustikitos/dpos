@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-
+import io
 import os
+import sys
 import pytz
+import pprint
 import hashlib
-from datetime import datetime
 
-import dposlib
-from dposlib import rest
+from datetime import datetime
+from importlib import import_module
+
+from dposlib import rest, PY3
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, slots, Transaction
 from dposlib.util.asynch import setInterval
-from dposlib.util.data import loadJson
 from dposlib.util.bin import hexlify, unhexlify
 
 cfg.headers["API-Version"] = "2"
@@ -79,29 +81,34 @@ def _rotate_peers():
     _select_peers()
 
 
-def _get_network_config(endpoint, seed=None):
-    # if network connection
-    if len(cfg.peers):
-        config = rest.GET(*endpoint.split("/"), peer=seed)
-        api.dumpJson(config, os.path.join(
-            dposlib.ROOT, ".cold",
-            cfg.network + "." + endpoint.replace("/", ".")
-        ))
-    # if no network connection, load basic configuration from local folder
-    else:
-        config = loadJson(os.path.join(
-            dposlib.ROOT, ".cold",
-            cfg.network + "." + endpoint.replace("/", ".")
-        ))
-    return config
-
-
 def init(seed=None):
     """
     """
     global DAEMON_PEERS, CONFIG, FEES
 
-    CONFIG = _get_network_config("api/node/configuration", seed=seed)
+    if hasattr(sys.modules[__package__], "cold"):
+        del sys.modules[__package__].cold
+    try:
+        sys.modules[__package__].cold = import_module(
+            __package__ + ".cold." + cfg.network
+        )
+    except ImportError:
+        CONFIG = rest.GET(* "api/node/configuration".split("/"), peer=seed)
+        cfg.headers["nethash"] = CONFIG["data"]["nethash"]
+        FEES = rest.GET(* "api/node/fees".split("/"), peer=seed)
+        with io.open(
+            os.path.join(__path__[0], "cold", cfg.network + ".py"),
+            "w" if PY3 else "wb", **({"encoding": "utf-8"} if PY3 else {})
+        ) as module:
+            module.write("configuration = ")
+            module.write(pprint.pformat(CONFIG))
+            module.write("\nfees = ")
+            module.write(pprint.pformat(FEES))
+    else:
+        CONFIG = getattr(sys.modules[__package__].cold, "configuration")
+        FEES = getattr(sys.modules[__package__].cold, "fees")
+        cfg.headers["nethash"] = CONFIG["data"]["nethash"]
+
     # no network connetcion neither local configuration files
     if "data" not in CONFIG:
         raise Exception("no data available")
@@ -110,7 +117,6 @@ def init(seed=None):
     constants = data["constants"]
 
     # -- root configuration ---------------------------------------------------
-    cfg.headers["nethash"] = data["nethash"]
     cfg.explorer = data["explorer"]
     cfg.marker = "%x" % data["version"]
     cfg.pubkeyHash = data["version"]
@@ -150,9 +156,6 @@ def init(seed=None):
     )
     # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
     if cfg.feestats == {}:
-        FEES = _get_network_config(
-            "api/node/fees", seed=seed
-        ).get("data", False)
         if isinstance(FEES, list):
             cfg.feestats = dict([
                 int(i["type"]), {

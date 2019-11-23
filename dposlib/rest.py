@@ -2,15 +2,13 @@
 # © Toons
 
 """
-:mod:`dposlib.rest` module cointains network loaders and provides root
-:class:`dposlib.rest.EndPoint` ``GET``, ``POST``, ``PUT`` and
-``DELETE``. See `Ark API documentation <https://api.ark.dev/public-rest-api/ge\
-tting-started>`_
+:mod:`rest` module cointains network loaders and provides root
+:class:`EndPoint` ``GET``, ``POST``, ``PUT`` and ``DELETE``. See
+`Ark API documentation <https://api.ark.dev/public-rest-api/getting-started>`_
 to see how to use http calls.
 
-:mod:`dposlib.rest` also creates a `dposlib.core <core.html>`_ module containing
-:mod:`dposlib.ark.crypto`, :mod:`dposlib.ark.v2.api` module and
-:class:`dposlib.blockchain.Transaction` builders.
+:mod:`rest` also creates a `core <core.html>`_ module containing :mod:`crypto`,
+:mod:`api` module and :class:`Transaction` builders.
 
 >>> from dposlib import rest
 >>> rest.use("ark")
@@ -56,7 +54,6 @@ lock", expiration=12, vendorField=u"\u2728 simple htlcLock vendorField")
 }
 """
 
-import io
 import os
 import re
 import sys
@@ -69,9 +66,9 @@ import pytz
 import requests
 
 from importlib import import_module
-from dposlib import FROZEN, ROOT
+from dposlib import FROZEN, net
 from dposlib.blockchain import cfg
-from dposlib.util.data import filter_dic, loadJson
+from dposlib.util.data import filter_dic
 
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 
@@ -299,10 +296,10 @@ def load(name):
             sys.modules[__package__].__delattr__(name)
         except AttributeError:
             pass
-        try:
-            sys.modules[__package__].core.init()
-        except Exception as e:
-            raise Exception("package initialization error\n%r" % e)
+        # try:
+        sys.modules[__package__].core.init()
+        # except Exception as e:
+        #     raise Exception("package initialization error\n%r" % e)
 
 
 def use(network, **kwargs):
@@ -312,8 +309,7 @@ def use(network, **kwargs):
     ``**kwargs`` argument.
 
     Args:
-        network (:class:`str`): network to initialize. Available networks are
-                                in ``network`` folder
+        network (:class:`str`): network to initialize
     """
 
     # clear data in cfg module
@@ -332,7 +328,7 @@ def use(network, **kwargs):
     cfg.peers = []         # peer list
 
     # load network.net configuration
-    data = loadJson(os.path.join(ROOT, "network", network + ".net"))
+    data = dict(getattr(net, network))
     # override some options if given
     data.update(**kwargs)
 

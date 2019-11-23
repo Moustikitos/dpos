@@ -1,5 +1,3 @@
-recursive-include dposlib *.net
 recursive-include test *.csv
 recursive-include test *.json
-include dposlib/.cold/*
 include VERSION

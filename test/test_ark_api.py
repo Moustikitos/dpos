@@ -22,7 +22,7 @@ class TestDposApi(unittest.TestCase):
         self.secret = "secret"
         self.secondSecret = "secondSecret"
         # initialize on ark devnet
-        if rest.use("d.ark"):
+        if rest.use("dark"):
             self.wallet = dposlib.core.api.Wallet(
                 dposlib.core.crypto.getAddress(
                     dposlib.core.crypto.getKeys(self.secret)["publicKey"]
