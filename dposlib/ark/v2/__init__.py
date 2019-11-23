@@ -11,7 +11,7 @@ import hashlib
 from datetime import datetime
 from importlib import import_module
 
-from dposlib import rest, PY3
+from dposlib import rest, PY3, HOME
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, slots, Transaction
@@ -85,19 +85,23 @@ def init(seed=None):
     """
     """
     global DAEMON_PEERS, CONFIG, FEES
+    from_zip = ".zip" in __file__ or ".egg" in __file__
 
     if hasattr(sys.modules[__package__], "cold"):
         del sys.modules[__package__].cold
     try:
         sys.modules[__package__].cold = import_module(
-            __package__ + ".cold." + cfg.network
+            ((__package__ + ".cold.") if not from_zip else "") + cfg.network
         )
     except ImportError:
         CONFIG = rest.GET(* "api/node/configuration".split("/"), peer=seed)
         cfg.headers["nethash"] = CONFIG["data"]["nethash"]
         FEES = rest.GET(* "api/node/fees".split("/"), peer=seed)
         with io.open(
-            os.path.join(__path__[0], "cold", cfg.network + ".py"),
+            os.path.join(
+                os.path.join(__path__[0], "cold") if not from_zip else HOME,
+                cfg.network + ".py"
+            ),
             "w" if PY3 else "wb", **({"encoding": "utf-8"} if PY3 else {})
         ) as module:
             module.write("configuration = ")

@@ -296,10 +296,10 @@ def load(name):
             sys.modules[__package__].__delattr__(name)
         except AttributeError:
             pass
-        # try:
-        sys.modules[__package__].core.init()
-        # except Exception as e:
-        #     raise Exception("package initialization error\n%r" % e)
+        try:
+            sys.modules[__package__].core.init()
+        except Exception as e:
+            raise Exception("package initialization error\n%r" % e)
 
 
 def use(network, **kwargs):

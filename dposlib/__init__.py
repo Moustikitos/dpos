@@ -39,3 +39,8 @@ else:
         HOME = os.path.join(os.environ["HOMEDRIVE"], os.environ["HOMEPATH"])
     except Exception:
         HOME = os.environ.get("HOME", ROOT)
+    finally:
+        HOME = os.path.normpath(HOME)
+
+if HOME not in sys.path:
+    sys.path.append(HOME)
