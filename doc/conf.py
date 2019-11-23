@@ -71,16 +71,27 @@ html_theme = 'alabaster'
 html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {}
+html_sidebars = {
+    "**": [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'support.html'
+    ]
+}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
+    "logo": "logo.png",
     "show_powered_by": False,
     "github_user": "Moustikitos",
     "github_repo": "dpos",
     "github_banner": False,
+    "github_button": False,
+    "travis_button": True,
     "show_related": False,
     "note_bg": "#FFF59C",
     "fixed_sidebar": True

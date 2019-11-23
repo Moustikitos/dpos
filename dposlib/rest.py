@@ -7,8 +7,8 @@
 `Ark API documentation <https://api.ark.dev/public-rest-api/getting-started>`_
 to see how to use http calls.
 
-:mod:`rest` also creates a `core <core.html>`_ module containing :mod:`crypto`,
-:mod:`api` module and :class:`Transaction` builders.
+:mod:`rest` also creates a `core <core.html>`_ module containing :mod:`crypto`
+and :mod:`api` module plus :class:`Transaction` builders.
 
 >>> from dposlib import rest
 >>> rest.use("ark")
