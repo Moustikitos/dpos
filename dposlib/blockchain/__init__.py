@@ -2,12 +2,10 @@
 # © Toons
 
 """
-:mod:`dposlib.blockchain` package provides
-:class:`dposlib.blockchain.Transaction` and :class:`dposlib.blockchain.Wallet`
-classes.
+:mod:`dposlib.blockchain` package provides :class:`Transaction` and
+:class:`.Wallet` classes.
 
-A blockchain have to be loaded first to use
-:class:`dposlib.blockchain.Transaction`:
+A blockchain have to be loaded first to use :class:`Transaction`:
 
 >>> from dposlib import blockchain
 >>> tx = blockchain.Transaction(amount=1, recipientId="D7seWn8JLVwX4nHd9hh2Lf7\
@@ -68,7 +66,7 @@ class Transaction(dict):
                         Transaction.FEESL
                 # use fee statistics if FEESL is not None
                 # if Transaction.FEESL is not None:
-                if feesl is not None:
+                if feesl is not None and self["type"] not in [6,]:
                     # if fee statistics not found, return static fee value
                     fee = cfg.feestats.get(self["type"], {})\
                           .get(feesl, static_value)
