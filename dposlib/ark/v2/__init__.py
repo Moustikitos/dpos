@@ -37,6 +37,8 @@ TRANSACTIONS = {
 TYPING = {
     "amount": int,
     "asset": dict,
+    "blockId": str,
+    "confirmations": int,
     "expiration": int,
     "fee": int,
     "id": str,

@@ -192,11 +192,13 @@ class Transaction(dict):
         )
 
     def __init__(self, *args, **kwargs):
+        # a blockchain package have to be loaded first
         if not hasattr(dposlib, "core"):
             raise Exception("no blockchain loaded")
+        # merge all elements and initialize a void dict
         data = dict(*args, **kwargs)
         dict.__init__(self)
-
+        # deal with ark transaction version
         version = data.pop("version", 0x0)
         if version >= 0x1:
             self["version"] = version
@@ -204,25 +206,44 @@ class Transaction(dict):
             # default typeGroup is 1 (Ark core)
             self["typeGroup"] = data.pop("typeGroup", 1)
             self["network"] = cfg.pubkeyHash
-
+        # set mandatory fields
         self["amount"] = data.pop("amount", 0)  # amount is required field
         self["type"] = data.pop("type", 0)  # default type is 0 (transfer)
         self["asset"] = data.pop("asset", {})  # if no one given
-
-        for key, value in [(k, v) for k, v in data.items() if v is not None]:
+        # pop all signatures and id
+        last = [
+            (k, data.pop(k, None)) for k in [
+                "signatures", "signature",
+                "signSignature", "secondSignature",
+                "id"
+            ]
+        ]
+        # initialize all non-void fields with signatures and id at the end
+        # of the loop because other field change removes them
+        for key, value in [
+            (k, v) for k, v in list(data.items())+last if v is not None
+        ]:
             self[key] = value
-
+        # initialize Transaction hidden fields
         if hasattr(Transaction, "_publicKey"):
             self._setSenderPublicKey(Transaction._publicKey)
 
     def __setitem__(self, item, value):
-        # cast values according to transaction typing
+        # because API responses uses fields names and layout that does not
+        # match dposlib.core.TYPING
+        if item == "timestamp" and isinstance(value, dict):
+            value = value.get("epoch", slots.getTime())
+        else:
+            item = "recipientId" if item == "recipient" \
+                    else "senderId" if item == "sender" \
+                    else item
+        # cast values according to typings
         if item in dposlib.core.TYPING.keys():
             cast = dposlib.core.TYPING[item]
             if item == "fee":
-                value = self._compute_fee(value)  # self.setFee(value)
+                value = self._compute_fee(value)
             elif item == "vendorField":
-                value = value.decode("utf-8") if isinstance(value, bytes)\
+                value = value.decode("utf-8") if isinstance(value, bytes) \
                         else value
             elif item == "senderPublicKey":
                 self._setSenderPublicKey(value)
@@ -231,9 +252,13 @@ class Transaction(dict):
             dict.__setitem__(self, item, value)
             # remove signatures and ids if an item other than signature or id
             # is modified
-            if item not in ["signatures", "signature", "signSignature",
-                            "secondSignature", "id"]:
+            if item not in [
+                "signatures", "signature",
+                "signSignature", "secondSignature",
+                "id"
+            ]:
                 self.pop("signature", False)
+                self.pop("signatures", False)
                 self.pop("signSignature", False)
                 self.pop("secondSignature", False)
                 self.pop("id", False)

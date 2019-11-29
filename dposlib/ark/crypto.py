@@ -18,7 +18,7 @@ def getKeys(secret):
 
     Args:
         secret (:class:`str`, :class:`bytes` or :class:`int`):
-            
+
     Returns:
         :class:`dict`: public, private and WIF keys
     """

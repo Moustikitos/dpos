@@ -24,7 +24,7 @@ class Wallet(dposlib.blockchain.Wallet):
         lambda cls: Delegate(cls.username) if cls.isDelegate else None,
         None, None, ""
     )
-    
+
     def __init__(self, address, **kw):
         dposlib.blockchain.Data.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
