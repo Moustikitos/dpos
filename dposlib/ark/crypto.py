@@ -51,6 +51,20 @@ def getAddressFromSecret(secret, marker=None):
     return getAddress(getKeys(secret)["publicKey"], marker)
 
 
+def getMultisignatureAddress(minimum, *publicKeys):
+    if 2 > minimum > len(publicKeys):
+        raise ValueError("min signatures value error")
+
+    secret = "%02x" % minimum
+    P = secp256k1.PublicKey.from_secret(
+        ("0" if len(secret) % 2 else "") + secret
+    )
+    for publicKey in publicKeys:
+        P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
+
+    return getAddress(hexlify(P.encode()))
+
+
 def getAddress(publicKey, marker=None):
     """
     Compute ARK address from publicKey.
