@@ -2,13 +2,13 @@
 # © Toons
 
 """
-:mod:`rest` module cointains network loaders and provides root
+:mod:`rest` module provides network loaders and root
 :class:`EndPoint` ``GET``, ``POST``, ``PUT`` and ``DELETE``. See
 `Ark API documentation <https://api.ark.dev/public-rest-api/getting-started>`_
 to see how to use http calls.
 
-:mod:`rest` also creates a `core <core.html>`_ module containing :mod:`crypto`
-and :mod:`api` module plus :class:`Transaction` builders.
+:mod:`rest` also creates a `core <core.html>`_ module containing
+:class:`Transaction` builders, :mod:`crypto` and :mod:`api` modules.
 
 >>> from dposlib import rest
 >>> rest.use("ark")
@@ -99,7 +99,7 @@ def checkLatency(peer):
 
 class EndPoint(object):
     """
-    This class is at the root of interaction with http JSON API. Build the
+    This class is at the root of interaction with Ark JSON API. Build the
     endpoint concatening multiple attributes, named accordingly to endpoint
     path, and call the last one.
 
@@ -161,8 +161,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         # using a returnKey that match the field name
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop('peer', False)
-        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
+            peer = peer if bool(peer) else random.choice(cfg.peers)
             req = requests.get(
                 peer + "/".join(args),
                 params=dict(
@@ -182,8 +182,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
         headers = kwargs.pop("headers", cfg.headers)
-        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
+            peer = peer if bool(peer) else random.choice(cfg.peers)
             req = requests.post(
                 peer + "/".join(args),
                 data=json.dumps(kwargs),
@@ -200,8 +200,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
     def _PUT(*args, **kwargs):
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
-        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
+            peer = peer if bool(peer) else random.choice(cfg.peers)
             req = requests.put(
                 peer + "/".join(args),
                 data=json.dumps(kwargs),
@@ -218,8 +218,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
     def _DELETE(*args, **kwargs):
         return_key = kwargs.pop('returnKey', False)
         peer = kwargs.pop("peer", False)
-        peer = peer if bool(peer) else random.choice(cfg.peers)
         try:
+            peer = peer if bool(peer) else random.choice(cfg.peers)
             req = requests.delete(
                 peer + "/".join(args),
                 data=json.dumps(kwargs),
@@ -269,8 +269,8 @@ DELETE = EndPoint(method=EndPoint._DELETE)
 
 def load(name):
     """
-    Loads a given blockchain package as ``dposlib.core`` module. A valid
-    blockchain package must provide ``init(peer=None)`` and ``stop()``
+    Load a given blockchain package as ``dposlib.core`` module. A valid
+    blockchain package must provide :func:`init(peer=None)` and ;func:`stop()`
     definitions.
 
     Args:
@@ -310,6 +310,9 @@ def use(network, **kwargs):
 
     Args:
         network (:class:`str`): network to initialize
+
+    Returns:
+        :class:`bool`: True if network connection established
     """
 
     # clear data in cfg module

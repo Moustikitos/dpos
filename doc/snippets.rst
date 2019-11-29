@@ -41,3 +41,19 @@ You can use :mod:`dposlib.ark.sig` module to issue and check signatures.
 True
 >>> sig2.b410_schnorr_verify("simple message", puk)
 True
+
+Peer targeting
+--------------
+
+:mod:`dposlib.rest` module provides easy way to target a specific peer when
+sending a http request in blockchain network.
+
+  .. note::
+  	Public ip of http request emmiter have to be white listed on targetted
+  	peer.
+
+
+
+Timestamp
+---------
+

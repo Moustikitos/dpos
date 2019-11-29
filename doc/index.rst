@@ -32,7 +32,7 @@ Simplicity of ``REST`` API::
     {u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 
 ``ECDSA`` and ``SCHNORR`` signatures can be performed using
-:mod:`sig` and :mod:`crypto` modules::
+:mod:`dposlib.ark.sig` and :mod:`dposlib.ark.crypto` modules::
 
     >>> import dposlib.ark.sig as sig
     >>> import dposlib.ark.crypto as crypto
@@ -51,7 +51,7 @@ Simplicity of ``REST`` API::
     >>> crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
     '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 
-:mod:`dposlib.ark.v2` package provides :class:`Transaction` 
+:mod:`dposlib.ark.v2` package provides :class:`dposlib.blockchain.Transaction` 
 class and its associated builders::
 
     >>> from dposlib import rest

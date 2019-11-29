@@ -19,16 +19,16 @@ GET = dposlib.rest.GET
 
 
 class Wallet(dposlib.blockchain.Wallet):
-    # TODO: set delegate property
     # TODO: add transactions 5 - 10
+    delegate = property(
+        lambda cls: Delegate(cls.username) if cls.isDelegate else None,
+        None, None, ""
+    )
     
     def __init__(self, address, **kw):
         dposlib.blockchain.Data.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
         )
-
-    def getDelegate(self):
-        return Delegate(self.username) if self.isDelegate else None
 
     def transactions(self, limit=50):
         sent = loadPages(
@@ -46,6 +46,34 @@ class Wallet(dposlib.blockchain.Wallet):
                 reverse=True
             )
         ][:limit]
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def registerIpfs(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def multiSend(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def multiSend(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def resignate(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def sendHtlc(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def claimHtlc(self):
+        raise NotImplementedError("Not implemented yet")
+
+    @dposlib.blockchain.Data.wallet_islinked
+    def refundHtlc(self):
+        raise NotImplementedError("Not implemented yet")
 
 
 if LEDGERBLUE:
@@ -196,3 +224,7 @@ class Webhook(dposlib.blockchain.Data):
         )
         if os.path.exists(whk_path):
             os.remove(whk_path)
+
+
+class MultiSignature(dposlib.blockchain.Data):
+    pass

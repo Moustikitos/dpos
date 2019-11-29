@@ -5,39 +5,34 @@ Pure python implementation for ``scp256k1`` curve algebra and associated
 ``ECDSA - SCHNORR`` signatures.
 
 >>> from dposlib.ark import secp256k1
->>> G = secp256k1.Point(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D9\
-59F2815B16F81798)
->>> G
-[5506626302227734366957871889516853432625060345377759417550018736038911672\
-9240, 326705100207588169780830851305070431844712733806592432759389043357573374\
-82424]
+>>> G = secp256k1.Point(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2\
+815B16F81798)
 >>> G.y
-32670510020758816978083085130507043184471273380659243275938904335757337482\
-424
->>> G + G
-[8956589192654700423125292042593569236064414582962220983368432991329718898\
-6597, 121583992996938303229678086127133986361553678870416281767988719547883716\
-53930]
->>> 2 * G
-[8956589192654700423125292042593569236064414582962220983368432991329718898\
-6597, 121583992996938303229678086127133986361553678870416281767988719547883716\
-53930]
->>> type(2 * G)
-<class 'dposlib.ark.secp256k1.Point'>
+32670510020758816978083085130507043184471273380659243275938904335757337482424
+>>> G
+<secp256k1 point:
+  x:79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+  y:483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+>
+>>> G+G == 2*G
+True
 
->>> secp256k1.PublicKey.from_int(secp256k1.int_from_bytes(secp256k1.ha\
-sh_sha256("secret")))
-[724471163557613172412942942796613800667477215476708463759021099077967\
-09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
-900207393]
+>>> secp256k1.PublicKey.from_int(secp256k1.int_from_bytes(secp256k1.hash_sha25\
+6("secret")))
+<secp256k1 public key:
+  x:a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933
+  y:924aa2580069952b0140d88de21c367ee4af7c4a906e1498f20ab8f62e4c2921
+>
 >>> secp256k1.PublicKey.from_seed(secp256k1.hash_sha256("secret"))
-[724471163557613172412942942796613800667477215476708463759021099077967\
-09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
-900207393]
+<secp256k1 public key:
+  x:a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933
+  y:924aa2580069952b0140d88de21c367ee4af7c4a906e1498f20ab8f62e4c2921
+>
 >>> secp256k1.PublicKey.from_secret("secret")
-[724471163557613172412942942796613800667477215476708463759021099077967\
-09206323, 66169543031377414121828739567128659064669886470778233805033454412463\
-900207393]
+<secp256k1 public key:
+  x:a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933
+  y:924aa2580069952b0140d88de21c367ee4af7c4a906e1498f20ab8f62e4c2921
+>
 
 Sources:
   - `BIP schnorr <https://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.me\
@@ -48,14 +43,13 @@ rr/reference.py>`_
 .1.0/lib/js/schnorr.js>`_
 
 Variables:
-  - ``secret`` (:class:`str`):     passphrase
-  - ``secret0`` (:class:`bytes`):  private key
-  - ``P`` (:class:`list`):         public key as ``secp256k1`` curve point
-  - ``pubkey`` (:class:`bytes`):   compressed - encoded public key
-  - ``pubkeyB`` (:class:`bytes`):  compressed - encoded public key according
+  - ``secret`` (:class:`str`): passphrase
+  - ``secret0`` (:class:`bytes`): private key
+  - ``P`` (:class:`list`): public key as ``secp256k1`` curve point
+  - ``pubkey`` (:class:`bytes`): compressed - encoded public key
+  - ``pubkeyB`` (:class:`bytes`): compressed - encoded public key according
     to bip schnorr spec
-    according to bip schnorr spec
-  - ``msg`` (:class:`bytes`):      sha256 hash of message to sign
+  - ``msg`` (:class:`bytes`): sha256 hash of message to sign
   - Uppercase variables refer to points on the curve with equation ``y²=x³+7``
     over the integers modulo p
 """
@@ -68,8 +62,8 @@ import hashlib
 from builtins import int, bytes, pow
 
 
-p = int(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
-n = int(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141)
+p = int(0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f)
+n = int(0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141)
 
 
 def hash_sha256(b):
@@ -289,7 +283,7 @@ def rand_k():
 def rfc6979_k(msg, secret0, V=None):
     """
     Generate a deterministic nonce according to
-    `ref6979 spec <https://tools.ietf.org/html/rfc6979#section-3.2>`_.
+    `rfc6979 spec <https://tools.ietf.org/html/rfc6979#section-3.2>`_.
 
     Args:
         msg (:class:`bytes`): 32-bytes sequence
@@ -354,13 +348,7 @@ class Point(list):
     """
     ``secp256k1`` point . Initialization can be done with sole ``x`` value.
     :class:`Point` overrides ``*`` and ``+`` operators which accepts
-    :class:`list` as argument and returns :class:`Point`. It extends
-    :class:`list` and allows item access using ``__getattr__``/``__setattr__``
-    operators.
-
-    Parameters:
-        x (:class:`int`): abscissa
-        y (:class:`int`): ordinate
+    :class:`list` as argument and returns :class:`Point`.
     """
 
     x = property(
@@ -369,11 +357,11 @@ class Point(list):
             list.__setitem__(cls, 0, int(v)),
             list.__setitem__(cls, 1, y_from_x(int(v)))
         ],
-        None, ""
+        None, "Return list item #0"
     )
     y = property(
         lambda cls: list.__getitem__(cls, 1),
-        None, None, ""
+        None, None, "Return list item #1"
     )
 
     def __init__(self, *xy):
@@ -397,6 +385,9 @@ class Point(list):
             raise TypeError("'%s' should be a 2-int-length list" % P)
     __radd__ = __add__
 
+    def __repr__(self):
+        return "<secp256k1 point:\n  x:%064x\n  y:%064x\n>" % tuple(self)
+
     @staticmethod
     def decode(pubkey):
         """
@@ -413,7 +404,7 @@ class Point(list):
 
 class PublicKey(Point):
     """
-    :class:`Point` extension providing other initialization methods.
+    :class:`Point` extension providing specific initialization methods.
     """
 
     @staticmethod
@@ -457,5 +448,8 @@ class PublicKey(Point):
         """
         return PublicKey.from_seed(hash_sha256(secret))
 
+    def __repr__(self):
+        return "<secp256k1 public key:\n  x:%064x\n  y:%064x\n>" % tuple(self)
 
-G = Point(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)
+
+G = Point(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)

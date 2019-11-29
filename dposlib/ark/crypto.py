@@ -7,29 +7,29 @@ import base58
 from dposlib import BytesIO
 from dposlib.ark import secp256k1
 from dposlib.blockchain import cfg
-from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
+from dposlib.util.bin import BHEX, hexlify, unhexlify, pack, pack_bytes
 from dposlib.ark.secp256k1 import schnorr, ecdsa
 
 
-def getKeys(secret, seed=None):
+def getKeys(secret):
     """
-    Generate keyring containing public key, signing and checking keys as
-    attribute.
+    Generate keyring containing secp256k1 keys-apir and wallet import format
+    (WIF).
 
     Args:
-        secret (:class:`str` or :class:`bytes`): a human pass phrase
-        seed (:class:`byte`): bytes sequence
-
+        secret (:class:`str`, :class:`bytes` or :class:`int`):
+            
     Returns:
         :class:`dict`: public, private and WIF keys
     """
-    if secret and not seed:
-        seed = secp256k1.hash_sha256(
-            secret if isinstance(secret, bytes) else
-            secret.encode()
-        )
-    publicKey = secp256k1.PublicKey.from_int(secp256k1.int_from_bytes(seed))
+    if isinstance(secret, str):
+        seed = secp256k1.hash_sha256(secret)
+    elif isinstance(bytes, str):
+        seed = secret
+    elif isinstance(secret, int):
+        seed = secp256k1.bytes_from_int(secret)
 
+    publicKey = secp256k1.PublicKey.from_seed(seed)
     return {
         "publicKey": hexlify(publicKey.encode()),
         "privateKey": hexlify(seed),
@@ -116,8 +116,7 @@ def wifSignatureFromBytes(data, wif):
         :class:`str`: signature
     """
     seed = base58.b58decode_check(
-        str(wif) if not isinstance(wif, bytes) else
-        wif
+        str(wif) if not isinstance(wif, bytes) else wif
     )[1:33]
     return getSignatureFromBytes(data, hexlify(seed))
 
@@ -157,7 +156,7 @@ def getSignatureFromBytes(data, privateKey):
         return hexlify(ecdsa.rfc6979_sign(msg, secret0, canonical=True))
 
 
-def checkTransaction(tx, secondPublicKey=None):
+def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
     """
     Verify transaction validity.
 
@@ -174,31 +173,52 @@ def checkTransaction(tx, secondPublicKey=None):
     version = tx.get("version", 0x01)
     publicKey = tx["senderPublicKey"]
 
+    if tx["type"] == 4:
+        multiPublicKeys = tx["asset"]["multiSignature"]["publicKeys"]
+
     # pure python dict serializer
-    def _ser(t, v):
-        return serialize(t, version=v) if v >= 0x02 else getBytes(t)
+    def _ser(t, v, **opt):
+        return \
+            serialize(t, version=v, **opt) if v >= 0x02 else \
+            getBytes(t, **opt)
 
     # create a local copy of tx
     tx = dict(**tx)
+
     # id check
     # remove id from tx if any and then compare
     id_ = tx.pop("id", False)
     if id_:
-        checks.append([getIdFromBytes(_ser(tx, version)) == id_])
-    # signatures check
-    # remove all signatures from tx and then check first signature if any
+        checks.append(getIdFromBytes(_ser(tx, version)) == id_)
+
     signature = tx.pop("signature", False)
     signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
+    signatures = tx.pop("signatures", [])
+
+    # multiple signature check
+    if len(multiPublicKeys) and len(signatures):
+        serialized = _ser(tx, version)
+        for sig in signatures:
+            idx, sig = int(sig[0:2], 16), sig[2:]
+            checks.append(verifySignatureFromBytes(
+                serialized, multiPublicKeys[idx], sig
+            ))
+        tx["signatures"] = signatures
+
     if signature:
+        # sender signature check
         checks.append(verifySignatureFromBytes(
             _ser(tx, version), publicKey, signature
         ))
-    # add signature and then check second signature if any
-    tx["signature"] = signature
-    if signSignature and secondPublicKey:
-        checks.append(verifySignatureFromBytes(
-            _ser(tx, version), secondPublicKey, signSignature
-        ))
+
+        # sender second signature check
+        if signSignature and secondPublicKey:
+            # add signature before check
+            tx["signature"] = signature
+            checks.append(verifySignatureFromBytes(
+                _ser(tx, version), secondPublicKey, signSignature
+            ))
+
     return False not in checks
 
 
@@ -413,7 +433,7 @@ def serializePayload(tx):
                     tx["recipientId"], bytes
                 ) else \
                 tx["recipientId"]
-            recipientId = base58.b58decode_check(tx["recipientId"])
+            recipientId = base58.b58decode_check(recipientId)
         except Exception:
             raise Exception("no recipientId defined")
         pack("<QI", buf, (

@@ -41,6 +41,9 @@ class Signature(list):
     def __init__(self, *rs):
         list.__init__(self, [int(e) for e in rs])
 
+    def __repr__(self):
+        return "<secp256k1 signature:\n  r:%064x\n  s:%064x\n>" % tuple(self)
+
     def _der_getter(cls):
         if not hasattr(cls, "_der"):
             setattr(cls, "_der", secp256k1.der_from_sig(*cls))

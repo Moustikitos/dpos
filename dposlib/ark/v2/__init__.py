@@ -21,7 +21,6 @@ from dposlib.util.bin import hexlify, unhexlify
 cfg.headers["API-Version"] = "2"
 
 DAEMON_PEERS = None
-CONFIG = FEES = {}
 TRANSACTIONS = {
     0: "transfer",
     1: "secondSignature",
@@ -98,27 +97,36 @@ def _write_module(path, configuration={}, fees={}):
 
 def init(seed=None):
     """
+    Blockchain initialisation. It stores root values in :mod:`cfg` modules.
     """
-    global DAEMON_PEERS, CONFIG, FEES
+    global DAEMON_PEERS
 
+    # configure cold package path and fils according to installation
     if ".zip" in __file__ or ".egg" in __file__:
+        # --> module loaded from zip or egg file
         path_module = os.path.join(HOME, cfg.network + ".py")
         package_path = cfg.network
     else:
+        # --> module loaded from python package
         path_module = os.path.join(
             os.path.join(__path__[0], "cold"), cfg.network + ".py"
         )
         package_path = __package__ + ".cold." + cfg.network
     path_module = os.path.normpath(path_module)
 
+    # if network connection available
     if cfg.hotmode:
         CONFIG = rest.GET(* "api/node/configuration".split("/"), peer=seed)
+        # nethash must be added before next api endpoint call
         cfg.headers["nethash"] = CONFIG["data"]["nethash"]
         FEES = rest.GET(* "api/node/fees".split("/"), peer=seed)
+        # write configuration in python module, overriding former one
         _write_module(path_module, CONFIG, FEES)
     else:
+        # remove cold package
         if hasattr(sys.modules[__package__], "cold"):
             del sys.modules[__package__].cold
+        # load cold package
         try:
             sys.modules[__package__].cold = import_module(
                 package_path
@@ -210,8 +218,16 @@ def stop():
         DAEMON_PEERS.set()
 
 
-# https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
-def computeDynamicFees(tx):
+def computeDynamicFees(tx, FMULT=None):
+    """
+    Compute transaction fees according to
+    `AIP 16 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md>`_
+
+    Arguments:
+        tx (:class:`dict` or :class:`Transaction`): transaction object
+    Returns:
+        :class:`int`: fees
+    """
     typ_ = tx.get("type", 0)
     version = tx.get("version", 0x01)
 
@@ -224,7 +240,7 @@ def computeDynamicFees(tx):
     T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
     return int(
         (T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) *
-        Transaction.FMULT
+        Transaction.FMULT if FMULT is None else FMULT
     )
 
 
@@ -235,8 +251,7 @@ def broadcastTransactions(*transactions, **params):
         transactions[i:i+chunk_size] for i in
         range(0, len(transactions), chunk_size)
     ]:
-        response = rest.POST.api.transactions(transactions=chunk)
-        report.append(response)
+        report.append(rest.POST.api.transactions(transactions=chunk))
     return \
         None if len(report) == 0 else \
         report[0] if len(report) == 1 else \
@@ -244,6 +259,21 @@ def broadcastTransactions(*transactions, **params):
 
 
 def transfer(amount, address, vendorField=None, expiration=0, version=1):
+    """
+    Build a transfer transaction. Emoji can be included in transaction
+    vendorField using unicode formating.
+
+    >>> u"message with sparkles \u2728"
+
+    Arguments:
+        amount (:class:`float`): transaction amount in ark
+        address (:class:`str`): valid recipient address
+        vendorField (:classl`str`): vendor field message
+        expiration (:class:`float`): time of persistance in hour
+        version (:class:`int`): transaction version
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     if version > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
         expiration = int(
@@ -263,12 +293,33 @@ def transfer(amount, address, vendorField=None, expiration=0, version=1):
 
 
 def registerSecondSecret(secondSecret, version=1):
+    """
+    Build a second secret registration transaction.
+
+    Arguments:
+        secondSecret (:class:`str`): passphrase
+        version (:class:`int`): transaction version
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return registerSecondPublicKey(
         crypto.getKeys(secondSecret)["publicKey"], version=version
     )
 
 
 def registerSecondPublicKey(secondPublicKey, version=1):
+    """
+    Build a second secret registration transaction.
+
+      .. note::
+        You must own the secret issuing secondPublicKey
+
+    Arguments:
+        secondPublicKey (:class:`str`): public key as hex string
+        version (:class:`int`): transaction version
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         type=1,
         version=version,
@@ -281,6 +332,15 @@ def registerSecondPublicKey(secondPublicKey, version=1):
 
 
 def registerAsDelegate(username, version=1):
+    """
+    Build a delegate registration transaction.
+
+    Arguments:
+        username (:class:`str`): delegate username
+        version (:class:`int`): transaction version
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         type=2,
         version=version,
@@ -293,6 +353,15 @@ def registerAsDelegate(username, version=1):
 
 
 def upVote(*usernames, **kwargs):
+    """
+    Build an upvote transaction.
+
+    Arguments:
+        usernames (:class:`iterable`): delegate usernames as :class:`str`
+                                       iterable
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     try:
         votes = [
             "+"+rest.GET.api.delegates(username, returnKey="data")["publicKey"]
@@ -312,6 +381,15 @@ def upVote(*usernames, **kwargs):
 
 
 def downVote(*usernames, **kwargs):
+    """
+    Build a downvote transaction.
+
+    Arguments:
+        usernames (:class:`iterable`): delegate usernames as :class:`str`
+                                       iterable
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     try:
         votes = [
             "-"+rest.GET.api.delegates(username, returnKey="data")["publicKey"]
@@ -331,20 +409,24 @@ def downVote(*usernames, **kwargs):
 
 
 # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md
-def registerMultiSignature(min, *publicKeys, **kwargs):
-    pkMin = crypto.getKeys(None, seed=unhexlify("%x" % min))["publicKey"]
-    P = crypto.hex2EcPublicKey(pkMin).W
+def registerMultiSignature(minSig, *publicKeys, **kwargs):
+    # raise NotImplementedError("Transaction type 4 not implemented yet")
+
+    P = crypto.secp256k1.PublicKey.from_int(minSig)
     for publicKey in publicKeys:
-        P = P.curve.add_point(P, crypto.hex2EcPublicKey(publicKey).W)
-    pkms = crypto.ecPublicKey2Hex(crypto.ECPublicKey(P))
+        P += crypto.secp256k1.PublicKey(
+            *crypto.secp256k1.point_from_encoded(
+                crypto.unhexlify(publicKey)
+            )
+        )
 
     return Transaction(
         version=2,
         type=4,
-        MultiSignatureAddress=crypto.getAddress(pkms),
+        MultiSignatureAddress=crypto.getAddress(hexlify(P.encode())),
         asset={
             "multiSignature": {
-                "min": min,
+                "min": minSig,
                 "publicKeys": publicKeys
             }
         },
@@ -352,6 +434,14 @@ def registerMultiSignature(min, *publicKeys, **kwargs):
 
 
 def registerIpfs(ipfs):
+    """
+    Build an IPFS registration transaction.
+
+    Arguments:
+        ipfs (:class:`str`): ipfs DAG
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=5,
@@ -362,6 +452,18 @@ def registerIpfs(ipfs):
 
 
 def multiPayment(*pairs, **kwargs):
+    """
+    Build multi-payment transaction. Emoji can be included in transaction
+    vendorField using unicode formating.
+
+    >>> u"message with sparkles \u2728"
+
+    Arguments:
+        pairs (:class:`iterable`): recipient-amount pair iterable
+        vendorField (:classl`str`): vendor field message
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=6,
@@ -375,6 +477,12 @@ def multiPayment(*pairs, **kwargs):
 
 
 def delegateResignation():
+    """
+    Build a delegate resignation transaction.
+
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=7
@@ -382,6 +490,14 @@ def delegateResignation():
 
 
 def htlcSecret(secret):
+    """
+    Compute an HTLC secret hex string from passphrase.
+
+    Arguments:
+        secret (:class:`str`): passphrase
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return hexlify(hashlib.sha256(
         secret if isinstance(secret, bytes) else
         secret.encode("utf-8")
@@ -389,6 +505,21 @@ def htlcSecret(secret):
 
 
 def htlcLock(amount, address, secret, expiration=24, vendorField=None):
+    """
+    Build an HTLC lock transaction. Emoji can be included in transaction
+    vendorField using unicode formating.
+
+    >>> u"message with sparkles \u2728"
+
+    Arguments:
+        amount (:class:`float`): transaction amount in ark
+        address (:class:`str`): valid recipient address
+        secret (:class:`str`): lock passphrase
+        expiration (:class:`float`): transaction validity in hour
+        vendorField (:classl`str`): vendor field message
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=8,
@@ -410,6 +541,15 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
 
 
 def htlcClaim(txid, secret):
+    """
+    Build an HTLC claim transaction.
+
+    Arguments:
+        txid (:class:`str`): htlc lock transaction id
+        secret (:class:`str`): passphrase used by htlc lock transaction
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=9,
@@ -423,6 +563,14 @@ def htlcClaim(txid, secret):
 
 
 def htlcRefund(txid):
+    """
+    Build an HTLC refund transaction.
+
+    Arguments:
+        txid (:class:`str`): htlc lock transaction id
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=10,

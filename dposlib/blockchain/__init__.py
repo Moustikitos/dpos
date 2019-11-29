@@ -3,7 +3,7 @@
 
 """
 :mod:`dposlib.blockchain` package provides :class:`Transaction` and
-:class:`.Wallet` classes.
+:class:`Wallet` classes.
 
 A blockchain have to be loaded first to use :class:`Transaction`:
 
@@ -65,8 +65,7 @@ class Transaction(dict):
                 feesl = value if isinstance(value, str) else\
                         Transaction.FEESL
                 # use fee statistics if FEESL is not None
-                # if Transaction.FEESL is not None:
-                if feesl is not None and self["type"] not in [6,]:
+                if feesl is not None and self["type"] not in [6, ]:
                     # if fee statistics not found, return static fee value
                     fee = cfg.feestats.get(self["type"], {})\
                           .get(feesl, static_value)
@@ -84,20 +83,25 @@ class Transaction(dict):
                 fee = static_value * (1+k)
             return int(fee)
 
-    def _setNonce(self, publicKey):
-        self["nonce"] = int(
-            dposlib.rest.GET.api.wallets(publicKey)
-            .get("data", {})
-            .get("nonce", 0)
-        ) + 1
-
     def _setSenderPublicKey(self, publicKey):
+        address = dposlib.core.crypto.getAddress(publicKey)
         dict.__setitem__(self, "senderPublicKey", publicKey)
         if self.get("version", 0x00) >= 0x02:
             if "nonce" not in self:
                 self._setNonce(publicKey)
         if "timestamp" not in self:
             self["timestamp"] = slots.getTime()
+        if self["type"] != 4:
+            self["senderId"] = address
+        if self["type"] in [1, 3, 9] and "recipientId" not in self:
+            self["recipientId"] = address
+
+    def _setNonce(self, publicKey):
+        self["nonce"] = int(
+            dposlib.rest.GET.api.wallets(publicKey)
+            .get("data", {})
+            .get("nonce", 0)
+        ) + 1
 
     @staticmethod
     def path():
@@ -220,6 +224,8 @@ class Transaction(dict):
             elif item == "vendorField":
                 value = value.decode("utf-8") if isinstance(value, bytes)\
                         else value
+            elif item == "senderPublicKey":
+                self._setSenderPublicKey(value)
             elif not isinstance(value, cast):
                 value = cast(value)
             dict.__setitem__(self, item, value)
@@ -246,7 +252,12 @@ class Transaction(dict):
                 "field '%s' not allowed in '%s' class" %
                 (item, self.__class__.__name__)
             )
-    __setattr__ = __setitem__
+
+    def __setattr__(self, attr, value):
+        if attr == "senderPublicKey":
+            self._setSenderPublicKey(value)
+        else:
+            self[attr] = value
 
     def __getattr__(self, attr):
         _attr = dict.get(self, attr, self.__dict__.get(attr, False))
@@ -311,31 +322,26 @@ class Transaction(dict):
         self.link(None, secondSecret)
         self.signSign()
 
-    def multiSignWithSecret(self, secret):
+    def multiSignWithSecret(self, secret, index=None):
         """
-        Add a signature in ``signatures`` field according to given index and
-        passphrase.
+        Add a signature in ``signatures`` field.
 
         Args:
             index (:class:`int`): signature index
             secret (:class:`str`): passphrase
         """
-        if self.type != 4:
-            raise Exception(
-                "multisignature only allowed for transaction type 4"
-            )
-
         keys = dposlib.core.crypto.getKeys(secret)
-        try:
+        if self["type"] == 4:
             self.multiSignWithKey(
+                keys["privateKey"],
                 self.asset["multiSignature"]["publicKeys"].index(
                     keys["publicKey"]
-                ), keys["privateKey"]
+                )
             )
-        except ValueError:
-            raise Exception(
-                "publicKey %s not allowed in this transaction" %
-                keys["publicKey"]
+        else:
+            self.multiSignWithKey(
+                keys["privateKey"],
+                index
             )
 
     # sign function using crypto keys
@@ -363,28 +369,37 @@ class Transaction(dict):
         Transaction._secondPrivateKey = secondPrivateKey
         self.signSign()
 
-    def multiSignWithKey(self, index, privateKey):
+    def multiSignWithKey(self, privateKey, index=None):
         """
         Add a signature in ``signatures`` field according to given index and
         privateKey.
 
         Args:
-            index (:class:`int`): signature index
             privateKey (:class:`str`): private key as hex string
+            index (:class:`int`): signature index
         """
-        if self.type != 4:
-            raise Exception(
-                "multisignature only allowed for transaction type 4"
-            )
-
         self.pop("id", False)
         if "fee" not in self:
             self.setFee()
+
+        index = len(self.get("signatures", [])) if index is None else index
         if "signatures" not in self:
-            self["signatures"] = \
-                [None] * len(self.asset["multiSignature"]["publicKeys"])
+            self["signatures"] = [None] * (index + 1)
+        elif len(self["signatures"]) < index + 1:
+            self["signatures"].extend(
+                [None] * (index + 1 - len(self["signatures"]))
+            )
+
         self["signatures"][index] = \
-            "%02x" % index + dposlib.core.crypto.getSignature(self, privateKey)
+            "%02x" % index + dposlib.core.crypto.getSignatureFromBytes(
+                dposlib.core.crypto.getBytes(
+                    self,
+                    exclude_sig=True,
+                    exclude_multi_sig=True,
+                    exclude_second_sig=True
+                ),
+                privateKey
+            )
 
     # root sign function called by others
     def sign(self):
@@ -395,11 +410,6 @@ class Transaction(dict):
         if hasattr(Transaction, "_privateKey"):
             if "sendserPublicKey" not in self:
                 self._setSenderPublicKey(Transaction._publicKey)
-            address = dposlib.core.crypto.getAddress(Transaction._publicKey)
-            if self["type"] != 4:
-                self["senderId"] = address
-            if self["type"] in [1, 3, 9] and "recipientId" not in self:
-                self["recipientId"] = address
             if "fee" not in self:
                 self.setFee()
             self["signature"] = dposlib.core.crypto.getSignature(
@@ -480,6 +490,11 @@ class Data:
     REF = set()
     EVENT = False
     TRACK = True
+
+    datetime = property(
+        lambda cls: slots.getRealTime(cls.timestamp["epoch"]),
+        None, None, ""
+    )
 
     @staticmethod
     def wallet_islinked(func):
