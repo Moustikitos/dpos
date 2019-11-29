@@ -51,7 +51,20 @@ def getAddressFromSecret(secret, marker=None):
     return getAddress(getKeys(secret)["publicKey"], marker)
 
 
-def getMultisignatureAddress(minimum, *publicKeys):
+def getMultisignatureAddress(minimum, *publicKeys, **kwargs):
+    """
+    Compute ARK multi signature address according to
+    `ARK AIP #18 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18\
+.md>`_.
+
+    Args:
+        minimum (:class:`int`): minimum signature required
+        publicKeys (:class:`list of str`): public key list
+        marker (:class:`int`): network marker (optional)
+
+    Returns:
+        :class:`str`: the multisignature address
+    """
     if 2 > minimum > len(publicKeys):
         raise ValueError("min signatures value error")
 
@@ -62,7 +75,7 @@ def getMultisignatureAddress(minimum, *publicKeys):
     for publicKey in publicKeys:
         P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
 
-    return getAddress(hexlify(P.encode()))
+    return getAddress(hexlify(P.encode()), marker=kwargs.get("marker", None))
 
 
 def getAddress(publicKey, marker=None):
