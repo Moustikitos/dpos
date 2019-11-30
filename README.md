@@ -237,17 +237,17 @@ pip install ledgerblue
   - [x] rest `returnKey` behaviour improvement
 
 ### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [X] flake8 compliancy
-  - [X] Ark 2.6 compatibility
-  - [X] removed package resources dependencies
-  - [X] builtin secp256k1 replaced ecdsa lib
-  - [X] added `iop` mainnet and devnet
-  - [X] Lisk and forks dev stopped
-  - [X] `ldgr` import now optional
+  - [x] flake8 compliancy
+  - [x] Ark 2.6 compatibility
+  - [x] removed package resources dependencies
+  - [x] builtin secp256k1 replaced ecdsa lib
+  - [x] added `iop` mainnet and devnet
+  - [x] Lisk and forks dev stopped
+  - [x] `ldgr` import now optional
+  - [x] sphinx doc added
 
 ## ONGOING
-  - [ ] doc writing
-  - [ ] unittest deployment
+  - [ ] multisignature server api
 
 ## TODO
   - [ ] CLI

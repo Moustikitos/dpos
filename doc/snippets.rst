@@ -42,18 +42,28 @@ True
 >>> sig2.b410_schnorr_verify("simple message", puk)
 True
 
-Peer targeting
---------------
+Peer targeting / JSON API access
+--------------------------------
 
 :mod:`dposlib.rest` module provides easy way to target a specific peer when
-sending a http request in blockchain network.
+sending a http request in blockchain network. You can also access whatever 
+JSON API endpoint.
 
   .. note::
-  	Public ip of http request emmiter have to be white listed on targetted
+  	Public ip of http request emitter have to be white listed on targetted
   	peer.
 
-
-
-Timestamp
----------
-
+>>> from dposlib import rest
+>>> # no need to call rest.use directive...
+>>> # https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=ARK&limit=365&toTS=1577833140
+>>> data = rest.GET.data.histoday(
+...    peer="https://min-api.cryptocompare.com", fsym="BTC", tsym="ARK",
+...    limit=365, toTs=1577833140
+...)
+>>> data["Data"][-1]
+{u'volumeto': 242439.09, u'high': 42955.33, u'low': 40832.99, u'time': 1575072000, u'volumefrom': 5.761, u'close': 42789.9, u'open': 40966.82}
+>>> # get configuration of https://explorer.ark.io:8443 peer
+>>> data = rest.GET.api.node.configuration(peer="https://explorer.ark.io:8443")
+>>> data["data"]["transactionPool"]
+{u'dynamicFees': {u'minFeePool': 3000, u'minFeeBroadcast': 3000, u'enabled': True, u'addonBytes': {u'ipfs': 250, u'transfer': 100, u'timelockTransfer': 500, u'multiSignature':
+500, u'delegateRegistration': 400000, u'delegateResignation': 100, u'multiPayment': 500, u'vote': 100, u'secondSignature': 250}}}>>> rest.use("ark")
