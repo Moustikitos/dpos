@@ -5,6 +5,16 @@ from . import *
 
 # https://github.com/bcoin-org/bcrypto/blob/v4.1.0/lib/js/schnorr.js
 def bcrypto410_sign(msg, seckey0):
+    """
+    Generate message signature according to `Bcrypto 4.10 schnorr <https://git\
+hub.com/bcoin-org/bcrypto/blob/v4.1.0/lib/js/schnorr.js>`_ spec.
+
+    Args:
+        msg (:class:`bytes`): sha256 message-hash
+        secret0 (:class:`bytes`): private key
+    Returns:
+        :class:`bytes`: RAW signature
+    """
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
 
@@ -37,6 +47,18 @@ def bcrypto410_sign(msg, seckey0):
 
 
 def bcrypto410_verify(msg, pubkey, sig):
+    """
+    Check if public key match message signature according to `Bcrypto 4.10 sch\
+norr <https://github.com/bcoin-org/bcrypto/blob/v4.1.0/lib/js/schnorr.js>`_
+    spec.
+
+    Args:
+        msg (:class:`bytes`): sha256 message-hash
+        pubkey (:class:`bytes`): encoded public key
+        sig (:class:`bytes`): signature
+    Returns:
+        :class:`bool`: True if match
+    """
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
     if len(sig) != 64:
@@ -64,7 +86,8 @@ def bcrypto410_verify(msg, pubkey, sig):
 
 def bytes_from_point(P):
     """
-    Encode a public key as defined in bip schnorr spec.
+    Encode a public key as defined in `BIP schnorr <https://github.com/sipa/bi\
+ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
     Args:
         P (:class:`PublicKey`):
@@ -76,7 +99,9 @@ def bytes_from_point(P):
 
 def point_from_bytes(pubkeyB):
     """
-    Decode a public key as defined in bip schnorr spec.
+    Decode a public key as defined in `BIP schnorr <https://github.com/sipa/bi\
+ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+
     """
     x = int_from_bytes(pubkeyB)
     y = y_from_x(x)
@@ -86,6 +111,16 @@ def point_from_bytes(pubkeyB):
 
 
 def sign(msg, seckey0):
+    """
+    Generate message signature according to `BIP schnorr <https://github.com/s\
+ipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+
+    Args:
+        msg (:class:`bytes`): sha256 message-hash
+        secret0 (:class:`bytes`): private key
+    Returns:
+        :class:`bytes`: RAW signature
+    """
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
 
@@ -117,6 +152,17 @@ def sign(msg, seckey0):
 
 
 def verify(msg, pubkey, sig):
+    """
+    Check if public key match message signature according to `BIP schnorr <htt\
+ps://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+
+    Args:
+        msg (:class:`bytes`): sha256 message-hash
+        pubkey (:class:`bytes`): encoded public key
+        sig (:class:`bytes`): signature
+    Returns:
+        :class:`bool`: True if match
+    """
     if len(msg) != 32:
         raise ValueError('The message must be a 32-byte array.')
     if len(pubkey) != 32:
