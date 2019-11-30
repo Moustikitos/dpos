@@ -520,7 +520,7 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
         address (:class:`str`): valid recipient address
         secret (:class:`str`): lock passphrase
         expiration (:class:`float`): transaction validity in hour
-        vendorField (:classl`str`): vendor field message
+        vendorField (:class:`str`): vendor field message
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
