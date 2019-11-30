@@ -412,11 +412,21 @@ def downVote(*usernames, **kwargs):
 
 # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md
 def registerMultiSignature(minSig, *publicKeys, **kwargs):
+    """
+    Build a multisignature registration transaction.
+
+    Args:
+        minimum (:class:`int`): minimum signature required
+        publicKeys (:class:`list of str`): public key list
+        marker (:class:`int`): network marker (optional)
+    Returns:
+        :class:`dposlib.blockchain.Transaction`: transaction object
+    """
     return Transaction(
         version=2,
         type=4,
         MultiSignatureAddress=crypto.getMultisignatureAddress(
-           minSig, *publicKeys
+           minSig, *publicKeys, **kwargs
         ),
         asset={
             "multiSignature": {
