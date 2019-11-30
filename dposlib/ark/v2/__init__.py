@@ -270,7 +270,7 @@ def transfer(amount, address, vendorField=None, expiration=0, version=1):
     Arguments:
         amount (:class:`float`): transaction amount in ark
         address (:class:`str`): valid recipient address
-        vendorField (:classl`str`): vendor field message
+        vendorField (:class:`str`): vendor field message
         expiration (:class:`float`): time of persistance in hour
         version (:class:`int`): transaction version
     Returns:
@@ -464,7 +464,7 @@ def multiPayment(*pairs, **kwargs):
 
     Arguments:
         pairs (:class:`iterable`): recipient-amount pair iterable
-        vendorField (:classl`str`): vendor field message
+        vendorField (:class:`str`): vendor field message
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
