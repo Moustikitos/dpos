@@ -416,7 +416,7 @@ def registerMultiSignature(minSig, *publicKeys, **kwargs):
     Build a multisignature registration transaction.
 
     Args:
-        minimum (:class:`int`): minimum signature required
+        minimum (:class:`int`): minSig signature required
         publicKeys (:class:`list of str`): public key list
         marker (:class:`int`): network marker (optional)
     Returns:
