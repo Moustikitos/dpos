@@ -67,3 +67,30 @@ JSON API endpoint.
 >>> data["data"]["transactionPool"]
 {u'dynamicFees': {u'minFeePool': 3000, u'minFeeBroadcast': 3000, u'enabled': True, u'addonBytes': {u'ipfs': 250, u'transfer': 100, u'timelockTransfer': 500, u'multiSignature':
 500, u'delegateRegistration': 400000, u'delegateResignation': 100, u'multiPayment': 500, u'vote': 100, u'secondSignature': 250}}}>>> rest.use("ark")
+
+Emoji in ``vendorField``
+------------------------
+
+This transaction will show a nice sparkle in its ``vendorField``:
+
+>>> dposlib.core.transfer(1, "DChFFe4QMwZesdMYNEkJsqnqY4MnF4TYQu", vendorField=u"message with sparkles \u2728")
+{
+  "amount": 100000000,
+  "asset": {},
+  "recipientId": "DChFFe4QMwZesdMYNEkJsqnqY4MnF4TYQu",
+  "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+  "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+  "timestamp": 85040681,
+  "type": 0,
+  "vendorField": "message with sparkles \u2728",
+  "version": 1
+}
+
+Emoji can be embeded in transaction ``vendorField`` using python unicode
+string. For example:
+
+  * |sparkles|: unicode hex value ``2728``, use ``\uXXXX`` format
+>>> u"emoji defined by less than or equal 4 digits : \u2728 - "
+
+  * |exchange|: unicode hex value ``1f4b1``, use ``\UXXXXXXXX`` format
+>>> u"emoji defined by more than 4 digits : \U0001f4b1"

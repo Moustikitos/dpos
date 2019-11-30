@@ -237,11 +237,11 @@ pip install ledgerblue
   - [x] rest `returnKey` behaviour improvement
 
 ### 0.3.0
-  - [x] flake8 compliancy
+  - [x] `flake8` compliancy
   - [x] Ark 2.6 compatibility
   - [x] removed package resources dependencies
-  - [x] builtin secp256k1 replaced ecdsa lib
-  - [x] added `iop` mainnet and devnet
+  - [x] `ecdsa` lib replaced by builtin `secp256k1`
+  - [x] added [Iop](https://iop.global/) mainnet and devnet
   - [x] Lisk and forks dev stopped
   - [x] `ldgr` import now optional
   - [x] sphinx doc added

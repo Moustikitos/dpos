@@ -17,6 +17,7 @@ dark = {
     "maxvotepertx": 1,
     "maxvote": 1,
     "aip20": 1,
+    "txversion": 2,
 
     "seeds": [
         "https://dexplorer.ark.io:8443"

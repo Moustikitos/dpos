@@ -613,15 +613,6 @@ class Data:
 
 class Wallet(Data):
 
-    ARK_TX_VERSION = False
-
-    ark_tx_v2 = property(
-        lambda w: Wallet.ARK_TX_VERSION,
-        lambda w, v: setattr(Wallet, "ARK_TX_VERSION", bool(v)),
-        None,
-        "Activate or deactivate transaction version 2"
-    )
-
     unlink = staticmethod(Transaction.unlink)
 
     def link(self, secret=None, secondSecret=None):
@@ -684,7 +675,7 @@ class Wallet(Data):
     def send(self, amount, address, vendorField=None, fee_included=False):
         tx = dposlib.core.transfer(
             amount, address, vendorField,
-            version=2 if Wallet.ARK_TX_VERSION else 1
+            version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(
             self._finalizeTx(tx, fee_included=fee_included)
@@ -693,34 +684,34 @@ class Wallet(Data):
     @Data.wallet_islinked
     def registerSecondSecret(self, secondSecret):
         tx = dposlib.core.registerSecondSecret(
-            secondSecret, version=2 if Wallet.ARK_TX_VERSION else 1
+            secondSecret, version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerSecondPublicKey(self, secondPublicKey):
         tx = dposlib.core.registerSecondPublicKey(
-            secondPublicKey, version=2 if Wallet.ARK_TX_VERSION else 1
+            secondPublicKey, version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerAsDelegate(self, username):
         tx = dposlib.core.registerAsDelegate(
-            username, version=2 if Wallet.ARK_TX_VERSION else 1
+            username, version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def upVote(self, *usernames):
         tx = dposlib.core.upVote(
-            *usernames, version=2 if Wallet.ARK_TX_VERSION else 1
+            *usernames, version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def downVote(self, *usernames):
         tx = dposlib.core.downVote(
-            *usernames, version=2 if Wallet.ARK_TX_VERSION else 1
+            *usernames, version=cfg.txversion
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))

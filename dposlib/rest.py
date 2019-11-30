@@ -329,6 +329,7 @@ def use(network, **kwargs):
     cfg.hotmode = False    # offline mode set
     cfg.network = network  # network name set
     cfg.peers = []         # peer list
+    cfg.txversion = 1
 
     # load network.net configuration
     data = dict(getattr(net, network))

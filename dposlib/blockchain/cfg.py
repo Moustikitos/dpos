@@ -9,3 +9,4 @@ headers = {"Content-Type": "application/json"}
 timeout = 5
 verify = True
 peers = []
+txversion = 1

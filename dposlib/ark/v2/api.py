@@ -26,7 +26,7 @@ class Wallet(dposlib.blockchain.Wallet):
     )
 
     def __init__(self, address, **kw):
-        dposlib.blockchain.Data.__init__(
+        dposlib.blockchain.Wallet.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
         )
 

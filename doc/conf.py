@@ -31,6 +31,10 @@ author = 'Toons'
 
 # The master toctree document.
 master_doc = 'index'
+rst_epilog = u"""
+.. |sparkles| replace:: \u2728
+.. |exchange| replace:: \U0001f4b1
+"""
 
 # -- General configuration ---------------------------------------------------
 
