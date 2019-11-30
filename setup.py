@@ -30,6 +30,7 @@ kw = {
         "dposlib.ark",
         "dposlib.ark.secp256k1",
         "dposlib.ark.v2",
+        "dposlib.ark.v2.cold",
         "dposlib.blockchain",
     ],
     "install_requires": [

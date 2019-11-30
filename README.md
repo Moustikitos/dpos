@@ -236,7 +236,7 @@ pip install ledgerblue
   - [x] packaging improvement
   - [x] rest `returnKey` behaviour improvement
 
-### 0.3.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.3.0
   - [x] flake8 compliancy
   - [x] Ark 2.6 compatibility
   - [x] removed package resources dependencies
@@ -246,9 +246,8 @@ pip install ledgerblue
   - [x] `ldgr` import now optional
   - [x] sphinx doc added
 
-## ONGOING
+### 0.3.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [ ] multisignature server api
 
 ## TODO
   - [ ] CLI
- 
