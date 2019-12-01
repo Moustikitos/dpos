@@ -4,9 +4,8 @@
  API
 =====
 
-The abstract :class:`Data`
---------------------------
+The :class:`Wallet`
+-------------------
 
-.. autoclass:: dposlib.blockchain.Data
+.. autoclass:: dposlib.blockchain.Wallet
     :members:
-

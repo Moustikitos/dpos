@@ -503,10 +503,6 @@ class Transaction(dict):
 
 # API
 class Data:
-    """
-    This abstract class gives basic interface to json interaction within
-    blockchain.
-    """
 
     REF = set()
     EVENT = False
@@ -613,8 +609,6 @@ class Data:
 class Wallet(Data):
 
     def link(self, secret=None, secondSecret=None):
-        """
-        """
         self.unlink()
         try:
             keys = dposlib.core.crypto.getKeys(
@@ -675,6 +669,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def send(self, amount, address, vendorField=None, fee_included=False):
+        "See :func:`dposlib.ark.v2.transfer`."
         tx = dposlib.core.transfer(
             amount, address, vendorField,
             version=cfg.txversion
@@ -685,6 +680,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def registerSecondSecret(self, secondSecret):
+        "See :func:`dposlib.ark.v2.registerSecondSecret`."
         tx = dposlib.core.registerSecondSecret(
             secondSecret, version=cfg.txversion
         )
@@ -692,6 +688,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def registerSecondPublicKey(self, secondPublicKey):
+        "See :func:`dposlib.ark.v2.registerSecondPublicKey`."
         tx = dposlib.core.registerSecondPublicKey(
             secondPublicKey, version=cfg.txversion
         )
@@ -699,6 +696,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def registerAsDelegate(self, username):
+        "See :func:`dposlib.ark.v2.registerAsDelegate`."
         tx = dposlib.core.registerAsDelegate(
             username, version=cfg.txversion
         )
@@ -706,6 +704,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def upVote(self, *usernames):
+        "See :func:`dposlib.ark.v2.upVote`."
         tx = dposlib.core.upVote(
             *usernames, version=cfg.txversion
         )
@@ -713,6 +712,7 @@ class Wallet(Data):
 
     @Data.wallet_islinked
     def downVote(self, *usernames):
+        "See :func:`dposlib.ark.v2.downVote`."
         tx = dposlib.core.downVote(
             *usernames, version=cfg.txversion
         )

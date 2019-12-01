@@ -48,22 +48,26 @@ class Wallet(dposlib.blockchain.Wallet):
 
     @dposlib.blockchain.Data.wallet_islinked
     def registerIpfs(self, ipfs):
+        "See :func:`dposlib.ark.v2.registerIpfs`."
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
     def multiSend(self, *pairs, **kwargs):
+        "See :func:`dposlib.ark.v2.multiPayment`."
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
     def resignate(self):
+        "See :func:`dposlib.ark.v2.delegateResignation`."
         tx = dposlib.core.delegateResignation()
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
+        "See :func:`dposlib.ark.v2.htlcLock`."
         tx = dposlib.core.htlcLock(
             amount, address, secret,
             expiration=expiration, vendorField=vendorField
@@ -72,11 +76,13 @@ class Wallet(dposlib.blockchain.Wallet):
 
     @dposlib.blockchain.Data.wallet_islinked
     def claimHtlc(self, txid, secret):
+        "See :func:`dposlib.ark.v2.htlcClaim`."
         tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
     def refundHtlc(self, txid):
+        "See :func:`dposlib.ark.v2.htlcRefund`."
         tx = dposlib.core.htlcRefund(txid)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
