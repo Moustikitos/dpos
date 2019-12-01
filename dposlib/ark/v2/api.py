@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # © Toons
-# ~ https://docs.ark.io/api/public/v2/
 
 import os
 import getpass
@@ -48,32 +47,38 @@ class Wallet(dposlib.blockchain.Wallet):
         ][:limit]
 
     @dposlib.blockchain.Data.wallet_islinked
-    def registerIpfs(self):
-        raise NotImplementedError("Not implemented yet")
+    def registerIpfs(self, ipfs):
+        tx = dposlib.core.registerIpfs(ipfs)
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
-    def multiSend(self):
-        raise NotImplementedError("Not implemented yet")
-
-    @dposlib.blockchain.Data.wallet_islinked
-    def multiSend(self):
-        raise NotImplementedError("Not implemented yet")
+    def multiSend(self, *pairs, **kwargs):
+        tx = dposlib.core.multiPayment(*pairs, **kwargs)
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
     def resignate(self):
-        raise NotImplementedError("Not implemented yet")
+        tx = dposlib.core.delegateResignation()
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
-    def sendHtlc(self):
-        raise NotImplementedError("Not implemented yet")
+    def sendHtlc(self, amount, address, secret,
+                 expiration=24, vendorField=None):
+        tx = dposlib.core.htlcLock(
+            amount, address, secret,
+            expiration=expiration, vendorField=vendorField
+        )
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
-    def claimHtlc(self):
-        raise NotImplementedError("Not implemented yet")
+    def claimHtlc(self, txid, secret):
+        tx = dposlib.core.htlcClaim(txid, secret)
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.Data.wallet_islinked
-    def refundHtlc(self):
-        raise NotImplementedError("Not implemented yet")
+    def refundHtlc(self, txid):
+        tx = dposlib.core.htlcRefund(txid)
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 
 if LEDGERBLUE:
@@ -224,7 +229,3 @@ class Webhook(dposlib.blockchain.Data):
         )
         if os.path.exists(whk_path):
             os.remove(whk_path)
-
-
-class MultiSignature(dposlib.blockchain.Data):
-    pass

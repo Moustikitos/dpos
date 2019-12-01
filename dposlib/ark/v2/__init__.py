@@ -183,16 +183,17 @@ def init(seed=None):
     )
     # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
     if cfg.feestats == {}:
-        if isinstance(FEES, list):
+        fees = FEES["data"]
+        if isinstance(fees, list):
             cfg.feestats = dict([
                 int(i["type"]), {
                     "avgFee": int(i["avg"]),
                     "minFee": int(i["min"]),
                     "maxFee": int(i["max"]),
                 }
-            ] for i in FEES)
+            ] for i in fees)
         # since ark v2.6 fee statistic structure is a dictionary
-        elif isinstance(FEES, dict):
+        elif isinstance(fees, dict):
             NUM = dict([v, k] for k, v in TRANSACTIONS.items())
             cfg.feestats = dict([
                 NUM[k], {
@@ -200,7 +201,7 @@ def init(seed=None):
                     "minFee": int(v["min"]),
                     "maxFee": int(v["max"]),
                 }
-            ] for k, v in FEES.get("1", {}).items())
+            ] for k, v in fees.get("1", {}).items())
     # activate dynamic fees
     Transaction.useDynamicFee()
     # -- network connection management ----------------------------------------
@@ -425,8 +426,10 @@ def registerMultiSignature(minSig, *publicKeys, **kwargs):
     return Transaction(
         version=2,
         type=4,
-        MultiSignatureAddress=crypto.getMultisignatureAddress(
-           minSig, *publicKeys, **kwargs
+        MultiSignatureAddress=crypto.getAddress(
+            crypto.getMultiSignaturePublicKey(
+                minSig, *publicKeys
+            )
         ),
         asset={
             "multiSignature": {

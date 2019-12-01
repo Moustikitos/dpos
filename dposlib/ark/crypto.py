@@ -7,7 +7,7 @@ import base58
 from dposlib import BytesIO
 from dposlib.ark import secp256k1
 from dposlib.blockchain import cfg
-from dposlib.util.bin import BHEX, hexlify, unhexlify, pack, pack_bytes
+from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 from dposlib.ark.secp256k1 import schnorr, ecdsa
 
 
@@ -22,13 +22,13 @@ def getKeys(secret):
     Returns:
         :class:`dict`: public, private and WIF keys
     """
-    if isinstance(secret, str):
-        seed = secp256k1.hash_sha256(secret)
-    elif isinstance(bytes, str):
-        seed = secret
-    elif isinstance(secret, int):
+    if isinstance(secret, (str, bytes)):
+        try:
+            seed = unhexlify(secret)
+        except TypeError:
+            seed = secp256k1.hash_sha256(secret)
+    else:
         seed = secp256k1.bytes_from_int(secret)
-
     publicKey = secp256k1.PublicKey.from_seed(seed)
     return {
         "publicKey": hexlify(publicKey.encode()),
@@ -51,9 +51,9 @@ def getAddressFromSecret(secret, marker=None):
     return getAddress(getKeys(secret)["publicKey"], marker)
 
 
-def getMultisignatureAddress(minimum, *publicKeys, **kwargs):
+def getMultiSignaturePublicKey(minimum, *publicKeys):
     """
-    Compute ARK multi signature address according to
+    Compute ARK multi signature publicKey according to
     `ARK AIP #18 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18\
 .md>`_.
 
@@ -67,15 +67,13 @@ def getMultisignatureAddress(minimum, *publicKeys, **kwargs):
     """
     if 2 > minimum > len(publicKeys):
         raise ValueError("min signatures value error")
-
     secret = "%02x" % minimum
     P = secp256k1.PublicKey.from_secret(
         ("0" if len(secret) % 2 else "") + secret
     )
     for publicKey in publicKeys:
         P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
-
-    return getAddress(hexlify(P.encode()), marker=kwargs.get("marker", None))
+    return hexlify(P.encode())
 
 
 def getAddress(publicKey, marker=None):
@@ -109,9 +107,10 @@ def getWIF(seed):
     Returns:
         :class:`str`: WIF address
     """
-    seed = unhexlify(cfg.wif) + seed[:32] + b"\x01"  # \x01 because compressed
-    b58 = base58.b58encode_check(seed)
-    return str(b58.decode('utf-8') if isinstance(b58, bytes) else b58)
+    if hasattr(cfg, "wif"):
+        seed = unhexlify(cfg.wif) + seed[:32] + b"\x01"  # \x01 -> compressed
+        b58 = base58.b58encode_check(seed)
+        return str(b58.decode('utf-8') if isinstance(b58, bytes) else b58)
 
 
 def wifSignature(tx, wif):

@@ -103,6 +103,10 @@ def tagged_hash(tag, msg):
     return hash_sha256(tag_hash + tag_hash + msg)
 
 
+def is_infinity(P):
+    return P is None
+
+
 def x(P):
     """
     Return :class:`P.x` or :class:`P[0]`.
@@ -192,8 +196,16 @@ def jacobi(x):
     return pow(x, (p - 1) // 2, p)
 
 
+# def is_square(x):
+#     return jacobi(x) == 1
+
+
 def is_quad(x):
     return jacobi(x) == 1
+
+
+def has_square_y(P):
+    return not is_infinity(P) and is_quad(y(P))
 
 
 def encoded_from_point(P):

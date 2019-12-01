@@ -142,29 +142,9 @@ class TestArkCrypto(unittest.TestCase):
             )
         )
 
-    def test_transaction_link(self):
-        dposlib.core.Transaction.link(self.secret, self.secondSecret)
-        self.assertEqual(
-            dposlib.core.crypto.verifySignatureFromBytes(
-                dposlib.core.crypto.getBytes(TestArkCrypto.tx0_dict),
-                dposlib.core.Transaction._publicKey,
-                TestArkCrypto.signed_tx0_dict["signature"]
-            ),
-            True
-        )
-        self.assertEqual(
-            dposlib.core.crypto.verifySignatureFromBytes(
-                dposlib.core.crypto.getBytes(TestArkCrypto.signed_tx0_dict),
-                dposlib.core.Transaction._secondPublicKey,
-                TestArkCrypto.signSigned_tx0_dict["signSignature"]
-            ),
-            True
-        )
-        dposlib.core.Transaction.unlink()
-
     def test_transaction_sign(self):
-        dposlib.core.Transaction.link(self.secret, self.secondSecret)
         tx = dposlib.core.Transaction(TestArkCrypto.tx0_dict)
+        tx.link(self.secret, self.secondSecret)
         tx.sign()
         self.assertEqual(tx["signature"],
                          TestArkCrypto.signed_tx0_dict["signature"])
@@ -175,7 +155,7 @@ class TestArkCrypto(unittest.TestCase):
                          TestArkCrypto.signSigned_tx0_dict["signSignature"])
         self.assertEqual(bin_.hexlify(dposlib.core.crypto.getBytes(tx)),
                          TestArkCrypto.signSigned_tx0_hex)
-        dposlib.core.Transaction.unlink()
+        tx.unlink()
 
     def test_wif_sign(self):
         keys = dposlib.core.crypto.getKeys(self.secret)
