@@ -411,7 +411,7 @@ class Transaction(dict):
 
         self["signatures"] = sorted(
             self.get("signatures", []) + [
-                signature = "%02x" % index + 
+                "%02x" % index +
                 dposlib.core.crypto.getSignatureFromBytes(
                     dposlib.core.crypto.getBytes(
                         self,
@@ -424,21 +424,6 @@ class Transaction(dict):
             ],
             key=lambda s: s[:2]
         )
-
-        # signature = "%02x" % index + dposlib.core.crypto.getSignatureFromBytes(
-        #     dposlib.core.crypto.getBytes(
-        #         self,
-        #         exclude_sig=True,
-        #         exclude_multi_sig=True,
-        #         exclude_second_sig=True
-        #     ),
-        #     privateKey
-        # )
-
-        # if "signatures" not in self:
-        #     self["signatures"] = [signature]
-        # else:
-        #     self["signatures"].insert(index, signature)
 
     # root sign function called by others
     def sign(self):
