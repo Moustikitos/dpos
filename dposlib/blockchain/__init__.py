@@ -388,7 +388,6 @@ class Transaction(dict):
 
         Args:
             privateKey (:class:`str`): private key as hex string
-            index (:class:`int`): signature index
         """
         publicKey = dposlib.core.crypto.secp256k1.PublicKey.from_seed(
             dposlib.core.crypto.unhexlify(privateKey)
@@ -410,20 +409,36 @@ class Transaction(dict):
         if "fee" not in self:
             self.setFee()
 
-        signature = "%02x" % index + dposlib.core.crypto.getSignatureFromBytes(
-            dposlib.core.crypto.getBytes(
-                self,
-                exclude_sig=True,
-                exclude_multi_sig=True,
-                exclude_second_sig=True
-            ),
-            privateKey
+        self["signatures"] = sorted(
+            self.get("signatures", []) + [
+                signature = "%02x" % index + 
+                dposlib.core.crypto.getSignatureFromBytes(
+                    dposlib.core.crypto.getBytes(
+                        self,
+                        exclude_sig=True,
+                        exclude_multi_sig=True,
+                        exclude_second_sig=True
+                    ),
+                    privateKey
+                )
+            ],
+            key=lambda s: s[:2]
         )
 
-        if "signatures" not in self:
-            self["signatures"] = [signature]
-        else:
-            self["signatures"].insert(index, signature)
+        # signature = "%02x" % index + dposlib.core.crypto.getSignatureFromBytes(
+        #     dposlib.core.crypto.getBytes(
+        #         self,
+        #         exclude_sig=True,
+        #         exclude_multi_sig=True,
+        #         exclude_second_sig=True
+        #     ),
+        #     privateKey
+        # )
+
+        # if "signatures" not in self:
+        #     self["signatures"] = [signature]
+        # else:
+        #     self["signatures"].insert(index, signature)
 
     # root sign function called by others
     def sign(self):
@@ -491,14 +506,14 @@ class Transaction(dict):
 
     def dump(self):
         """Dumps transaction in registry."""
+        pathfile = self.path()
+        registry = loadJson(pathfile)
+        data = dict(self)
         if "id" in self:
-            pathfile = self.path()
-            data = dict(self)
-            registry = loadJson(pathfile)
             registry[data.pop("id")] = data
-            dumpJson(registry, pathfile)
         else:
-            raise Exception("transaction is not finalized")
+            registry["stack"] = registry.get("stack", []) + [self]
+        dumpJson(registry, pathfile)
 
 
 # API
