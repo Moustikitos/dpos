@@ -99,23 +99,17 @@ class Transaction(dict):
 
     def _setSenderPublicKey(self, publicKey):
         address = dposlib.core.crypto.getAddress(publicKey)
-        dict.__setitem__(self, "senderPublicKey", publicKey)
-        if self.get("version", 0x00) >= 0x02:
-            if "nonce" not in self:
-                self._setNonce(publicKey)
-        else:
-            self._multisignature = {}
+        data = dposlib.rest.GET.api.wallets(publicKey).get("data", {})
+        if self.get("version", 0x00) >= 0x02 and "nonce" not in self:
+            self["nonce"] = int(data.get("nonce", 0)) + 1
         if "timestamp" not in self:
             self["timestamp"] = slots.getTime()
         if self["type"] != 4:
             self["senderId"] = address
         if self["type"] in [1, 3, 9] and "recipientId" not in self:
             self["recipientId"] = address
-
-    def _setNonce(self, publicKey):
-        data = dposlib.rest.GET.api.wallets(publicKey).get("data", {})
-        self["nonce"] = int(data.get("nonce", 0)) + 1
         self._multisignature = data.get("multiSignature", {})
+        dict.__setitem__(self, "senderPublicKey", publicKey)
 
     def path(self):
         """Return current registry path."""
@@ -229,6 +223,8 @@ class Transaction(dict):
         # does not match dposlib.core.TYPING
         if item == "timestamp" and isinstance(value, dict):
             value = value.get("epoch", slots.getTime())
+        elif item == "senderPublicKey":
+            self._setSenderPublicKey(value)
         else:
             item = "recipientId" if item == "recipient" \
                     else "senderId" if item == "sender" \
@@ -241,8 +237,6 @@ class Transaction(dict):
             elif item == "vendorField":
                 value = value.decode("utf-8") if isinstance(value, bytes) \
                         else value
-            elif item == "senderPublicKey":
-                self._setSenderPublicKey(value)
             elif not isinstance(value, cast):
                 value = cast(value)
             dict.__setitem__(self, item, value)
