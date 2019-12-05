@@ -39,6 +39,15 @@ def load(network, publicKey, txid):
     return registry.get(txid, False)
 
 
+def pop(network, tx):
+    path = os.path.join(
+        dposlib.ROOT, ".registry", network, tx["senderPublicKey"]
+    )
+    registry = loadJson(path)
+    registry.pop(identify(tx), False)
+    dumpJson(registry, path)
+
+
 def dump(network, tx):
     path = os.path.join(
         dposlib.ROOT, ".registry", network, tx["senderPublicKey"]
@@ -116,7 +125,7 @@ def postNewTransactions(network):
                     "transaction #%d successfully posted (id:%s)" % (idx, id_)
                 )
 
-        return json.dumps({"messages": msg, "transactions": txs}), 200
+        return json.dumps({"messages": msg, "transactions": txs}), 201
 
     else:
         return json.dumps({"API error": "POST request only allowed here"})
@@ -140,14 +149,12 @@ def putSignature(network, publicKey):
         txid = data["pair"]["id"]
         ms_publicKey = data["pair"]["publicKey"]
         signature = data["pair"]["signature"]
-        print(network, publicKey, txid)
         tx = load(network, publicKey, txid)
 
         if not tx:
             return json.dumps({"API error": "transaction %s not found" % txid})
 
         tx = dposlib.core.Transaction(tx)
-        print(tx._multisignature, ms_publicKey)
         if tx["type"] == 4:
             index = tx.asset["multiSignature"]["publicKeys"].index(
                 ms_publicKey
@@ -155,7 +162,8 @@ def putSignature(network, publicKey):
         elif getattr(tx, "_multisignature", False):
             if ms_publicKey not in tx._multisignature["publicKeys"]:
                 return json.dumps({
-                    "API error": "public key %s not allowed here" % ms_publicKey
+                    "API error": "public key %s not allowed here" %
+                    ms_publicKey
                 })
             index = tx._multisignature["publicKeys"].index(ms_publicKey)
         else:
@@ -174,19 +182,28 @@ def putSignature(network, publicKey):
         if check:
             tx["signatures"] = tx.get("signatures", []) + \
                                ["%02x" % index + signature]
-            dump(network, tx)
             if len(tx["signatures"]) >= tx._multisignature["min"]:
                 tx.identify()
+                response = rest.POST.api.transactions(transactions=[tx])
+                if len(response.get("data", {}).get("broadcast", [])):
+                    msg = response["data"]
+                    code = 200
+                    tx.pop("id")
+                    pop(network, tx)
+                else:
+                    msg = "error broadcasting transaction to blockchain"
+                    code = 202
+                    dump(network, tx)
                 return json.dumps({
-                    "success": "transaction sent to blockchain",
-                    "message": rest.POST.api.transactions(transactions=[tx]),
+                    "message": msg,
                     "data": tx
-                }), 200
+                }), code
             else:
+                dump(network, tx)
                 return json.dumps({
                     "success": "signature added to transaction",
                     "data": tx
-                }), 200
+                }), 201
         else:
             return json.dumps({
                 "API error": "signature does not match owner keys"

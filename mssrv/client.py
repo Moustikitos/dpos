@@ -27,7 +27,9 @@ def postNewTransactions(network, *tx):
 
 
 def putSignature(network, publicKey, txid, ms_publicKey, signature):
-    return rest.PUT.multisignature.__getattr__(network).put.__getattr__(publicKey)(
+    return rest.PUT.multisignature.__getattr__(network).put.__getattr__(
+        publicKey
+    )(
         peer=API_PEER,
         pair={"publicKey": ms_publicKey, "signature": signature, "id": txid}
     )
