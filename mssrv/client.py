@@ -26,34 +26,34 @@ def postNewTransactions(network, *tx):
     )
 
 
-def putSignature(network, txid, publicKey, signature):
-    return rest.PUT.multisignature.__getattr__(network).__getattr__(txid).put(
+def putSignature(network, publicKey, txid, ms_publicKey, signature):
+    return rest.PUT.multisignature.__getattr__(network).put.__getattr__(publicKey)(
         peer=API_PEER,
-        pair={"publicKey":publicKey, "signature":signature}
+        pair={"publicKey": ms_publicKey, "signature": signature, "id": txid}
     )
 
 
-def remoteSignWithSecret(network, txid, secret=None):
+def remoteSignWithSecret(network, publicKey, txid, secret=None):
     return remoteSignWithKey(
-        network, txid,
+        network, publicKey, txid,
         hexlify(
             secp256k1.hash_sha256(
-                secret if secret is not None else 
+                secret if secret is not None else
                 getpass.getpass("secret > ")
             )
         )
     )
 
 
-def remoteSignWithKey(network, txid, privateKey):
-    publicKey = hexlify(
-        secp256k1.PublicKey.from_seed(unexlify(privateKey)).encode()
+def remoteSignWithKey(network, publicKey, txid, ms_privateKey):
+    ms_publicKey = hexlify(
+        secp256k1.PublicKey.from_seed(unhexlify(ms_privateKey)).encode()
     )
 
-    wallet = getWallet(network, publicKey)
+    wallet = getWallet(network, publicKey).get("data", {})
     if txid in wallet:
         return putSignature(
-            network, txid, publicKey,
+            network, publicKey, txid, ms_publicKey,
             crypto.getSignatureFromBytes(
                 crypto.getBytes(
                     wallet[txid],
@@ -61,7 +61,7 @@ def remoteSignWithKey(network, txid, privateKey):
                     exclude_multi_sig=True,
                     exclude_second_sig=True
                 ),
-                privateKey
+                ms_privateKey
             )
         )
     else:

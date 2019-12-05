@@ -28,7 +28,7 @@ app.config.update(
     # reload templates without server restart
     TEMPLATES_AUTO_RELOAD=True,
     #
-    DEBUG=True
+    # DEBUG=True
 )
 
 
@@ -70,8 +70,9 @@ def handle_exception(error):
 def getAll(network):
     result = {}
     search_path = os.path.join(dposlib.ROOT, ".registry", network)
-    for name in os.listdir(search_path):
-        result[name] = loadJson(os.path.join(search_path, name))
+    if os.path.exists(search_path) and os.path.isdir(search_path):
+        for name in os.listdir(search_path):
+            result[name] = loadJson(os.path.join(search_path, name))
     return json.dumps({"data": result}), 200
 
 
@@ -100,11 +101,12 @@ def postNewTransactions(network):
             return json.dumps({"API error": "transaction(s) not found"})
 
         transactions = data.get("transactions", [])
-        msg = txs = []
+        msg = []
+        txs = []
         for tx in transactions:
             idx = transactions.index(tx)
             try:
-                tx = dposlib.core.Tranaction(tx)
+                tx = dposlib.core.Transaction(tx)
                 id_ = dump(network, tx)
             except Exception as error:
                 msg.append("transaction #%d rejected (%r)" % (idx, error))
@@ -121,10 +123,13 @@ def postNewTransactions(network):
 
 
 @app.route(
-    "/multisignature/<string:network>/put/<string:txid>",
+    "/multisignature/<string:network>/put/<string:publicKey>",
     methods=["PUT"]
 )
-def putSignature(network, txid):
+def putSignature(network, publicKey):
+
+    if network != getattr(rest.cfg, "network", False):
+        rest.use(network)
 
     if flask.request.method == "PUT":
         data = json.loads(flask.request.data)
@@ -132,24 +137,27 @@ def putSignature(network, txid):
         if "pair" not in data:
             return json.dumps({"error": "no signature found"})
 
-        publicKey = data["pair"]["publicKey"]
+        txid = data["pair"]["id"]
+        ms_publicKey = data["pair"]["publicKey"]
         signature = data["pair"]["signature"]
+        print(network, publicKey, txid)
         tx = load(network, publicKey, txid)
 
         if not tx:
             return json.dumps({"API error": "transaction %s not found" % txid})
 
         tx = dposlib.core.Transaction(tx)
+        print(tx._multisignature, ms_publicKey)
         if tx["type"] == 4:
             index = tx.asset["multiSignature"]["publicKeys"].index(
-                publicKey
+                ms_publicKey
             )
-        elif tx.get("_multisignature", False):
-            if publicKey not in tx._multisignature["publicKeys"]:
+        elif getattr(tx, "_multisignature", False):
+            if ms_publicKey not in tx._multisignature["publicKeys"]:
                 return json.dumps({
-                    "API error": "public key %s not allowed here" % publicKey
+                    "API error": "public key %s not allowed here" % ms_publicKey
                 })
-            index = tx._multisignature["publicKeys"].index(publicKey)
+            index = tx._multisignature["publicKeys"].index(ms_publicKey)
         else:
             return json.dumps({"error": "multisignature not to be used here"})
 
@@ -160,11 +168,10 @@ def putSignature(network, txid):
                 exclude_multi_sig=True,
                 exclude_second_sig=True
             ),
-            publicKey, signature
+            ms_publicKey, signature
         )
         #
         if check:
-            msg = txs = []
             tx["signatures"] = tx.get("signatures", []) + \
                                ["%02x" % index + signature]
             dump(network, tx)
@@ -172,13 +179,13 @@ def putSignature(network, txid):
                 tx.identify()
                 return json.dumps({
                     "success": "transaction sent to blockchain",
-                    "message" : rest.POST.api.transactions(transactions=[tx]),
+                    "message": rest.POST.api.transactions(transactions=[tx]),
                     "data": tx
                 }), 200
             else:
                 return json.dumps({
                     "success": "signature added to transaction",
-                    "data": tx              
+                    "data": tx
                 }), 200
         else:
             return json.dumps({
