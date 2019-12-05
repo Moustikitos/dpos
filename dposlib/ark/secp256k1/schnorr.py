@@ -90,9 +90,9 @@ def bytes_from_point(P):
 ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
     Args:
-        P (:class:`PublicKey`):
+        P (:class:`Point`): secp256k1 curve point
     Returns:
-        pubkeyB (:class:`bytes`): encoded public key
+        :class:`bytes`: encoded public key
     """
     return bytes_from_int(x(P))
 
@@ -102,6 +102,10 @@ def point_from_bytes(pubkeyB):
     Decode a public key as defined in `BIP schnorr <https://github.com/sipa/bi\
 ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
+    Args:
+        pubkeyB (:class:`bytes`): encoded public key
+    Returns:
+        :class:`Point`: secp256k1 curve point
     """
     x = int_from_bytes(pubkeyB)
     y = y_from_x(x)
