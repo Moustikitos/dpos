@@ -50,6 +50,7 @@ It is recommended to use virtual environement::
     $ git clone https://github.com/Moustikitos/
     $ . ~/.local/share/ms-server/venv/bin/activate
     (venv) $ pip install -r ~/dpos/requirements.txt
+    (venv) $ pip install gunicorn flask
 
 Once ``dpos`` repository cloned, there is no need to install dposlib because 
 python pathes are set accordingly.
@@ -64,11 +65,11 @@ Deploy using ``gunicorn`` server::
 
     $ . ~/.local/share/ms-server/venv/bin/activate
     $ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
-    $ gunicorn --bind=0.0.0.0:5000 --workers=5 mssrv.app:app
+    $ gunicorn --bind=0.0.0.0:5050 --workers=5 mssrv:app
 
 If you have ``pm2`` installed you can start ``flask`` or ``gunicorn`` server::
 
-    $ rem flask server
+    $ # flask server
     $ pm2 start ~/dpos/srv.json
     $ rem gunicorn server
-    $ pm2 start ~/dpos/app.json
+    $ # start ~/dpos/app.json

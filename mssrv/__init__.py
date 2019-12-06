@@ -1,7 +1,17 @@
 # -*- coding:utf-8 -*-
 # (C) Toons MIT Licence
 
+"""
+Endpoint descrption
+===================
 
+```
+GET /multisignature/{network}
+GET /multisignature/{network}/{publicKey}
+POST /multisignature/{network}/post
+PUT /multisignature/{network}/put/{publicKey}
+```
+"""
 
 import os
 import json
@@ -73,7 +83,8 @@ def identify(tx):
 
 @app.errorhandler(Exception)
 def handle_exception(error):
-    return json.dumps({"python error": "%r" % error}), 500
+    msg = "%s" % error
+    return json.dumps({"python error": msg})
 
 
 @app.route("/multisignature/<string:network>", methods=["GET"])
