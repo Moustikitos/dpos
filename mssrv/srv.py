@@ -25,4 +25,4 @@ sys.path.append(
 if __name__ == "__main__":
     from mssrv import app
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
-    app.run(host="127.0.0.1", port=int(args["--port"]))
+    app.run(host="0.0.0.0", port=int(args["--port"]))

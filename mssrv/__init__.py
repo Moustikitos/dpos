@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
 # (C) Toons MIT Licence
 
+
+
 import os
-import sys
 import json
 import flask
 import dposlib
@@ -110,7 +111,6 @@ def postNewTransactions(network):
             return json.dumps({"API error": "transaction(s) not found"})
 
         transactions = data.get("transactions", [])
-        msg = []
         response = {}
         for tx in transactions:
             idx = transactions.index(tx)
@@ -181,8 +181,9 @@ def putSignature(network, publicKey):
         )
         #
         if check:
-            tx["signatures"] = list(set(tx.get("signatures", []) + \
-                               ["%02x" % index + signature]))
+            tx["signatures"] = list(
+                set(tx.get("signatures", []) + ["%02x" % index + signature])
+            )
             if len(tx["signatures"]) >= tx._multisignature["min"]:
                 tx.identify()
                 response = rest.POST.api.transactions(transactions=[tx])
