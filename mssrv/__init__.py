@@ -111,21 +111,22 @@ def postNewTransactions(network):
 
         transactions = data.get("transactions", [])
         msg = []
-        txs = []
+        response = {}
         for tx in transactions:
             idx = transactions.index(tx)
             try:
                 tx = dposlib.core.Transaction(tx)
                 id_ = dump(network, tx)
             except Exception as error:
-                msg.append("transaction #%d rejected (%r)" % (idx, error))
+                response["errors"] = response.get("errors", []) + [
+                    "transaction #%d rejected (%r)" % (idx+1, error)
+                ]
             else:
-                txs.append(tx)
-                msg.append(
-                    "transaction #%d successfully posted (id:%s)" % (idx, id_)
-                )
-
-        return json.dumps({"messages": msg, "transactions": txs}), 201
+                response["success"] = response.get("success", []) + [
+                    "transaction #%d successfully posted" % (idx+1)
+                ]
+                response["ids"] = response.get("ids", []) + [id_]
+        return json.dumps(response), 201
 
     else:
         return json.dumps({"API error": "POST request only allowed here"})
@@ -143,12 +144,12 @@ def putSignature(network, publicKey):
     if flask.request.method == "PUT":
         data = json.loads(flask.request.data)
 
-        if "pair" not in data:
+        if "info" not in data:
             return json.dumps({"error": "no signature found"})
 
-        txid = data["pair"]["id"]
-        ms_publicKey = data["pair"]["publicKey"]
-        signature = data["pair"]["signature"]
+        txid = data["info"]["id"]
+        ms_publicKey = data["info"]["publicKey"]
+        signature = data["info"]["signature"]
         tx = load(network, publicKey, txid)
 
         if not tx:
@@ -180,29 +181,23 @@ def putSignature(network, publicKey):
         )
         #
         if check:
-            tx["signatures"] = tx.get("signatures", []) + \
-                               ["%02x" % index + signature]
+            tx["signatures"] = list(set(tx.get("signatures", []) + \
+                               ["%02x" % index + signature]))
             if len(tx["signatures"]) >= tx._multisignature["min"]:
                 tx.identify()
                 response = rest.POST.api.transactions(transactions=[tx])
+                tx.pop("id")
                 if len(response.get("data", {}).get("broadcast", [])):
-                    msg = response["data"]
                     code = 200
-                    tx.pop("id")
                     pop(network, tx)
                 else:
-                    msg = "error broadcasting transaction to blockchain"
                     code = 202
                     dump(network, tx)
-                return json.dumps({
-                    "message": msg,
-                    "data": tx
-                }), code
+                return json.dumps(response), code
             else:
                 dump(network, tx)
                 return json.dumps({
                     "success": "signature added to transaction",
-                    "data": tx
                 }), 201
         else:
             return json.dumps({

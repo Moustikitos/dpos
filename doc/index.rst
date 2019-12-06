@@ -41,7 +41,10 @@ Simplicity of ``REST`` API::
     {'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
     >>> s = sig.Signature.ecdsa_sign("simple message", keys["privateKey"])
     >>> s
-    [35314084229303150913836520313684788872375048130620231441581098465861064088693, 46834985432572711527816757766911460691200906216722908963407150983007804769398]
+    <secp256k1 signature:
+      r:d811a0321a2e31b0492c1b1b1c4dc3b58055b53cdc9308492b3de71c765f5914
+      s:4747219a0d74d49a42305c040a91e6a8acd39e6d06b21ec1805bd31c6d871b4f
+    >
     >>> s.der
     b"0D\x02 N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe1\xdf&\xf7\xdd\xce\\u\x02 g\x8b\xa9\x90V\xaa\xdf\xa7\xf2-;z\xa5.D\x8bq8ehG\xb7\x11\x07-`\xd2\xd9\xd3.\xc4v"
     >>> crypto.hexlify(s.der)
@@ -55,7 +58,7 @@ Simplicity of ``REST`` API::
 class and its associated builders::
 
     >>> from dposlib import rest
-    >>> rest.use("d.ark")
+    >>> rest.use("dark")
     True
     >>> from dposlib.ark.v2 import *
     >>> tx = transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"simple message with sparkle \u2728", version=2)

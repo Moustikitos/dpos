@@ -1,12 +1,12 @@
 {
     "apps": [
         {
-            "exec_interpreter": "python",
-            "script": "mssrv/srv.py",
             "exec_mode": "fork",
+            "exec_interpreter": "bash",
+            "args": "gunicorn --bind=0.0.0.0:7777 --workers=5 mssrv.app:app",
             "instances": 1,
             "log_date_format": "YYYY-MM-DD HH:mm Z",
-            "name": "ms-app",
+            "name": "ms-srv",
             "combine_logs": true
         }
     ]

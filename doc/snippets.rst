@@ -98,16 +98,20 @@ string. For example:
 Multisignature server
 ---------------------
 
+>>> import dposlib
+>>> from dposlib import rest
+>>> from mssrv import client
+>>> rest.use("dark")
+True
+>>> client.API_PEER = "http://127.0.0.1:5000"
 >>> t = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"ms-srv test #4 \u2728", version=2)
 >>> t.senderPublicKey = "02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3"
 >>> t.setFee()
 >>> client.postNewTransactions("dark", t)
-{u'messages': [u'transaction #0 successfully posted (id:7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e)'], u'transactions': [{u'nonce': 8, u'fee': 6585355, u'network': 30, u'timestamp': 85480288, u'senderId': u'DChFFe4QMwZesdMYNEkJsqnqY4MnF4TYQu', u'recipientId': u'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', u'senderPublicKey': u'02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3', u'vendorField': u'ms-srv test #4 \u2728', u'typeGroup': 1, u'amount': 100000000, u'version': 2, u'asset': {}, u'type':
-0, u'expiration': 0}]}
+{u'success': [u'transaction #1 successfully posted (id:7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e)']}
 >>> client.remoteSignWithSecret("dark", t.senderPublicKey, "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e")
 secret >
-{u'data': {u'nonce': 8, u'fee': 6585355, u'network': 30, u'timestamp': 85480288, u'senderId': u'DChFFe4QMwZesdMYNEkJsqnqY4MnF4TYQu', u'recipientId': u'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', u'senderPublicKey': u'02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3', u'vendorField': u'ms-srv test #4 \u2728', u'typeGroup': 1, u'amount': 100000000, u'signatures': [u'00b7abdbc73e39d1a4bbefd81c7822fe37d70f9221943bab39bf5db4edcbe2ba70aa128b42d526507321b7ddb40f0e37f809d2a6a80df01eb6b236732e56aaf225'], u'asset': {}, u'version': 2, u'type': 0, u'expiration': 0}, u'success': u'signature added to transaction'}
+{u'success': u'signature added to transaction'}
 >>> client.remoteSignWithSecret("dark", t.senderPublicKey, "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e")
 secret >
-{u'message': {u'broadcast': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'accept': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'invalid': [], u'excess': []}, u'data': {u'nonce': 8, u'fee': 6585355, u'network': 30, u'timestamp': 85480288, u'senderId': u'DChFFe4QMwZesdMYNEkJsqnqY4MnF4TYQu', u'recipientId': u'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', u'senderPublicKey': u'02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3', u'vendorField': u'ms-srv test #4 \u2728', u'typeGroup': 1, u'amount': 100000000, u'signatures': [u'00b7abdbc73e39d1a4bbefd81c7822fe37d70f9221943bab39bf5db4edcbe2ba70aa128b42d526507321b7ddb40f0e37f809d2a6a80df01eb6b236732e56aaf225', u'01b1d9a135bd6edf8ffd9a18a25f678c9acfb02ceae72f7a62fa4f1d5bf9d6a77a1fc72938f5393bdacafafb122b1afbdea74f5e44df15ccb2aa68529de60ac3bb'], u'asset': {}, u'version':
-2, u'type': 0, u'expiration': 0}}
+{u'broadcast': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'accept': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'invalid': [], u'excess': []}

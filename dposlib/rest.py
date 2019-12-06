@@ -270,8 +270,9 @@ DELETE = EndPoint(method=EndPoint._DELETE)
 def load(name):
     """
     Load a given blockchain package as ``dposlib.core`` module. A valid
-    blockchain package must provide :func:`init(peer=None)` and ;func:`stop()`
-    definitions.
+    blockchain package must provide :func:`init(peer=None)` and :func:`stop()`
+    definitions. Available blockchains are referenced in :mod:`dposli.net`
+    module.
 
     Args:
         name (:class:`str`): package name to load

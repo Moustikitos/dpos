@@ -53,17 +53,16 @@ def getAddressFromSecret(secret, marker=None):
 
 def getMultiSignaturePublicKey(minimum, *publicKeys):
     """
-    Compute ARK multi signature publicKey according to
+    Compute ARK multi signature public key according to
     `ARK AIP #18 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18\
 .md>`_.
 
     Args:
         minimum (:class:`int`): minimum signature required
         publicKeys (:class:`list of str`): public key list
-        marker (:class:`int`): network marker (optional)
 
     Returns:
-        :class:`str`: the multisignature address
+        :class:`str`: the multisignature public key
     """
     if 2 > minimum > len(publicKeys):
         raise ValueError("min signatures value error")
@@ -147,7 +146,7 @@ def wifSignatureFromBytes(data, wif):
     return getSignatureFromBytes(data, hexlify(seed))
 
 
-def getSignature(tx, privateKey):
+def getSignature(tx, privateKey, **options):
     """
     Generate transaction signature using private key.
 
@@ -156,11 +155,18 @@ def getSignature(tx, privateKey):
             transaction description
         privateKey (:class:`str`):
             private key as hex string
+    Keyword args:
+        exclude_sig (:class:`bool`):
+            exclude signature during tx serialization [defalut: True]
+        exclude_multi_sig(:class:`bool`):
+            exclude signatures during tx serialization [defalut: True]
+        exclude_second_sig(:class:`bool`):
+            exclude second signatures during tx serialization [defalut: True]
 
     Returns:
         :class:`str`: signature
     """
-    return getSignatureFromBytes(getBytes(tx), privateKey)
+    return getSignatureFromBytes(getBytes(tx, **options), privateKey)
 
 
 def getSignatureFromBytes(data, privateKey):
@@ -191,6 +197,8 @@ def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
             transaction object
         secondPublicKey (:class:`str`):
             second public key to use if needed
+        multiPublicKeys (:class:`list`):
+            owners public keys (sorted according to associated type-4-tx asset)
 
     Returns:
         :class:`bool`: true if transaction is valid
@@ -236,7 +244,6 @@ def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
         checks.append(verifySignatureFromBytes(
             _ser(tx, version), publicKey, signature
         ))
-
         # sender second signature check
         if signSignature and secondPublicKey:
             # add signature before check
@@ -318,6 +325,13 @@ def getBytes(tx, **options):
     Args:
         tx (:class:`dict` or :class:`Transaction`):
             transaction object
+    Keyword args:
+        exclude_sig (:class:`bool`):
+            exclude signature during tx serialization [defalut: True]
+        exclude_multi_sig(:class:`bool`):
+            exclude signatures during tx serialization [defalut: True]
+        exclude_second_sig(:class:`bool`):
+            exclude second signatures during tx serialization [defalut: True]
 
     Returns:
         :class:`bytes`: bytes sequence

@@ -6,19 +6,31 @@ from dposlib import rest
 from dposlib.ark import secp256k1, crypto
 from dposlib.util.bin import hexlify, unhexlify
 
-API_PEER = "http://musig.arky-delegate.info"
+API_PEER = None
 
 
+def peer_available(func):
+    def wrapper(*args, **kw):
+        if rest.checkLatency(API_PEER):
+            return func(*args, **kw)
+        else:
+            raise Exception("peer not available")
+    return wrapper
+
+
+@peer_available
 def getAll(network):
     return rest.GET.multisignature.__getattr__(network).get(peer=API_PEER)
 
 
+@peer_available
 def getWallet(network, publicKey):
     return rest.GET.multisignature.__getattr__(network).__getattr__(publicKey)(
         peer=API_PEER
     )
 
 
+@peer_available
 def postNewTransactions(network, *tx):
     return rest.POST.multisignature.__getattr__(network).post(
         peer=API_PEER,
@@ -26,12 +38,13 @@ def postNewTransactions(network, *tx):
     )
 
 
+@peer_available
 def putSignature(network, publicKey, txid, ms_publicKey, signature):
     return rest.PUT.multisignature.__getattr__(network).put.__getattr__(
         publicKey
     )(
         peer=API_PEER,
-        pair={"publicKey": ms_publicKey, "signature": signature, "id": txid}
+        info={"publicKey": ms_publicKey, "signature": signature, "id": txid}
     )
 
 
