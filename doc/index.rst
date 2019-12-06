@@ -100,4 +100,5 @@ class and its associated builders::
     rest
     core
     api
+    ms-srv
     snippets

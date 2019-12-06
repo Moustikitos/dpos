@@ -5,12 +5,30 @@
 Endpoint descrption
 ===================
 
-```
-GET /multisignature/{network}
-GET /multisignature/{network}/{publicKey}
-POST /multisignature/{network}/post
-PUT /multisignature/{network}/put/{publicKey}
-```
+::
+
+  # get all wallet issuing multisignature transactions
+  GET /multisignature/{network}
+  # get all pending multisignature transactions from wallet
+  GET /multisignature/{network}/{musig_publicKey}
+  # post a new pending multisignature transaction
+  POST /multisignature/{network}/post
+  # put a signature to a specific pending transaction
+  PUT /multisignature/{network}/put/{musig_publicKey}
+
+with ``POST /multisignature/{network}/post`` endpoint::
+
+    data = {"transactions": [tx1, tx2, ... txi ..., txn]}
+
+with ``PUT /multisignature/{network}/put/{musig_publicKey}`` endpoint::
+
+    data = {
+        "info": {
+            "id": tx_id_to_sign,
+            "signature": signature_to_add,
+            "publicKey": pkey_associated_to_signature
+        }
+    }
 """
 
 import os
@@ -44,6 +62,17 @@ app.config.update(
 
 
 def load(network, publicKey, txid):
+    """
+    Extract a transaction from registry.
+
+    Args:
+        network (:class:`str`): blockchain name
+        publicKey (:class:`str`): encoded-compresed public key as hex string
+        txid (:class:`str`): transaction id
+
+    Returns:
+        :class:`dict`: transaction data
+    """
     registry = loadJson(
         os.path.join(dposlib.ROOT, ".registry", network, publicKey)
     )
@@ -51,15 +80,35 @@ def load(network, publicKey, txid):
 
 
 def pop(network, tx):
+    """
+    Remove a transaction from registry. Wallet registry is removed if empty
+
+    Args:
+        network (:class:`str`): blockchain name
+        publicKey (:class:`str`): encoded-compresed public key as hex string
+    """
     path = os.path.join(
         dposlib.ROOT, ".registry", network, tx["senderPublicKey"]
     )
     registry = loadJson(path)
     registry.pop(identify(tx), False)
-    dumpJson(registry, path)
+    if not(len(registry)):
+        os.remove(path)
+    else:
+        dumpJson(registry, path)
 
 
 def dump(network, tx):
+    """
+    Add a transaction into registry. ``senderPublicKey`` field is used to
+    create registry name.
+
+    Args:
+        network (:class:`str`):
+            blockchain name
+        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+            transaction to store
+    """
     path = os.path.join(
         dposlib.ROOT, ".registry", network, tx["senderPublicKey"]
     )
@@ -71,6 +120,15 @@ def dump(network, tx):
 
 
 def identify(tx):
+    """
+    Identify a transaction.
+
+    Args:
+        tx (:class:`dict` or :class:`dposlib.blockchain.Transaction`):
+            transaction to identify
+    Returns:
+        :class:`str`: transaction id used by registries
+    """
     return dposlib.core.crypto.getIdFromBytes(
         dposlib.core.crypto.getBytes(
             tx,
@@ -89,6 +147,15 @@ def handle_exception(error):
 
 @app.route("/multisignature/<string:network>", methods=["GET"])
 def getAll(network):
+    """
+    ``GET /multisignature/{network}`` endpoint. Return all wallet issuing
+    multisignature transactions.
+
+    Args:
+        network (:class:`str`): blockchain network name
+    Returns:
+        :class:`dict`: all registries
+    """
     result = {}
     search_path = os.path.join(dposlib.ROOT, ".registry", network)
     if os.path.exists(search_path) and os.path.isdir(search_path):
@@ -167,11 +234,7 @@ def putSignature(network, publicKey):
             return json.dumps({"API error": "transaction %s not found" % txid})
 
         tx = dposlib.core.Transaction(tx)
-        if tx["type"] == 4:
-            index = tx.asset["multiSignature"]["publicKeys"].index(
-                ms_publicKey
-            )
-        elif getattr(tx, "_multisignature", False):
+        if getattr(tx, "_multisignature", False):
             if ms_publicKey not in tx._multisignature["publicKeys"]:
                 return json.dumps({
                     "API error": "public key %s not allowed here" %
@@ -218,3 +281,23 @@ def putSignature(network, publicKey):
 
     else:
         return json.dumps({"API error": "PUT request only allowed here"})
+
+
+# if tx["type"] == 4:
+#     if ms_publicKey == publicKey and \
+#        len(tx.signatures) == tx._multisignature["min"] and \
+#        dposlib.core.crypto.verifySignatureFromBytes(
+#             dposlib.core.crypto.getBytes(tx),
+#             ms_publicKey, signature
+#        ):
+#            pass
+#     elif ms_publicKey == getattr(tx, "_secondPublicKey", None) and \
+#        dposlib.core.crypto.verifySignatureFromBytes(
+#             dposlib.core.crypto.getBytes(tx),
+#             ms_publicKey, signature
+#        ):
+#            pass
+#     else:
+#         index = tx.asset["multiSignature"]["publicKeys"].index(
+#             ms_publicKey
+#         )
