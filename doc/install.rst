@@ -22,15 +22,15 @@ Install :mod:`dposlib` using ``pip``
 
 To install last version of :mod:`dposlib`::
 
-	$ pip install dposlib
+    $ pip install dposlib
 
 To install development vesion::
 
-	$ pip install git+https://github.com/Moustikitos/dpos#egg=dposlib
+    $ pip install git+https://github.com/Moustikitos/dpos#egg=dposlib
 
 You may whant to install a specific branch of dposlib::
 
-	$ pip install git+https://github.com/Moustikitos/dpos#egg=dposlib@<branch>
+    $ pip install git+https://github.com/Moustikitos/dpos#egg=dposlib@<branch>
 
 Where ``<branch>`` can be:
   * a commit number
@@ -43,32 +43,33 @@ Deploy a multisignature server
 
 It is recommended to use virtual environement::
 
-	$ sudo apt-get install python python-setuptools python-pip virtualenv
-	$ mkdir ~/.local/share/ms-server/venv -p
-	$ virtualenv ~/.local/share/ms-server/venv -q
-	$ cd ~
+    $ sudo apt-get install python python-setuptools python-pip virtualenv
+    $ mkdir ~/.local/share/ms-server/venv -p
+    $ virtualenv ~/.local/share/ms-server/venv -q
+    $ cd ~
     $ git clone https://github.com/Moustikitos/
-	$ . ~/.local/share/ms-server/venv/bin/activate
-    $ pip install -r ~/dpos/requirements.txt
+    $ . ~/.local/share/ms-server/venv/bin/activate
+    (venv) $ pip install -r ~/dpos/requirements.txt
+    (venv) $ pip install gunicorn flask
 
 Once ``dpos`` repository cloned, there is no need to install dposlib because 
 python pathes are set accordingly.
 
 Deploy using ``flask`` server::
 
-	$ . ~/.local/share/ms-server/venv/bin/activate
-	$ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
-	$ python ~/dpos/mssrv/srv.py
+    $ . ~/.local/share/ms-server/venv/bin/activate
+    $ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
+    $ python ~/dpos/mssrv/srv.py
 
 Deploy using ``gunicorn`` server::
 
-	$ . ~/.local/share/ms-server/venv/bin/activate
-	$ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
-	$ gunicorn --bind=0.0.0.0:5000 --workers=5 mssrv.app:app
+    $ . ~/.local/share/ms-server/venv/bin/activate
+    $ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
+    $ gunicorn --bind=0.0.0.0:5050 --workers=5 mssrv:app
 
 If you have ``pm2`` installed you can start ``flask`` or ``gunicorn`` server::
 
-	$ rem flask server
-	$ pm2 start ~/dpos/srv.json
-	$ rem gunicorn server
-	$ pm2 start ~/dpos/app.json
+    $ # flask server
+    $ pm2 start ~/dpos/srv.json
+    $ rem gunicorn server
+    $ # start ~/dpos/app.json

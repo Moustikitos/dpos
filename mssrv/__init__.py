@@ -1,6 +1,36 @@
 # -*- coding:utf-8 -*-
 # (C) Toons MIT Licence
 
+"""
+Endpoint descrption
+===================
+
+::
+
+  # get all wallet issuing multisignature transactions
+  GET /multisignature/{network}
+  # get all pending multisignature transactions from wallet
+  GET /multisignature/{network}/{musig_publicKey}
+  # post a new pending multisignature transaction
+  POST /multisignature/{network}/post
+  # put a signature to a specific pending transaction
+  PUT /multisignature/{network}/put/{musig_publicKey}
+
+with ``POST /multisignature/{network}/post`` endpoint::
+
+    data = {"transactions": [tx1, tx2, ... txi ..., txn]}
+
+with ``PUT /multisignature/{network}/put/{musig_publicKey}`` endpoint::
+
+    data = {
+        "info": {
+            "id": tx_id_to_sign,
+            "signature": signature_to_add,
+            "publicKey": pkey_associated_to_signature
+        }
+    }
+"""
+
 import os
 import json
 import flask

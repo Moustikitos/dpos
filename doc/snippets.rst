@@ -89,14 +89,19 @@ This transaction will show a nice sparkle in its ``vendorField``:
 Emoji can be embeded in transaction ``vendorField`` using python unicode
 string. For example:
 
-  * |sparkles|: unicode hex value ``2728``, use ``\uXXXX`` format
->>> u"emoji defined by less than or equal 4 digits : \u2728 - "
+  * |sparkles|: unicode hex value ``2728``, use ``\uXXXX`` format::
 
-  * |exchange|: unicode hex value ``1f4b1``, use ``\UXXXXXXXX`` format
->>> u"emoji defined by more than 4 digits : \U0001f4b1"
+  >>> u"emoji defined by less than or equal 4 digits : \u2728 - "
+
+  * |exchange|: unicode hex value ``1f4b1``, use ``\UXXXXXXXX`` format::
+
+  >>> u"emoji defined by more than 4 digits : \U0001f4b1"
 
 Multisignature server
 ---------------------
+
+``dpos`` repository contains ``mssrv`` package that provides client - server
+modules to issue multisignature registration and transactions.
 
 >>> import dposlib
 >>> from dposlib import rest
@@ -108,7 +113,7 @@ True
 >>> t.senderPublicKey = "02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3"
 >>> t.setFee()
 >>> client.postNewTransactions("dark", t)
-{u'success': [u'transaction #1 successfully posted (id:7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e)']}
+{u'success': [u'transaction #1 successfully posted'], u'ids': [u'7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e']}
 >>> client.remoteSignWithSecret("dark", t.senderPublicKey, "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e")
 secret >
 {u'success': u'signature added to transaction'}
