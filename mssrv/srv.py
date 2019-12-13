@@ -3,10 +3,11 @@
 
 """
 Usage:
-   srv [-p <port>]
+   srv [-h <host>] [-p <port>]
 
 Options:
 -p --port=<port> : the port you want to use  [default: 5000]
+-h --host=<host> : the host ip you want to use  [default: 0.0.0.0]
 """
 
 import os
@@ -25,4 +26,4 @@ sys.path.append(
 if __name__ == "__main__":
     from mssrv import app
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
-    app.run(host="127.0.0.1", port=int(args["--port"]))
+    app.run(host=args["--host"], port=int(args["--port"]))

@@ -109,6 +109,7 @@ class Transaction(dict):
         if self["type"] in [1, 3, 9] and "recipientId" not in self:
             self["recipientId"] = address
         self._multisignature = data.get("multiSignature", {})
+        self._secondPublicKey = data.get("secondPublicKey", None)
         dict.__setitem__(self, "senderPublicKey", publicKey)
 
     def path(self):

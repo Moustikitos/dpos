@@ -3,7 +3,7 @@
         {
             "exec_mode": "fork",
             "exec_interpreter": "bash",
-            "args": "gunicorn --bind=0.0.0.0:7777 --workers=5 mssrv.app:app",
+            "script": "bash/app.sh",
             "instances": 1,
             "log_date_format": "YYYY-MM-DD HH:mm Z",
             "name": "ms-srv",

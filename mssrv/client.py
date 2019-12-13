@@ -39,18 +39,18 @@ def postNewTransactions(network, *tx):
 
 
 @peer_available
-def putSignature(network, publicKey, txid, ms_publicKey, signature):
-    return rest.PUT.multisignature.__getattr__(network).put.__getattr__(
-        publicKey
-    )(
+def putSignature(network, ms_publicKey, txid, publicKey, signature):
+    return rest.PUT.multisignature.__getattr__(network).__getattr__(
+        ms_publicKey
+    ).put(
         peer=API_PEER,
-        info={"publicKey": ms_publicKey, "signature": signature, "id": txid}
+        info={"publicKey": publicKey, "signature": signature, "id": txid}
     )
 
 
-def remoteSignWithSecret(network, publicKey, txid, secret=None):
+def remoteSignWithSecret(network, ms_publicKey, txid, secret=None):
     return remoteSignWithKey(
-        network, publicKey, txid,
+        network, ms_publicKey, txid,
         hexlify(
             secp256k1.hash_sha256(
                 secret if secret is not None else
@@ -60,23 +60,23 @@ def remoteSignWithSecret(network, publicKey, txid, secret=None):
     )
 
 
-def remoteSignWithKey(network, publicKey, txid, ms_privateKey):
-    ms_publicKey = hexlify(
-        secp256k1.PublicKey.from_seed(unhexlify(ms_privateKey)).encode()
+def remoteSignWithKey(network, ms_publicKey, txid, privateKey):
+    publicKey = hexlify(
+        secp256k1.PublicKey.from_seed(unhexlify(privateKey)).encode()
     )
 
-    wallet = getWallet(network, publicKey).get("data", {})
+    wallet = getWallet(network, ms_publicKey).get("data", {})
     if txid in wallet:
+        options = {} if wallet[txid]["type"] == 4 else {
+            "exclude_sig": True,
+            "exclude_multi_sig": True,
+            "exclude_second_sig": True
+        }
         return putSignature(
-            network, publicKey, txid, ms_publicKey,
+            network, ms_publicKey, txid, publicKey,
             crypto.getSignatureFromBytes(
-                crypto.getBytes(
-                    wallet[txid],
-                    exclude_sig=True,
-                    exclude_multi_sig=True,
-                    exclude_second_sig=True
-                ),
-                ms_privateKey
+                crypto.getBytes(wallet[txid], **options),
+                privateKey
             )
         )
     else:
