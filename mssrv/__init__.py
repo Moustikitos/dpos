@@ -1,36 +1,6 @@
 # -*- coding:utf-8 -*-
 # (C) Toons MIT Licence
 
-"""
-Endpoint descrption
-===================
-
-::
-
-  # get all wallet issuing multisignature transactions
-  GET /multisignature/{network}
-  # get all pending multisignature transactions from wallet
-  GET /multisignature/{network}/{musig_publicKey}
-  # post a new pending multisignature transaction
-  POST /multisignature/{network}/post
-  # put a signature to a specific pending transaction
-  PUT /multisignature/{network}/put/{musig_publicKey}
-
-with ``POST /multisignature/{network}/post`` endpoint::
-
-    data = {"transactions": [tx1, tx2, ... txi ..., txn]}
-
-with ``PUT /multisignature/{network}/put/{musig_publicKey}`` endpoint::
-
-    data = {
-        "info": {
-            "id": tx_id_to_sign,
-            "signature": signature_to_add,
-            "publicKey": pkey_associated_to_signature
-        }
-    }
-"""
-
 import os
 import json
 import flask
@@ -64,7 +34,7 @@ app.config.update(
 
 def load(network, ms_publicKey, txid):
     """
-    Extract a transaction from registry.
+    Load a transaction from a specific registry.
 
     Args:
         network (:class:`str`): blockchain name
@@ -82,7 +52,7 @@ def load(network, ms_publicKey, txid):
 
 def pop(network, tx):
     """
-    Remove a transaction from registry. Wallet registry is removed if empty
+    Remove a transaction from registry. Wallet registry is removed if empty.
 
     Args:
         network (:class:`str`): blockchain name
@@ -103,7 +73,7 @@ def pop(network, tx):
 def dump(network, tx):
     """
     Add a transaction into registry. ``senderPublicKey`` field is used to
-    create registry name.
+    create registry if it does not exist.
 
     Args:
         network (:class:`str`):
@@ -209,6 +179,12 @@ def getWallet(network, ms_publicKey):
     ``GET /multisignature/{network}/{ms_publicKey}`` endpoint. Return all
     pending transactions issued by a specific public key.
     """
+    if flask.request.method != "GET":
+        return json.dumps({
+            "success": False,
+            "API error": "GET request only allowed here"
+        })
+
     wallet = loadJson(
         os.path.join(dposlib.ROOT, ".registry", network, ms_publicKey)
     )
@@ -227,6 +203,12 @@ def getTransaction(network, ms_publicKey, txid):
     ``GET /multisignature/{network}/{ms_publicKey}/{txid}`` endpoint. Return
     specific pending transaction from a specific public key.
     """
+    if flask.request.method != "GET":
+        return json.dumps({
+            "success": False,
+            "API error": "GET request only allowed here"
+        })
+
     tx = load(network, ms_publicKey, txid)
     if tx:
         return json.dumps({"success": True, "data": tx}), 200
@@ -243,6 +225,12 @@ def getSerial(network, ms_publicKey, txid):
     ``GET /multisignature/{network}/{ms_publicKey}/{txid}/serial`` endpoint.
     Return specific pending transaction serial from a specific public key.
     """
+    if flask.request.method != "GET":
+        return json.dumps({
+            "success": False,
+            "API error": "GET request only allowed here"
+        })
+
     tx = load(network, ms_publicKey, txid)
     if tx:
         tx = dposlib.core.Transaction(tx)
@@ -285,6 +273,7 @@ def registerWallet(network):
             data["info"]["min"], *data["info"]["publicKeys"]
         )
         tx.senderPublicKey = data["info"]["senderPublicKey"]
+        tx.useDynamicFee(data["info"].get("fee", "avgFee"))
         tx.setFee()
 
         return append(network, tx)
@@ -329,7 +318,18 @@ def postNewTransactions(network):
     methods=["PUT"]
 )
 def putSignature(network, ms_publicKey):
+    """
+    ``PUT /multisignature/{network}/{ms_publicKey}/put`` endpoint. Add
+    signature to a pending transaction::
 
+        data = {
+            "info": {
+                "id": pending_transaction_id,
+                "signature": signature,
+                "publicKey": associated_public_key
+            }
+        }
+    """
     if network != getattr(rest.cfg, "network", False):
         rest.use(network)
 
