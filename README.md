@@ -247,7 +247,7 @@ pip install ledgerblue
   - [x] sphinx doc added
 
 ### 0.3.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [ ] multisignature server api
+  - [x] multisignature client-server api
 
 ## TODO
   - [ ] CLI
