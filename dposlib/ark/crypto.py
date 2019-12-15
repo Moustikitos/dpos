@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-import hashlib
 import base58
+import hashlib
+import binascii
 
-from dposlib import BytesIO
+from dposlib import BytesIO, PY3
 from dposlib.ark import secp256k1
 from dposlib.blockchain import cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 from dposlib.ark.secp256k1 import schnorr, ecdsa
+
+if PY3:
+    unicode = str
 
 
 def getKeys(secret):
@@ -22,10 +26,10 @@ def getKeys(secret):
     Returns:
         :class:`dict`: public, private and WIF keys
     """
-    if isinstance(secret, (str, bytes)):
+    if isinstance(secret, (str, bytes, unicode)):
         try:
             seed = unhexlify(secret)
-        except:  # (TypeError, binascii.Error)
+        except (TypeError, binascii.Error):
             seed = secp256k1.hash_sha256(secret)
     else:
         seed = secp256k1.bytes_from_int(secret)

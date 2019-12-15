@@ -158,7 +158,7 @@ def init(seed=None):
     cfg.begintime = pytz.utc.localize(
         datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
     )
-    cfg.blockReward = float(constants["reward"])/100000000
+    cfg.blockreward = float(constants["reward"])/100000000
     # since ark v2.4 wif and slip44 are provided by network
     if "wif" in data:
         cfg.wif = "%x" % data["wif"]
@@ -476,7 +476,8 @@ def multiPayment(*pairs, **kwargs):
         vendorField=kwargs.get("vendorField", None),
         asset={
             "payments": [
-                {"amount": a*100000000, "recipientId": r} for r, a in pairs
+                {"amount": int(a*100000000), "recipientId": r}
+                for a, r in pairs
             ]
         }
     )
