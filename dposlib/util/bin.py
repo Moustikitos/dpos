@@ -10,8 +10,8 @@ import binascii
 
 from dposlib import PY3
 
-HEX = re.compile("^[0-9a-fA-F]$")
-BHEX = re.compile(b"^[0-9a-fA-F]$")
+HEX = re.compile("[0-9a-fA-F]")
+BHEX = re.compile(b"[0-9a-fA-F]")
 
 
 def intasb(i):
