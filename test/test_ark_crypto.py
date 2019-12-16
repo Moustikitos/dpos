@@ -93,6 +93,15 @@ class TestArkCrypto(unittest.TestCase):
             )
         )
 
+    def test_get_keys(self):
+        i = 0x2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b
+        s = "%x" % i
+        keys = dposlib.core.crypto.getKeys("secret")
+        self.assertEqual(keys, dposlib.core.crypto.getKeys(u"secret"))
+        self.assertEqual(keys, dposlib.core.crypto.getKeys(u"secret".encode()))
+        self.assertEqual(keys, dposlib.core.crypto.getKeys(i))
+        self.assertEqual(keys, dposlib.core.crypto.getKeys(s))
+
     def test_schnorr_signature(self):
         keys = dposlib.core.crypto.getKeys(self.secret)
         message = b'\xff' + "test message".encode("utf-8")

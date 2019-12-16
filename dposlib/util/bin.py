@@ -62,7 +62,7 @@ def unhexlify(data):
         if BHEX.match(data):
             data = data.decode()
         else:
-            return data
+            raise Exception("Non hexadecimal digit found")
     if len(data) % 2:
         data = "0" + data
     result = binascii.unhexlify(data)

@@ -29,7 +29,7 @@ def getKeys(secret):
     if isinstance(secret, (str, bytes, unicode)):
         try:
             seed = unhexlify(secret)
-        except (TypeError, binascii.Error):
+        except Exception:  #(TypeError, binascii.Error):
             seed = secp256k1.hash_sha256(secret)
     else:
         seed = secp256k1.bytes_from_int(secret)

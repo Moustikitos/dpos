@@ -134,6 +134,8 @@ def init(seed=None):
                 package_path
             )
         except Exception:
+            pass
+        finally:
             CONFIG = FEES = {}
 
     # no network connetcion neither local configuration files

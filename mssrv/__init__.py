@@ -327,7 +327,9 @@ def putSignature(network, ms_publicKey):
                 "id": pending_transaction_id,
                 "signature": signature,
                 "publicKey": associated_public_key
-            }
+            } [ + {
+                "fee": optional_fee_value_to_use
+            } ]
         }
     """
     if network != getattr(rest.cfg, "network", False):
