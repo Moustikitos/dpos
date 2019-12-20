@@ -43,14 +43,7 @@ Deploy a multisignature server
 
 It is recommended to use virtual environement::
 
-    $ sudo apt-get install python python-setuptools python-pip virtualenv
-    $ mkdir ~/.local/share/ms-server/venv -p
-    $ virtualenv ~/.local/share/ms-server/venv -q
-    $ cd ~
-    $ git clone https://github.com/Moustikitos/
-    $ . ~/.local/share/ms-server/venv/bin/activate
-    (venv) $ pip install -r ~/dpos/requirements.txt
-    (venv) $ pip install gunicorn flask
+    $ bash <(curl -s https://raw.githubusercontent.com/Moustikitos/dpos/master/bash/mssrv-install.sh)
 
 Once ``dpos`` repository cloned, there is no need to install dposlib because 
 python pathes are set accordingly.

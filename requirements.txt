@@ -2,4 +2,3 @@ future
 requests
 pytz
 base58
-docopt
