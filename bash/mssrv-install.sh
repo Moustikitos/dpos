@@ -17,7 +17,7 @@ echo
 echo downloading dpos package
 echo ========================
 cd ~
-if (git clone -q --branch $B https://github.com/Moustikitos/dpos.git) then
+if (git clone -q --branch $B https://github.com/Moustikitos/dpos.git) then 
     echo "cloning dpos..."
 else
     echo "dpos already cloned !"
