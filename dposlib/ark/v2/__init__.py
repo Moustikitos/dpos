@@ -181,7 +181,7 @@ def init(seed=None):
     )
     # before ark v2.4 dynamicFees statistics are in "feeStatistics" field
     cfg.feestats = dict(
-        [i["type"], int(i["fees"])] for i in data.get("feeStatistics", {})
+        [i["type"], i["fees"]] for i in data.get("feeStatistics", {})
     )
     # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
     if cfg.feestats == {}:

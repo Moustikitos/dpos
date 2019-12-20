@@ -86,3 +86,14 @@ qredit = {
         "http://159.69.89.41:4103"
     ]
 }
+
+ripa = {
+    "familly": "ark.v2",
+    "maxvotepertx": 1,
+    "maxvote": 1,
+    "aip20": 0,
+
+    "seeds": [
+        "https://api.ripaex.io"
+    ]
+}

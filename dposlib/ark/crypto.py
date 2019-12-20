@@ -3,7 +3,6 @@
 
 import base58
 import hashlib
-import binascii
 
 from dposlib import BytesIO, PY3
 from dposlib.ark import secp256k1
@@ -29,7 +28,7 @@ def getKeys(secret):
     if isinstance(secret, (str, bytes, unicode)):
         try:
             seed = unhexlify(secret)
-        except Exception:  #(TypeError, binascii.Error):
+        except Exception:
             seed = secp256k1.hash_sha256(secret)
     else:
         seed = secp256k1.bytes_from_int(secret)
@@ -556,7 +555,7 @@ def serializePayload(tx):
             ]
         except Exception:
             raise Exception("error in recipientId address list")
-        result = pack("<I", buf, (len(items), ))
+        result = pack("<H", buf, (len(items), ))
         for amount, address in items:
             pack("<Q", buf, (amount, ))
             pack_bytes(buf, address)

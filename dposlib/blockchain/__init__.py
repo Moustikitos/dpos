@@ -106,7 +106,7 @@ class Transaction(dict):
             self["timestamp"] = slots.getTime()
         if self["type"] != 4:
             self["senderId"] = address
-        if self["type"] in [1, 3, 9] and "recipientId" not in self:
+        if self["type"] in [1, 3, 6, 9] and "recipientId" not in self:
             self["recipientId"] = address
         self._multisignature = data.get("multiSignature", {})
         self._secondPublicKey = data.get("secondPublicKey", None)
