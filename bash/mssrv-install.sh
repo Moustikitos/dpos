@@ -1,5 +1,5 @@
 #!/bin/bash
-clear
+clear 
 
 if [ $# = 0 ]; then
     B="master"
