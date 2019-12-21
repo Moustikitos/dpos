@@ -6,3 +6,6 @@
 
 .. automodule:: mssrv
     :members:
+
+.. automodule:: mssrv.client
+    :members:

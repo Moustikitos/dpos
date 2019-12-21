@@ -41,7 +41,7 @@ Where ``<branch>`` can be:
 Deploy a multisignature server
 ------------------------------
 
-It is recommended to use virtual environement::
+Install developpement version::
 
     $ bash <(curl -s https://raw.githubusercontent.com/Moustikitos/dpos/master/bash/mssrv-install.sh)
 
@@ -64,5 +64,5 @@ If you have ``pm2`` installed you can start ``flask`` or ``gunicorn`` server::
 
     $ # flask server
     $ pm2 start ~/dpos/srv.json
-    $ rem gunicorn server
-    $ # start ~/dpos/app.json
+    $ # gunicorn server
+    $ pm2 start ~/dpos/app.json
