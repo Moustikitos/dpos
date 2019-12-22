@@ -31,7 +31,6 @@ sudo apt-get install python-pip python3-pip
     + [x] Internet of People
       * [X] mainet : `iop`
       * [X] devnet : `diop`
-    + [x] Persona : `persona`
     + [x] Ripa : `ripa`
     + [x] Phantom : `phantom`
     + [x] Qredit : `qredit`
@@ -246,8 +245,10 @@ pip install ledgerblue
   - [x] `ldgr` import now optional
   - [x] sphinx doc added
 
-### 0.3.1 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.3.1
   - [x] multisignature client-server api
+
+### 0.3.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] CLI
