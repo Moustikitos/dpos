@@ -42,6 +42,7 @@ if [ ! -d "$HOME/.local/share/ark-zen/venv" ]; then
     echo "done"
 else
     echo "virtual environement already there !"
+fi
 
 echo
 echo installing python dependencies
@@ -50,3 +51,4 @@ echo ==============================
 pip install -r ~/dpos/requirements.txt
 pip install docopt gunicorn flask
 echo "done"
+
