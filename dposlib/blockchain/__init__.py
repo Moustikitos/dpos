@@ -110,6 +110,7 @@ class Transaction(dict):
             self["recipientId"] = address
         self._multisignature = data.get("multiSignature", {})
         self._secondPublicKey = data.get("secondPublicKey", None)
+        self._publicKey = publicKey
         dict.__setitem__(self, "senderPublicKey", publicKey)
 
     def path(self):
@@ -122,6 +123,10 @@ class Transaction(dict):
             raise Exception("No public key found")
 
     def unlink(self):
+        self.pop("senderPublicKey", False)
+        self.pop("_multisignature", False)
+        self.pop("timestamp", False)
+        self.pop("nonce", False)
         _unlink(self)
 
     def link(self, secret=None, secondSecret=None):
@@ -136,7 +141,7 @@ class Transaction(dict):
         if hasattr(dposlib, "core"):
             if secret:
                 keys = dposlib.core.crypto.getKeys(secret)
-                self._publicKey = self.senderPublicKey = keys["publicKey"]
+                self.senderPublicKey = keys["publicKey"]
                 self._privateKey = keys["privateKey"]
             if secondSecret:
                 keys = dposlib.core.crypto.getKeys(secondSecret)
@@ -256,13 +261,8 @@ class Transaction(dict):
         # set internal private keys (secrets are not stored)
         elif item == "secret":
             self.link(value)
-            self._setSenderPublicKey(self._publicKey)
         elif item == "secondSecret":
             self.link(None, value)
-        elif item == "privateKey":
-            self._privateKey = str(value)
-        elif item == "secondPrivateKey":
-            self._secondPrivateKey = str(value)
         else:
             raise AttributeError(
                 "field '%s' not allowed in '%s' class" %
@@ -361,7 +361,7 @@ class Transaction(dict):
             publicKey (:class:`str`): public key as hex string
             privateKey (:class:`str`): private key as hex string
         """
-        self._publicKey = publicKey
+        self.senderPublicKey = publicKey
         self._privateKey = privateKey
         self.sign()
 
@@ -427,8 +427,6 @@ class Transaction(dict):
         :func:`link`.
         """
         if hasattr(self, "_privateKey"):
-            if "sendserPublicKey" not in self:
-                self._setSenderPublicKey(self._publicKey)
             if "fee" not in self:
                 self.setFee()
             self["signature"] = dposlib.core.crypto.getSignature(
@@ -654,7 +652,7 @@ class Wallet(Data):
 
     def _finalizeTx(self, tx, fee=None, fee_included=False):
         if hasattr(self, "_publicKey"):
-            tx._publicKey = tx.senderPublicKey = self._publicKey
+            tx.senderPublicKey = self._publicKey
             tx._privateKey = self._privateKey
         if hasattr(self, "_secondPrivateKey"):
             tx._secondPublicKey = self._secondPublicKey

@@ -419,7 +419,8 @@ def serialize(tx, version=None, **options):
 
     # deal with vendorField
     if "vendorFieldHex" in tx:
-        vendorField = unhexlify(tx["vendorFieldHex"])
+        vendorField = unhexlify(tx.pop("vendorFieldHex"))
+        tx["vendorField"] = vendorField.decode("utf-8")
     else:
         vendorField = tx.get("vendorField", "")
         if not isinstance(vendorField, bytes):
