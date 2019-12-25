@@ -249,6 +249,7 @@ pip install ledgerblue
   - [x] multisignature client-server api
 
 ### 0.3.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] better `vendorFieldHex` field  handling
 
 ## TODO
   - [ ] CLI

@@ -417,10 +417,10 @@ def serialize(tx, version=None, **options):
     buf = BytesIO()
     version = tx.get("version", 0x01) if not version else version
 
-    # deal with vendorField
+    # deal with vendorField value
     if "vendorFieldHex" in tx:
-        vendorField = unhexlify(tx.pop("vendorFieldHex"))
-        tx["vendorField"] = vendorField.decode("utf-8")
+        vendorField = unhexlify(dict.pop(tx, "vendorFieldHex"))
+        dict.__setitem__(tx, "vendorField", vendorField.decode("utf-8"))
     else:
         vendorField = tx.get("vendorField", "")
         if not isinstance(vendorField, bytes):
