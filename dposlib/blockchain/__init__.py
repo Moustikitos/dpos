@@ -460,7 +460,7 @@ class Transaction(dict):
                 if missings:
                     raise Exception("owner signature missing (%d)" % missings)
             elif self._secondPublicKey:
-                if "signSignature" not in self or "secondSignature" not in self:
+                if "signSignature" not in self:
                     raise Exception("second signature is missing")
             self["id"] = dposlib.core.crypto.getId(self)
         else:
