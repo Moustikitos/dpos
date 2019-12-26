@@ -104,7 +104,7 @@ Multisignature server
 modules to issue multisignature registration and transactions.
 
 let's take an exemple of a two owner multisignature wallet. From owner terminal
-issuing the transaction::
+issuing the transaction:
 
 >>> import dposlib
 >>> from dposlib import rest
@@ -120,7 +120,7 @@ True
 >>> client.postNewTransactions("dark", t)
 {u'success': [u'transaction #1 successfully posted'], u'ids': [u'7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e']}
 
-From second owner terminal::
+From second owner terminal:
 
 >>> from mssrv import client
 >>> client.API_PEER = "http://mssrv.arky-delegate.info"
