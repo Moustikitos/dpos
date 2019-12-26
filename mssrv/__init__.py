@@ -149,11 +149,6 @@ def append(network, *transactions):
             response["errors"] = response.get("errors", []) + [
                 "transaction #%d rejected (%r)" % (idx, error)
             ]
-        # else:
-        #     response["success"] = response.get("success", []) + [
-        #         "transaction #%d successfully posted" % (idx)
-        #     ]
-        #     response["ids"] = response.get("ids", []) + [id_]
     return json.dumps(response), 201
 
 
