@@ -103,20 +103,30 @@ Multisignature server
 ``dpos`` repository contains ``mssrv`` package that provides client - server
 modules to issue multisignature registration and transactions.
 
+let's take an exemple of a two owner multisignature wallet. From owner terminal
+issuing the transaction::
+
 >>> import dposlib
 >>> from dposlib import rest
 >>> from mssrv import client
 >>> rest.use("dark")
 True
->>> client.API_PEER = "http://127.0.0.1:5000"
+>>> client.API_PEER = "http://mssrv.arky-delegate.info"
 >>> t = dposlib.core.transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"ms-srv test #4 \u2728", version=2)
 >>> t.senderPublicKey = "02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3"
 >>> t.setFee()
+>>> # one signature minimum is mandatory 
+>>> t.multiSignWithSecret("secret")
 >>> client.postNewTransactions("dark", t)
 {u'success': [u'transaction #1 successfully posted'], u'ids': [u'7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e']}
->>> client.remoteSignWithSecret("dark", t.senderPublicKey, "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e")
-secret >
-{u'success': u'signature added to transaction'}
->>> client.remoteSignWithSecret("dark", t.senderPublicKey, "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e")
+
+From second owner terminal::
+
+>>> from mssrv import client
+>>> client.API_PEER = "http://mssrv.arky-delegate.info"
+>>> senderPublicKey = "02cccf1a186bed2cf8d22f6c46d8497a4eceeb8e159bde4ee83b908145764da5e3"
+>>> tx_id = "7c01e5bd9d78a82f766db50c345cbcd227e47089b3fbeca7cde530a46bfcb77e"
+>>> # automated broadcast when minimum signature reached
+>>> client.remoteSignWithSecret("dark", senderPublicKey, tx_id)
 secret >
 {u'broadcast': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'accept': [u'47b7d0431a2996c04292ae9bddad36db52e3babcc666704d593da616ab6c207e'], u'invalid': [], u'excess': []}
