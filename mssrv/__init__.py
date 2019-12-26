@@ -144,6 +144,12 @@ def broadcast(network, tx):
     return json.dumps(response), code
 
 
+@app.after_request
+def apply_caching(response):
+    response.headers["Content-Type"] = "application/json; charset=utf-8"
+    return response
+
+
 @app.errorhandler(Exception)
 def handle_exception(error):
     tl = traceback.format_exc().splitlines()
