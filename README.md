@@ -250,6 +250,8 @@ pip install ledgerblue
 
 ### 0.3.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] better `vendorFieldHex` field  handling
+  - [x] `dposlib.blockchain.Transaction` behaviour improvement
+  - [x] tx versioning defined in `net` module
 
 ## TODO
   - [ ] CLI

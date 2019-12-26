@@ -20,7 +20,8 @@ def getKeys(secret):
     (WIF).
 
     Args:
-        secret (:class:`str`, :class:`bytes` or :class:`int`):
+        secret (:class:`str`, :class:`bytes` or :class:`int`): 
+            anything that could issue a private key on secp256k1 curve
 
     Returns:
         :class:`dict`: public, private and WIF keys
@@ -38,20 +39,6 @@ def getKeys(secret):
         "privateKey": hexlify(seed),
         "wif": getWIF(seed)
     }
-
-
-def getAddressFromSecret(secret, marker=None):
-    """
-    Compute ARK address from secret.
-
-    Args:
-        secret (:class:`str`): secret string
-        marker (:class:`int`): network marker (optional)
-
-    Returns:
-        :class:`str`: the address
-    """
-    return getAddress(getKeys(secret)["publicKey"], marker)
 
 
 def getMultiSignaturePublicKey(minimum, *publicKeys):
@@ -76,6 +63,20 @@ def getMultiSignaturePublicKey(minimum, *publicKeys):
     for publicKey in publicKeys:
         P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
     return hexlify(P.encode())
+
+
+def getAddressFromSecret(secret, marker=None):
+    """
+    Compute ARK address from secret.
+
+    Args:
+        secret (:class:`str`): secret string
+        marker (:class:`int`): network marker (optional)
+
+    Returns:
+        :class:`str`: the address
+    """
+    return getAddress(getKeys(secret)["publicKey"], marker)
 
 
 def getAddress(publicKey, marker=None):
@@ -189,73 +190,6 @@ def getSignatureFromBytes(data, privateKey):
         return hexlify(schnorr.bcrypto410_sign(msg, secret0))
     else:
         return hexlify(ecdsa.rfc6979_sign(msg, secret0, canonical=True))
-
-
-def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
-    """
-    Verify transaction validity.
-
-    Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction object
-        secondPublicKey (:class:`str`):
-            second public key to use if needed
-        multiPublicKeys (:class:`list`):
-            owners public keys (sorted according to associated type-4-tx asset)
-
-    Returns:
-        :class:`bool`: true if transaction is valid
-    """
-    checks = []
-    version = tx.get("version", 0x01)
-    publicKey = tx["senderPublicKey"]
-
-    if tx["type"] == 4:
-        multiPublicKeys = tx["asset"]["multiSignature"]["publicKeys"]
-
-    # pure python dict serializer
-    def _ser(t, v, **opt):
-        return \
-            serialize(t, version=v, **opt) if v >= 0x02 else \
-            getBytes(t, **opt)
-
-    # create a local copy of tx
-    tx = dict(**tx)
-
-    # id check
-    # remove id from tx if any and then compare
-    id_ = tx.pop("id", False)
-    if id_:
-        checks.append(getIdFromBytes(_ser(tx, version)) == id_)
-
-    signature = tx.pop("signature", False)
-    signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
-    signatures = tx.pop("signatures", [])
-
-    # multiple signature check
-    if len(multiPublicKeys) and len(signatures):
-        serialized = _ser(tx, version)
-        for sig in signatures:
-            idx, sig = int(sig[0:2], 16), sig[2:]
-            checks.append(verifySignatureFromBytes(
-                serialized, multiPublicKeys[idx], sig
-            ))
-        tx["signatures"] = signatures
-
-    if signature:
-        # sender signature check
-        checks.append(verifySignatureFromBytes(
-            _ser(tx, version), publicKey, signature
-        ))
-        # sender second signature check
-        if signSignature and secondPublicKey:
-            # add signature before check
-            tx["signature"] = signature
-            checks.append(verifySignatureFromBytes(
-                _ser(tx, version), secondPublicKey, signSignature
-            ))
-
-    return False not in checks
 
 
 def verifySignature(value, publicKey, signature):
@@ -604,3 +538,70 @@ def serializePayload(tx):
     result = buf.getvalue()
     buf.close()
     return result
+
+
+def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
+    """
+    Verify transaction validity.
+
+    Args:
+        tx (:class:`dict` or :class:`Transaction`):
+            transaction object
+        secondPublicKey (:class:`str`):
+            second public key to use if needed
+        multiPublicKeys (:class:`list`):
+            owners public keys (sorted according to associated type-4-tx asset)
+
+    Returns:
+        :class:`bool`: true if transaction is valid
+    """
+    checks = []
+    version = tx.get("version", 0x01)
+    publicKey = tx["senderPublicKey"]
+
+    if tx["type"] == 4:
+        multiPublicKeys = tx["asset"]["multiSignature"]["publicKeys"]
+
+    # pure python dict serializer
+    def _ser(t, v, **opt):
+        return \
+            serialize(t, version=v, **opt) if v >= 0x02 else \
+            getBytes(t, **opt)
+
+    # create a local copy of tx
+    tx = dict(**tx)
+
+    # id check
+    # remove id from tx if any and then compare
+    id_ = tx.pop("id", False)
+    if id_:
+        checks.append(getIdFromBytes(_ser(tx, version)) == id_)
+
+    signature = tx.pop("signature", False)
+    signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
+    signatures = tx.pop("signatures", [])
+
+    # multiple signature check
+    if len(multiPublicKeys) and len(signatures):
+        serialized = _ser(tx, version)
+        for sig in signatures:
+            idx, sig = int(sig[0:2], 16), sig[2:]
+            checks.append(verifySignatureFromBytes(
+                serialized, multiPublicKeys[idx], sig
+            ))
+        tx["signatures"] = signatures
+
+    if signature:
+        # sender signature check
+        checks.append(verifySignatureFromBytes(
+            _ser(tx, version), publicKey, signature
+        ))
+        # sender second signature check
+        if signSignature and secondPublicKey:
+            # add signature before check
+            tx["signature"] = signature
+            checks.append(verifySignatureFromBytes(
+                _ser(tx, version), secondPublicKey, signSignature
+            ))
+
+    return False not in checks

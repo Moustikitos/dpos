@@ -263,7 +263,7 @@ def broadcastTransactions(*transactions, **params):
         report
 
 
-def transfer(amount, address, vendorField=None, expiration=0, version=1):
+def transfer(amount, address, vendorField=None, expiration=0):
     """
     Build a transfer transaction. Emoji can be included in transaction
     vendorField using unicode formating.
@@ -275,11 +275,10 @@ def transfer(amount, address, vendorField=None, expiration=0, version=1):
         address (:class:`str`): valid recipient address
         vendorField (:class:`str`): vendor field message
         expiration (:class:`float`): time of persistance in hour
-        version (:class:`int`): transaction version
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
-    if version > 1 and expiration > 0:
+    if cfg.txversion > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
         expiration = int(
             rest.GET.api.blockchain()
@@ -292,27 +291,26 @@ def transfer(amount, address, vendorField=None, expiration=0, version=1):
         amount=amount*100000000,
         recipientId=address,
         vendorField=vendorField,
-        version=version,
-        expiration=None if version < 2 else expiration
+        version=cfg.txversion,
+        expiration=None if cfg.txversion < 2 else expiration
     )
 
 
-def registerSecondSecret(secondSecret, version=1):
+def registerSecondSecret(secondSecret):
     """
     Build a second secret registration transaction.
 
     Arguments:
         secondSecret (:class:`str`): passphrase
-        version (:class:`int`): transaction version
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return registerSecondPublicKey(
-        crypto.getKeys(secondSecret)["publicKey"], version=version
+        crypto.getKeys(secondSecret)["publicKey"], version=cfg.txversion
     )
 
 
-def registerSecondPublicKey(secondPublicKey, version=1):
+def registerSecondPublicKey(secondPublicKey):
     """
     Build a second secret registration transaction.
 
@@ -321,13 +319,12 @@ def registerSecondPublicKey(secondPublicKey, version=1):
 
     Arguments:
         secondPublicKey (:class:`str`): public key as hex string
-        version (:class:`int`): transaction version
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
         type=1,
-        version=version,
+        version=cfg.txversion,
         asset={
             "signature": {
                 "publicKey": secondPublicKey
@@ -336,19 +333,18 @@ def registerSecondPublicKey(secondPublicKey, version=1):
     )
 
 
-def registerAsDelegate(username, version=1):
+def registerAsDelegate(username):
     """
     Build a delegate registration transaction.
 
     Arguments:
         username (:class:`str`): delegate username
-        version (:class:`int`): transaction version
     Returns:
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
         type=2,
-        version=version,
+        version=cfg.txversion,
         asset={
             "delegate": {
                 "username": username
@@ -357,7 +353,7 @@ def registerAsDelegate(username, version=1):
     )
 
 
-def upVote(*usernames, **kwargs):
+def upVote(*usernames):
     """
     Build an upvote transaction.
 
@@ -378,14 +374,14 @@ def upVote(*usernames, **kwargs):
 
     return Transaction(
         type=3,
-        version=kwargs.get("version", 1),
+        version=cfg.txversion,
         asset={
             "votes": votes
         },
     )
 
 
-def downVote(*usernames, **kwargs):
+def downVote(*usernames):
     """
     Build a downvote transaction.
 
@@ -406,7 +402,7 @@ def downVote(*usernames, **kwargs):
 
     return Transaction(
         type=3,
-        version=kwargs.get("version", 1),
+        version=cfg.txversion,
         asset={
             "votes": votes
         },
@@ -425,7 +421,7 @@ def registerMultiSignature(minSig, *publicKeys):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=4,
         MultiSignatureAddress=crypto.getAddress(
             crypto.getMultiSignaturePublicKey(
@@ -451,7 +447,7 @@ def registerIpfs(ipfs):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=5,
         asset={
             "ipfs": ipfs
@@ -473,7 +469,7 @@ def multiPayment(*pairs, **kwargs):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=6,
         vendorField=kwargs.get("vendorField", None),
         asset={
@@ -493,7 +489,7 @@ def delegateResignation():
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=7
     )
 
@@ -530,7 +526,7 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=8,
         amount=amount*100000000,
         recipientId=address,
@@ -560,7 +556,7 @@ def htlcClaim(txid, secret):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=9,
         asset={
             "claim": {
@@ -581,7 +577,7 @@ def htlcRefund(txid):
         :class:`dposlib.blockchain.Transaction`: transaction object
     """
     return Transaction(
-        version=2,
+        version=cfg.txversion,
         type=10,
         asset={
             "refund": {
@@ -593,6 +589,7 @@ def htlcRefund(txid):
 
 __all__ = [
     "crypto",
+    "hexlify", "unhexlify",
     "Transaction",
     "broadcastTransactions",
     "transfer", "registerSecondSecret", "registerSecondPublicKey",
