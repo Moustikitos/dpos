@@ -115,20 +115,45 @@ def identify(tx):
 def append(network, *transactions):
     response = {}
     for tx in transactions:
-        idx = transactions.index(tx)
+        idx = transactions.index(tx) + 1
         try:
             if not isinstance(tx, dposlib.core.Transaction):
                 tx = dposlib.core.Transaction(tx)
-            id_ = dump(network, tx)
+            signatures = tx.get("signatures", [])
+            if len(signatures) == 0:
+                response["errors"] = response.get("errors", []) + [
+                    "transaction #%d rejected (one signature is mandatory)"
+                    % idx
+                ]
+            else:
+                checks = []
+                serialized = crypto.getBytes(tx, exclude_multi_sig=True)
+                for sig in signatures:
+                    pk_idx, sig = int(sig[0:2], 16), sig[2:]
+                    checks.append(crypto.verifySignatureFromBytes(
+                        serialized, tx._multisignature["publicKeys"][pk_idx],
+                        sig
+                    ))
+                if False in checks:
+                    response["errors"] = response.get("errors", []) + [
+                        "transaction #%d rejected (bad signature)"
+                        % idx
+                    ]
+                else:
+                    id_ = dump(network, tx)
+                    response["success"] = response.get("success", []) + [
+                        "transaction #%d successfully posted" % (idx)
+                    ]
+                    response["ids"] = response.get("ids", []) + [id_]
         except Exception as error:
             response["errors"] = response.get("errors", []) + [
-                "transaction #%d rejected (%r)" % (idx+1, error)
+                "transaction #%d rejected (%r)" % (idx, error)
             ]
-        else:
-            response["success"] = response.get("success", []) + [
-                "transaction #%d successfully posted" % (idx+1)
-            ]
-            response["ids"] = response.get("ids", []) + [id_]
+        # else:
+        #     response["success"] = response.get("success", []) + [
+        #         "transaction #%d successfully posted" % (idx)
+        #     ]
+        #     response["ids"] = response.get("ids", []) + [id_]
     return json.dumps(response), 201
 
 
@@ -231,6 +256,9 @@ def getSerial(network, ms_publicKey, txid):
     ``GET /multisignature/{network}/{ms_publicKey}/{txid}/serial`` endpoint.
     Return specific pending transaction serial from a specific public key.
     """
+    if network != getattr(rest.cfg, "network", False):
+        rest.use(network)
+
     if flask.request.method != "GET":
         return json.dumps({
             "success": False,
@@ -239,7 +267,6 @@ def getSerial(network, ms_publicKey, txid):
 
     tx = load(network, ms_publicKey, txid)
     if tx:
-        tx = dposlib.core.Transaction(tx)
         return json.dumps({
             "success": True,
             "data": hexlify(crypto.getBytes(tx))

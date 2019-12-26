@@ -20,7 +20,7 @@ def getKeys(secret):
     (WIF).
 
     Args:
-        secret (:class:`str`, :class:`bytes` or :class:`int`): 
+        secret (:class:`str`, :class:`bytes` or :class:`int`):
             anything that could issue a private key on secp256k1 curve
 
     Returns:
