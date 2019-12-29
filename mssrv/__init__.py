@@ -125,6 +125,11 @@ def append(network, *transactions):
                     "transaction #%d rejected (one signature is mandatory)"
                     % idx
                 ]
+            if tx.get("nonce", 1) <= tx._nonce:
+                response["errors"] = response.get("errors", []) + [
+                    "transaction #%d rejected (bad nonce)"
+                    % idx
+                ]
             else:
                 checks = []
                 serialized = crypto.getBytes(tx, exclude_multi_sig=True)
