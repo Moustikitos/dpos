@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Multisignature site</title>
+	<meta name="description" content="ark: visual multisignature site.">
+	<meta charset="utf-8">
+{%- block meta %}
+{%- endblock meta %}
+	<!-- Smartphone app theme -->
+	<meta name="theme-color" content="#48a178" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap styles -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<!-- Custom styles -->
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+	<link rel="shortcut icon" href="https://ark.io/favicon.png">
+{%- block title %}
+{%- endblock title %}
+</head>
+
+<body>
+
+<nav class="navbar shadow-lg fixed-top navbar-dark navbar-expand" style="background:rgb(42, 42, 48);">
+<div class="container">
+	<button class="navbar-toggler my-2 my-sm-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<a class="navbar-brand"><span style="font-size:25px">&#x01f4e1;</span></a>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+{%- block nav %}
+{%- endblock nav %}
+		</ul>
+	</div>
+</div>
+</nav>
+
+{%- with messages = get_flashed_messages(with_categories=true) %}
+	{%- if messages %}
+	<div class="container">
+	<section class="terminal-container">
+		<header class="terminal">
+			<span class="button red"></span>
+			<span class="button yellow"></span>
+			<span class="button green"></span>
+		</header>
+		<div class="terminal-home">	
+		{%- for category, message in messages %}
+			<p class="console sig">{{ message }}</p>
+		{%- endfor %}
+	</section>
+	</div>
+	{%- endif %}
+{%- endwith %}
+
+{%- block body %}
+{%- endblock body %}
+
+<!-- Bootstrap javascript files -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>

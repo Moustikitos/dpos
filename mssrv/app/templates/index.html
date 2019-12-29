@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{%- block title %}
+    <title>Network selection</title>
+{%- endblock title %}
+
+{%- block body %}
+<div class="container">
+	<div class="jumbotron">
+		<h1>&#x1f517;&nbsp;Blockchain {{ network }}</h1>
+		<p>
+		</p>
+		<hr/>
+	</div>
+{%- if response["success"] %}
+	{%- if response["data"]|length != 0 %}
+	<!-- show wallet found in response['data'] -->
+	<ul class="list-group">
+		<li class="list-group-item bg-primary">
+			<strong>Pending multisignature transaction found</strong>
+		</li>
+		{%- for puk,txs in response["data"].items() %}
+		{%- set wallet = _address(puk) %}
+		<li class="list-group-item d-flex justify-content-between align-items-center">
+			<a href="{{ '/%s/%s' % (network, wallet) }}" class="card-link">&#x1f4b3;&nbsp;{{ _shorten(wallet) }}</a>
+			<span class="badge badge-primary badge-pill">{{ txs|length }}</span>
+		</li>
+		{%- endfor %}
+	</ul>
+	{%- endif %}
+{%- endif %}
+</div>
+{%- endblock body %}
