@@ -19,8 +19,8 @@ app.config.update(
     SECRET_KEY=os.urandom(24),
     # JS can't access cookies
     SESSION_COOKIE_HTTPONLY=True,
-    # bi use of https
-    SESSION_COOKIE_SECURE=False,
+    # cookie stored only if use of https
+    SESSION_COOKIE_SECURE=True,
     # update cookies on each request
     # cookie are outdated after PERMANENT_SESSION_LIFETIME seconds of idle
     SESSION_REFRESH_EACH_REQUEST=True,
@@ -85,7 +85,7 @@ def loadNetwork(network):
     resp = rest.GET.multisignature(network, peer=app.peer)
 
     if not len(resp.get("data", [])):
-        flask.flash("no pending transaction found", category="info")
+        flask.flash("no pending transaction found")
 
     return flask.render_template("index.html", response=resp, network=network)
 
@@ -97,58 +97,92 @@ def loadWallet(network, wallet):
         return ""
     elif network != getattr(rest.cfg, "network", False):
         rest.use(network)
+
+    host_url = flask.request.host_url
     wlt = rest.GET.api.wallets(wallet).get("data", [])
+    crypto = dposlib.core.crypto
+    form = flask.request.form
 
     if len(wlt):
+
         if flask.request.method == "POST":
-            if flask.request.form["secret"] in ["", None]:
-                flask.flash("No secret found", category="error")
-            else:
-                resp = {}
-                form = flask.request.form
-                crypto = dposlib.core.crypto
+            # form contains secret (https or localhost mode)
+            if form.get("secret", None) not in ["", None]:
                 keys = crypto.getKeys(form["secret"])
+                publicKey = keys["publicKey"]
                 signature = crypto.getSignatureFromBytes(
                     crypto.unhexlify(form["serial"]),
                     keys["privateKey"]
                 )
+            # form contains signature
+            elif form.get("signature", None) not in ["", None]:
+                try:
+                    data = json.loads(form["signature"].strip())
+                    signature = data.get("signature", "")
+                    publicKey = data.get("publicKey", form["publicKey"])
+                except Exception:
+                    publicKey = form["publicKey"]
+                    signature = form["signature"].strip()
+            # form is empty
+            else:
                 flask.flash(
-                    json.dumps(
-                        rest.PUT.multisignature(
-                            network, form["ms_publicKey"], "put",
-                            peer=app.peer,
-                            info={
-                                "publicKey": keys["publicKey"],
-                                "signature": signature,
-                                "id": form["id"]
-                            }
-                        )
-                    )
+                    "Nothing found to proceed with POST request",
+                    category="red"
                 )
 
-        # call to multisignature server
-        resp = rest.GET.multisignature(
-            network, wlt["publicKey"],
-            peer=app.peer
-        )
+        try:
+            # print({
+            #                     "publicKey": publicKey,
+            #                     "signature": signature,
+            #                     "id": form["id"]
+            #                 })
+            flask.flash(
+                json.dumps(
+                    rest.PUT.multisignature(
+                        network, form["ms_publicKey"], "put",
+                        peer=app.peer,
+                        info={
+                            "publicKey": publicKey,
+                            "signature": signature,
+                            "id": form["id"]
+                        }
+                    )
+                )
+            )
+        except Exception:
+            pass
+        finally:
+            # call to multisignature server
+            resp = rest.GET.multisignature(
+                network, wlt["publicKey"],
+                peer=app.peer
+            )
 
-        if not len(resp.get("data", [])):
-            flask.flash("no pending transaction found", category="info")
+        if not len(resp.get("data", {})):
+            flask.flash("no pending transaction found")
 
         return flask.render_template(
             "wallet.html",
-            response=resp, network=network, wallet=wlt
+            secure="127.0.0.1" in host_url or host_url.startswith("https"),
+            items=sorted(
+                resp.get("data", {}).items(),
+                key=lambda i: i[1]["nonce"]
+            ),
+            network=network, wallet=wlt
         )
 
-    flask.flash("'%s' wallet not found" % wallet)
+    flask.flash("'%s' wallet not found" % wallet, category="red")
     return flask.redirect(
         flask.url_for("loadNetwork", response={}, network=network)
     )
 
 
-def initWallet():
+@app.route("/<string:network>/create", methods=["GET", "POST"])
+def createWallet(network):
     pass
 
 
-def initTransaction():
+@app.route("/<string:network>/<string:wallet>/create", methods=["GET", "POST"])
+def createTransaction(network, wallet):
     pass
+

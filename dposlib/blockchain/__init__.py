@@ -110,7 +110,7 @@ class Transaction(dict):
             self["recipientId"] = address
         self._multisignature = data.get("multiSignature", {})
         self._secondPublicKey = data.get("secondPublicKey", None)
-        self._nonce = data.get("nonce", 0)
+        self._nonce = int(data.get("nonce", 0))
         self._publicKey = publicKey
         dict.__setitem__(self, "senderPublicKey", publicKey)
 

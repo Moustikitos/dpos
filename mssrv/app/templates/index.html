@@ -7,10 +7,14 @@
 {%- block body %}
 <div class="container">
 	<div class="jumbotron">
-		<h1>&#x1f517;&nbsp;Blockchain {{ network }}</h1>
-		<p>
-		</p>
+		<h1>&#x26d3;&nbsp;Blockchain {{ network }}</h1>
 		<hr/>
+		<div class="input-group">
+			<input id="wallet-search" type="text" class="form-control" placeholder="Search for wallet&hellip;" aria-label="wallet name or address" aria-describedby="search-button">
+			<div class="input-group-append">
+				<button onclick="javascript:openWalletUrl();" class="btn btn-outline-secondary" type="button" id="search-button">&#x1f50d;</button>
+			</div>
+		</div>
 	</div>
 {%- if response["success"] %}
 	{%- if response["data"]|length != 0 %}
@@ -30,4 +34,29 @@
 	{%- endif %}
 {%- endif %}
 </div>
+
+<script type="text/javascript">
+
+var input = document.getElementById("wallet-search");
+var action = document.getElementById("create-ms-wallet");
+
+function openWalletUrl() { 
+	if (input.value) {
+		window.location = "/{{ network }}/" + input.value;
+	}
+}
+
+// function createMsWallet() { 
+// 	window.location = "/{{ network }}/create";
+// }
+
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    openWalletUrl();
+  }
+});
+
+</script>
 {%- endblock body %}
