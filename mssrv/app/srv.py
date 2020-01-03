@@ -16,11 +16,16 @@ import sys
 import docopt
 
 from mssrv.app import app, _ark_srv_synch, _link_peer
-
 args = docopt.docopt(__doc__, argv=sys.argv[1:])
-app.config.update(DEBUG=args["--debug"])
-_link_peer(args["--ms-peer"])
-_ark_srv_synch()
+
+
+def create_app():
+    app.config.update(DEBUG=args["--debug"])
+    _link_peer(args["--ms-peer"])
+    _ark_srv_synch()
+    return app
+
 
 if __name__ == "__main__":
+    create_app()
     app.run(host=args["--host"], port=int(args["--port"]))
