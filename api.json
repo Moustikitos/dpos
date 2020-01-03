@@ -3,11 +3,11 @@
         {
             "exec_mode": "fork",
             "exec_interpreter": "bash",
-            "script": "bash/app.sh",
-            "args": "0.0.0.0 5051",
+            "script": "bash/api.sh",
+            "args": "0.0.0.0 5050",
             "instances": 1,
             "log_date_format": "YYYY-MM-DD HH:mm Z",
-            "name": "ms-app",
+            "name": "ms-api",
             "combine_logs": true
         }
     ]

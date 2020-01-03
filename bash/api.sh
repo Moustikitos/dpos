@@ -1,3 +1,3 @@
 . ~/.local/share/ms-server/venv/bin/activate
 export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
-python ~/dpos/mssrv/srv.py -p 5050
+gunicorn --bind=$1:$2 --workers=5 mssrv:app

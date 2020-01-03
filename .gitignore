@@ -111,3 +111,7 @@ simple_history.html
 
 # Visual Studio Code
 .vscode
+
+# custom
+.registry/
+.synch/

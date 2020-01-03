@@ -1,1 +1,0 @@
-python ..\mssrv\srv.py

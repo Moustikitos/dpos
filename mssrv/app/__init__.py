@@ -2,11 +2,17 @@
 # (C) Toons MIT Licence
 
 import os
+import sys
 import json
 import flask
 
 import dposlib
+
+from functools import wraps
 from dposlib import rest, net
+from dposlib.util.asynch import setInterval
+from dposlib.util.data import loadJson, dumpJson
+from mssrv import identify, client
 
 
 # create the application instance
@@ -18,17 +24,18 @@ app.config.update(
     # secret key is generated each time app is restarted
     SECRET_KEY=os.urandom(24),
     # JS can't access cookies
-    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_HTTPONLY=False,
     # cookie stored only if use of https
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=False,
     # update cookies on each request
     # cookie are outdated after PERMANENT_SESSION_LIFETIME seconds of idle
     SESSION_REFRESH_EACH_REQUEST=True,
     # reload templates without server restart
     TEMPLATES_AUTO_RELOAD=True,
 )
+
 app.root_path = __path__[0]
-app.peer = "http://127.0.0.1:5000"
+SYNCH_FOLDER = os.path.join(app.root_path, ".synch")
 
 
 ########################
@@ -47,6 +54,42 @@ def _url_for(endpoint, **values):
 ########################
 
 
+def _link_peer(peer="http://127.0.0.1:5000"):
+    client.API_PEER = app.peer = peer
+
+
+def _fix_tx(t):
+    for key in ["amount", "fee", "nonce"]:
+        t[key] = int(t[key])
+    return t
+
+
+@setInterval(60)
+def _ark_srv_synch():
+    data = {}  # loadJson(path)
+    if not hasattr(rest.cfg, "pubkeyHash"):
+        return
+    path = os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
+    try:
+        for server in ["https://multisig-devnet.ark.dev"]:
+            req = rest.GET.transactions(peer=server)
+            if req:
+                pendings = [
+                    _fix_tx(elem["data"])
+                    for elem in req
+                    if elem["data"]["network"] == rest.cfg.pubkeyHash
+                ]
+                data.update(
+                    dict(
+                        [tx["senderPublicKey"], {identify(tx): tx}]
+                        for tx in pendings
+                    )
+                )
+                dumpJson(data, path)
+    except Exception as error:
+        sys.stdout.write("%r\n" % error)
+
+
 def _shorten(addr, n=5):
     return flask.Markup(
         '<span class="not-ellipsed">%s</span><span class="ellipsed">%s'
@@ -55,6 +98,18 @@ def _shorten(addr, n=5):
             "%s&nbsp;&hellip;&nbsp;%s" % (addr[:n], addr[-n:])
         )
     )
+
+
+def checkNetwork(func):
+    @wraps(func)
+    def wrapper(*args, **kw):
+        network = kw.get("network", "?")
+        if hasattr(net, network) and network != getattr(rest.cfg, network, False):
+            rest.use(network)
+            return func(*args, **kw)
+        else:
+            flask.abort(404)
+    return wrapper
 
 
 @app.context_processor
@@ -74,15 +129,15 @@ def tweak():
 
 
 @app.route("/<string:network>", methods=["GET"])
+@checkNetwork
 def loadNetwork(network):
-    # first filter
-    if network not in dir(net):
-        return ""
-    elif network != getattr(rest.cfg, "network", False):
-        rest.use(network)
-
     # call to multisignature server
     resp = rest.GET.multisignature(network, peer=app.peer)
+    # merge with ark server
+    resp2 = loadJson(os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash))
+    if len(resp2):
+        resp["success"] = True
+        resp["data"] = dict(resp.get("data", {}), **resp2)
 
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")
@@ -91,15 +146,10 @@ def loadNetwork(network):
 
 
 @app.route("/<string:network>/<string:wallet>", methods=["GET", "POST"])
+@checkNetwork
 def loadWallet(network, wallet):
-    # first filter
-    if network not in dir(net):
-        return ""
-    elif network != getattr(rest.cfg, "network", False):
-        rest.use(network)
-
     host_url = flask.request.host_url
-    wlt = rest.GET.api.wallets(wallet).get("data", [])
+    wlt = rest.GET.api.wallets(wallet).get("data", {})
     crypto = dposlib.core.crypto
     form = flask.request.form
 
@@ -131,23 +181,14 @@ def loadWallet(network, wallet):
                 )
 
         try:
-            # print({
-            #                     "publicKey": publicKey,
-            #                     "signature": signature,
-            #                     "id": form["id"]
-            #                 })
             flask.flash(
                 json.dumps(
-                    rest.PUT.multisignature(
-                        network, form["ms_publicKey"], "put",
-                        peer=app.peer,
-                        info={
-                            "publicKey": publicKey,
-                            "signature": signature,
-                            "id": form["id"]
-                        }
+                    client.putSignature(
+                        network, form["ms_publicKey"], 
+                        form["id"], publicKey, signature
                     )
-                )
+                ),
+                category="yellow"
             )
         except Exception:
             pass
@@ -157,6 +198,18 @@ def loadWallet(network, wallet):
                 network, wlt["publicKey"],
                 peer=app.peer
             )
+            # update with what is found on ark servers
+            txs = loadJson(
+                os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
+            ).get(wlt["publicKey"], {})
+            if len(txs):
+                resp.update(txs)
+                flask.flash(
+                    json.dumps(
+                        client.postNewTransactions(network, *txs.values())
+                    ),
+                    category="yellow"
+                )
 
         if not len(resp.get("data", {})):
             flask.flash("no pending transaction found")
@@ -173,16 +226,17 @@ def loadWallet(network, wallet):
 
     flask.flash("'%s' wallet not found" % wallet, category="red")
     return flask.redirect(
-        flask.url_for("loadNetwork", response={}, network=network)
+        flask.url_for("loadNetwork", network=network)
     )
 
 
 @app.route("/<string:network>/create", methods=["GET", "POST"])
+@checkNetwork
 def createWallet(network):
-    pass
+    return flask.render_template("building.html", network=network)
 
 
 @app.route("/<string:network>/<string:wallet>/create", methods=["GET", "POST"])
+@checkNetwork
 def createTransaction(network, wallet):
-    pass
-
+    return flask.render_template("building.html", network=network)

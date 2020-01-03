@@ -459,6 +459,7 @@ def putSignature(network, ms_publicKey):
                 "success": False,
                 "API error": "multisignature not to be used here"
             })
+
         # verify signature
         check = crypto.verifySignatureFromBytes(
             crypto.getBytes(
