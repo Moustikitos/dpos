@@ -14,6 +14,8 @@ import os
 import sys
 import docopt
 
+from mssrv import app
+
 # add parent path if executed from git structure
 sys.path.append(
     os.path.normpath(
@@ -24,6 +26,5 @@ sys.path.append(
 )
 
 if __name__ == "__main__":
-    from mssrv import app
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
     app.run(host=args["--host"], port=int(args["--port"]))

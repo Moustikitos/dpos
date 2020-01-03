@@ -15,12 +15,12 @@ Options:
 import sys
 import docopt
 
+from mssrv.app import app, _ark_srv_synch, _link_peer
+
+args = docopt.docopt(__doc__, argv=sys.argv[1:])
+app.config.update(DEBUG=args["--debug"])
+_link_peer(args["--ms-peer"])
+_ark_srv_synch()
 
 if __name__ == "__main__":
-    from mssrv.app import app, _ark_srv_synch, _link_peer
-    args = docopt.docopt(__doc__, argv=sys.argv[1:])
-
-    app.config.update(DEBUG=args["--debug"])
-    _link_peer(args["--ms-peer"])
-    _ark_srv_synch()
     app.run(host=args["--host"], port=int(args["--port"]))
