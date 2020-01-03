@@ -133,13 +133,13 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         # first try to jsonify response
         try:
             data = req.json()
-        except Exception as error:
+        except Exception as err:
             data = {
                 "success": True, "except": True, "data": req.text,
-                "error": "%r" % error
+                "error": "%r" % err
             }
 
-        if req.status_code < 300:
+        if req.status_code < 300 and returnKey:
             # else try to extract the returnKey
             tmp = data.get(returnKey, False)
             if not tmp:
