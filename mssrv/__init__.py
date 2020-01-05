@@ -125,7 +125,7 @@ def append(network, *transactions):
                     "transaction #%d rejected (one signature is mandatory)"
                     % idx
                 ]
-            if tx.get("nonce", 1) <= tx._nonce:
+            elif tx.get("nonce", 1) <= tx._nonce:
                 response["errors"] = response.get("errors", []) + [
                     "transaction #%d rejected (bad nonce)"
                     % idx
@@ -386,12 +386,12 @@ def putSignature(network, ms_publicKey):
         tx = dposlib.core.Transaction(tx)
         publicKey = data["info"]["publicKey"]
         signature = data["info"]["signature"]
+        publicKeys = tx["asset"]["multiSignature"]["publicKeys"]
 
         # sign type 4
-        if tx.type == 4 and publicKey == tx.senderPublicKey:
-            publicKeys = tx["asset"]["multiSignature"]["publicKeys"]
+        if tx.type == 4 and len(tx.get("signatures", [])) == len(publicKeys):
             # type 4 signatures field is full
-            if len(tx.get("signatures", [])) == len(publicKeys):
+            if publicKey == tx.senderPublicKey:
                 # and signature matches type 4 issuer's public key
                 if crypto.verifySignatureFromBytes(
                     crypto.getBytes(tx), publicKey, signature
@@ -412,36 +412,30 @@ def putSignature(network, ms_publicKey):
                         "success": False,
                         "API error": "signature does not match issuer key"
                     })
-            else:
-                return json.dumps({
-                    "success": False,
-                    "API error": "one or more signature missing"
-                })
-
-        # signSign
-        if publicKey == tx._secondPublicKey:
-            # if tx already signed by issuer
-            if "signature" in tx:
-                # and signature matches type 4 issuer 's second public key
-                if crypto.verifySignatureFromBytes(
-                    crypto.getBytes(tx), publicKey, signature
-                ):
-                    # signSign, broadcast and return network response
-                    tx.signSignature = signature
-                    return broadcast(network, tx)
+            # signSign
+            elif publicKey == tx._secondPublicKey:
+                # if tx already signed by issuer
+                if "signature" in tx:
+                    # and signature matches type 4 issuer 's second public key
+                    if crypto.verifySignatureFromBytes(
+                        crypto.getBytes(tx), publicKey, signature
+                    ):
+                        # signSign, broadcast and return network response
+                        tx.signSignature = signature
+                        return broadcast(network, tx)
+                    else:
+                        return json.dumps({
+                            "success": False,
+                            "API error": "signature does not match issuer "
+                                         "second key"
+                        })
                 else:
                     return json.dumps({
                         "success": False,
-                        "API error": "signature does not match issuer "
-                                     "second key"
+                        "API error": "transaction have to be signed first"
                     })
-            else:
-                return json.dumps({
-                    "success": False,
-                    "API error": "transaction have to be signed first"
-                })
 
-        # multi owner signature
+        # add owner signature
         try:
             # try to get public key index
             if tx["type"] == 4:

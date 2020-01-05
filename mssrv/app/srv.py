@@ -26,6 +26,6 @@ def create_app(mssrv):
 
 if __name__ == "__main__":
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
-    create_app()
+    create_app(args["--ms-peer"])
     app.config.update(DEBUG=args["--debug"])
     app.run(host=args["--host"], port=int(args["--port"]))

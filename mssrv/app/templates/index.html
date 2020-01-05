@@ -31,21 +31,6 @@
 		{%- endfor %}
 	</ul>
 {%- endif %}
-<!-- {%- if ark_server|length != 0 %}
-	<ul class="list-group">
-		<li class="list-group-item bg-primary">
-			<strong>Pending multisignature transaction found on official servers</strong>
-		</li>
-		{%- for puk,txs in ark_server.items() %}
-		{%- set wallet = _address(puk) %}
-		<li class="list-group-item d-flex justify-content-between align-items-center">
-			<a href="{{ '/%s/%s' % (network, wallet) }}" class="card-link">&#x1f4b3;&nbsp;{{ _shorten(wallet) }}</a>
-			<span class="badge badge-primary badge-pill">{{ txs|length }}</span>
-		</li>
-		{%- endfor %}
-	</ul>
-{%- endif %}-->
-
 </div>
 
 <script type="text/javascript">
@@ -58,10 +43,6 @@ function openWalletUrl() {
 		window.location = "/{{ network }}/" + input.value;
 	}
 }
-
-// function createMsWallet() { 
-// 	window.location = "/{{ network }}/create";
-// }
 
 input.addEventListener("keyup", function(event) {
   // Number 13 is the "Enter" key on the keyboard
