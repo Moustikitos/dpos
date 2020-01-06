@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {%- set ownersPublicKeys = wallet.get("multiSignature", {}).get("publicKeys", []) %}
-{%- set next_nonce = wallet.get("nonce", {})|int +1 %}
+{%- set next_nonce = wallet.get("nonce", "0")|int +1 %}
 
 {%- block meta %}
 	<meta http-equiv="refresh" content="360">
@@ -26,7 +26,7 @@
 			</button>
             {%- else %}
             <button onclick="javascript:window.location='/{{ network }}/{{ wallet['address'] }}/create'" id="create-ms-wallet" class="btn btn-outline-success m-1" type="button">
-                Create multisignature transaction
+                Send {{ symbol }}
             </button>
             {%- endif %}
 		</div>
@@ -43,72 +43,73 @@
     </div>
 {%- if items|length != 0 %}
     <h2>Pending transactions</h2>
+    <div></div>
     <div>
         {%- for id,tx in items %}
-        {%- set publicKeys = tx.get("asset", {}).get("multiSignature", {}).get("publicKeys", []) if tx["type"] == 4 else ownersPublicKeys %}
-        {%- set full_type_4 = tx.get("signatures", [])|length == publicKeys|length and tx["type"] == 4 %}
-        {%- set serialized = _crypto.hexlify(_crypto.getBytes(tx, exclude_multi_sig=not full_type_4)) %}
+            {%- set publicKeys = tx.get("asset", {}).get("multiSignature", {}).get("publicKeys", []) if tx["type"] == 4 else ownersPublicKeys %}
+            {%- set full_type_4 = tx.get("signatures", [])|length == publicKeys|length and tx["type"] == 4 %}
+            {%- set serialized = _crypto.hexlify(_crypto.getBytes(tx, exclude_multi_sig=not full_type_4)) %}
         <form class="shadow-lg p-3 mb-5 rounded" method="POST">
-            <fieldset{{ " disabled" if tx["nonce"] != next_nonce else "" }}>
+            <fieldset {{ "disabled" if tx["nonce"] != next_nonce else "" }}>
             <span class="sig">&#x1f516;&nbsp;{{ _shorten(id) }}</span>
             <input type="hidden" name="id" value="{{ id }}"/>
             <input type="hidden" name="ms_publicKey" value="{{ wallet['publicKey'] }}"/>
             <table class="table table-striped table-hover table-success table-sm table-responsive">
                 <tbody>
-                    {%- for key in ["type", "recipientId", "MultiSignatureAddress", "amount", "fee", "vendorField"] %}
-                        {% if key in tx %}
-                            {% if key in ["amount", "fee"] %}
+            {%- for key in ["type", "recipientId", "MultiSignatureAddress", "amount", "fee", "vendorField"] %}
+                {% if key in tx %}
+                    {% if key in ["amount", "fee"] %}
                     <tr><th>{{ key }}</th><td width="100%">{{ _currency(tx[key] / 100000000.0) }}</td></tr>
-                            {%- elif key in ["recipientId", "MultiSignatureAddress"] %}
+                    {%- elif key in ["recipientId", "MultiSignatureAddress"] %}
                     <tr><th>{{ key }}</th><td width="100%">{{ _shorten(tx[key]) }}</td></tr>
-                            {%- else %}
+                    {%- else %}
                     <tr><th>{{ key }}</th><td width="100%">{{ tx[key] }}</td></tr>
-                            {%- endif %}
-                        {%- endif %}
-                    {%- endfor %}
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor %}
                 </tbody>
             </table>
             <div class="form-group">
-            <strong>Signatures</strong>
-            <div class="sig">
+                <strong>Signatures</strong>
+                <div class="sig">
             {%- for sig in tx.get("signatures", []) %}
-            <strong>#{{ loop.index }}&nbsp;:</strong>&nbsp;{{ sig[2:] }}<br/>
+                    <strong>#{{ loop.index }}&nbsp;:</strong>&nbsp;{{ sig[2:] }}<br/>
             {%- endfor %}
-            </div>
-            <hr/>
+                </div>
+                <hr/>
             {%- if secure %}
-            <input type="hidden" name="serial" value="{{ serialized }}">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal{{ '%02d' % loop.index }}">
+                <input type="hidden" name="serial" value="{{ serialized }}">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal{{ '%02d' % loop.index }}">
                 {%- if full_type_4 and tx.get("signature", False) %}
-                Second sign transaction
+                    Second sign transaction
                 {%- elif full_type_4 %}
-                Sign transaction
+                    Sign transaction
                 {%- else %}
-                Add signature
+                    Add signature
                 {%- endif %}
-            </button>
-            <!-- MODAL -->
-            <div class="modal fade" id="modal{{ '%02d' % loop.index }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Paste secret</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="input-group">
-                                <textarea class="form-control" aria-label="With textarea" name="secret"></textarea>
+                </button>
+                <!-- MODAL -->
+                <div class="modal fade" id="modal{{ '%02d' % loop.index }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Paste secret</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Sign</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <div class="modal-body">
+                                <div class="input-group">
+                                    <textarea class="form-control" aria-label="With textarea" name="secret"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Sign</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </div>
             {%- else %}
                 {%- if full_type_4 and tx.get("signature", False) %}
@@ -146,12 +147,11 @@
                 </div>
                 <textarea class="form-control" aria-label="With textarea" name="signature"></textarea>
             </div>
-            </div>
             <button type="submit" class="btn btn-primary">
                 Send signature
             </button>
             {%- endif %}
-        </fieldset>
+            </fieldset>
         </form>
         {%- endfor %}
     </div>

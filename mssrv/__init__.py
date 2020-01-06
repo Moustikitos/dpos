@@ -386,12 +386,22 @@ def putSignature(network, ms_publicKey):
         tx = dposlib.core.Transaction(tx)
         publicKey = data["info"]["publicKey"]
         signature = data["info"]["signature"]
-        publicKeys = tx["asset"]["multiSignature"]["publicKeys"]
+        publicKeys = \
+            tx["asset"]["multiSignature"]["publicKeys"] \
+            if tx["type"] == 4 else tx._multisignature.get("publicKeys", [])
+
+        if publicKey not in (
+            publicKeys + [tx._secondPublicKey, tx._publicKey]
+        ):
+            return json.dumps({
+                "success": False,
+                "API error": "public key %s not allowed here" % publicKey
+            })
 
         # sign type 4
+        # signatures field is full
         if tx.type == 4 and len(tx.get("signatures", [])) == len(publicKeys):
-            # type 4 signatures field is full
-            if publicKey == tx.senderPublicKey:
+            if publicKey == tx._publicKey:
                 # and signature matches type 4 issuer's public key
                 if crypto.verifySignatureFromBytes(
                     crypto.getBytes(tx), publicKey, signature
@@ -435,26 +445,7 @@ def putSignature(network, ms_publicKey):
                         "API error": "transaction have to be signed first"
                     })
 
-        # add owner signature
-        try:
-            # try to get public key index
-            if tx["type"] == 4:
-                index = \
-                    tx.asset["multiSignature"]["publicKeys"].index(publicKey)
-            else:
-                index = tx._multisignature["publicKeys"].index(publicKey)
-        except ValueError:  # retuned by [].index if not found
-            return json.dumps({
-                "success": False,
-                "API error": "public key %s not allowed here" % publicKey
-            })
-        except (KeyError, AttributeError):
-            return json.dumps({
-                "success": False,
-                "API error": "multisignature not to be used here"
-            })
-
-        # verify signature
+        # verify owner signature
         check = crypto.verifySignatureFromBytes(
             crypto.getBytes(
                 tx, exclude_sig=True, exclude_multi_sig=True,
@@ -463,6 +454,7 @@ def putSignature(network, ms_publicKey):
         )
         # if signature matches
         if check:
+            index = publicKeys.index(publicKey)
             # set is used here to remove doubles
             tx["signatures"] = list(
                 set(tx.get("signatures", []) + ["%02x" % index + signature])
@@ -479,7 +471,7 @@ def putSignature(network, ms_publicKey):
         else:
             return json.dumps({
                 "success": False,
-                "API error": "signature does not match owner keys"
+                "API error": "signature not accepted"
             })
 
     else:

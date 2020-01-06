@@ -16,6 +16,7 @@ import sys
 import docopt
 
 from mssrv.app import app, _ark_srv_synch, _link_peer
+from dposlib.util.asynch import setInterval
 
 
 def create_app(mssrv):
@@ -27,5 +28,6 @@ def create_app(mssrv):
 if __name__ == "__main__":
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
     create_app(args["--ms-peer"])
+    @setInterval(60)(_ark_srv_synch)()
     app.config.update(DEBUG=args["--debug"])
     app.run(host=args["--host"], port=int(args["--port"]))
