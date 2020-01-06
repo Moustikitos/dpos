@@ -103,10 +103,14 @@ def checkNetwork(func):
     def wrapper(*args, **kw):
         network = kw.get("network", "?")
         if hasattr(net, network) and network != getattr(rest.cfg, network, False):
-            rest.use(network)
+            try:
+                rest.use(network)
+            except Exception:
+                return flask.render_template("void.html", network=network) 
+            _ark_srv_synch()
             return func(*args, **kw)
         else:
-            flask.abort(404)
+            return flask.render_template("void.html", network=network)
     return wrapper
 
 
@@ -114,7 +118,7 @@ def checkNetwork(func):
 def tweak():
     return dict(
         url_for=_url_for,
-        symbol=dposlib.core.cfg.symbol,
+        symbol=getattr(dposlib.core.cfg, "symbol", "?"),
         _shorten=_shorten,
         _crypto=dposlib.core.crypto,
         _address=lambda puk: dposlib.core.crypto.getAddress(puk),
@@ -227,6 +231,20 @@ def loadWallet(network, wallet):
     return flask.redirect(
         flask.url_for("loadNetwork", network=network)
     )
+
+
+@app.route("/<string:network>/crypto/serialize", methods=["POST"])
+@checkNetwork
+def serialize(network):
+    if flask.request.method == "POST":
+        try:
+            return json.dumps({
+                "serial": dposlib.core.hexlify(
+                    dposlib.core.crypto.getBytes(flask.request.form)
+                )
+            })
+        except Exception:
+            return json.dumps({"serial": "Serialization not possible..."})
 
 
 @app.route("/<string:network>/create", methods=["GET", "POST"])

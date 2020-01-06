@@ -132,11 +132,14 @@ def append(network, *transactions):
                 ]
             else:
                 checks = []
+                publicKeys = \
+                    tx["asset"].get("multiSignature", {}).get("publicKeys", []) \
+                    if tx["type"] == 4 else tx._multisignature.get("publicKeys", [])
                 serialized = crypto.getBytes(tx, exclude_multi_sig=True)
                 for sig in signatures:
                     pk_idx, sig = int(sig[0:2], 16), sig[2:]
                     checks.append(crypto.verifySignatureFromBytes(
-                        serialized, tx._multisignature["publicKeys"][pk_idx],
+                        serialized, publicKeys[pk_idx],
                         sig
                     ))
                 if False in checks:
@@ -387,7 +390,7 @@ def putSignature(network, ms_publicKey):
         publicKey = data["info"]["publicKey"]
         signature = data["info"]["signature"]
         publicKeys = \
-            tx["asset"]["multiSignature"]["publicKeys"] \
+            tx["asset"].get("multiSignature", {}).get("publicKeys", []) \
             if tx["type"] == 4 else tx._multisignature.get("publicKeys", [])
 
         if publicKey not in (
@@ -453,7 +456,7 @@ def putSignature(network, ms_publicKey):
             ), publicKey, signature
         )
         # if signature matches
-        if check:
+        if check and publicKey in publicKeys:
             index = publicKeys.index(publicKey)
             # set is used here to remove doubles
             tx["signatures"] = list(

@@ -7,7 +7,7 @@
 {%- endblock meta %}
 
 {%- block title %}
-    <title>Network selection</title>
+    <title>Wallet {{ wallet["address"] }}</title>
 {%- endblock title %}
 
 {%- block body %}
@@ -85,7 +85,7 @@
                 {%- elif full_type_4 %}
                     Sign transaction
                 {%- else %}
-                    Add signature
+                    Add owner signature
                 {%- endif %}
                 </button>
                 <!-- MODAL -->
@@ -93,7 +93,7 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">Paste secret</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle">Secret</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
@@ -105,7 +105,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary">Sign</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -117,7 +117,7 @@
                 {%- elif full_type_4 %}
             <strong>Sign transaction</strong>
                 {%- else %}
-            <strong>Add another owner signature</strong>
+            <strong>Add owner signature</strong>
                 {%- endif %}
                 {%- if full_type_4 and tx.get("signature", False) %}
             <input type="hidden" name="publicKey" value="{{ wallet['secondPublicKey'] }}"/>
