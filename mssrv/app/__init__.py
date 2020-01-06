@@ -160,18 +160,10 @@ def loadWallet(network, wallet):
             if form.get("secret", None) not in ["", None]:
                 keys = crypto.getKeys(form["secret"])
                 publicKey = keys["publicKey"]
-                if publicKey not in [
-                    wlt["publicKey"], wlt.get("secondPublicKey", "")
-                ]:
-                    flask.flash(
-                        "public key mismatch",
-                        category="red"
-                    )
-                else:
-                    signature = crypto.getSignatureFromBytes(
-                        crypto.unhexlify(form["serial"]),
-                        keys["privateKey"]
-                    )
+                signature = crypto.getSignatureFromBytes(
+                    crypto.unhexlify(form["serial"]),
+                    keys["privateKey"]
+                )
             # form contains signature
             elif form.get("signature", None) not in ["", None]:
                 try:
