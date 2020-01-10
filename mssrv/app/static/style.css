@@ -22,6 +22,7 @@
 
 body {
 	padding-top:30px;
+	padding-bottom:30px;
 }
 .shadow-lg {
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.375)!important;

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{%- block title %}
+    <title>Network selection</title>
+{%- endblock title %}
+
+{%- block body %}
+<div class="container">
+	<div class="jumbotron">
+		<h1>&#x26d3;&nbsp;Blockchain {{ network }}</h1>
+		<hr/>
+		<div class="input-group">
+			<input id="wallet-search" type="text" class="form-control" placeholder="Search for wallet&hellip;" aria-label="wallet name or address" aria-describedby="search-button">
+			<div class="input-group-append">
+				<button onclick="javascript:openWalletUrl();" class="btn btn-outline-secondary" type="button" id="search-button">&#x1f50d;</button>
+			</div>
+		</div>
+	</div>
+{%- if response["data"]|length != 0 %}
+	<p class="list-group-item bg-primary">
+		<strong>Pending multisignature transaction found</strong>
+	</p>
+	{%- for puk,txs in response["data"].items() %}
+	{%- set wallet = _address(puk) %}
+	<div class="card shadow-lg px-4 py-2 my-3 rounded bg-light">
+		&#x1f4b3;&nbsp;
+		<a href="{{ '/%s/%s' % (network, wallet) }}" class="stretched-link">
+			{{ _shorten(wallet) }}
+			<div class="badge badge-primary badge-pill">{{ txs|length }}</div>
+		</a>
+		
+	</div>
+	{%- endfor %}
+{%- endif %}
+</div>
+
+<script type="text/javascript">
+
+var input = document.getElementById("wallet-search");
+var action = document.getElementById("create-ms-wallet");
+
+function openWalletUrl() { 
+	if (input.value) {
+		window.location = "/{{ network }}/" + input.value;
+	}
+}
+
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    openWalletUrl();
+  }
+});
+
+</script>
+{%- endblock body %}

@@ -118,17 +118,24 @@ def checkNetwork(func):
 def tweak():
     return dict(
         url_for=_url_for,
-        symbol=getattr(dposlib.core.cfg, "symbol", "?"),
+        symbol=getattr(rest.cfg, "symbol", "?"),
         _shorten=_shorten,
-        _crypto=dposlib.core.crypto,
+        _crypto=dposlib.ark.crypto,
         _address=lambda puk: dposlib.core.crypto.getAddress(puk),
         _json=lambda data, indent=2: json.dumps(data, indent=indent),
         _currency=lambda value, fmt="r":
             flask.Markup(
                 ("%"+fmt+"&nbsp;%s") %
-                (round(value, 8), dposlib.core.cfg.symbol)
+                (round(value, 8), rest.cfg.symbol)
             )
     )
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return flask.render_template("index.html", network=[
+        name for name in dir(net) if not name.startswith("__")
+    ])
 
 
 @app.route("/<string:network>", methods=["GET"])
@@ -145,7 +152,7 @@ def loadNetwork(network):
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")
 
-    return flask.render_template("index.html", response=resp, network=network)
+    return flask.render_template("network.html", response=resp, network=network)
 
 
 @app.route("/<string:network>/<string:wallet>", methods=["GET", "POST"])
