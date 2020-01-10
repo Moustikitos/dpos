@@ -152,6 +152,7 @@ class Transaction(dict):
         # a blockchain package have to be loaded first
         if not hasattr(dposlib, "core"):
             raise Exception("no blockchain loaded")
+        self._ignore_bad_fields = kwargs.pop("ignore_bad_fields", False)
         # merge all elements and initialize a void dict
         data = dict(*args, **kwargs)
         dict.__init__(self)
@@ -221,7 +222,7 @@ class Transaction(dict):
             self.link(value)
         elif item == "secondSecret":
             self.link(None, value)
-        else:
+        elif not self._ignore_bad_fields:
             raise AttributeError(
                 "field '%s' not allowed in '%s' class" %
                 (item, self.__class__.__name__)

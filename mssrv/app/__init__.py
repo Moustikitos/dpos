@@ -121,7 +121,7 @@ def tweak():
         symbol=getattr(rest.cfg, "symbol", "?"),
         _shorten=_shorten,
         _crypto=dposlib.ark.crypto,
-        _address=lambda puk: dposlib.core.crypto.getAddress(puk),
+        _address=lambda puk: dposlib.ark.crypto.getAddress(puk),
         _json=lambda data, indent=2: json.dumps(data, indent=indent),
         _currency=lambda value, fmt="r":
             flask.Markup(
@@ -235,9 +235,7 @@ def loadWallet(network, wallet):
         )
 
     flask.flash("'%s' wallet not found" % wallet, category="red")
-    return flask.redirect(
-        flask.url_for("loadNetwork", network=network)
-    )
+    return loadNetwork(network=network)
 
 
 @app.route("/<string:network>/crypto/serialize", methods=["POST"])

@@ -118,7 +118,7 @@ def append(network, *transactions):
         idx = transactions.index(tx) + 1
         try:
             if not isinstance(tx, dposlib.core.Transaction):
-                tx = dposlib.core.Transaction(tx)
+                tx = dposlib.core.Transaction(tx, ignore_bad_fields=True)
             signatures = tx.get("signatures", [])
             if len(signatures) == 0:
                 response["errors"] = response.get("errors", []) + [
