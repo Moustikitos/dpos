@@ -121,6 +121,7 @@ def tweak():
     return dict(
         url_for=_url_for,
         symbol=getattr(rest.cfg, "symbol", "?"),
+        _cfg=lambda attr: getattr(rest.cfg, attr, "?"),
         _shorten=_shorten,
         _crypto=dposlib.ark.crypto,
         _address=lambda puk: dposlib.ark.crypto.getAddress(puk),
@@ -253,18 +254,38 @@ def loadWallet(network, wallet):
     return loadNetwork(network=network)
 
 
-@app.route("/<string:network>/crypto/serialize", methods=["POST"])
+@app.route("/<string:network>/serialize", methods=["POST"])
 @checkNetwork
 def serialize(network):
     if flask.request.method == "POST":
+        form = flask.request.form.to_dict()
+        tx = dposlib.core.Transaction(
+            form,
+            version=2,
+            ignore_bad_fields=True
+        )
+        tx.senderPublicKey = form["senderPublicKey"]
+        tx.amount *= 100000000
+        tx.useDynamicFee(form["feeLevel"])
+        tx.setFee()
+
         try:
-            return json.dumps({
+            resp = json.dumps({
                 "serial": dposlib.core.hexlify(
-                    dposlib.core.crypto.getBytes(flask.request.form)
+                    dposlib.core.crypto.getBytes(tx)
                 )
             })
-        except Exception:
-            return json.dumps({"serial": "Serialization not possible..."})
+        except Exception as error:
+            resp = json.dumps({
+                "serial": "Serialization not possible...",
+                "error": "%r" % error
+            })
+
+        return app.response_class(
+            response=resp,
+            status=200,
+            mimetype='application/json'
+        )
 
 
 @app.route("/<string:network>/create", methods=["GET", "POST"])
@@ -273,7 +294,67 @@ def createWallet(network):
     return flask.render_template("building.html", network=network)
 
 
-@app.route("/<string:network>/<string:wallet>/create", methods=["GET", "POST"])
+@app.route("/<string:network>/<string:puk>/create", methods=["GET", "POST"])
 @checkNetwork
-def createTransaction(network, wallet):
-    return flask.render_template("building.html", network=network)
+def createTransaction(network, puk):
+    host_url = flask.request.host_url
+
+    if flask.request.method == "POST":
+        crypto = dposlib.core.crypto
+
+        form = flask.request.form.to_dict()
+        tx = dposlib.core.Transaction(
+            form,
+            version=2,
+            ignore_bad_fields=True
+        )
+        tx.amount *= 100000000
+        tx.senderPublicKey = form["senderPublicKey"]
+        tx.useDynamicFee(form["feeLevel"])
+        tx.setFee()
+
+        # form contains secret (https or localhost mode)
+        if form.get("secret", None) not in ["", None]:
+            keys = crypto.getKeys(form["secret"])
+            publicKey = keys["publicKey"]
+            signature = crypto.getSignatureFromBytes(
+                crypto.unhexlify(form["serial"]),
+                keys["privateKey"]
+            )
+        # form contains signature
+        elif form.get("signature", None) not in ["", None]:
+            try:
+                data = json.loads(form["signature"].strip())
+                publicKey = data.get("publicKey", form["publicKey"])
+                signature = data.get("signature", "")
+            except Exception:
+                publicKey = form["senderPublicKey"]
+                signature = form["signature"].strip()
+        # form is empty
+        else:
+            signature = None
+            flask.flash(
+                "Nothing found to proceed with POST request",
+                category="red"
+            )
+
+        if signature is not None:
+            tx["signatures"] = [
+                "%02x%s" % (
+                    tx._multisignature["publicKeys"].index(publicKey),
+                    signature
+                )
+            ]
+            try:
+                flask.flash(
+                    json.dumps(client.postNewTransactions(network, tx)),
+                    category="yellow"
+                )
+            except Exception:
+                pass
+
+    return flask.render_template(
+        "transfer.html",
+        secure="127.0.0.1" in host_url or host_url.startswith("https"),
+        network=network, puk=puk
+    )

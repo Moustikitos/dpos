@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{%- set feestats = _cfg("feestats").get(0, {}) %}
+
+{%- block meta %}
+{%- endblock meta %}
+
+{%- block title %}
+{%- endblock title %}
+
+{%- block body %}
+<div class="container">
+    <div class="jumbotron">
+        <h1>&#x1f4b3;&nbsp;Create multisignature transfer</h1>
+        <p>
+            &#x2709;&nbsp;{{ _shorten(_address(puk)) }}<br/>
+        </p>
+    </div>
+    <form class="card shadow-lg px-2 py-2 my-3 rounded bg-light" id="data" method="POST">
+        <input type="hidden" name="type" value="0"/>
+        <input type="hidden" name="senderPublicKey" value="{{ puk }}"/>
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Amount</span>
+            </div>
+            <input type="number" class="form-control" name="amount" min="0" step="0.1" onfocusout="javascript:checkFormContent();">
+            <div class="input-group-append">
+                <span class="input-group-text">{{ symbol }}</span>
+            </div>
+        </div>
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Fee level</span>
+            </div>
+            <select class="custom-select" name="feeLevel" id="feeSelect" onchange="javascript:updateFeeInfo();" onfocusout="javascript:checkFormContent();">
+                {%- for (key,value) in feestats.items() %}
+                <option value="{{ key }}">{{ key }}</option>
+                {%- endfor %}
+            </select>
+            <div class="input-group-append">
+                <span class="input-group-text" id="feeInfo"></span>
+            </div>
+        </div>
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Recipient</span>
+            </div>
+            <input type="text" class="form-control" name="recipientId" onfocusout="javascript:checkFormContent();">
+        </div>
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Message</span>
+            </div>
+            <input type="text" class="form-control" name="vendorField" onfocusout="javascript:checkFormContent();">
+        </div>
+        <hr/>
+    {%- if secure %}
+        <input id="serialized" type="hidden" name="serial">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
+            Send transaction
+        </button>
+        <!-- MODAL -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <textarea class="form-control" aria-label="With textarea" name="secret" placeholder="Type or paste secret here"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Sign</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL -->
+    {%- else %}
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Serial</span>
+            </div>
+            <textarea id="serialized" class="form-control" aria-label="With textarea" name="serial" disabled></textarea>
+        </div>
+        <div class="input-group mt-1">
+            <div class="input-group-prepend col-3 px-0">
+                <span class="input-group-text w-100">Signature</span>
+            </div>
+            <textarea placeholder="Paste your signature here..." class="form-control" aria-label="With textarea" name="signature"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-1">
+            Send transaction
+        </button>
+    {%-endif %}
+    </form>
+</div>
+
+<script type="text/javascript">
+
+var form = document.getElementById("data");
+var info = document.getElementById("feeInfo");
+var select = document.getElementById("feeSelect");
+var serialized = document.getElementById("serialized");
+var feestats = JSON.parse('{{ _json(feestats,indent=None)|safe }}');
+
+function updateFeeInfo() {
+    info.innerText = feestats[select.value]/100000000.0 + "{{ symbol }}";
+}
+
+function checkFormContent() {
+    if (form.amount.value != "" & form.recipientId.value != "") {
+        fetch(
+            `${window.origin}/{{ network }}/serialize`,
+            {
+                method: "POST",
+                body: new FormData(form)
+            }
+        ).then(
+            function (response) {
+                if (response.status !== 200) {
+                    serialized.placeholder = `Fetch status code: ${response.status}`;
+                } else {
+                    serialized.innerText = response.json().then(
+                        json => {
+                            serialized.innerText = json["serial"];
+                            serialized.value = json["serial"];
+                        }
+                    );
+                }
+            }
+        ).catch(
+            function (error) {
+                serialized.placeholder = "Fetch error: " + error;
+            }
+        );
+    } else {
+        serialized.placeholder = "No enough data to serialize";
+    }
+}
+
+select.value = "avgFee";
+updateFeeInfo();
+checkFormContent();
+
+</script>
+{%- endblock body %}
