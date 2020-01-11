@@ -173,7 +173,7 @@ def loadWallet(network, wallet):
         form = flask.request.form
         crypto = dposlib.core.crypto
 
-        # if ms wallet never sent or received  tx, publicKey is not public
+        # if ms wallet never sent or received tx, publicKey is not public
         # so update manually wallet info
         if wlt.get("nonce", 0) and "multiSignature" in wlt:
             ms = wlt["multiSignature"]
