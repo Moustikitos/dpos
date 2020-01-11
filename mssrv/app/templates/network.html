@@ -17,18 +17,17 @@
 		</div>
 	</div>
 {%- if response["data"]|length != 0 %}
-	<p class="list-group-item bg-primary">
-		<strong>Pending multisignature transaction found</strong>
-	</p>
+	<strong>Pending multisignature transaction found</strong>
 	{%- for puk,txs in response["data"].items() %}
 	{%- set wallet = _address(puk) %}
 	<div class="card shadow-lg px-4 py-2 my-3 rounded bg-light">
-		&#x1f4b3;&nbsp;
-		<a href="{{ '/%s/%s' % (network, wallet) }}" class="stretched-link">
-			{{ _shorten(wallet) }}
-			<div class="badge badge-primary badge-pill">{{ txs|length }}</div>
-		</a>
-		
+		<table>
+			<tr>
+				<td>&#x1f4b3;&nbsp;</td>
+				<td width="100%"><a href="{{ '/%s/%s' % (network, wallet) }}" class="stretched-link">{{ _shorten(wallet) }}</a></td>
+				<td><div class="badge badge-primary badge-pill">{{ txs|length }}</div></td>
+			</tr>
+		</table>
 	</div>
 	{%- endfor %}
 {%- endif %}

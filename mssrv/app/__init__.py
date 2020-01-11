@@ -23,9 +23,9 @@ app.config.update(
     # secret key is generated each time app is restarted
     SECRET_KEY=os.urandom(24),
     # JS can't access cookies
-    SESSION_COOKIE_HTTPONLY=False,
+    SESSION_COOKIE_HTTPONLY=True,
     # cookie stored only if use of https
-    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_SECURE=True,
     # update cookies on each request
     # cookie are outdated after PERMANENT_SESSION_LIFETIME seconds of idle
     SESSION_REFRESH_EACH_REQUEST=True,
@@ -64,12 +64,14 @@ def _fix_tx(t):
 
 
 def _ark_srv_synch():
-    data = {}  # loadJson(path)
+    data = {}
     if not hasattr(rest.cfg, "pubkeyHash"):
         return
     path = os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
     try:
-        for server in ["https://multisig-devnet.ark.dev"]:
+        for server in loadJson(
+            os.path.join(__path__[0], "server.json")
+        ):
             req = rest.GET.transactions(peer=server)
             if req:
                 pendings = [
@@ -102,12 +104,12 @@ def checkNetwork(func):
     @wraps(func)
     def wrapper(*args, **kw):
         network = kw.get("network", "?")
-        if hasattr(net, network) and network != getattr(rest.cfg, network, False):
+        if hasattr(net, network) and \
+           network != getattr(rest.cfg, network, False):
             try:
                 rest.use(network)
             except Exception:
-                return flask.render_template("void.html", network=network) 
-            _ark_srv_synch()
+                return flask.render_template("void.html", network=network)
             return func(*args, **kw)
         else:
             return flask.render_template("void.html", network=network)
@@ -144,7 +146,9 @@ def loadNetwork(network):
     # call to multisignature server
     resp = rest.GET.multisignature(network, peer=app.peer)
     # merge with ark server
-    resp2 = loadJson(os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash))
+    resp2 = loadJson(
+        os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
+    )
     if len(resp2):
         resp["success"] = True
         resp["data"] = dict(resp.get("data", {}), **resp2)
@@ -152,18 +156,29 @@ def loadNetwork(network):
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")
 
-    return flask.render_template("network.html", response=resp, network=network)
+    return flask.render_template(
+        "network.html", response=resp, network=network
+    )
 
 
 @app.route("/<string:network>/<string:wallet>", methods=["GET", "POST"])
 @checkNetwork
 def loadWallet(network, wallet):
-    host_url = flask.request.host_url
     wlt = rest.GET.api.wallets(wallet).get("data", {})
-    crypto = dposlib.core.crypto
-    form = flask.request.form
 
     if len(wlt):
+
+        host_url = flask.request.host_url
+        form = flask.request.form
+        crypto = dposlib.core.crypto
+
+        # if ms wallet never sent or received  tx, publicKey is not public
+        # so update manually wallet info
+        if wlt.get("nonce", 0) and "multiSignature" in wlt:
+            ms = wlt["multiSignature"]
+            wlt["publicKey"] = dposlib.ark.crypto.getMultiSignaturePublicKey(
+                ms["min"], *ms["publicKeys"]
+            )
 
         if flask.request.method == "POST":
             # form contains secret (https or localhost mode)
@@ -190,36 +205,35 @@ def loadWallet(network, wallet):
                     category="red"
                 )
 
-        try:
-            flask.flash(
-                json.dumps(
-                    client.putSignature(
-                        network, form["ms_publicKey"],
-                        form["id"], publicKey, signature
-                    )
-                ),
-                category="yellow"
-            )
-        except Exception:
-            pass
-        finally:
-            # call to multisignature server
-            resp = rest.GET.multisignature(
-                network, wlt["publicKey"],
-                peer=app.peer
-            )
-            # update with what is found on ark servers
-            txs = loadJson(
-                os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
-            ).get(wlt["publicKey"], {})
-            if len(txs):
-                resp.update(txs)
+            try:
                 flask.flash(
                     json.dumps(
-                        client.postNewTransactions(network, *txs.values())
+                        client.putSignature(
+                            network, form["ms_publicKey"],
+                            form["id"], publicKey, signature
+                        )
                     ),
                     category="yellow"
                 )
+            except Exception:
+                pass
+
+        # call to multisignature server
+        resp = rest.GET.multisignature(
+            network, wlt["publicKey"],
+            peer=app.peer
+        )
+
+        # update with what is found on ark servers
+        txs = loadJson(
+            os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
+        ).get(wlt["publicKey"], {})
+        if len(txs):
+            resp.update(txs)
+            flask.flash(
+                json.dumps(client.postNewTransactions(network, *txs.values())),
+                category="yellow"
+            )
 
         if not len(resp.get("data", {})):
             flask.flash("no pending transaction found")
@@ -235,6 +249,7 @@ def loadWallet(network, wallet):
         )
 
     flask.flash("'%s' wallet not found" % wallet, category="red")
+    # if redirect, flash messages are losed with https
     return loadNetwork(network=network)
 
 
