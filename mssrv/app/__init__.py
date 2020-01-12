@@ -333,7 +333,7 @@ def createTransaction(network, wallet):
                 signature = form["signature"].strip()
         # form is empty
         else:
-            signature = None
+            signature = publicKey = None
             flask.flash(
                 "Nothing found to proceed with POST request",
                 category="red"
@@ -355,7 +355,7 @@ def createTransaction(network, wallet):
             except Exception:
                 pass
 
-        else:
+        elif publicKey is not None:
             flask.flash(
                 "public key %s not owner or signature error" % publicKey,
                 category="red"
