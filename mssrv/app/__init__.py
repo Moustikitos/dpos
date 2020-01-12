@@ -166,20 +166,19 @@ def loadNetwork(network):
 @checkNetwork
 def loadWallet(network, wallet):
     wlt = rest.GET.api.wallets(wallet).get("data", {})
+    # if ms wallet never sent or received tx, publicKey is not public
+    # so update manually wallet info
+    if wlt.get("nonce", 0) and "multiSignature" in wlt:
+        ms = wlt["multiSignature"]
+        wlt["publicKey"] = dposlib.ark.crypto.getMultiSignaturePublicKey(
+            ms["min"], *ms["publicKeys"]
+        )
 
     if len(wlt):
 
         host_url = flask.request.host_url
         form = flask.request.form
         crypto = dposlib.core.crypto
-
-        # if ms wallet never sent or received tx, publicKey is not public
-        # so update manually wallet info
-        if wlt.get("nonce", 0) and "multiSignature" in wlt:
-            ms = wlt["multiSignature"]
-            wlt["publicKey"] = dposlib.ark.crypto.getMultiSignaturePublicKey(
-                ms["min"], *ms["publicKeys"]
-            )
 
         if flask.request.method == "POST":
             # form contains secret (https or localhost mode)
@@ -297,8 +296,16 @@ def createWallet(network):
 @app.route("/<string:network>/<string:wallet>/create", methods=["GET", "POST"])
 @checkNetwork
 def createTransaction(network, wallet):
-    wlt = rest.GET.api.wallets(wallet).get("data", {})
     host_url = flask.request.host_url
+
+    wlt = rest.GET.api.wallets(wallet).get("data", {})
+    # if ms wallet never sent or received tx, publicKey is not public
+    # so update manually wallet info
+    if wlt.get("nonce", 0) and "multiSignature" in wlt:
+        ms = wlt["multiSignature"]
+        wlt["publicKey"] = dposlib.ark.crypto.getMultiSignaturePublicKey(
+            ms["min"], *ms["publicKeys"]
+        )
 
     if flask.request.method == "POST":
         crypto = dposlib.core.crypto
