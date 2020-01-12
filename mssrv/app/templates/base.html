@@ -19,6 +19,14 @@
 
 <body>
 
+<nav aria-label="breadcrumb" class="container fixed-top px-0">
+    <ol class="breadcrumb py-1 shadow-lg">
+        {%- block navbar %}
+        <li class="breadcrumb-item" aria-current="page">blockchain</li>
+        {%- endblock navbar %}
+    </ol>
+</nav>
+
 {%- with messages = get_flashed_messages(with_categories=true) %}
     {%- if messages %}
 <div class="container">

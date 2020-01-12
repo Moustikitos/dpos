@@ -10,6 +10,12 @@
     <title>Wallet {{ wallet["address"] }}</title>
 {%- endblock title %}
 
+{%- block navbar %}
+		<li class="breadcrumb-item"><a href="/">blockchain</a></li>
+		<li class="breadcrumb-item"><a href="/{{ network }}">{{ network }}</a></li>
+		<li class="breadcrumb-item" aria-current="page">wallet</li>
+{%- endblock navbar %}
+
 {%- block body %}
 <div class="container">
     <div class="jumbotron">
@@ -48,7 +54,7 @@
             {%- set publicKeys = tx.get("asset", {}).get("multiSignature", {}).get("publicKeys", []) if tx["type"] == 4 else ownersPublicKeys %}
             {%- set full_type_4 = tx.get("signatures", [])|length == publicKeys|length and tx["type"] == 4 %}
             {%- set serialized = _crypto.hexlify(_crypto.getBytes(tx, exclude_multi_sig=not full_type_4)) %}
-        <form class="shadow-lg p-3 mb-5 rounded" method="POST">
+        <form class="shadow bg-light p-3 mb-5 rounded" method="POST">
             <fieldset {{ "disabled" if tx["nonce"] != next_nonce else "" }}>
             <div class="sig">&#x1f516;&nbsp;{{ _shorten(id) }}</div>
             {%- if tx["type"] == 4 %}

@@ -8,6 +8,12 @@
 {%- block title %}
 {%- endblock title %}
 
+{%- block navbar %}
+		<li class="breadcrumb-item"><a href="/">blockchain</a></li>
+		<li class="breadcrumb-item"><a href="/{{ network }}">{{ network }}</a></li>
+		<li class="breadcrumb-item"><a href="{{ '/%s/%s' % (network, wallet['address']) }}">wallet</a></li>
+{%- endblock navbar %}
+
 {%- block body %}
 <div class="container">
     <div class="jumbotron">

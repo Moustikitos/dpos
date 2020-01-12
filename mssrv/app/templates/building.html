@@ -4,6 +4,11 @@
     <title>Page not yet ready</title>
 {%- endblock title %}
 
+{%- block navbar %}
+		<li class="breadcrumb-item"><a href="/">blockchain</a></li>
+		<li class="breadcrumb-item"><a href="/{{ network }}">{{ network }}</a></li>
+{%- endblock navbar %}
+
 {%- block body %}
 <div class="container">
 	<div class="jumbotron">
