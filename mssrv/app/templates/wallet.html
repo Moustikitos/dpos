@@ -54,7 +54,7 @@
             {%- set publicKeys = tx.get("asset", {}).get("multiSignature", {}).get("publicKeys", []) if tx["type"] == 4 else ownersPublicKeys %}
             {%- set full_type_4 = tx.get("signatures", [])|length == publicKeys|length and tx["type"] == 4 %}
             {%- set serialized = _crypto.hexlify(_crypto.getBytes(tx, exclude_multi_sig=not full_type_4)) %}
-        <form class="shadow bg-light p-3 mb-5 rounded" method="POST">
+        <form class="card shadow bg-light p-3 mb-5 rounded" method="POST">
             <fieldset {{ "disabled" if tx["nonce"] != next_nonce else "" }}>
             <div class="sig">&#x1f516;&nbsp;{{ _shorten(id) }}</div>
             {%- if tx["type"] == 4 %}
@@ -63,7 +63,7 @@
                 <div class="sig">{{ _shorten(puk) }}</div>
                 {%- endfor %}
             {%- endif %}             
-        <input type="hidden" name="id" value="{{ id }}"/>
+            <input type="hidden" name="id" value="{{ id }}"/>
             <input type="hidden" name="ms_publicKey" value="{{ wallet['publicKey'] }}"/>
             <table class="table table-striped table-hover table-success table-sm table-responsive">
                 <tbody>

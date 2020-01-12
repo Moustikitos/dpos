@@ -12,11 +12,11 @@
 	<div class="jumbotron">
 		<h1>&#x26d3;&nbsp;Select a network</h1>
         <hr/>
-        {%- for net in network %}
-        <div class="card shadow px-4 py-2 my-2 rounded bg-light">
-            <a id="{{ net }}" href="/{{ net }}" class="stretched-link">{{ net|capitalize }}</a>
-        </div>
-        {%- endfor %}
 	</div>
+    {%- for net in network %}
+    <div class="card shadow px-4 py-2 my-2 rounded bg-light">
+        <a id="{{ net }}" href="/{{ net }}" class="stretched-link">{{ net|capitalize }}</a>
+    </div>
+    {%- endfor %}
 </div>
 {%- endblock body %}
