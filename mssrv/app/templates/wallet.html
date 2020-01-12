@@ -25,18 +25,17 @@
                 Create multisignature wallet
 			</button>
             {%- else %}
-            <button onclick="javascript:window.location='/{{ network }}/{{ wallet['publicKey'] }}/create'" id="create-ms-wallet" class="btn btn-outline-success m-1" type="button">
+            <button onclick="javascript:window.location='/{{ network }}/{{ wallet['address'] }}/create'" id="create-ms-wallet" class="btn btn-outline-success m-1" type="button">
                 Send {{ symbol }}
             </button>
             {%- endif %}
 		</div>
-
         {%- if ownersPublicKeys %}
         <hr/>
         <strong>Owners public keys</strong>
         <div class="sig">
         {%- for puk in ownersPublicKeys %}
-        {{ _shorten(puk) }}<br/>
+        <div class="sig">{{ _shorten(puk) }}</div>
         {%- endfor %}
         </div>
         {%- endif %}
@@ -55,7 +54,7 @@
             {%- if tx["type"] == 4 %}
             <strong>Owners</strong><br/>
                 {%- for puk in publicKeys %}
-                <div>{{ _shorten(puk) }}</div>
+                <div class="sig">{{ _shorten(puk) }}</div>
                 {%- endfor %}
             {%- endif %}             
         <input type="hidden" name="id" value="{{ id }}"/>

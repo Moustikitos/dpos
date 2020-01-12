@@ -294,9 +294,10 @@ def createWallet(network):
     return flask.render_template("building.html", network=network)
 
 
-@app.route("/<string:network>/<string:puk>/create", methods=["GET", "POST"])
+@app.route("/<string:network>/<string:wallet>/create", methods=["GET", "POST"])
 @checkNetwork
-def createTransaction(network, puk):
+def createTransaction(network, wallet):
+    wlt = rest.GET.api.wallets(wallet).get("data", {})
     host_url = flask.request.host_url
 
     if flask.request.method == "POST":
@@ -308,8 +309,8 @@ def createTransaction(network, puk):
             version=2,
             ignore_bad_fields=True
         )
-        tx.amount *= 100000000
         tx.senderPublicKey = form["senderPublicKey"]
+        tx.amount *= 100000000
         tx.useDynamicFee(form["feeLevel"])
         tx.setFee()
 
@@ -338,7 +339,8 @@ def createTransaction(network, puk):
                 category="red"
             )
 
-        if signature is not None:
+        if publicKey in tx._multisignature["publicKeys"] and \
+           signature is not None:
             tx["signatures"] = [
                 "%02x%s" % (
                     tx._multisignature["publicKeys"].index(publicKey),
@@ -353,8 +355,14 @@ def createTransaction(network, puk):
             except Exception:
                 pass
 
+        else:
+            flask.flash(
+                "public key %s not owner or signature error" % publicKey,
+                category="red"
+            )
+
     return flask.render_template(
         "transfer.html",
         secure="127.0.0.1" in host_url or host_url.startswith("https"),
-        network=network, puk=puk
+        network=network, wallet=wlt
     )

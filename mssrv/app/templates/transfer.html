@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{%- set ownersPublicKeys = wallet.get("multiSignature", {}).get("publicKeys", []) %}
 {%- set feestats = _cfg("feestats").get(0, {}) %}
 
 {%- block meta %}
@@ -12,12 +13,23 @@
     <div class="jumbotron">
         <h1>&#x1f4b3;&nbsp;Create multisignature transfer</h1>
         <p>
-            &#x2709;&nbsp;{{ _shorten(_address(puk)) }}<br/>
+            &#x2709;&nbsp;{{ _shorten(wallet["address"]) }}<br/>
+            <span class="sig">&#x1f511;&nbsp;{{ _shorten(wallet["publicKey"]) }}<br/></span>
+            <span id="balance">&#x1f4c8;&nbsp;{{ _currency(wallet["balance"]|int/100000000.0) }}</span>
         </p>
+        {%- if ownersPublicKeys %}
+        <hr/>
+        <strong>Owners public keys</strong>
+        <div class="sig">
+        {%- for puk in ownersPublicKeys %}
+        <div class="sig">{{ _shorten(puk) }}</div>
+        {%- endfor %}
+        </div>
+        {%- endif %}
     </div>
     <form class="card shadow-lg px-2 py-2 my-3 rounded bg-light" id="data" method="POST">
         <input type="hidden" name="type" value="0"/>
-        <input type="hidden" name="senderPublicKey" value="{{ puk }}"/>
+        <input type="hidden" name="senderPublicKey" value="{{ wallet['publicKey'] }}"/>
         <div class="input-group mt-1">
             <div class="input-group-prepend col-3 px-0">
                 <span class="input-group-text w-100">Amount</span>
@@ -50,7 +62,7 @@
             <div class="input-group-prepend col-3 px-0">
                 <span class="input-group-text w-100">Message</span>
             </div>
-            <input type="text" class="form-control" name="vendorField" onfocusout="javascript:checkFormContent();">
+            <input type="text" class="form-control" name="vendorField" onfocusout="javascript:checkFormContent();"/>
         </div>
         <hr/>
     {%- if secure %}
@@ -68,7 +80,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Sign</button>
+                        <button type="submit" class="btn btn-primary" id="submitButton" disabled>Sign</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -86,9 +98,9 @@
             <div class="input-group-prepend col-3 px-0">
                 <span class="input-group-text w-100">Signature</span>
             </div>
-            <textarea placeholder="Paste your signature here..." class="form-control" aria-label="With textarea" name="signature"></textarea>
+            <textarea placeholder="Paste your signature here..." class="form-control" aria-label="With textarea" name="signature" id="signature" onfocusout="javascript:checkFormContent();"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary mt-1">
+        <button type="submit" class="btn btn-primary mt-1" id="submitButton" disabled>
             Send transaction
         </button>
     {%-endif %}
@@ -107,34 +119,49 @@ function updateFeeInfo() {
     info.innerText = feestats[select.value]/100000000.0 + "{{ symbol }}";
 }
 
+function activateSubmit() {
+    var sig = document.getElementById("signature");
+    return ! (sig == null || (sig != null && sig.value.length > 64));
+}
+
 function checkFormContent() {
-    if (form.amount.value != "" & form.recipientId.value != "") {
-        fetch(
-            `${window.origin}/{{ network }}/serialize`,
-            {
-                method: "POST",
-                body: new FormData(form)
-            }
-        ).then(
-            function (response) {
-                if (response.status !== 200) {
-                    serialized.placeholder = `Fetch status code: ${response.status}`;
-                } else {
-                    serialized.innerText = response.json().then(
-                        json => {
-                            serialized.innerText = json["serial"];
-                            serialized.value = json["serial"];
-                        }
-                    );
+    if (form.amount.value != "" && form.recipientId.value != "") {
+        if (parseInt(form.amount.value) + feestats[select.value]/100000000.0 > {{ wallet["balance"]|int/100000000.0 }}) {
+            document.getElementById("balance").style="font-weight:bold;color:red;";
+            document.getElementById("submitButton").disabled = true;
+        } else {
+            document.getElementById("balance").style="font-weight:normal;color:black;";
+            fetch(
+                `${window.origin}/{{ network }}/serialize`,
+                {
+                    method: "POST",
+                    body: new FormData(form)
                 }
-            }
-        ).catch(
-            function (error) {
-                serialized.placeholder = "Fetch error: " + error;
-            }
-        );
+            ).then(
+                function (response) {
+                    if (response.status !== 200) {
+                        serialized.placeholder = `Fetch status code: ${response.status}`;
+                        document.getElementById("submitButton").disabled = true;
+                    } else {
+                        serialized.innerText = response.json().then(
+                            json => {
+                                serialized.innerText = json["serial"];
+                                serialized.value = json["serial"];
+                                document.getElementById("submitButton").disabled = activateSubmit();
+                            }
+                        );
+                    }
+                }
+            ).catch(
+                function (error) {
+                    serialized.placeholder = "Fetch error: " + error;
+                    document.getElementById("submitButton").disabled = true;
+                }
+            );
+        }
     } else {
         serialized.placeholder = "No enough data to serialize";
+        document.getElementById("submitButton").disabled = true;
     }
 }
 
