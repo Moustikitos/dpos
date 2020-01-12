@@ -38,16 +38,16 @@
         <input type="hidden" name="senderPublicKey" value="{{ wallet['publicKey'] }}"/>
         <div class="input-group mt-1">
             <div class="input-group-prepend col-3 px-0">
-                <span class="input-group-text w-100">Amount</span>
+                <span class="input-group-text w-100 px-1">Amount</span>
             </div>
             <input type="number" class="form-control" name="amount" min="0" step="0.1" onfocusout="javascript:checkFormContent();">
             <div class="input-group-append">
-                <span class="input-group-text">{{ symbol }}</span>
+                <span class="input-group-text px-1">{{ symbol }}</span>
             </div>
         </div>
         <div class="input-group mt-1">
             <div class="input-group-prepend col-3 px-0">
-                <span class="input-group-text w-100">Fee level</span>
+                <span class="input-group-text w-100 px-1">Fee level</span>
             </div>
             <select class="custom-select" name="feeLevel" id="feeSelect" onchange="javascript:updateFeeInfo();" onfocusout="javascript:checkFormContent();">
                 {%- for (key,value) in feestats.items() %}
@@ -55,20 +55,23 @@
                 {%- endfor %}
             </select>
             <div class="input-group-append">
-                <span class="input-group-text" id="feeInfo"></span>
+                <span class="input-group-text px-1" id="feeInfo"></span>
+            </div>
+            <div class="input-group-append">
+                <span class="input-group-text px-1">{{ symbol }}</span>
             </div>
         </div>
         <div class="input-group mt-1">
             <div class="input-group-prepend col-3 px-0">
-                <span class="input-group-text w-100">Recipient</span>
+                <span class="input-group-text w-100 px-1">Recipient</span>
             </div>
             <input type="text" class="form-control" name="recipientId" onfocusout="javascript:checkFormContent();">
         </div>
         <div class="input-group mt-1">
             <div class="input-group-prepend col-3 px-0">
-                <span class="input-group-text w-100">Message</span>
+                <span class="input-group-text w-100 px-1">Message</span>
             </div>
-            <input type="text" class="form-control" name="vendorField" onfocusout="javascript:checkFormContent();"/>
+            <input type="text" maxlength="255" class="form-control" name="vendorField" onfocusout="javascript:checkFormContent();"/>
         </div>
         <hr/>
     {%- if secure %}
@@ -122,7 +125,7 @@ var serialized = document.getElementById("serialized");
 var feestats = JSON.parse('{{ _json(feestats,indent=None)|safe }}');
 
 function updateFeeInfo() {
-    info.innerText = feestats[select.value]/100000000.0 + "{{ symbol }}";
+    info.innerText = feestats[select.value]/100000000.0;
 }
 
 function activateSubmit() {
