@@ -21,6 +21,7 @@ from dposlib.util.asynch import setInterval
 
 def create_app(mssrv):
     _link_peer(mssrv)
+    setInterval(60)(_ark_srv_synch)()
     return app
 
 
