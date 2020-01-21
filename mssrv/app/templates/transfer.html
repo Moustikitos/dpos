@@ -118,6 +118,7 @@
 
 <script type="text/javascript">
 
+var sig = document.getElementById("signature");
 var form = document.getElementById("data");
 var info = document.getElementById("feeInfo");
 var select = document.getElementById("feeSelect");
@@ -130,7 +131,11 @@ function updateFeeInfo() {
 
 function activateSubmit() {
     var sig = document.getElementById("signature");
-    return ! (sig == null || (sig != null && sig.value.length > 64));
+    if (/^[0-9a-fA-F].*$/.test(serialized.value)) {
+        return ! (sig == null || (sig != null && sig.value.length > 64));
+    } else {
+        return true;
+    }
 }
 
 function checkFormContent() {

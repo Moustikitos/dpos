@@ -135,7 +135,12 @@ def append(network, *transactions):
                 publicKeys = \
                     tx["asset"].get("multiSignature", {}).get("publicKeys", []) \
                     if tx["type"] == 4 else tx._multisignature.get("publicKeys", [])
-                serialized = crypto.getBytes(tx, exclude_multi_sig=True)
+                serialized = crypto.getBytes(
+                    tx,
+                    exclude_sig=True,
+                    exclude_second_sig=True,
+                    exclude_multi_sig=True
+                )
                 for sig in signatures:
                     pk_idx, sig = int(sig[0:2], 16), sig[2:]
                     checks.append(crypto.verifySignatureFromBytes(
@@ -338,7 +343,10 @@ def postNewTransactions(network):
         data = json.loads(flask.request.data)
 
         if "transactions" not in data:
-            return json.dumps({"API error": "transaction(s) not found"})
+            return json.dumps({
+                "success": False,
+                "API error": "transaction(s) not found"
+            })
 
         return append(network, *data.get("transactions", []))
 

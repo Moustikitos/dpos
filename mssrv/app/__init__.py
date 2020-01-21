@@ -146,17 +146,17 @@ def index():
 def loadNetwork(network):
     # call to multisignature server
     resp = rest.GET.multisignature(network, peer=app.peer)
-    # merge with ark server
+    # get data from official servers
     resp2 = loadJson(
         os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
     )
+    # merge data
     if len(resp2):
         resp["success"] = True
         resp["data"] = dict(resp.get("data", {}), **resp2)
-
+    # flash a message if nothing found
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")
-
     return flask.render_template(
         "network.html", response=resp, network=network
     )
