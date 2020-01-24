@@ -150,15 +150,17 @@ def loadNetwork(network):
     resp2 = loadJson(
         os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
     )
-    # merge data
-    if len(resp2):
-        resp["success"] = True
-        resp["data"] = dict(resp.get("data", {}), **resp2)
+
+    # # merge data
+    # if len(resp2):
+    #     resp["success"] = True
+    #     resp["data"] = dict(resp.get("data", {}), **resp2)
+
     # flash a message if nothing found
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")
     return flask.render_template(
-        "network.html", response=resp, network=network
+        "network.html", response2=resp2, response=resp, network=network
     )
 
 
