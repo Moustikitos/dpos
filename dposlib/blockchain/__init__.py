@@ -125,7 +125,7 @@ class Transaction(dict):
             self["recipientId"] = dposlib.core.crypto.getAddress(publicKey)
         # add "senderPublicKey" and "_publicKey" avoiding recursion loop
         dict.__setitem__(self, "senderPublicKey", publicKey)
-        dict.__setitem__(self, "_publicKey", publicKey)
+        self._publicKey = publicKey
 
     @staticmethod
     def useDynamicFee(value="avgFee"):
