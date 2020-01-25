@@ -76,7 +76,7 @@ class Transaction(dict):
                 .get("staticFees", getattr(cfg, "fees", {}))\
                 .get(dposlib.core.TRANSACTIONS[self["type"]], 10000000)
             if Transaction.DFEES:
-                feesl = value if isinstance(value, str) else\
+                feesl = value if isinstance(value, str) else \
                         Transaction.FEESL
                 # use fee statistics if FEESL is not None
                 if feesl is not None and self["type"] not in [6, ]:
@@ -123,8 +123,9 @@ class Transaction(dict):
             self["senderId"] = dposlib.core.crypto.getAddress(publicKey)
         if self["type"] in [1, 3, 6, 9] and "recipientId" not in self:
             self["recipientId"] = dposlib.core.crypto.getAddress(publicKey)
-        # add "senderPublicKey" avoiding recursion loop
+        # add "senderPublicKey" and "_publicKey" avoiding recursion loop
         dict.__setitem__(self, "senderPublicKey", publicKey)
+        dict.__setitem__(self, "_publicKey", publicKey)
 
     @staticmethod
     def useDynamicFee(value="avgFee"):
