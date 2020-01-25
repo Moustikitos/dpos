@@ -28,9 +28,10 @@
 		</div>
 		<div id="official_pending" class="collapse p-2">
 {%- if response2|length != 0 %}
+			<strong>&#x2714;&nbsp;At least one transaction can be synched with&hellip;</strong>
 	{%- for puk,txs in response2.items() %}
 		{%- set wallet = _address(puk) %}
-			<div class="card shadow px-4 py-2 my-2 rounded bg-light">
+			<div class="card shadow px-4 py-2 my-1 rounded bg-light">
 				<table>
 					<tr>
 						<td>&#x1f4b3;&nbsp;</td>
@@ -48,10 +49,10 @@
 
 	<div class="card rounded p-2 mt-2">
 {%- if response["data"]|length != 0 %}
-		<strong>&#x2714;&nbsp;There are some pending transaction&hellip;</strong>
+		<strong>&#x2714;&nbsp;At least one transaction is pending&hellip;</strong>
 	{%- for puk,txs in response["data"].items() %}
 		{%- set wallet = _address(puk) %}
-		<div class="card shadow px-4 py-2 my-2 rounded bg-light">
+		<div class="card shadow px-4 py-2 my-1 rounded bg-light">
 			<table>
 				<tr>
 					<td>&#x1f4b3;&nbsp;</td>
