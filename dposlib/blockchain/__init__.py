@@ -642,6 +642,8 @@ def _username(cls):
         return cls.attributes.get("delegate", {}).get("username", None)
     else:
         return cls._Data__dict.get("username", None)
+
+
 def _secondPublicKey(cls):
     if "attributes" in cls._Data__dict:
         return cls.attributes.get("secondPublicKey", None)
@@ -653,7 +655,9 @@ def _secondPublicKey(cls):
 class Wallet(Data):
     # bridges for 2.5 and 2.6
     username = property(lambda cls: _username(cls), None, None, "")
-    secondPublicKey = property(lambda cls: _secondPublicKey(cls), None, None, "")
+    secondPublicKey = property(
+        lambda cls: _secondPublicKey(cls), None, None, ""
+    )
 
     def link(self, secret=None, secondSecret=None):
         self.unlink()
