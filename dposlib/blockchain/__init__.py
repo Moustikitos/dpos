@@ -99,7 +99,8 @@ class Transaction(dict):
 
     def _setSenderPublicKey(self, publicKey):
         # load information from blockchain
-        data = dposlib.rest.GET.api.wallets(publicKey).get("data", {})
+        address = dposlib.core.crypto.getAddress(publicKey)
+        data = dposlib.rest.GET.api.wallets(address).get("data", {})
         # keep original nonce
         self._nonce = int(data.get("nonce", 0))
         # in ark-core 2.6 secondPublicKey and multisignature are stored under
@@ -120,9 +121,9 @@ class Transaction(dict):
             self["timestamp"] = slots.getTime()
         # deal with recipientId and senderId fields
         if self["type"] != 4:
-            self["senderId"] = dposlib.core.crypto.getAddress(publicKey)
+            self["senderId"] = address
         if self["type"] in [1, 3, 6, 9] and "recipientId" not in self:
-            self["recipientId"] = dposlib.core.crypto.getAddress(publicKey)
+            self["recipientId"] = address
         # add "senderPublicKey" and "_publicKey" avoiding recursion loop
         dict.__setitem__(self, "senderPublicKey", publicKey)
         self._publicKey = publicKey
