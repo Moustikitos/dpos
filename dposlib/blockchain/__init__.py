@@ -98,20 +98,32 @@ class Transaction(dict):
             return int(fee)
 
     def _setSenderPublicKey(self, publicKey):
-        address = dposlib.core.crypto.getAddress(publicKey)
+        # load information from blockchain
         data = dposlib.rest.GET.api.wallets(publicKey).get("data", {})
+        # keep original nonce
+        self._nonce = int(data.get("nonce", 0))
+        # in ark-core 2.6 secondPublicKey and multisignature are stored under
+        # "attributes" field
+        if "attributes" in data:
+            self._multisignature = data["attributes"].get("multiSignature", {})
+            self._secondPublicKey = data["attributes"].get(
+                "secondPublicKey", None
+            )
+        else:
+            self._multisignature = data.get("multiSignature", {})
+            self._secondPublicKey = data.get("secondPublicKey", None)
+        # increment nonce field (ark-core 2.6) if no one is set already
         if self.get("version", 0x00) >= 0x02 and "nonce" not in self:
-            self["nonce"] = int(data.get("nonce", 0)) + 1
+            self["nonce"] = self._nonce + 1
+        # add a timestamp if no one found
         if "timestamp" not in self:
             self["timestamp"] = slots.getTime()
+        # deal with recipientId and senderId fields
         if self["type"] != 4:
-            self["senderId"] = address
+            self["senderId"] = dposlib.core.crypto.getAddress(publicKey)
         if self["type"] in [1, 3, 6, 9] and "recipientId" not in self:
-            self["recipientId"] = address
-        self._multisignature = data.get("multiSignature", {})
-        self._secondPublicKey = data.get("secondPublicKey", None)
-        self._nonce = int(data.get("nonce", 0))
-        self._publicKey = publicKey
+            self["recipientId"] = dposlib.core.crypto.getAddress(publicKey)
+        # add "senderPublicKey" avoiding recursion loop
         dict.__setitem__(self, "senderPublicKey", publicKey)
 
     @staticmethod
@@ -621,17 +633,26 @@ class Data:
             pass
 
 
-# bridge with 2.5 and 2.6
+###########################
+# bridges for 2.5 and 2.6 #
+###########################
 def _username(cls):
     if "attributes" in cls._Data__dict:
         return cls.attributes.get("delegate", {}).get("username", None)
     else:
         return cls._Data__dict.get("username", None)
+def _secondPublicKey(cls):
+    if "attributes" in cls._Data__dict:
+        return cls.attributes.get("secondPublicKey", None)
+    else:
+        return cls._Data__dict.get("secondPublicKey", None)
+############################
 
 
 class Wallet(Data):
-    # bridge with 2.5 and 2.6
+    # bridges for 2.5 and 2.6
     username = property(lambda cls: _username(cls), None, None, "")
+    secondPublicKey = property(lambda cls: _secondPublicKey(cls), None, None, "")
 
     def link(self, secret=None, secondSecret=None):
         self.unlink()
@@ -654,7 +675,7 @@ class Wallet(Data):
                     keys = dposlib.core.crypto.getKeys(
                         getpass.getpass("secret > ")
                     )
-            if hasattr(self, "secondPublicKey"):
+            if self.secondPublicKey is not None:
                 keys_2 = dposlib.core.crypto.getKeys(
                     secondSecret if secondSecret is not None else
                     getpass.getpass("second secret > ")
