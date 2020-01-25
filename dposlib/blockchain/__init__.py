@@ -621,7 +621,17 @@ class Data:
             pass
 
 
+# bridge with 2.5 and 2.6
+def _username(cls):
+    if "attributes" in cls._Data__dict:
+        return cls.attributes.get("delegate", {}).get("username", None)
+    else:
+        return cls._Data__dict.get("username", None)
+
+
 class Wallet(Data):
+    # bridge with 2.5 and 2.6
+    username = property(lambda cls: _username(cls), None, None, "")
 
     def link(self, secret=None, secondSecret=None):
         self.unlink()
