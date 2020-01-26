@@ -63,6 +63,35 @@ def _fix_tx(t):
     return t
 
 
+def _storage_clean_up():
+    if not hasattr(rest.cfg, "pubkeyHash"):
+        return
+
+    path = os.path.join(dposlib.ROOT, ".registry", rest.cfg.network)
+    if not os.path.exists(path):
+        return
+
+    for name in os.listdir(path):
+        address = dposlib.core.crypto.getAddress(name)
+        filepath = os.path.join(path, name)
+        nonce = int(
+            rest.GET.api.wallets(address).get("data", {}).get("nonce", 0)
+        )
+
+        data = loadJson(filepath)
+        msg = []
+        for txid in list(data.keys()):
+            if data[txid].get("nonce", 0) <= nonce:
+                data.pop(txid)
+                msg.append(txid)
+        dumpJson(data, filepath)
+        if len(msg):
+            flask.flash(
+                "%s - nonce expiration cleanup:\n%s" %
+                (rest.cfg.network, "\n   ".join(msg))
+            )
+
+
 def _ark_srv_synch():
     data = {}
     if not hasattr(rest.cfg, "pubkeyHash"):
@@ -150,12 +179,6 @@ def loadNetwork(network):
     resp2 = loadJson(
         os.path.join(SYNCH_FOLDER, "data.%d" % rest.cfg.pubkeyHash)
     )
-
-    # # merge data
-    # if len(resp2):
-    #     resp["success"] = True
-    #     resp["data"] = dict(resp.get("data", {}), **resp2)
-
     # flash a message if nothing found
     if not len(resp.get("data", [])):
         flask.flash("no pending transaction found")

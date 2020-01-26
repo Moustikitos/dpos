@@ -15,14 +15,17 @@ Options:
 import sys
 import docopt
 
-from mssrv.app import app, _ark_srv_synch, _link_peer
+from mssrv.app import app, _ark_srv_synch, _storage_clean_up, _link_peer
 from dposlib.util.asynch import setInterval
 
 setInterval(60)(_ark_srv_synch)()
+setInterval(60)(_storage_clean_up)()
+
 
 def create_app(mssrv):
     _link_peer(mssrv)
     return app
+
 
 if __name__ == "__main__":
     args = docopt.docopt(__doc__, argv=sys.argv[1:])
