@@ -248,10 +248,13 @@ pip install ledgerblue
 ### 0.3.1
   - [x] multisignature client-server api
 
-### 0.3.2 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.3.2
   - [x] better `vendorFieldHex` field  handling
   - [x] `dposlib.blockchain.Transaction` behaviour improvement
   - [x] tx versioning defined in `net` module
+  - [x] bridge for ark-core 2.5 and 2.6
+
+### 0.3.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
 
 ## TODO
   - [ ] CLI
