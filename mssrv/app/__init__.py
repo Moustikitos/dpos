@@ -84,7 +84,12 @@ def _storage_clean_up():
             if data[txid].get("nonce", 0) <= nonce:
                 data.pop(txid)
                 msg.append(txid)
-        dumpJson(data, filepath)
+
+        if len(data):
+            dumpJson(data, filepath)
+        else:
+            os.remove(filepath)
+
         if len(msg):
             flask.flash(
                 "%s - nonce expiration cleanup:\n%s" %
