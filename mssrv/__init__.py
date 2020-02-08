@@ -133,8 +133,12 @@ def append(network, *transactions):
             else:
                 checks = []
                 publicKeys = \
-                    tx["asset"].get("multiSignature", {}).get("publicKeys", []) \
-                    if tx["type"] == 4 else tx._multisignature.get("publicKeys", [])
+                    tx["asset"].get("multiSignature", {}).get(
+                        "publicKeys", []
+                    ) \
+                    if tx["type"] == 4 else tx._multisignature.get(
+                        "publicKeys", []
+                    )
                 serialized = crypto.getBytes(
                     tx,
                     exclude_sig=True,
