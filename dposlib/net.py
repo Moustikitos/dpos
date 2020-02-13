@@ -6,6 +6,7 @@ ark = {
     "maxvotepertx": 1,
     "maxvote": 1,
     "aip20": 0,
+    "txversion": 2,
 
     "seeds": [
         "https://explorer.ark.io:8443"
