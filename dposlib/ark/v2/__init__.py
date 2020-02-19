@@ -133,9 +133,9 @@ def init(seed=None):
             sys.modules[__package__].cold = import_module(
                 package_path
             )
+            CONFIG = sys.modules[__package__].cold.configuration
+            FEES = sys.modules[__package__].cold.fees
         except Exception:
-            pass
-        finally:
             CONFIG = FEES = {}
 
     # no network connetcion neither local configuration files
