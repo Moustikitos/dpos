@@ -722,10 +722,7 @@ class Wallet(Data):
     @Data.wallet_islinked
     def send(self, amount, address, vendorField=None, fee_included=False):
         "See :func:`dposlib.ark.v2.transfer`."
-        tx = dposlib.core.transfer(
-            amount, address, vendorField,
-            version=cfg.txversion
-        )
+        tx = dposlib.core.transfer(amount, address, vendorField)
         return dposlib.core.broadcastTransactions(
             self._finalizeTx(tx, fee_included=fee_included)
         )
@@ -733,39 +730,29 @@ class Wallet(Data):
     @Data.wallet_islinked
     def registerSecondSecret(self, secondSecret):
         "See :func:`dposlib.ark.v2.registerSecondSecret`."
-        tx = dposlib.core.registerSecondSecret(
-            secondSecret, version=cfg.txversion
-        )
+        tx = dposlib.core.registerSecondSecret(secondSecret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerSecondPublicKey(self, secondPublicKey):
         "See :func:`dposlib.ark.v2.registerSecondPublicKey`."
-        tx = dposlib.core.registerSecondPublicKey(
-            secondPublicKey, version=cfg.txversion
-        )
+        tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def registerAsDelegate(self, username):
         "See :func:`dposlib.ark.v2.registerAsDelegate`."
-        tx = dposlib.core.registerAsDelegate(
-            username, version=cfg.txversion
-        )
+        tx = dposlib.core.registerAsDelegate(username)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def upVote(self, *usernames):
         "See :func:`dposlib.ark.v2.upVote`."
-        tx = dposlib.core.upVote(
-            *usernames, version=cfg.txversion
-        )
+        tx = dposlib.core.upVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @Data.wallet_islinked
     def downVote(self, *usernames):
         "See :func:`dposlib.ark.v2.downVote`."
-        tx = dposlib.core.downVote(
-            *usernames, version=cfg.txversion
-        )
+        tx = dposlib.core.downVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))

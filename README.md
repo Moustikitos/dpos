@@ -255,6 +255,8 @@ pip install ledgerblue
   - [x] bridge for ark-core 2.5 and 2.6
 
 ### 0.3.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] offline start fixed
+  - [x] `api.Wallet` fixed
 
 ## TODO
   - [ ] CLI
