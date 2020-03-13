@@ -257,6 +257,7 @@ pip install ledgerblue
 ### 0.3.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] offline start fixed
   - [x] `api.Wallet` fixed
+  - [x] added pythonic `datetime` attribute to `Transaction` class
 
 ## TODO
   - [ ] CLI

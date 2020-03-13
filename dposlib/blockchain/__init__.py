@@ -68,6 +68,11 @@ class Transaction(dict):
     FMULT = 10000
     FEESL = None
 
+    datetime = property(
+        lambda cls: slots.getRealTime(cls.timestamp),
+        None, None, ""
+    )
+
     def _compute_fee(self, value=None):
         try:
             return int(value)
@@ -129,12 +134,12 @@ class Transaction(dict):
         self._publicKey = publicKey
 
     @staticmethod
-    def useDynamicFee(value="avgFee"):
+    def useDynamicFee(value="minFee"):
         """
         Activate and configure dynamic fees parameters. Value can be either an
         integer defining the fee multiplier constant or a string defining the
         fee level to use acccording to the 30-days-average. possible values are
-        ``avgFee`` (default) ``minFee`` and ``maxFee``.
+        ``avgFee`` ``minFee`` (default) and ``maxFee``.
 
         Args:
             value (:class:`str` or :class:`int`): constant or fee multiplier
@@ -392,11 +397,15 @@ class Transaction(dict):
         Args:
             privateKey (:class:`str`): private key as hex string
         """
+        # get public key from private key
         publicKey = dposlib.core.crypto.secp256k1.PublicKey.from_seed(
             dposlib.core.crypto.unhexlify(privateKey)
         )
         publicKey = dposlib.core.crypto.hexlify(publicKey.encode())
 
+        # get public key index :
+        # if type 4 find index in asset
+        # else find it in _multisignature attribute
         if self["type"] == 4:
             index = self.asset["multiSignature"]["publicKeys"].index(
                 publicKey
@@ -408,11 +417,14 @@ class Transaction(dict):
         else:
             raise Exception("multisignature not to be used here")
 
+        # remove id if any and set fee
         self.pop("id", False)
         if "fee" not in self:
             self.setFee()
 
-        self["signatures"] = sorted(
+        # concatenate index and signature and fill it in signatures field
+        # sorted(set([...])) returns sorted([...]) with unique values
+        self["signatures"] = sorted(set(
             self.get("signatures", []) + [
                 "%02x" % index +
                 dposlib.core.crypto.getSignatureFromBytes(
@@ -424,7 +436,7 @@ class Transaction(dict):
                     ),
                     privateKey
                 )
-            ],
+            ]),
             key=lambda s: s[:2]
         )
 
