@@ -59,38 +59,20 @@ import re
 import sys
 import json
 import random
-import logging
 import datetime
 
 import pytz
-import requests
 
 from importlib import import_module
-from dposlib import FROZEN, net
+from dposlib import FROZEN, PY3, net
 from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
 
-logging.getLogger("requests").setLevel(logging.CRITICAL)
-
-
-def checkLatency(peer):
-    """
-    Returns latency in second for a given peer
-
-    Args:
-        peer (:class:`str`): the peer in the scheme http(s)://[ip]:[port]
-
-    Returns:
-        :class:`float`: latency in seconds
-    """
-
-    try:
-        request = requests.get(peer, timeout=cfg.timeout, verify=cfg.verify)
-    except Exception:
-        # we want to capture all exceptions because we don't want to stop
-        # checking latency for other peers that might be working
-        return False
-    return request.elapsed.total_seconds()
+if PY3:
+    from urllib.request import Request, OpenerDirector, HTTPHandler
+    from urllib.request import HTTPSHandler
+else:
+    from urllib2 import Request, OpenerDirector, HTTPHandler, HTTPSHandler
 
 
 #################
@@ -127,119 +109,17 @@ human': '2019-05-28T12:05:52.000Z'}}}, 'production': {'approval': 1.19}, 'forg\
 ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
 }}}
 """
+    opener = None
 
-    @staticmethod
-    def _manage_response(req, returnKey, error=None):
-        # first try to jsonify response
-        try:
-            data = req.json()
-        except Exception as err:
-            data = {
-                "success": True, "except": True, "data": req.text,
-                "error": "%r" % err
-            }
-
-        if req.status_code < 300 and returnKey:
-            # else try to extract the returnKey
-            tmp = data.get(returnKey, False)
-            if not tmp:
-                if returnKey:
-                    data["warning"] = "returnKey %s not found" % returnKey
-            # filter the result if returnKey gives a dict instance
-            else:
-                data = tmp
-                if isinstance(tmp, dict):
-                    data = filter_dic(tmp)
-                elif isinstance(tmp, list):
-                    data = [filter_dic(e) for e in data]
-
-        return data
-
-    @staticmethod
-    def _GET(*args, **kwargs):
-        # API response contains several fields. Wanted one can be extracted
-        # using a returnKey that match the field name
-        return_key = kwargs.pop('returnKey', False)
-        peer = kwargs.pop('peer', False)
-        try:
-            peer = peer if bool(peer) else random.choice(cfg.peers)
-            req = requests.get(
-                peer + "/".join(args),
-                params=dict(
-                    [k.replace('and_', 'AND:'), v] for k, v in kwargs.items()
-                ),
-                headers=cfg.headers,
-                verify=cfg.verify,
-                timeout=cfg.timeout
-            )
-        except Exception as error:
-            return {"success": False, "error": "%r" % error, "except": True}
-        else:
-            return EndPoint._manage_response(req, return_key)
-
-    @staticmethod
-    def _POST(*args, **kwargs):
-        return_key = kwargs.pop('returnKey', False)
-        peer = kwargs.pop("peer", False)
-        headers = kwargs.pop("headers", cfg.headers)
-        try:
-            peer = peer if bool(peer) else random.choice(cfg.peers)
-            req = requests.post(
-                peer + "/".join(args),
-                data=json.dumps(kwargs),
-                headers=headers,
-                verify=cfg.verify,
-                timeout=cfg.timeout
-            )
-        except Exception as error:
-            return {"success": False, "error": "%r" % error, "except": True}
-        else:
-            return EndPoint._manage_response(req, return_key)
-
-    @staticmethod
-    def _PUT(*args, **kwargs):
-        return_key = kwargs.pop('returnKey', False)
-        peer = kwargs.pop("peer", False)
-        try:
-            peer = peer if bool(peer) else random.choice(cfg.peers)
-            req = requests.put(
-                peer + "/".join(args),
-                data=json.dumps(kwargs),
-                headers=cfg.headers,
-                verify=cfg.verify,
-                timeout=cfg.timeout
-            )
-        except Exception as error:
-            return {"success": False, "error": "%r" % error, "except": True}
-        else:
-            return EndPoint._manage_response(req, return_key)
-
-    @staticmethod
-    def _DELETE(*args, **kwargs):
-        return_key = kwargs.pop('returnKey', False)
-        peer = kwargs.pop("peer", False)
-        try:
-            peer = peer if bool(peer) else random.choice(cfg.peers)
-            req = requests.delete(
-                peer + "/".join(args),
-                data=json.dumps(kwargs),
-                headers=cfg.headers,
-                verify=cfg.verify,
-                timeout=cfg.timeout
-            )
-        except Exception as error:
-            return {"success": False, "error": "%r" % error, "except": True}
-        else:
-            return EndPoint._manage_response(req, return_key)
-
-    def __init__(self, elem=None, parent=None, method=None):
-        if method not in [
-            EndPoint._GET, EndPoint._POST, EndPoint._PUT, EndPoint._DELETE
-        ]:
-            raise Exception("REST method nort implemented")
+    def __init__(self, elem=None, parent=None, method=lambda: None):
         self.elem = elem
         self.parent = parent
         self.method = method
+
+        if EndPoint.opener is None:
+            EndPoint.opener = OpenerDirector()
+            for handler in [HTTPHandler, HTTPSHandler]:
+                EndPoint.opener.add_handler(handler())
 
     def __getattr__(self, attr):
         if attr not in ["elem", "parent", "method", "chain"]:
@@ -256,16 +136,83 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         return (self.parent.chain() + [self.elem]) if self.parent is not None \
                else [""]
 
+    @staticmethod
+    def _call(method="GET", *args, **kwargs):
+        method = method.upper()
+        peer = kwargs.pop("peer", False)
+        return_key = kwargs.pop('returnKey', False)
+        headers = kwargs.pop("headers", cfg.headers)
 
-GET = EndPoint(method=EndPoint._GET)
-POST = EndPoint(method=EndPoint._POST)
-PUT = EndPoint(method=EndPoint._PUT)
-DELETE = EndPoint(method=EndPoint._DELETE)
+        # build request
+        url = peer if bool(peer) else random.choice(cfg.peers) + "/".join(args)
+        if method == "GET":
+            params = dict(
+                [k.replace('and_', 'AND:'), v] for k, v in kwargs.items()
+            )
+            if len(params):
+                url += "?" + "&".join(
+                    "%s=%s" % item for item in params.items()
+                )
+            req = Request(url, None, headers)
+        else:
+            req = Request(url, json.dumps(kwargs).encode('utf-8'), headers)
+
+        req.add_header("User-agent", "Mozilla/5.0")
+        req.get_method = lambda: method
+
+        # send request
+        try:
+            res = EndPoint.opener.open(req, timeout=cfg.timeout)
+        except Exception as error:
+            return {"success": False, "error": "%r" % error, "except": True}
+        else:
+            return EndPoint._manage_response(res, return_key)
+
+    @staticmethod
+    def _manage_response(res, returnKey, error=None):
+        # first try to jsonify response
+        text = res.read()
+        try:
+            data = json.loads(text)
+        except Exception as err:
+            data = {
+                "success": True, "except": True,
+                "raw": text, "error": "%r" % err
+            }
+
+        if res.getcode() < 300 and returnKey:
+            # else try to extract the returnKey
+            tmp = data.get(returnKey, False)
+            if not tmp:
+                data["warning"] = "returnKey %s not found" % returnKey
+            # filter the result if returnKey gives a dict instance
+            else:
+                data = tmp
+                if isinstance(tmp, dict):
+                    data = filter_dic(tmp)
+                elif isinstance(tmp, list):
+                    data = [filter_dic(e) for e in data]
+
+        return data
+
+
+GET = EndPoint(method=lambda *a, **kw: EndPoint._call("GET", *a, **kw))
+POST = EndPoint(method=lambda *a, **kw: EndPoint._call("POST", *a, **kw))
+PUT = EndPoint(method=lambda *a, **kw: EndPoint._call("PUT", *a, **kw))
+DELETE = EndPoint(method=lambda *a, **kw: EndPoint._call("DELETE", *a, **kw))
 
 
 #######################
 #  network selection  #
 #######################
+
+def isOnline(peer):
+    try:
+        response = EndPoint.opener.open(peer, timeout=cfg.timeout)
+    except Exception:
+        response = False
+    return True if response else False
+
 
 def load(name):
     """
@@ -339,7 +286,7 @@ def use(network, **kwargs):
 
     # connect with first available seed
     for seed in data.pop("seeds", []):
-        if checkLatency(seed):
+        if isOnline(seed):
             cfg.peers.append(seed)
             cfg.hotmode = True
             break

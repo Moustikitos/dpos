@@ -65,12 +65,12 @@ TYPING = {
 def _select_peers():
     api_port = cfg.ports["core-api"]
     peers = []
-    candidates = rest.GET.api.peers().get("data", [])
+    candidates = rest.GET.api.peers(
+        version=cfg.version,
+        orderBy="height:desc"
+    ).get("data", [])
     for candidate in candidates:
-        peer = "http://%s:%s" % (candidate["ip"], api_port)
-        synced = rest.GET.api.node.status(peer=peer).get("data")
-        if isinstance(synced, dict) and synced.get("synced", False):
-            peers.append(peer)
+        peers.append("http://%s:%s" % (candidate["ip"], api_port))
         if len(peers) >= cfg.broadcast:
             break
     if len(peers):
@@ -146,6 +146,7 @@ def init(seed=None):
     constants = data["constants"]
 
     # -- root configuration ---------------------------------------------------
+    cfg.version = data.get("core", {}).get("version", "2")
     cfg.explorer = data["explorer"]
     cfg.marker = "%x" % data["version"]
     cfg.pubkeyHash = data["version"]

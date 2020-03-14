@@ -254,10 +254,13 @@ pip install ledgerblue
   - [x] tx versioning defined in `net` module
   - [x] bridge for ark-core 2.5 and 2.6
 
-### 0.3.3 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.3.3
   - [x] offline start fixed
   - [x] `api.Wallet` fixed
   - [x] added pythonic `datetime` attribute to `Transaction` class
+
+### 0.3.4 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] removed `requests` dependancy
 
 ## TODO
   - [ ] CLI

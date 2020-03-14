@@ -33,14 +33,14 @@ def dumpJson(data, path):
 
 
 def filter_dic(dic):
-    special_keys = [
+    arktoshi = [
         "amount",
         "balance",
-        "fee", "fees", "forged",
+        "fee", "fees", "forged", "forgedRewards", "forgedFees",
         "reward", "rewards",
         "totalAmount", "totalFee", "totalForged", "total", "totalVotes",
         "unconfirmedBalance",
-        "votes"
+        "votes", "voteBalance"
     ]
 
     def cast_value(typ, value):
@@ -52,7 +52,7 @@ def filter_dic(dic):
     return dict(
         (
             k,
-            cast_value(float, v) if k in special_keys else
+            cast_value(float, v) if k in arktoshi else
             filter_dic(v) if isinstance(v, dict) else
             v
         ) for k, v in dic.items()
