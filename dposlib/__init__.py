@@ -25,8 +25,8 @@ else:
 # dposlib can be embeded in a frozen app
 FROZEN = \
     hasattr(sys, "frozen") or hasattr(sys, "importers")
-    #  or \
-    # imp.is_frozen("__main__")
+#       or \
+#       imp.is_frozen("__main__")
 
 if FROZEN:
     # if frozen code, HOME and ROOT pathes are same

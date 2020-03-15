@@ -144,14 +144,15 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         headers = kwargs.pop("headers", cfg.headers)
 
         # build request
-        url = peer if bool(peer) else random.choice(cfg.peers) + "/".join(args)
+        url = peer if bool(peer) else random.choice(cfg.peers)
+        url += "/".join(args)
         if method == "GET":
-            params = dict(
-                [k.replace('and_', 'AND:'), v] for k, v in kwargs.items()
-            )
-            if len(params):
+            if len(kwargs):
                 url += "?" + "&".join(
-                    "%s=%s" % item for item in params.items()
+                    "%s=%s" % item for item in [
+                        (k.replace('and_', 'AND:'), v)
+                        for k, v in kwargs.items()
+                    ]
                 )
             req = Request(url, None, headers)
         else:
