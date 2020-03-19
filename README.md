@@ -260,7 +260,7 @@ pip install ledgerblue
   - [x] added pythonic `datetime` attribute to `Transaction` class
 
 ### 0.3.4 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [x] removed `requests` dependancy
+  - [x] removed `requests` dependency
 
 ## TODO
   - [ ] CLI

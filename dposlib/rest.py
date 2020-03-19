@@ -70,9 +70,10 @@ from dposlib.util.data import filter_dic
 
 if PY3:
     from urllib.request import Request, OpenerDirector, HTTPHandler
-    from urllib.request import HTTPSHandler
+    from urllib.request import HTTPSHandler, BaseHandler
 else:
     from urllib2 import Request, OpenerDirector, HTTPHandler, HTTPSHandler
+    from urllib2 import BaseHandler
 
 
 #################
@@ -121,6 +122,15 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
             for handler in [HTTPHandler, HTTPSHandler]:
                 EndPoint.opener.add_handler(handler())
 
+    def add_handler(self, handler):
+        if not isinstance(handler, BaseHandler):
+            raise Exception(
+                "%r have to be a %r instance" % (handler, BaseHandler)
+            )
+        if not isinstance(EndPoint.opener, OpenerDirector):
+            EndPoint.opener = OpenerDirector()
+        EndPoint.opener.add_handler(handler)
+
     def __getattr__(self, attr):
         if attr not in ["elem", "parent", "method", "chain"]:
             if re.match("^_[0-9A-Fa-f].*", attr):
@@ -142,7 +152,6 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         peer = kwargs.pop("peer", False)
         return_key = kwargs.pop('returnKey', False)
         headers = kwargs.pop("headers", cfg.headers)
-
         # build request
         url = peer if bool(peer) else random.choice(cfg.peers)
         url += "/".join(args)
@@ -157,10 +166,9 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
             req = Request(url, None, headers)
         else:
             req = Request(url, json.dumps(kwargs).encode('utf-8'), headers)
-
+        # tweak request
         req.add_header("User-agent", "Mozilla/5.0")
         req.get_method = lambda: method
-
         # send request
         try:
             res = EndPoint.opener.open(req, timeout=cfg.timeout)
