@@ -71,9 +71,11 @@ from dposlib.util.data import filter_dic
 if PY3:
     from urllib.request import Request, OpenerDirector, HTTPHandler
     from urllib.request import HTTPSHandler, BaseHandler
+    from urllib.parse import urlencode
 else:
     from urllib2 import Request, OpenerDirector, HTTPHandler, HTTPSHandler
     from urllib2 import BaseHandler
+    from urllib import urlencode
 
 
 #################
@@ -157,11 +159,13 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         url += "/".join(args)
         if method == "GET":
             if len(kwargs):
-                url += "?" + "&".join(
-                    "%s=%s" % item for item in [
-                        (k.replace('and_', 'AND:'), v)
-                        for k, v in kwargs.items()
-                    ]
+                url += "?" + urlencode(
+                    dict(
+                        [
+                            (k.replace('and_', 'AND:'), v)
+                            for k, v in kwargs.items()
+                        ]
+                    )
                 )
             req = Request(url, None, headers)
         else:

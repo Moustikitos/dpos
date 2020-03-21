@@ -11,7 +11,7 @@ API_PEER = None
 
 def peer_available(func):
     def wrapper(*args, **kw):
-        if rest.checkLatency(API_PEER):
+        if rest.isOnline(API_PEER):
             return func(*args, **kw)
         else:
             raise Exception("peer not available")
