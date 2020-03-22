@@ -1,0 +1,3 @@
+#!/bin/bash
+export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
+/bin/bash --rcfile ~/.local/share/ms-server/venv/bin/activate

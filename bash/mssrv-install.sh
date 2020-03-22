@@ -52,3 +52,10 @@ pip install -r ~/dpos/requirements.txt
 pip install docopt gunicorn flask
 echo "done"
 
+chmod +x bash/activate
+cp bash/ms ~
+cd ~
+chmod +x ms
+
+echo
+echo "setup finished"

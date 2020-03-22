@@ -60,9 +60,23 @@ Deploy using ``gunicorn`` server::
     $ export PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
     $ gunicorn --bind=0.0.0.0:5050 --workers=5 mssrv:app
 
-If you have ``pm2`` installed you can start ``flask`` or ``gunicorn`` server::
+Deploy using ``ms`` command::
 
-    $ # flask server
-    $ pm2 start ~/dpos/srv.json
-    $ # gunicorn server
-    $ pm2 start ~/dpos/app.json
+    $ # activate virtual environment
+    $ bash ~/dpos/bash/activate
+    $ ./ms --help
+    $ Usage:
+    $    ms start-api [-p <api-port>]
+    $    ms start-app [-p <port> -s <server>]
+    $    ms (stop-api | stop-app)
+    $    ms (log-api | log-app)
+    $ 
+    $ Options:
+    $ -p --port=<port>       : the port to use [default: 5050]
+    $ -s --server=<server>   : the ms-api server to link to [default: http://127.0.0.1:5050]
+    $ 
+    $ Subcommands:
+    $    start-api     : start multi signature server
+    $    start-app     : start multi signature app
+    $    stop-api/app  : stop multi signature server/app
+    $    log-api/app   : show multi signature server/app logs
