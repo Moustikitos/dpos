@@ -68,7 +68,7 @@ Deploy using ``ms`` command::
     $ Usage:
     $    ms start-api [-p <api-port>]
     $    ms start-app [-p <port> -s <server>]
-    $    ms (stop-api | stop-app)
+    $    ms (restart-api | restart-app | stop-api | stop-app)
     $    ms (log-api | log-app)
     $ 
     $ Options:
@@ -78,5 +78,6 @@ Deploy using ``ms`` command::
     $ Subcommands:
     $    start-api     : start multi signature server
     $    start-app     : start multi signature app
+    $    restart-app/api : restart multi signature api/app
     $    stop-api/app  : stop multi signature server/app
     $    log-api/app   : show multi signature server/app logs
