@@ -5,7 +5,7 @@
 Usage:
    ms start-api [-p <api-port>]
    ms start-app [-p <port> -s <server>]
-   ms (stop-api | stop-app)
+   ms (restart-api | restart-app | stop-api | stop-app)
    ms (log-api | log-app)
 
 Options:
@@ -13,10 +13,11 @@ Options:
 -s --server=<server>   : the ms-api server to link to [default: http://127.0.0.1:5050]
 
 Subcommands:
-   start-api     : start multi signature server
-   start-app     : start multi signature app
-   stop-api/app  : stop multi signature server/app
-   log-api/app   : show multi signature server/app logs
+   start-api       : start multi signature api
+   start-app       : start multi signature app
+   restart-app/api : restart multi signature api/app
+   stop-api/app    : stop multi signature api/app
+   log-api/app     : show multi signature api/app logs
 """
 
 import os
@@ -79,6 +80,14 @@ def start_app(args={}, **options):
     os.system("sudo systemctl daemon-reload")
     if not os.system("sudo systemctl restart msapp"):
         os.system("sudo systemctl start msapp")
+
+
+def restart_api(args={}, **options):
+    os.system("sudo systemctl restart msapi")
+
+
+def restart_app(args={}, **options):
+    os.system("sudo systemctl restart msapp")
 
 
 def stop_app(args={}, **options):
