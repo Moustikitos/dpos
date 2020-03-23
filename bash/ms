@@ -38,7 +38,7 @@ After=network.target
 [Service]
 User=${USER}
 WorkingDirectory=${HOME}/.local/share/ms-server
-Environment=PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
+Environment=PYTHONPATH=${HOME}/dpos
 ExecStart=${HOME}/.local/share/ms-server/venv/bin/gunicorn mssrv:app --bind=0.0.0.0:%(port)s --workers=5 --access-logfile -
 Restart=always
 
@@ -53,7 +53,7 @@ After=network.target
 [Service]
 User=${USER}
 WorkingDirectory=${HOME}/.local/share/ms-server
-Environment=PYTHONPATH=${PYTHONPATH}:${HOME}/dpos
+Environment=PYTHONPATH=${HOME}/dpos
 ExecStart=${HOME}/.local/share/ms-server/venv/bin/gunicorn 'mssrv.app.srv:create_app(mssrv=\"%(server)s\")' --bind=0.0.0.0:%(port)s --workers=5 --access-logfile -
 Restart=always
 

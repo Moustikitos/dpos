@@ -11,7 +11,10 @@ echo "github branch to use : $B"
 echo
 echo installing system dependencies
 echo ==============================
-sudo apt-get install python python-setuptools python-pip virtualenv
+sudo apt-get -qq install python python-dev python-setuptools python-pip
+sudo apt-get -qq install python3 python3-dev python3-setuptools python3-pip
+sudo apt-get install pypy
+sudo apt-get install virtualenv
 
 echo
 echo downloading dpos package
@@ -36,9 +39,18 @@ echo "done"
 echo
 echo creating virtual environement
 echo =============================
-if [ ! -d "$HOME/.local/share/ark-zen/venv" ]; then
+
+echo -e "Select the environment:\n  1) python3\n  2) pypy"
+read -p "(default:python)> " n
+case $n in
+1) TARGET="$(which python3)";;
+2) TARGET="$(which pypy)";;
+*) TARGET="$(which python)";;
+esac
+
+if [ ! -d "$HOME/.local/share/ms-server/venv" ]; then
     mkdir ~/.local/share/ms-server/venv -p
-    virtualenv ~/.local/share/ms-server/venv -q
+    virtualenv -p ${TARGET} ~/.local/share/ms-server/venv -q
     echo "done"
 else
     echo "virtual environement already there !"
@@ -48,6 +60,7 @@ echo
 echo installing python dependencies
 echo ==============================
 . ~/.local/share/ms-server/venv/bin/activate
+export PYTHONPATH=${HOME}/dpos
 pip install -r ~/dpos/requirements.txt
 pip install docopt gunicorn flask
 echo "done"

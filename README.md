@@ -261,6 +261,7 @@ pip install ledgerblue
 
 ### 0.3.4 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] removed `requests` dependency
+  - [x] multisignature api and app run as system services
 
 ## TODO
   - [ ] CLI
