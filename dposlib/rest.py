@@ -153,10 +153,11 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         method = method.upper()
         peer = kwargs.pop("peer", False)
         return_key = kwargs.pop('returnKey', False)
-        headers = kwargs.pop("headers", cfg.headers)
+        headers = kwargs.pop("headers", dict(cfg.headers))
+        data = kwargs.pop("urlencode", None)
         # build request
-        url = peer if bool(peer) else random.choice(cfg.peers)
-        url += "/".join(args)
+        url = \
+            (peer if bool(peer) else random.choice(cfg.peers)) + "/".join(args)
         if method == "GET":
             if len(kwargs):
                 url += "?" + urlencode(
@@ -169,7 +170,13 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
                 )
             req = Request(url, None, headers)
         else:
-            req = Request(url, json.dumps(kwargs).encode('utf-8'), headers)
+            if data is None:
+                data = json.dumps(kwargs)
+                headers["Content-type"] = "application/json"
+            else:
+                data = urlencode(data)
+                headers["Content-type"] = "application/x-www-form-urlencoded"
+            req = Request(url, data.encode('utf-8'), headers)
         # tweak request
         req.add_header("User-agent", "Mozilla/5.0")
         req.get_method = lambda: method

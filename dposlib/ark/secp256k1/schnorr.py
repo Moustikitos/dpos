@@ -121,7 +121,7 @@ ipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
     Args:
         msg (:class:`bytes`): sha256 message-hash
-        secret0 (:class:`bytes`): private key
+        seckey0 (:class:`bytes`): private key
     Returns:
         :class:`bytes`: RAW signature
     """
