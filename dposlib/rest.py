@@ -154,7 +154,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         peer = kwargs.pop("peer", False)
         return_key = kwargs.pop('returnKey', False)
         headers = kwargs.pop("headers", dict(cfg.headers))
-        data = kwargs.pop("urlencode", None)
+        to_urlencode = kwargs.pop("urlencode", None)
+        to_jsonify = kwargs.pop("jsonify", None)
         # build request
         url = \
             (peer if bool(peer) else random.choice(cfg.peers)) + "/".join(args)
@@ -170,12 +171,26 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
                 )
             req = Request(url, None, headers)
         else:
-            if data is None:
-                data = json.dumps(kwargs)
-                headers["Content-type"] = "application/json"
-            else:
-                data = urlencode(data)
+            if to_urlencode != to_jsonify:
+                if len(kwargs):
+                    url += "?" + urlencode(
+                        dict(
+                            [
+                                (k.replace('and_', 'AND:'), v)
+                                for k, v in kwargs.items()
+                            ]
+                        )
+                    )
+            headers["Content-type"] = "application/json"
+            if to_urlencode is not None:
+                data = urlencode(to_urlencode)
                 headers["Content-type"] = "application/x-www-form-urlencoded"
+            elif to_jsonify is not None:
+                data = json.dumps(to_jsonify)
+            elif len(kwargs):
+                data = json.dumps(kwargs)
+            else:
+                data = json.dumps({})
             req = Request(url, data.encode('utf-8'), headers)
         # tweak request
         req.add_header("User-agent", "Mozilla/5.0")
