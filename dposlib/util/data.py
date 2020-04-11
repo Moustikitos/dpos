@@ -15,6 +15,11 @@ def loadJson(path):
             data = json.load(in_)
     else:
         data = {}
+    try:
+        in_.close()
+        del in_
+    except Exception:
+        pass
     return data
 
 
@@ -30,6 +35,11 @@ def dumpJson(data, path):
         **({"encoding": "utf-8"} if PY3 else {})
     ) as out:
         json.dump(data, out, indent=4)
+    try:
+        out.close()
+        del out
+    except Exception:
+        pass
 
 
 def filter_dic(dic):

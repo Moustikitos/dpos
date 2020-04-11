@@ -212,10 +212,14 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
         except Exception as err:
             data = {
                 "success": True, "except": True,
-                "raw": text, "error": "%r" % err
+                "raw":
+                    text.decode("utf-8") if isinstance(text, bytes)
+                    else text,
+                "error": "%r" % err
             }
 
-        if res.getcode() < 300 and returnKey:
+        status = res.getcode()
+        if status < 300 and returnKey:
             # else try to extract the returnKey
             tmp = data.get(returnKey, False)
             if not tmp:
@@ -228,6 +232,7 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
                 elif isinstance(tmp, list):
                     data = [filter_dic(e) for e in data]
 
+        data["status"] = status
         return data
 
 
