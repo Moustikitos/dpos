@@ -232,7 +232,8 @@ ed': {'fees': 390146323536, 'rewards': 32465000000000, 'total': 32855146323536\
                 elif isinstance(tmp, list):
                     data = [filter_dic(e) for e in data]
 
-        data["status"] = status
+        if isinstance(data, dict):
+            data["status"] = status
         return data
 
 

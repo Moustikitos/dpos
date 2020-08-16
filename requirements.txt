@@ -1,3 +1,4 @@
 future
 pytz
 base58
+requests
