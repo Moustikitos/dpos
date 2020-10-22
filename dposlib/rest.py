@@ -64,30 +64,42 @@ from importlib import import_module
 from uio import req
 from dposlib import net
 from dposlib.blockchain import cfg
+from dposlib.util.data import filter_dic
+
+
+def _call(method="GET", *args, **kwargs):
+    returnKey = kwargs.pop("returnKey", False)
+    response = req.EndPoint._open(
+        req.EndPoint.build_req(method, *args, **kwargs)
+    )
+    if returnKey:
+        return filter_dic(response)
+    else:
+        return response
 
 
 GET = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
-        req.EndPoint._call("GET", *a, **dict(kw, headers=cfg.headers))
+        _call("GET", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 POST = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
-        req.EndPoint._call("POST", *a, **dict(kw, headers=cfg.headers))
+        _call("POST", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 PUT = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
-        req.EndPoint._call("PUT", *a, **dict(kw, headers=cfg.headers))
+        _call("PUT", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 DELETE = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
-        req.EndPoint._call("DELETE", *a, **dict(kw, headers=cfg.headers))
+        _call("DELETE", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 
