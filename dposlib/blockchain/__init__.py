@@ -617,7 +617,7 @@ class Data:
 
     def __getattr__(self, attr):
         try:
-            return Data.__getattribute__(attr)
+            return Data.__getattribute__(self, attr)
         except Exception:
             if attr in self.__dict:
                 return self.__dict[attr]
@@ -625,14 +625,17 @@ class Data:
                 raise AttributeError("field '%s' can not be found" % attr)
 
     def _get_result(self):
+        result = self.__endpoint(*self.__args, **self.__kwargs)
         if dposlib.rest.cfg.familly == "lisk.v10":
-            result = self.__endpoint(*self.__args, **self.__kwargs)
             if isinstance(result, list):
                 return result[0]
             elif isinstance(result, dict):
                 return result
         else:
-            return self.__endpoint(*self.__args, **self.__kwargs)
+            if isinstance(result, dict):
+                return result.get("data", result)
+            else:
+                return result
 
     def update(self):
         result = self._get_result()
