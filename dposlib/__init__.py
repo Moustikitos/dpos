@@ -10,7 +10,6 @@ It is designed to run with both python 2.x and 3.x.
 
 import os
 import sys
-# import imp
 
 
 PY3 = True if sys.version_info[0] >= 3 else False
@@ -25,8 +24,6 @@ else:
 # dposlib can be embeded in a frozen app
 FROZEN = \
     hasattr(sys, "frozen") or hasattr(sys, "importers")
-#       or \
-#       imp.is_frozen("__main__")
 
 if FROZEN:
     # if frozen code, HOME and ROOT pathes are same

@@ -37,6 +37,7 @@ kw = {
         "future",
         "pytz",
         "base58",
+        "git+http://github.com/Moustikitos/micro-io#egg=uio"
     ],
     "license": "Copyright 2018, MIT licence",
     "classifiers": [
