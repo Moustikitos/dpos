@@ -5,7 +5,7 @@
 Release v\ |version| - (:ref:`Installation <install>`)
 
 .. image:: https://pepy.tech/badge/dposlib/week
-    :target: https://pepy.tech/project/dposlib/week
+    :target: https://pepy.tech/project/dposlib
 
 .. image:: https://img.shields.io/pypi/pyversions/dposlib.svg
     :target: https://pypi.python.org/pypi/dposlib

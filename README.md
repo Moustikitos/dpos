@@ -5,7 +5,7 @@
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags)
-[![Downloads](https://pepy.tech/badge/dposlib/week)](https://pepy.tech/project/dposlib/week)
+[![Downloads](https://pepy.tech/badge/dposlib/week)](https://pepy.tech/project/dposlib)
 
 ### Support this project
 
