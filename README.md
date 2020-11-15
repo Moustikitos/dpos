@@ -24,9 +24,11 @@ sudo apt-get install python-pip python3-pip
 
 ## Available network
 
+  - Ark-core 3.0 (`API`+ transaction type `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` & `10`)
+    * [X] devnet : `dark`
   - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` & `10`)
     * [X] mainet : `ark`
-    * [X] devnet : `dark`
+    * [X] devnet : `dark2`
   - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
     + [x] Internet of People
       * [X] mainet : `iop`
