@@ -36,7 +36,9 @@ kw = {
     "install_requires": [
         "future",
         "pytz",
-        "base58",
+        "base58"
+    ],
+    "dependecy_list": [
         "git+http://github.com/Moustikitos/micro-io#egg=uio"
     ],
     "license": "Copyright 2018, MIT licence",

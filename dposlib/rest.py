@@ -72,8 +72,8 @@ def _call(method="GET", *args, **kwargs):
     response = req.EndPoint._open(
         req.EndPoint.build_req(method, *args, **kwargs)
     )
-    if returnKey:
-        return filter_dic(response)
+    if returnKey and returnKey in response:
+        return filter_dic(response[returnKey])
     else:
         return response
 

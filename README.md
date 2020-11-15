@@ -259,9 +259,12 @@ pip install ledgerblue
   - [x] `api.Wallet` fixed
   - [x] added pythonic `datetime` attribute to `Transaction` class
 
-### 0.3.4 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 0.3.4
   - [x] removed `requests` dependency
   - [x] multisignature api and app run as system services
 
+### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] Ark-core v 3.0.x compatibility for ``dark`` network
+  
 ## TODO
   - [ ] CLI

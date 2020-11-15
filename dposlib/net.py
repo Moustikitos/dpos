@@ -13,8 +13,20 @@ ark = {
     ]
 }
 
-dark = {
+dark2 = {
     "familly": "ark.v2",
+    "maxvotepertx": 1,
+    "maxvote": 1,
+    "aip20": 1,
+    "txversion": 2,
+
+    "seeds": [
+        "https://dexplorer.ark.io:8443"
+    ]
+}
+
+dark = {
+    "familly": "ark.v3",
     "maxvotepertx": 1,
     "maxvote": 1,
     "aip20": 1,
