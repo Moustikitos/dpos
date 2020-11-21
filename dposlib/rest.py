@@ -78,27 +78,31 @@ def _call(method="GET", *args, **kwargs):
         return response
 
 
+def _random_peer(kwargs):
+    return kwargs.pop("peer", None) or random.choice(cfg.peers)
+
+
 GET = req.EndPoint(
     method=lambda *a, **kw: [
-        setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
+        setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("GET", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 POST = req.EndPoint(
     method=lambda *a, **kw: [
-        setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
+        setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("POST", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 PUT = req.EndPoint(
     method=lambda *a, **kw: [
-        setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
+        setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("PUT", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
 DELETE = req.EndPoint(
     method=lambda *a, **kw: [
-        setattr(req.EndPoint, "peer", random.choice(cfg.peers)),
+        setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("DELETE", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )

@@ -29,7 +29,6 @@ def setDynamicFee(tx, value):
             try:
                 fee = dposlib.core.computeDynamicFees(tx)
             except Exception as err:
-                print(err)
                 fee = static_value
     dict.__setitem__(tx, "fee", int(fee))
 
@@ -70,6 +69,11 @@ def deleteSenderPublicKey(cls):
     cls._reset()
 
 
+def checkAddress(address):
+    if base58.b58decode_check(address):
+        return address
+
+
 class Transaction(dict):
     """
     A python :class:`dict` that implements all the necessities to manually
@@ -84,7 +88,7 @@ class Transaction(dict):
     )
     fee = property(
         lambda cls: cls.get("fee", None),
-        None,
+        lambda cls, value: cls.setFee(value),
         None,
         ""
     )
@@ -108,13 +112,13 @@ class Transaction(dict):
     )
     recipientId = recipient = property(
         lambda cls: cls.get("recipientId", None),
-        lambda cls, value: cls.__setitem("recipientId", value),
+        lambda cls, value: cls.__setitem("recipientId", checkAddress(value)),
         lambda cls: cls.pop("recipientId", None),
         ""
     )
     senderId = sender = property(
         lambda cls: cls.get("senderId", None),
-        lambda cls, value: cls.__setitem("senderId", value),
+        lambda cls, value: cls.__setitem("senderId", checkAddress(value)),
         lambda cls: cls.pop("senderId", None),
         ""
     )
@@ -122,6 +126,12 @@ class Transaction(dict):
         lambda cls: cls.get("senderPublicKey", None),
         lambda cls, value: setSenderPublicKey(cls, value),
         lambda cls: deleteSenderPublicKey(cls),
+        ""
+    )
+    secondSignature = signSignature = property(
+        lambda cls: cls.get("signSignature", None),
+        lambda cls, value: cls.__setitem("signSignature", value),
+        lambda cls: cls.pop("signSignature", None),
         ""
     )
 
@@ -210,18 +220,21 @@ class Transaction(dict):
             self.link(value)
         elif item == "secondSecret":
             self.link(None, value)
-        elif item in self.__dict__:  # equivalent to hasattr(self, item):
-            dict.__setattr__(self, item, value)
         else:
-            self.__setitem(item, value)
+            try:
+                dict.__getattribute__(self, item)
+            except AttributeError:
+                self.__setitem(item, value)
+            else:
+                object.__setattr__(self, item, value)
 
     def __getattr__(self, attr):
-        if attr in self.__dict__:  # equivalent to hasattr(self, attr):
-            return dict.__getattr__(self, attr)
-        elif attr in self:
-            return self[attr]
-        else:
-            raise AttributeError()
+        try:
+            return dict.__getattribute__(self, attr)
+        except AttributeError:
+            return dict.__getitem__(self, attr)
+
+    __getitem__ = __getattr__
 
     def __str__(self):
         return json.dumps(
@@ -329,7 +342,7 @@ class Transaction(dict):
         Args:
             secret (:class:`str`): passphrase
         """
-        self.link()
+        self.link(secret)
         self.sign()
 
     def signSignWithSecondSecret(self, secondSecret):
@@ -447,6 +460,33 @@ class Transaction(dict):
         else:
             raise Exception("transaction not signed")
 
+    def finalize(self, secret=None, secondSecret=None,
+                 fee=None, fee_included=False):
+        """
+        Finalize a transaction by setting ``fee``, signatures and ``id``.
+
+        Args:
+            secret (:class:`str`): passphrase
+            secondSecret (:class:`str`): second passphrase
+            fee (:class:`int`): manually set fee value in ``satoshi``
+            fee_included (:class:`bool`):
+                see :func:`feeIncluded`
+                :func:`feeExcluded`
+        """
+        self.link(secret, secondSecret)
+        # automatically set fees if needed
+        if "fee" not in self or fee is not None:
+            self.fee = fee
+        self.feeIncluded() if fee_included else self.feeExcluded()
+        # sign with private keys
+        # if transaction is not from a multisignature wallet
+        if not self._multisignature:
+            self.sign()
+            if hasattr(self, "_secondPrivateKey"):
+                self.signSign()
+        # generate the id
+        self.identify()
+
 
 # Reference:
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
@@ -463,17 +503,7 @@ def serialize(tx, **options):
         :class:`bytes`: bytes sequence
     """
     buf = BytesIO()
-
-    # deal with vendorField value
-    if "vendorFieldHex" in tx:
-        vendorField = unhexlify(dict.pop(tx, "vendorFieldHex"))
-        dict.__setitem__(tx, "vendorField", vendorField.decode("utf-8"))
-    else:
-        vendorField = tx.get("vendorField", "")
-        if not isinstance(vendorField, bytes):
-            vendorField = vendorField.encode("utf-8")
-    # "vendorFieldLength" = 255 since height 8,128,000
-    vendorField = vendorField[:255]
+    vendorField = tx.get("vendorField", "").encode("utf-8")[:255]
 
     # common part
     pack("<BBB", buf, (0xff, tx.version, cfg.pubkeyHash))
@@ -490,10 +520,7 @@ def serialize(tx, **options):
         pack_bytes(buf, unhexlify(tx["signature"]))
 
     if not options.get("exclude_second_sig", False):
-        if "signSignature" in tx:
-            pack_bytes(buf, unhexlify(tx["signSignature"]))
-        elif "secondSignature" in tx:
-            pack_bytes(buf, unhexlify(tx["secondSignature"]))
+        pack_bytes(buf, unhexlify(tx.get("signSignature", "")))
 
     if "signatures" in tx and not options.get("exclude_multi_sig", False):
         pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))

@@ -7,7 +7,7 @@
 Transaction class
 -----------------
 
-.. autoclass:: dposlib.blockchain.Transaction
+.. autoclass:: dposlib.blockchain.tx.Transaction
     :members:
 
 Crypto utils
@@ -25,30 +25,30 @@ Signature utils
 Transaction builders
 --------------------
 
-.. autofunction:: dposlib.ark.v2.transfer
+.. autofunction:: dposlib.ark.v3.transfer
 
-.. autofunction:: dposlib.ark.v2.registerSecondSecret
+.. autofunction:: dposlib.ark.v3.registerSecondSecret
 
-.. autofunction:: dposlib.ark.v2.registerSecondPublicKey
+.. autofunction:: dposlib.ark.v3.registerSecondPublicKey
 
-.. autofunction:: dposlib.ark.v2.registerAsDelegate
+.. autofunction:: dposlib.ark.v3.registerAsDelegate
 
-.. autofunction:: dposlib.ark.v2.upVote
+.. autofunction:: dposlib.ark.v3.upVote
 
-.. autofunction:: dposlib.ark.v2.downVote
+.. autofunction:: dposlib.ark.v3.downVote
 
-.. autofunction:: dposlib.ark.v2.registerMultiSignature
+.. autofunction:: dposlib.ark.v3.registerMultiSignature
 
-.. autofunction:: dposlib.ark.v2.registerIpfs
+.. autofunction:: dposlib.ark.v3.registerIpfs
 
-.. autofunction:: dposlib.ark.v2.multiPayment
+.. autofunction:: dposlib.ark.v3.multiPayment
 
-.. autofunction:: dposlib.ark.v2.delegateResignation
+.. autofunction:: dposlib.ark.v3.delegateResignation
 
-.. autofunction:: dposlib.ark.v2.htlcSecret
+.. autofunction:: dposlib.ark.v3.htlcSecret
 
-.. autofunction:: dposlib.ark.v2.htlcLock
+.. autofunction:: dposlib.ark.v3.htlcLock
 
-.. autofunction:: dposlib.ark.v2.htlcClaim
+.. autofunction:: dposlib.ark.v3.htlcClaim
 
-.. autofunction:: dposlib.ark.v2.htlcRefund
+.. autofunction:: dposlib.ark.v3.htlcRefund

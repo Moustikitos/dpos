@@ -42,7 +42,7 @@ def dumpJson(data, path):
         pass
 
 
-def filter_dic(dic):
+def filter_dic(value):
     arktoshi = [
         "amount",
         "balance",
@@ -53,17 +53,20 @@ def filter_dic(dic):
         "votes", "voteBalance"
     ]
 
-    def cast_value(typ, value):
+    def cast_value(typ, v):
         try:
-            return typ(value)/100000000.0
+            return typ(v)/100000000.0
         except Exception:
-            return filter_dic(value) if isinstance(value, dict) else value
+            return filter_dic(v)
 
-    return dict(
-        (
-            k,
-            cast_value(float, v) if k in arktoshi else
-            filter_dic(v) if isinstance(v, dict) else
-            v
-        ) for k, v in dic.items()
-    )
+    if isinstance(value, dict):
+        return dict(
+            (
+                k,
+                cast_value(float, v) if k in arktoshi else
+                filter_dic(v) if isinstance(v, dict) else
+                v
+            ) for k, v in value.items()
+        )
+    else:
+        return value
