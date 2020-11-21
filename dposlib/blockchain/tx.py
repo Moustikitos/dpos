@@ -7,9 +7,9 @@ import base58
 import dposlib
 
 from collections import OrderedDict
-from dposlib import BytesIO, PY3
+from dposlib import BytesIO
 from dposlib.blockchain import slots, cfg
-from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
+from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 
 
 def setDynamicFee(tx, value):
@@ -28,7 +28,7 @@ def setDynamicFee(tx, value):
         else:
             try:
                 fee = dposlib.core.computeDynamicFees(tx)
-            except Exception as err:
+            except Exception:
                 fee = static_value
     dict.__setitem__(tx, "fee", int(fee))
 
@@ -56,6 +56,7 @@ def setSenderPublicKey(cls, publicKey):
 
 
 def deleteSenderPublicKey(cls):
+    cls._reset()
     del cls._nonce
     del cls._multisignature
     del cls._secondPublicKey
@@ -66,15 +67,6 @@ def deleteSenderPublicKey(cls):
     if cls["type"] in [1, 3, 6, 9]:
         cls.pop("recipientId", None)
     cls.pop("senderPublicKey", None)
-    cls._reset()
-
-
-def checkAddress(address):
-    if base58.b58decode_check(
-        address.encode("utf-8")
-        if not PY3 and not isinstance(address, bytes) else address
-    ):
-        return address
 
 
 class Transaction(dict):
@@ -266,6 +258,14 @@ class Transaction(dict):
             if secondSecret:
                 keys = dposlib.core.crypto.getKeys(secondSecret)
                 self._secondPrivateKey = keys["privateKey"]
+
+    def unlink(self):
+        try:
+            deleteSenderPublicKey(self)
+            del self._privateKey
+            del self._secondPrivateKey
+        except Exception:
+            pass
 
     def setFee(self, value=None):
         """

@@ -7,6 +7,7 @@ Binary data manipulation that perform samely on python 2.x and 3.x.
 import re
 import struct
 import binascii
+import base58
 
 from dposlib import PY3
 
@@ -67,3 +68,11 @@ def unhexlify(data):
         data = "0" + data
     result = binascii.unhexlify(data)
     return result if isinstance(result, bytes) else result.encode()
+
+
+def checkAddress(address):
+    if base58.b58decode_check(
+        address.encode("utf-8")
+        if not PY3 and not isinstance(address, bytes) else address
+    ):
+        return address
