@@ -7,7 +7,7 @@ import base58
 import dposlib
 
 from collections import OrderedDict
-from dposlib import BytesIO
+from dposlib import BytesIO, PY3
 from dposlib.blockchain import slots, cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
@@ -70,7 +70,10 @@ def deleteSenderPublicKey(cls):
 
 
 def checkAddress(address):
-    if base58.b58decode_check(address):
+    if base58.b58decode_check(
+        address.encode("utf-8")
+        if not PY3 and not isinstance(address, bytes) else address
+    ):
         return address
 
 
@@ -84,7 +87,7 @@ class Transaction(dict):
         lambda cls: slots.getRealTime(cls["timestamp"]),
         None,
         None,
-        "transaction timestamp returned as python datetime object"
+        "Transaction timestamp returned as python datetime object"
     )
     fee = property(
         lambda cls: cls.get("fee", None),
