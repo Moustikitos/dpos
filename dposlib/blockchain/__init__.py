@@ -58,6 +58,7 @@ def _unlink(cls):
             delattr(cls, attr)
 
 
+# TO BE DEPRECATED WITH ARK CORE 3.0
 class Transaction(dict):
     """
     A python :class:`dict` that implements all the necessities to manually

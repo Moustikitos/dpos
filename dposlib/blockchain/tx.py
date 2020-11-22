@@ -37,10 +37,11 @@ def setSenderPublicKey(cls, publicKey):
     # load information from blockchain
     address = dposlib.core.crypto.getAddress(publicKey)
     data = dposlib.rest.GET.api.wallets(address).get("data", {})
+    attributes = data.get("attributes", {})
     # keep original nonce
     cls._nonce = int(data.get("nonce", 0))
-    cls._multisignature = data["attributes"].get("multiSignature", {})
-    cls._secondPublicKey = data["attributes"].get("secondPublicKey", None)
+    cls._multisignature = attributes.get("multiSignature", {})
+    cls._secondPublicKey = attributes.get("secondPublicKey", None)
     cls["nonce"] = cls._nonce + 1
     # add a timestamp if no one found
     if "timestamp" not in cls:
@@ -135,10 +136,7 @@ class Transaction(dict):
         try:
             cast = dposlib.core.TYPING[item]
         except KeyError:
-            raise KeyError(
-                "field '%s' not allowed in '%s' class" %
-                (item, self.__class__.__name__)
-            )
+            dict.__setattr__(self, item, value)
         else:
             if not isinstance(value, cast):
                 value = cast(value)
@@ -222,13 +220,13 @@ class Transaction(dict):
                 self.__setitem(item, value)
             else:
                 object.__setattr__(self, item, value)
+    __setattr__ = __setitem__
 
     def __getattr__(self, attr):
         try:
             return dict.__getattribute__(self, attr)
         except AttributeError:
             return dict.__getitem__(self, attr)
-
     __getitem__ = __getattr__
 
     def __str__(self):
@@ -459,7 +457,9 @@ class Transaction(dict):
             elif self._secondPublicKey:
                 if "signSignature" not in self:
                     raise Exception("second signature is missing")
-            self["id"] = dposlib.core.crypto.getId(self)
+            self["id"] = dposlib.core.crypto.getIdFromBytes(
+                serialize(self, exclude_multi_sig=False)
+            )
         else:
             raise Exception("transaction not signed")
 
@@ -519,18 +519,15 @@ def serialize(tx, **options):
     pack_bytes(buf, serializePayload(tx))
 
     # signatures part
-    if "signature" in tx and not options.get("exclude_sig", False):
-        pack_bytes(buf, unhexlify(tx["signature"]))
-
+    if not options.get("exclude_sig", False):
+        pack_bytes(buf, unhexlify(tx.get("signature", "")))
     if not options.get("exclude_second_sig", False):
         pack_bytes(buf, unhexlify(tx.get("signSignature", "")))
-
     if "signatures" in tx and not options.get("exclude_multi_sig", False):
         pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
     # id part
-    if "id" in tx:
-        pack_bytes(buf, unhexlify(tx["id"]))
+    pack_bytes(buf, unhexlify(tx.get("id", "")))
 
     result = buf.getvalue()
     buf.close()

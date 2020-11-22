@@ -255,6 +255,7 @@ def getIdFromBytes(data):
     return hexlify(secp256k1.hash_sha256(data))
 
 
+# TO BE DEPRECATED WITH ARK CORE 3.0
 def getBytes(tx, **options):
     """
     Hash transaction.
@@ -337,6 +338,7 @@ def getBytes(tx, **options):
 # Reference:
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-102.md
+# TO BE DEPRECATED WITH ARK CORE 3.0
 def serialize(tx, version=None, **options):
     """
     Serialize transaction.
@@ -399,6 +401,7 @@ def serialize(tx, version=None, **options):
     return result
 
 
+# TO BE DEPRECATED WITH ARK CORE 3.0
 def serializePayload(tx):
     asset = tx.get("asset", {})
     buf = BytesIO()
