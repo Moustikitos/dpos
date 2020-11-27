@@ -36,7 +36,7 @@ class TestArkAip11(unittest.TestCase):
             computed = bin_.hexlify(dposlib.core.crypto.getBytes(t,
                                     exclude_multi_sig=not t['type'] == 4))
             self.assertEqual(
-                str(serialized),
+                serialized,
                 computed.decode() if isinstance(computed, bytes) else computed
             )
             self.assertEqual(id_, dposlib.core.crypto.getId(t))
