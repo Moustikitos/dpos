@@ -6,7 +6,7 @@ import dposlib
 import os
 
 from dposlib import rest
-from dposlib import blockchain
+from dposlib.blockchain import tx as tx_
 from dposlib.util import bin as bin_
 from dposlib.util import data
 
@@ -31,7 +31,7 @@ class TestArkAip11(unittest.TestCase):
             serialized = tx.pop("serialized", False)
             id_ = tx.pop("id", False)
             sig = tx.pop("signature", False)
-            t = blockchain.Transaction(tx)
+            t = tx_.Transaction(tx)
             t.signature = sig
             computed = bin_.hexlify(dposlib.core.crypto.getBytes(t,
                                     exclude_multi_sig=not t['type'] == 4))

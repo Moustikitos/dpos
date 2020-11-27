@@ -268,7 +268,6 @@ pip install ledgerblue
 ### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [ ] Ark-core v 3.0.x compliancy
   - [ ] `entity` and `business` transactions implementation
-  - [ ] custom transaction implementation
 
 ## TODO
-  - [ ] CLI
+  - [ ] custom transaction implementation

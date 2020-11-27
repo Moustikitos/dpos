@@ -507,10 +507,14 @@ def serialize(tx, **options):
     """
     buf = BytesIO()
     vendorField = tx.get("vendorField", "").encode("utf-8")[:255]
+    version = tx.get("version", 1)
 
     # common part
-    pack("<BBB", buf, (0xff, tx.version, cfg.pubkeyHash))
-    pack("<IHQ", buf, (tx.get("typeGroup", 1), tx["type"], tx["nonce"],))
+    pack("<BBB", buf, (0xff, version, cfg.pubkeyHash))
+    if version >= 2:
+        pack("<IHQ", buf, (tx.get("typeGroup", 1), tx["type"], tx["nonce"],))
+    else:
+        pack("<BI", buf, (tx["type"], tx["timestamp"],))
     pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
     pack("<QB", buf, (tx["fee"], len(vendorField)))
     pack_bytes(buf, vendorField)
@@ -524,6 +528,8 @@ def serialize(tx, **options):
     if not options.get("exclude_second_sig", False):
         pack_bytes(buf, unhexlify(tx.get("signSignature", "")))
     if "signatures" in tx and not options.get("exclude_multi_sig", False):
+        if version == 1:
+            pack("<B", buf, (0xff,))
         pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
     # id part
