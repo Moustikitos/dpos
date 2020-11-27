@@ -161,7 +161,7 @@ class Transaction(dict):
     def _set_vendorFieldHex(self, value, encoding="utf-8"):
         value = value.decode(encoding) if isinstance(value, bytes) else value
         if (
-            re.fullmatch(r"^[0-9a-fA-F]*$", value) is not None and
+            re.match(r"^[0-9a-fA-F]*$", value) is not None and
             len(value) % 2 == 0
         ):
             self.__setitem("vendorField", unhexlify(value).decode(encoding))
