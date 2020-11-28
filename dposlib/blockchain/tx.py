@@ -15,25 +15,54 @@ if dposlib.PY3:
     long = int
 
 
-def setDynamicFee(tx, value):
+def setDynamicFee(cls, value):
     if isinstance(value, (float, int, long)):
         fee = value
     else:
         static_value = getattr(cfg, "fees", {})\
             .get("staticFees", getattr(cfg, "fees", {}))\
-            .get(dposlib.core.TRANSACTIONS[tx["type"]], 10000000)
-        feesl = value if isinstance(value, str) else tx.FEESL
+            .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
+        feesl = value if isinstance(value, str) else cls.FMULT
+        # # use static fee if feesl and FMULT are None
+        # if feesl is None and cls.FMULT is None:
+        #     fee = static_value
+
         # use fee statistics if FEESL is not None
-        if feesl is not None and tx["type"] not in [6, ]:
+        if feesl is not None and cls["type"] not in [6, ]:
             # if fee statistics not found, return static fee value
-            fee = cfg.feestats.get(tx["type"], {}).get(feesl, static_value)
-        # else compute fees using fee multiplier and tx size
+            fee = cfg.feestats.get(cls["type"], {}).get(feesl, static_value)
+        # else compute fees using fee multiplier and cls size
         else:
             try:
-                fee = dposlib.core.computeDynamicFees(tx)
+                fee = computeDynamicFees(cls, cls.FMULT)
             except Exception:
                 fee = static_value
-    dict.__setitem__(tx, "fee", int(fee))
+    dict.__setitem__(cls, "fee", long(fee))
+
+
+def computeDynamicFees(tx, FMULT=None):
+    """
+    Compute transaction fees according to
+    `AIP 16 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md>`_
+
+    Arguments:
+        tx (:class:`dict` or :class:`Transaction`): transaction object
+    Returns:
+        :class:`int`: fees
+    """
+    typ_ = tx.get("type", 0)
+    version = tx.get("version", 0x01)
+
+    vendorField = tx.get("vendorField", "")
+    vendorField = \
+        vendorField if isinstance(vendorField, bytes) else \
+        vendorField.encode("utf-8")
+    lenVF = len(vendorField)
+    payload = serializePayload(tx)
+    T = cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 0)
+    return int(
+        (T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * FMULT
+    )
 
 
 def setSenderPublicKey(cls, publicKey):
@@ -73,11 +102,68 @@ def deleteSenderPublicKey(cls):
     cls.pop("senderPublicKey", None)
 
 
+def setFeeIncluded(cls):
+    """
+    Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
+    the desired spent.
+    """
+    if cls["type"] in [0, 7] and cls["fee"] < cls["amount"]:
+        if "_amount" not in cls.__dict__:
+            cls._amount = cls["amount"]
+        cls["amount"] = cls._amount - cls["fee"]
+    cls._reset()
+
+
+def unsetFeeIncluded(cls):
+    """
+    Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
+    the desired spent plus the fee.
+    """
+    if cls["type"] in [0, 7] and "_amount" in cls.__dict__:
+        cls["amount"] = cls._amount
+        cls.__dict__.pop("_amount", False)
+    cls._reset()
+
+
+def setVendorField(cls, value, encoding="utf-8"):
+    if isinstance(value, bytes):
+        value = value.decode(encoding)
+    elif not isinstance(value, str):
+        value = "%s" % value
+    cls._setitem("vendorField", value)
+    cls._reset()
+
+
+def setVendorFieldHex(cls, value, encoding="utf-8"):
+    value = value.decode(encoding) if isinstance(value, bytes) else value
+    if (
+        re.match(r"^[0-9a-fA-F]*$", value) is not None and
+        len(value) % 2 == 0
+    ):
+        cls._setitem("vendorField", unhexlify(value).decode(encoding))
+        cls._reset()
+    else:
+        raise ValueError("'%s' seems not be a valid hex string" % value)
+
+
+def setTimestamp(cls, value):
+    if isinstance(value, dict):
+        value = value.get("epoch", slots.getTime())
+    elif isinstance(value, slots.datetime):
+        value = slots.getTime(value)
+    cls._setitem("timestamp", value)
+    cls._reset()
+
+
 class Transaction(dict):
     """
     A python :class:`dict` that implements all the necessities to manually
     generate valid transactions.
     """
+
+    FMULT = 10000
+    FEESL = None
+
     # custom properties definitions
     datetime = property(
         lambda cls: slots.getRealTime(cls["timestamp"]),
@@ -93,31 +179,31 @@ class Transaction(dict):
     )
     vendorField = property(
         lambda cls: cls.get("vendorField", None),
-        lambda cls, value: cls._set_vendorField(value),
-        lambda cls: cls._set_vendorField(""),
+        lambda cls, value: setVendorField(cls, value),
+        lambda cls: setVendorField(cls, ""),
         ""
     )
     vendorFieldHex = property(
         lambda cls: hexlify(cls.get("vendorField", "").encode("utf-8")),
-        lambda cls, value: cls._set_vendorFieldHex(value),
-        lambda cls: cls.pop("vendorFieldHex", None),
+        lambda cls, value: setVendorFieldHex(cls, value),
+        lambda cls: setVendorField(cls, ""),
         ""
     )
     timestamp = property(
         lambda cls: cls.get("timestamp", None),
-        lambda cls, value: cls._set_timestamp(value),
+        lambda cls, value: setTimestamp(cls, value),
         None,
         ""
     )
     recipientId = recipient = property(
         lambda cls: cls.get("recipientId", None),
-        lambda cls, value: cls.__setitem("recipientId", checkAddress(value)),
+        lambda cls, value: cls._setitem("recipientId", checkAddress(value)),
         lambda cls: cls.pop("recipientId", None),
         ""
     )
     senderId = sender = property(
         lambda cls: cls.get("senderId", None),
-        lambda cls, value: cls.__setitem("senderId", checkAddress(value)),
+        lambda cls, value: cls._setitem("senderId", checkAddress(value)),
         lambda cls: cls.pop("senderId", None),
         ""
     )
@@ -129,13 +215,48 @@ class Transaction(dict):
     )
     secondSignature = signSignature = property(
         lambda cls: cls.get("signSignature", None),
-        lambda cls, value: cls.__setitem("signSignature", value),
+        lambda cls, value: cls._setitem("signSignature", value),
         lambda cls: cls.pop("signSignature", None),
         ""
     )
+    feeIncluded = property(
+        lambda cls: "_amount" in cls.__dict__,
+        lambda cls, value: (
+            setFeeIncluded if bool(value) else unsetFeeIncluded
+        )(cls),
+        None,
+        ""
+    )
+
+    @staticmethod
+    def useDynamicFee(value="minFee"):
+        """
+        Activate and configure dynamic fees parameters. Value can be either an
+        integer defining the fee multiplier constant or a string defining the
+        fee level to use acccording to the 30-days-average. possible values are
+        ``avgFee`` ``minFee`` (default) and ``maxFee``.
+
+        Args:
+            value (:class:`str` or :class:`int`): constant or fee multiplier
+        """
+        if hasattr(cfg, "doffsets"):
+            if isinstance(value, (int, float, long)):
+                Transaction.FMULT = long(value)
+                Transaction.FEESL = None
+            elif value in ["maxFee", "avgFee", "minFee"]:
+                Transaction.FMULT = None
+                Transaction.FEESL = value
+            else:
+                Transaction.FMULT = None
+                Transaction.FEESL = None
+        else:
+            raise Exception(
+                "Dynamic fees can not be set on %s network" % cfg.network
+            )
+    setDynamicFee = useDynamicFee
 
     # private definitions
-    def __setitem(self, item, value):
+    def _setitem(self, item, value):
         try:
             cast = dposlib.core.TYPING[item]
         except KeyError:
@@ -153,37 +274,10 @@ class Transaction(dict):
         self.pop("secondSignature", False)
         self.pop("id", False)
 
-    def _set_vendorField(self, value, encoding="utf-8"):
-        if isinstance(value, bytes):
-            value = value.decode(encoding)
-        elif not isinstance(value, str):
-            value = "%s" % value
-        self.__setitem("vendorField", value)
-        self._reset()
-
-    def _set_vendorFieldHex(self, value, encoding="utf-8"):
-        value = value.decode(encoding) if isinstance(value, bytes) else value
-        if (
-            re.match(r"^[0-9a-fA-F]*$", value) is not None and
-            len(value) % 2 == 0
-        ):
-            self.__setitem("vendorField", unhexlify(value).decode(encoding))
-            self._reset()
-        else:
-            raise ValueError("'%s' seems not be a valid hex string" % value)
-
-    def _set_timestamp(self, value):
-        if isinstance(value, dict):
-            value = value.get("epoch", slots.getTime())
-        elif isinstance(value, slots.datetime):
-            value = slots.getTime(value)
-        self.__setitem("timestamp", value)
-        self._reset()
-
     def __init__(self, *args, **kwargs):
         self._ignore_bad_fields = kwargs.pop("ignore_bad_fields", False)
-        self.FEESL = kwargs.pop("FEESL", "avgFee")
-        self.FMULT = kwargs.pop("FMULT", 1000)
+        self.FEESL = kwargs.pop("FEESL", Transaction.FEESL)
+        self.FMULT = kwargs.pop("FMULT", Transaction.FMULT)
         # initialize a void dict
         dict.__init__(self)
         # if blockchain package loaded merge all elements else return void dict
@@ -197,15 +291,13 @@ class Transaction(dict):
                 ]
             ]
             # set default values
-            dict.__setitem__(self, "version", 2)
+            dict.__setitem__(self, "version", data.pop("version", 2))
             dict.__setitem__(self, "network", cfg.pubkeyHash)
-            # set default fields
             dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
             dict.__setitem__(self, "amount", data.pop("amount", 0))
             dict.__setitem__(self, "type", data.pop("type", 0))
             dict.__setitem__(self, "asset", data.pop("asset", {}))
-            # initialize all non-void fields with signatures and id at the end
-            # of the loop because other changes remove them
+            # initialize all non-void fields
             for key, value in [
                 (k, v) for k, v in list(data.items()) + last_to_be_set
                 if v is not None
@@ -221,7 +313,7 @@ class Transaction(dict):
             try:
                 dict.__getattribute__(self, item)
             except AttributeError:
-                self.__setitem(item, value)
+                self._setitem(item, value)
             else:
                 object.__setattr__(self, item, value)
     __setattr__ = __setitem__
@@ -279,31 +371,13 @@ class Transaction(dict):
         setDynamicFee(self, value or self.FEESL)
         self._reset()
 
-    def feeIncluded(self):
-        """
-        Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
-        the desired spent.
-        """
-        if self["type"] in [0, 7] and self["fee"] < self["amount"]:
-            if "_amount" not in self.__dict__:
-                self._amount = self["amount"]
-            self["amount"] = self._amount - self["fee"]
-
-    def feeExcluded(self):
-        """
-        Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
-        the desired spent plus the fee.
-        """
-        if self["type"] in [0, 7] and "_amount" in self.__dict__:
-            self["amount"] = self._amount
-            self.__dict__.pop("_amount", False)
-
     # root sign function called by others
     def sign(self):
         """
         Generate the ``signature`` field. Private key have to be set first. See
         :func:`link`.
         """
+        self._reset()
         if hasattr(self, "_privateKey"):
             if "fee" not in self:
                 self.setFee()

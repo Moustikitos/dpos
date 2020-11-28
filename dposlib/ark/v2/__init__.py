@@ -14,7 +14,8 @@ from importlib import import_module
 from dposlib import rest, PY3, HOME
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
-from dposlib.blockchain import cfg, slots, Transaction
+from dposlib.blockchain import cfg, slots
+from dposlib.blockchain.tx import Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.bin import hexlify, unhexlify
 
@@ -589,6 +590,7 @@ def htlcRefund(txid):
 
 
 __all__ = [
+    "api",
     "crypto",
     "hexlify", "unhexlify",
     "Transaction",
