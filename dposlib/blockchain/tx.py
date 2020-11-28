@@ -23,10 +23,6 @@ def setDynamicFee(cls, value):
             .get("staticFees", getattr(cfg, "fees", {}))\
             .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
         feesl = value if isinstance(value, str) else cls.FMULT
-        # # use static fee if feesl and FMULT are None
-        # if feesl is None and cls.FMULT is None:
-        #     fee = static_value
-
         # use fee statistics if FEESL is not None
         if feesl is not None and cls["type"] not in [6, ]:
             # if fee statistics not found, return static fee value
@@ -161,7 +157,7 @@ class Transaction(dict):
     generate valid transactions.
     """
 
-    FMULT = 10000
+    FMULT = None
     FEESL = None
 
     # custom properties definitions
@@ -250,9 +246,8 @@ class Transaction(dict):
                 Transaction.FMULT = None
                 Transaction.FEESL = None
         else:
-            raise Exception(
-                "Dynamic fees can not be set on %s network" % cfg.network
-            )
+            Transaction.FMULT = None
+            Transaction.FEESL = None
     setDynamicFee = useDynamicFee
 
     # private definitions

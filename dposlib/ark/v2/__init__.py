@@ -225,32 +225,6 @@ def stop():
         DAEMON_PEERS.set()
 
 
-def computeDynamicFees(tx, FMULT=None):
-    """
-    Compute transaction fees according to
-    `AIP 16 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md>`_
-
-    Arguments:
-        tx (:class:`dict` or :class:`Transaction`): transaction object
-    Returns:
-        :class:`int`: fees
-    """
-    typ_ = tx.get("type", 0)
-    version = tx.get("version", 0x01)
-
-    vendorField = tx.get("vendorField", "")
-    vendorField = \
-        vendorField if isinstance(vendorField, bytes) else \
-        vendorField.encode("utf-8")
-    lenVF = len(vendorField)
-    payload = crypto.serializePayload(tx)
-    T = cfg.doffsets.get(TRANSACTIONS[typ_], 0)
-    return int(
-        (T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) *
-        Transaction.FMULT if FMULT is None else FMULT
-    )
-
-
 def broadcastTransactions(*transactions, **params):
     chunk_size = params.pop("chunk_size", cfg.maxTransactions)
     report = []
