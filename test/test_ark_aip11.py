@@ -33,10 +33,10 @@ class TestArkAip11(unittest.TestCase):
             sig = tx.pop("signature", False)
             t = tx_.Transaction(tx)
             t.signature = sig
-            computed = bin_.hexlify(dposlib.core.crypto.getBytes(t,
-                                    exclude_multi_sig=not t['type'] == 4))
-            self.assertEqual(
-                serialized,
-                computed.decode() if isinstance(computed, bytes) else computed
+            computed = bin_.hexlify(
+                dposlib.core.crypto.getBytes(
+                    t, exclude_multi_sig=not t['type'] == 4
+                )
             )
+            self.assertEqual(str(serialized), computed)
             self.assertEqual(id_, dposlib.core.crypto.getId(t))

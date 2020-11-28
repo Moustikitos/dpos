@@ -11,9 +11,12 @@ from dposlib import BytesIO
 from dposlib.blockchain import slots, cfg
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 
+if dposlib.PY3:
+    long = int
+
 
 def setDynamicFee(tx, value):
-    if isinstance(value, (float, int)):
+    if isinstance(value, (float, int, long)):
         fee = value
     else:
         static_value = getattr(cfg, "fees", {})\
@@ -186,6 +189,13 @@ class Transaction(dict):
         # if blockchain package loaded merge all elements else return void dict
         if hasattr(dposlib, "core"):
             data = dict(*args, **kwargs)
+            last_to_be_set = [
+                (k, data.pop(k, None)) for k in [
+                    "fee", "nonce",
+                    "signatures", "signature", "signSignature",
+                    "secondSignature", "id"
+                ]
+            ]
             # set default values
             dict.__setitem__(self, "version", 2)
             dict.__setitem__(self, "network", cfg.pubkeyHash)
@@ -196,12 +206,6 @@ class Transaction(dict):
             dict.__setitem__(self, "asset", data.pop("asset", {}))
             # initialize all non-void fields with signatures and id at the end
             # of the loop because other changes remove them
-            last_to_be_set = [
-                (k, data.pop(k, None)) for k in [
-                    "signatures", "signature", "signSignature",
-                    "secondSignature", "id"
-                ]
-            ]
             for key, value in [
                 (k, v) for k, v in list(data.items()) + last_to_be_set
                 if v is not None
