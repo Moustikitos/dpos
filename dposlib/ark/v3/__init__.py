@@ -195,8 +195,8 @@ def init(seed=None):
             }] for k, v in fees.get("1", {}).items()
         )
         setattr(cfg, "feestats", stats)
-    # # activate dynamic fees
-    # Transaction.useDynamicFee()
+    # activate dynamic fees
+    Transaction.useDynamicFee()
     # -- network connection management ----------------------------------------
     # change peers every 30 seconds
     if getattr(cfg, "hotmode", False):
@@ -223,5 +223,5 @@ __all__ = [
     "transfer", "registerSecondSecret", "registerSecondPublicKey",
     "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
     "registerIpfs", "multiPayment", "delegateResignation",
-    "htlcLock", "htlcClaim", "htlcRefund"
+    "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund"
 ]

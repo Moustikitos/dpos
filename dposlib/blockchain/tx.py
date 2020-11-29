@@ -189,31 +189,31 @@ class Transaction(dict):
         lambda cls: cls.get("timestamp", None),
         lambda cls, value: setTimestamp(cls, value),
         None,
-        ""
+        "Transaction timestamp setter"
     )
     recipientId = recipient = property(
         lambda cls: cls.get("recipientId", None),
         lambda cls, value: cls._setitem("recipientId", checkAddress(value)),
         lambda cls: cls.pop("recipientId", None),
-        ""
+        "Receiver address checker and setter"
     )
     senderId = sender = property(
         lambda cls: cls.get("senderId", None),
         lambda cls, value: cls._setitem("senderId", checkAddress(value)),
         lambda cls: cls.pop("senderId", None),
-        ""
+        "Sender address checker and setter"
     )
     senderPublicKey = property(
         lambda cls: cls.get("senderPublicKey", None),
         lambda cls, value: setSenderPublicKey(cls, value),
         lambda cls: deleteSenderPublicKey(cls),
-        ""
+        "Initialize transaction according to senderPublicKey value"
     )
     secondSignature = signSignature = property(
         lambda cls: cls.get("signSignature", None),
         lambda cls, value: cls._setitem("signSignature", value),
         lambda cls: cls.pop("signSignature", None),
-        ""
+        "Second signature"
     )
     feeIncluded = property(
         lambda cls: "_amount" in cls.__dict__,
@@ -221,7 +221,7 @@ class Transaction(dict):
             setFeeIncluded if bool(value) else unsetFeeIncluded
         )(cls),
         None,
-        ""
+        "if `True` then :attr:`amount` + :attr:`fee` = total arktoshi flow"
     )
 
     @staticmethod
@@ -287,7 +287,7 @@ class Transaction(dict):
             ]
             # set default values
             dict.__setitem__(self, "version", data.pop("version", 2))
-            dict.__setitem__(self, "network", cfg.pubkeyHash)
+            dict.__setitem__(self, "network", getattr(cfg, "pubkeyHash", 30))
             dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
             dict.__setitem__(self, "amount", data.pop("amount", 0))
             dict.__setitem__(self, "type", data.pop("type", 0))
@@ -546,14 +546,13 @@ class Transaction(dict):
             secondSecret (:class:`str`): second passphrase
             fee (:class:`int`): manually set fee value in ``satoshi``
             fee_included (:class:`bool`):
-                see :func:`feeIncluded`
-                :func:`feeExcluded`
+                see :attr:`Transaction.feeIncluded`
         """
         self.link(secret, secondSecret)
         # automatically set fees if needed
         if "fee" not in self or fee is not None:
             self.fee = fee
-        self.feeIncluded() if fee_included else self.feeExcluded()
+        self.feeIncluded = fee_included
         # sign with private keys
         # if transaction is not from a multisignature wallet
         if not self._multisignature:

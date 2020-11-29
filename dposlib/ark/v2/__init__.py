@@ -252,7 +252,7 @@ def transfer(amount, address, vendorField=None, expiration=0):
         vendorField (:class:`str`): vendor field message
         expiration (:class:`float`): time of persistance in hour
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     if cfg.txversion > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
@@ -279,7 +279,7 @@ def registerSecondSecret(secondSecret):
     Arguments:
         secondSecret (:class:`str`): passphrase
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return registerSecondPublicKey(
         crypto.getKeys(secondSecret)["publicKey"], version=cfg.txversion
@@ -296,7 +296,7 @@ def registerSecondPublicKey(secondPublicKey):
     Arguments:
         secondPublicKey (:class:`str`): public key as hex string
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         type=1,
@@ -316,7 +316,7 @@ def registerAsDelegate(username):
     Arguments:
         username (:class:`str`): delegate username
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         type=2,
@@ -337,7 +337,7 @@ def upVote(*usernames):
         usernames (:class:`iterable`): delegate usernames as :class:`str`
                                        iterable
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     try:
         votes = [
@@ -365,7 +365,7 @@ def downVote(*usernames):
         usernames (:class:`iterable`): delegate usernames as :class:`str`
                                        iterable
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     try:
         votes = [
@@ -394,7 +394,7 @@ def registerMultiSignature(minSig, *publicKeys):
         minSig (:class:`int`): minimum signature required
         publicKeys (:class:`list of str`): public key list
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -420,7 +420,7 @@ def registerIpfs(ipfs):
     Arguments:
         ipfs (:class:`str`): ipfs DAG
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -442,7 +442,7 @@ def multiPayment(*pairs, **kwargs):
         pairs (:class:`iterable`): recipient-amount pair iterable
         vendorField (:class:`str`): vendor field message
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -462,7 +462,7 @@ def delegateResignation():
     Build a delegate resignation transaction.
 
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -477,7 +477,7 @@ def htlcSecret(secret):
     Arguments:
         secret (:class:`str`): passphrase
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return hexlify(hashlib.sha256(
         secret if isinstance(secret, bytes) else
@@ -499,7 +499,7 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
         expiration (:class:`float`): transaction validity in hour
         vendorField (:class:`str`): vendor field message
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -529,7 +529,7 @@ def htlcClaim(txid, secret):
         txid (:class:`str`): htlc lock transaction id
         secret (:class:`str`): passphrase used by htlc lock transaction
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -550,7 +550,7 @@ def htlcRefund(txid):
     Arguments:
         txid (:class:`str`): htlc lock transaction id
     Returns:
-        :class:`dposlib.blockchain.Transaction`: transaction object
+        :class:`dposlib.blockchain.tx.Transaction`: transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -572,5 +572,5 @@ __all__ = [
     "transfer", "registerSecondSecret", "registerSecondPublicKey",
     "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
     "registerIpfs", "multiPayment", "delegateResignation",
-    "htlcLock", "htlcClaim", "htlcRefund"
+    "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund"
 ]

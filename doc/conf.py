@@ -26,7 +26,7 @@ sys.path.insert(
 with open("../VERSION") as f1:
     version = release = f1.read().strip()
 project = 'dposlib'
-copyright = '2016-2019, Toons'
+copyright = '2016-2020, Toons'
 author = 'Toons'
 
 # The master toctree document.
