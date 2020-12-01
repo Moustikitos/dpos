@@ -18,53 +18,48 @@ GET = dposlib.rest.GET
 
 
 class Wallet(dposlib.blockchain.Wallet):
-    # TODO: add transactions 5 - 10
-    delegate = property(
-        lambda cls: Delegate(cls.username) if cls.isDelegate else None,
-        None, None, ""
-    )
 
     def __init__(self, address, **kw):
         dposlib.blockchain.Wallet.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
         )
 
-    def transactions(self, limit=50):
-        sent = loadPages(
-            GET.api.wallets.__getattr__(self.address).transactions.sent,
-            limit=limit
-        )
-        received = loadPages(
-            GET.api.wallets.__getattr__(self.address).transactions.received,
-            limit=limit
-        )
-        return [
-            filter_dic(dic) for dic in sorted(
-                received+sent,
-                key=lambda e: e.get("timestamp", {}).get("epoch"),
-                reverse=True
-            )
-        ][:limit]
+    # def transactions(self, limit=50):
+    #     sent = loadPages(
+    #         GET.api.wallets.__getattr__(self.address).transactions.sent,
+    #         limit=limit
+    #     )
+    #     received = loadPages(
+    #         GET.api.wallets.__getattr__(self.address).transactions.received,
+    #         limit=limit
+    #     )
+    #     return [
+    #         filter_dic(dic) for dic in sorted(
+    #             received+sent,
+    #             key=lambda e: e.get("timestamp", {}).get("epoch"),
+    #             reverse=True
+    #         )
+    #     ][:limit]
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def registerIpfs(self, ipfs):
         "See :func:`dposlib.ark.v2.registerIpfs`."
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def multiSend(self, *pairs, **kwargs):
         "See :func:`dposlib.ark.v2.multiPayment`."
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def resignate(self):
         "See :func:`dposlib.ark.v2.delegateResignation`."
         tx = dposlib.core.delegateResignation()
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
         "See :func:`dposlib.ark.v2.htlcLock`."
@@ -74,13 +69,13 @@ class Wallet(dposlib.blockchain.Wallet):
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def claimHtlc(self, txid, secret):
         "See :func:`dposlib.ark.v2.htlcClaim`."
         tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.Data.wallet_islinked
+    @dposlib.blockchain.isLinked
     def refundHtlc(self, txid):
         "See :func:`dposlib.ark.v2.htlcRefund`."
         tx = dposlib.core.htlcRefund(txid)
@@ -150,7 +145,7 @@ if LEDGERBLUE:
             return tx
 
 
-class Delegate(dposlib.blockchain.Data):
+class Delegate(dposlib.blockchain.Content):
 
     wallet = property(lambda cls: Wallet(cls.address), None, None, "")
     voters = property(
@@ -169,7 +164,7 @@ class Delegate(dposlib.blockchain.Data):
     )
 
     def __init__(self, username, **kw):
-        dposlib.blockchain.Data.__init__(
+        dposlib.blockchain.Content.__init__(
             self, GET.api.delegates, username,
             **dict({"returnKey": "data"}, **kw)
         )
@@ -181,7 +176,7 @@ class Delegate(dposlib.blockchain.Data):
         )
 
 
-class Block(dposlib.blockchain.Data):
+class Block(dposlib.blockchain.Content):
 
     previous = property(
         lambda cls: Block(cls._Data__dict["previous"]),
@@ -198,12 +193,12 @@ class Block(dposlib.blockchain.Data):
     )
 
     def __init__(self, blk_id, **kw):
-        dposlib.blockchain.Data.__init__(
+        dposlib.blockchain.Content.__init__(
             self, GET.api.blocks, blk_id, **dict({"returnKey": "data"}, **kw)
         )
 
 
-class Webhook(dposlib.blockchain.Data):
+class Webhook(dposlib.blockchain.Content):
 
     @staticmethod
     def create(peer, event, target, conditions):
@@ -220,7 +215,7 @@ class Webhook(dposlib.blockchain.Data):
         return Webhook(data["id"], peer=peer)
 
     def __init__(self, whk_id, **kw):
-        dposlib.blockchain.Data.__init__(
+        dposlib.blockchain.Content.__init__(
             self, GET.api.webhooks, "%s" % whk_id,
             **dict({"track": False, "returnKey": "data"}, **kw)
         )
