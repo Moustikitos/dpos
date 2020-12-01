@@ -52,3 +52,9 @@ Transaction builders
 .. autofunction:: dposlib.ark.v3.htlcClaim
 
 .. autofunction:: dposlib.ark.v3.htlcRefund
+
+API
+---
+
+.. automodule:: dposlib.ark.v2.api
+    :members:

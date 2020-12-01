@@ -4,8 +4,11 @@
  API
 =====
 
-The :class:`Wallet`
--------------------
+.. autofunction:: dposlib.blockchain.link
 
-.. autoclass:: dposlib.blockchain.Wallet
+.. autofunction:: dposlib.blockchain.unLink
+
+.. autofunction:: dposlib.blockchain.isLinked
+
+.. automodule:: dposlib.ark.v2.api
     :members:

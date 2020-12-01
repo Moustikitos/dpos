@@ -5,4 +5,4 @@
 =================
 
 .. automodule:: dposlib.rest
-    :members:
+    :members: use
