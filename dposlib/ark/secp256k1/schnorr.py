@@ -2,7 +2,6 @@
 
 from . import *
 
-
 # https://github.com/bcoin-org/bcrypto/blob/v4.1.0/lib/js/schnorr.js
 def bcrypto410_sign(msg, seckey0):
     """
@@ -86,8 +85,8 @@ norr <https://github.com/bcoin-org/bcrypto/blob/v4.1.0/lib/js/schnorr.js>`_
 
 def bytes_from_point(P):
     """
-    Encode a public key as defined in `BIP schnorr <https://github.com/sipa/bi\
-ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+    Encode a public key as defined in `BIP schnorr <https://github.com/bitcoin\
+/bips/blob/master/bip-0340.mediawiki>`_ spec.
 
     Args:
         P (:class:`Point`): secp256k1 curve point
@@ -99,8 +98,8 @@ ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
 def point_from_bytes(pubkeyB):
     """
-    Decode a public key as defined in `BIP schnorr <https://github.com/sipa/bi\
-ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+    Decode a public key as defined in `BIP schnorr <https://github.com/bitcoin\
+/bips/blob/master/bip-0340.mediawiki>`_ spec.
 
     Args:
         pubkeyB (:class:`bytes`): encoded public key
@@ -116,8 +115,8 @@ ps/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 
 def sign(msg, seckey0):
     """
-    Generate message signature according to `BIP schnorr <https://github.com/s\
-ipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+    Generate message signature according to `BIP schnorr <https://github.com/b\
+itcoin/bips/blob/master/bip-0340.mediawiki>`_ spec.
 
     Args:
         msg (:class:`bytes`): sha256 message-hash
@@ -158,7 +157,7 @@ ipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
 def verify(msg, pubkey, sig):
     """
     Check if public key match message signature according to `BIP schnorr <htt\
-ps://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>`_ spec.
+ps://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki>`_ spec.
 
     Args:
         msg (:class:`bytes`): sha256 message-hash
