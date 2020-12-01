@@ -36,7 +36,7 @@ class TestDposApi(unittest.TestCase):
 
     @connection_enabled
     def test_wallet_link(self):
-        self.wallet.link(self.secret, self.secondSecret)
+        dposlib.blockchain.link(self.wallet, self.secret, self.secondSecret)
         self.assertEqual(self.wallet._publicKey,
                          self.wallet.publicKey)
         self.assertEqual(self.wallet._secondPublicKey,
