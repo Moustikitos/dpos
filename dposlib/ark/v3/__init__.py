@@ -196,7 +196,7 @@ def init(seed=None):
         )
         setattr(cfg, "feestats", stats)
     # activate dynamic fees
-    Transaction.useDynamicFee()
+    Transaction.useDynamicFee("avgFee")
     # -- network connection management ----------------------------------------
     # change peers every 30 seconds
     if getattr(cfg, "hotmode", False):

@@ -12,7 +12,7 @@ from dposlib.blockchain import slots
 class DataIterator:
 
     def __init__(self, endpoint, tries=10):
-        if not isinstance(endpoint, rest.EndPoint):
+        if not isinstance(endpoint, rest.GET.__class__):
             raise Exception("Invalid endpoint class")
         self.endpoint = endpoint
         self.data = {}
