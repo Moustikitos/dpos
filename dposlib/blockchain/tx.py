@@ -24,7 +24,7 @@ def setDynamicFee(cls, value):
             .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
         feesl = value if isinstance(value, str) else cls.FMULT
         # use fee statistics if FEESL is not None
-        if feesl is not None and cls["type"] not in [6, ]:
+        if feesl is not None:  # and cls["type"] not in [6, ]:
             # if fee statistics not found, return static fee value
             fee = cfg.feestats.get(cls["type"], {}).get(feesl, static_value)
         # else compute fees using fee multiplier and cls size
@@ -70,7 +70,8 @@ def setSenderPublicKey(cls, publicKey):
     cls._nonce = int(data.get("nonce", 0))
     cls._multisignature = attributes.get("multiSignature", {})
     cls._secondPublicKey = attributes.get("secondPublicKey", None)
-    cls["nonce"] = cls._nonce + 1
+    if "nonce" not in cls:
+        cls["nonce"] = cls._nonce + 1
     # add a timestamp if no one found
     if "timestamp" not in cls:
         cls["timestamp"] = slots.getTime()
@@ -452,7 +453,8 @@ class Transaction(dict):
             publicKey (:class:`str`): public key as hex string
             privateKey (:class:`str`): private key as hex string
         """
-        self.senderPublicKey = publicKey
+        if self.get("senderPublicKey", None) != publicKey:
+            self.senderPublicKey = publicKey
         self._privateKey = privateKey
         self.sign()
 
