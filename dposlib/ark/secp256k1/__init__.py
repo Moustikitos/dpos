@@ -35,10 +35,10 @@ True
 >
 
 Sources:
-  - `BIP schnorr <https://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.me\
-diawiki>`_
-  - `Python reference <https://github.com/sipa/bips/blob/bip-schnorr/bip-schno\
-rr/reference.py>`_
+  - `BIP schnorr <https://github.com/bitcoin/bips/blob/master/bip-0340.mediawi\
+ki>`_
+  - `Python reference <https://github.com/sipa/bips/blob/bip-taproot/bip-0340/\
+reference.py>`_
   - `Bcrypto 4.10 schnorr scheme <https://github.com/bcoin-org/bcrypto/blob/v4\
 .1.0/lib/js/schnorr.js>`_
 
