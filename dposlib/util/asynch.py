@@ -4,7 +4,10 @@ import threading
 
 
 def setInterval(interval):
-    """ threaded decorator
+    """
+    threaded decorator
+
+    ```python
     >>> @setInterval(10)
     ... def tick():
     ...     print("Tick")
@@ -12,19 +15,18 @@ def setInterval(interval):
     >>> type(event)
     <class 'threading.Event'>
     >>> event.set() # stop printing 'Tick' every 10 sec
+    ```
     """
     def decorator(function):
         """Main decorator function."""
 
         def wrapper(*args, **kwargs):
             """Helper function to create thread."""
-
             stopped = threading.Event()
-
             # executed in another thread
+
             def loop():
                 """Thread entry point."""
-
                 # until stopped
                 while not stopped.wait(interval):
                     function(*args, **kwargs)
@@ -34,5 +36,7 @@ def setInterval(interval):
             t.daemon = True
             t.start()
             return stopped
+
         return wrapper
+
     return decorator

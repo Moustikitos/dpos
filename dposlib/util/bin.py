@@ -22,9 +22,7 @@ def intasb(i):
 
 def basint(e):
     # byte as int conversion
-    if not PY3:
-        e = ord(e)
-    return e
+    return struct.pack("B", e)
 
 
 def unpack(fmt, fileobj):
