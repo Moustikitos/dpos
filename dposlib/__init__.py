@@ -2,17 +2,26 @@
 # © Toons
 
 """
-`dposlib` is a package providing REST API and to interact with ark and ark
-forks.
+# dposlib
 
-It is designed to run with both python 2.x and 3.x.
+`dposlib` is a package that provides REST API and to interact with ARK
+blockchain and its forks. It is designed to run with both python 2.x and 3.x.
+
+```python
+>>> import dposlib
+>>> from dposlib import rest
+>>> rest.use("ark")
+True
+>>> delegate0 = rest.GET.api.delegates(returnKey="data")[0]
+>>> delegate0["username"]
+u'binance_staking'
+```
 """
 
 import os
 import sys
 
-
-PY3 = True if sys.version_info[0] >= 3 else False
+PY3 = sys.version_info[0] >= 3
 
 if PY3:
     import io
@@ -21,9 +30,11 @@ else:
     from cStringIO import StringIO
     BytesIO = StringIO
 
+
 # dposlib can be embeded in a frozen app
 FROZEN = \
-    hasattr(sys, "frozen") or hasattr(sys, "importers")
+    hasattr(sys, "frozen") or hasattr(sys, "importers") \
+    or ".egg" in __path__ or ".whl" in __path__
 
 if FROZEN:
     # if frozen code, HOME and ROOT pathes are same

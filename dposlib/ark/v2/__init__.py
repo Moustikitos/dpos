@@ -11,7 +11,7 @@ import hashlib
 from datetime import datetime
 from importlib import import_module
 
-from dposlib import rest, PY3, HOME
+from dposlib import rest, PY3, HOME, FROZEN
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
 from dposlib.blockchain import cfg, slots
@@ -84,6 +84,8 @@ def _rotate_peers():
 
 
 def _write_module(path, configuration={}, fees={}):
+    if FROZEN:
+        return
     with io.open(
         path, "w" if PY3 else "wb", **({"encoding": "utf-8"} if PY3 else {})
     ) as module:
