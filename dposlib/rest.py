@@ -61,7 +61,7 @@ import datetime
 import pytz
 
 from importlib import import_module
-from uio import req
+from usrv import req
 from dposlib import net
 from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
@@ -160,7 +160,10 @@ def use(network, **kwargs):
     [cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]
     # initialize minimum values
     cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
-    cfg.headers = {"Content-Type": "application/json"}
+    cfg.headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Python/dposlib"
+    }
     cfg.broadcast = 10     # maximum peer to use
     cfg.timeout = 5        # global timeout used within requests calls
     cfg.hotmode = False    # offline mode set

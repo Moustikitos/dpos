@@ -41,7 +41,7 @@ kw = {
         "base58"
     ],
     "dependecy_list": [
-        "git+http://github.com/Moustikitos/micro-io#egg=uio"
+        "git+http://github.com/Moustikitos/micro-server#egg=usrv"
     ],
     "license": "Copyright 2018, MIT licence",
     "classifiers": [

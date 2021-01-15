@@ -1,4 +1,4 @@
 future
 pytz
 base58
-git+http://github.com/Moustikitos/micro-io#egg=uio
+git+http://github.com/Moustikitos/micro-server#egg=usrv

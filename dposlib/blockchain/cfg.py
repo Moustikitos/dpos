@@ -5,7 +5,10 @@
 This module stores blockchain parameters.
 """
 
-headers = {"Content-Type": "application/json"}
+headers = {
+    "Content-Type": "application/json",
+    "User-Agent": "Python/dposlib"
+}
 timeout = 5
 verify = True
 peers = []
