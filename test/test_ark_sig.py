@@ -2,8 +2,8 @@
 # © Toons
 
 import unittest
+import pySecp256k1 as secp256k1
 
-from dposlib.ark import secp256k1
 from dposlib.ark.sig import Signature
 from dposlib.util.bin import hexlify, unhexlify
 

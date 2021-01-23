@@ -3,13 +3,13 @@
 
 import base58
 import hashlib
+import pySecp256k1 as secp256k1
 
+from pySecp256k1 import schnorr, ecdsa
 from dposlib import BytesIO, PY3
-from dposlib.ark import secp256k1
 from dposlib.blockchain import cfg
 from dposlib.blockchain.tx import serialize
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
-from dposlib.ark.secp256k1 import schnorr, ecdsa
 
 if PY3:
     unicode = str
@@ -17,7 +17,7 @@ if PY3:
 
 def getKeys(secret):
     """
-    Generate keyring containing secp256k1 keys-apir and wallet import format
+    Generate keyring containing secp256k1 keys-pair and wallet import format
     (WIF).
 
     Args:

@@ -2,8 +2,9 @@
 # (C) Toons MIT Licence
 
 import getpass
+import pySecp256k1 as secp256k1
 from dposlib import rest
-from dposlib.ark import secp256k1, crypto
+from dposlib.ark import crypto
 from dposlib.util.bin import hexlify, unhexlify
 
 API_PEER = None

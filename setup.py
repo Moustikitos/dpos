@@ -28,7 +28,6 @@ kw = {
         "dposlib",
         "dposlib.util",
         "dposlib.ark",
-        "dposlib.ark.secp256k1",
         "dposlib.ark.v2",
         "dposlib.ark.v2.cold",
         "dposlib.ark.v3",
@@ -41,6 +40,7 @@ kw = {
         "base58"
     ],
     "dependecy_list": [
+        "git+http://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1",
         "git+http://github.com/Moustikitos/micro-server#egg=usrv"
     ],
     "license": "Copyright 2018, MIT licence",

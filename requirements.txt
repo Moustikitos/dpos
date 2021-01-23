@@ -1,4 +1,5 @@
 future
 pytz
 base58
+git+http://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1
 git+http://github.com/Moustikitos/micro-server#egg=usrv
