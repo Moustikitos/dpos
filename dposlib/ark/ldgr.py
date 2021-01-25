@@ -10,7 +10,7 @@ import struct
 import dposlib
 
 from dposlib.util.bin import unhexlify, hexlify, intasb
-from dposlib.blockchain.tx import serialize
+from dposlib.blockchain.tx import serialize, Transaction
 from ledgerblue.comm import getDongle
 from ledgerblue.commException import CommException
 
@@ -68,7 +68,7 @@ def parseBip32Path(path="44'/111'/0'/0/0"):
 
 
 def splitData(data, dongle_path):
-    first = chunkSize - len(dongle_path) -1
+    first = chunkSize - len(dongle_path) - 1
     return [
         data[:first]
     ] + [
@@ -98,10 +98,11 @@ def buildPukApdu(dongle_path):
 def buildSignatureApdu(data, dongle_path, what="tx", schnorr=True):
     apdu = []
     path_len = len(dongle_path)
+    payload = len(data) + len(dongle_path) + 1
 
-    if len(data) > payloadMax:
+    if payload > payloadMax:
         raise CommException(
-            'Payload size:', len(data),
+            'Payload size:', payload,
             'exceeds max length:', payloadMax
         )
 
@@ -109,9 +110,9 @@ def buildSignatureApdu(data, dongle_path, what="tx", schnorr=True):
     if len(data) == 1:
         first, body, last = data[0], [], None
     else:
-        first, *body, last = data
+        first, body, last = data[0], data[1:-1], data[-1]
 
-    # print(first, body, last)
+    print(first, body, last)
 
     p2 = p2_schnorr_leg if schnorr else p2_ecdsa
     p1 = p1_single if last is None else p1_first
@@ -139,6 +140,25 @@ def buildSignatureApdu(data, dongle_path, what="tx", schnorr=True):
     return apdu
 
 
+def sendApdu(apdus, debug=True):
+    dongle = getDongle(debug)
+    try:
+        for apdu in apdus:
+            data = bytes(dongle.exchange(apdu, timeout=30))
+    except CommException as comm:
+        if comm.sw == 0x6985:
+            sys.stdout.write("Rejected by user\n")
+        elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
+            sys.stdout.write(
+                "Make sure your Ledger is connected and unlocked",
+                "with the ARK app opened\n"
+            )
+        data = b""
+    finally:
+        dongle.close()
+    return hexlify(data)
+
+
 def getPublicKey(dongle_path, debug=False):
     """
     Compute the public key associated to a derivation path.
@@ -159,65 +179,39 @@ def getPublicKey(dongle_path, debug=False):
 
 def signMessage(msg, path, schnorr=True, debug=False):
     if not isinstance(msg, bytes):
-        msg = msg.encode("ascii", errors="replace")
+        msg = \
+            msg.encode("ascii", errors="replace")\
+            .decode("ascii").encode("utf-8")
     if len(msg) > 255:
         raise ValueError("message max length is 255, got %d" % len(msg))
 
-    dongle = getDongle(debug)
-    try:
-        for apdu in buildSignatureApdu(
-            msg,
-            parseBip32Path(path),
-            "msg",
-            schnorr
-        ):
-            data = bytes(dongle.exchange(apdu, timeout=30))
-    except CommException as comm:
-        if comm.sw == 0x6985:
-            sys.stdout.write("Rejected by user\n")
-        elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
-            sys.stdout.write(
-                "Make sure your Ledger is connected and unlocked",
-                "with the ARK app opened\n"
-            )
-        data = b""
-    finally:
-        dongle.close()
-
-    return hexlify(data)
+    return sendApdu(
+        buildSignatureApdu(msg, parseBip32Path(path), "msg", schnorr),
+        debug=debug
+    )
 
 
 def signTransaction(tx, path, schnorr=True, debug=False):
     """
-    Append signature and sender public key into transaction according to
+    Append sender public key and signature into transaction according to
     derivation path.
 
     Arguments:
         tx (dict): transaction as dictionary
         path (str): derivation path
+        schnorr (bool): use schnorr signature if True else ecdsa
         debug (bool): flag to activate debug messages from ledger key
     """
-    dongle = getDongle(debug)
-    dongle_path = parseBip32Path(path)
-    try:
-        tx["senderPublicKey"] = hexlify(
-            bytes(dongle.exchange(buildPukApdu(dongle_path), timeout=30))
-        )
-        for apdu in buildSignatureApdu(
-            serialize(tx),
-            parseBip32Path(path),
-            "tx",
-            schnorr
-        ):
-            data = bytes(dongle.exchange(apdu, timeout=30))
-        tx["signature"] = hexlify(data)
-    except CommException as comm:
-        if comm.sw == 0x6985:
-            sys.stdout.write("Rejected by user\n")
-        elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
-            sys.stdout.write(
-                "Make sure your Ledger is connected and unlocked",
-                "with the ARK app opened\n"
+    if not isinstance(tx, Transaction):
+        raise ValueError(
+            "tx should be %s class, get %s instead" % (
+                Transaction, type(tx)
             )
-    finally:
-        dongle.close()
+        )
+
+    dongle_path = parseBip32Path(path)
+    tx["senderublicKey"] = sendApdu([buildPukApdu(dongle_path)], debug=debug)
+    tx["signature"] = sendApdu(
+        buildSignatureApdu(serialize(tx), dongle_path, "tx", schnorr),
+        debug=debug
+    )
