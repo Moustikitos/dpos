@@ -5,26 +5,54 @@
 This module contains functions to interoperate with Ledger Nano S.
 """
 
+import sys
 import struct
-
 import dposlib
-from dposlib.util.bin import unhexlify, hexlify, intasb, basint
+
+from dposlib.util.bin import unhexlify, hexlify, intasb
+from dposlib.blockchain.tx import serialize
 from ledgerblue.comm import getDongle
+from ledgerblue.commException import CommException
+
 
 PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
        (lambda f, v: bytes(struct.pack(f, v)))
 
 
-def parseBip32Path(path):
+# https://github.com/sleepdefic1t/hardware-sdk-ledger/blob/master/packages/ledger-app-ark/examples/example_helper.py
+# Limits
+chunkSize = 255
+chunkMax = 10
+payloadMax = chunkMax * chunkSize
+
+# Instruction Class
+cla = "e0"
+# Instructions
+op_puk = "02"
+op_sign_tx = "04"
+op_sign_msg = "08"
+# PublicKey APDU P1 & P2
+p1_non_confirm = "00"
+p2_no_chaincode = "00"
+# Signing APDU P1
+p1_single = "80"
+p1_first = "00"
+p1_more = "01"
+p1_last = "81"
+# Signing Flags P2
+p2_ecdsa = "40"
+p2_schnorr_leg = "50"
+
+
+def parseBip32Path(path="44'/111'/0'/0/0"):
     """
     Parse a BIP44 derivation path.
     https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 
     Args:
-        path (:class:`str`): the derivation path
-
+        path (str): the derivation path
     Returns:
-        :class:`bytes`: parsed bip32 path
+        parsed bip32 path
     """
     if len(path) == 0:
         return b""
@@ -39,54 +67,76 @@ def parseBip32Path(path):
     return result
 
 
-def buildTxApdu(dongle_path, data):
-    """
-    Generate apdu from data. This apdu is to be sent into the ledger key.
-
-    Args:
-        dongle_path (:class:`bytes`):
-            value returned by :func:`parseBip32Path`
-        data (:class:`bytes`):
-            bytes value returned by :func:`getBytes`
-
-    Returns:
-        :class:`bytes`: public key apdu data
-    """
-
-    path_len = len(dongle_path)
-
-    if len(data) > 255 - (path_len+1):
-        data1 = data[:255-(path_len+1)]
-        data2 = data[255-(path_len+1):]
-        p1 = unhexlify("e0040040")
-    else:
-        data1 = data
-        data2 = unhexlify("")
-        p1 = unhexlify("e0048040")
-
+def splitData(data, dongle_path):
+    first = chunkSize - len(dongle_path) -1
     return [
-        p1 + intasb(1 + path_len + len(data1)) + intasb(path_len//4) +
-        dongle_path + data1,
-        unhexlify("e0048140") + intasb(len(data2)) + data2 if len(data2) else
-        None
+        data[:first]
+    ] + [
+        data[i:i + chunkSize]
+        for i in range(first, len(data), chunkSize)
     ]
 
 
-def buildPkeyApdu(dongle_path):
+def buildPukApdu(dongle_path):
     """
     Generate apdu to get public key from ledger key.
 
     Args:
-        dongle_path (:class:`bytes`):
-            value returned by :func:`parseBip32Path`
-
+        dongle_path (bytes): value returned by
+                             `dposlib.ark.ldgr.parseBip32Path`
     Returns:
         :class:`bytes`: public key apdu data
     """
-
     path_len = len(dongle_path)
-    return unhexlify("e0020040") + intasb(1 + path_len) + \
-        intasb(path_len//4) + dongle_path
+    return \
+        unhexlify(cla + op_puk + p1_non_confirm + p2_no_chaincode) + \
+        intasb(path_len + 1) + \
+        intasb(path_len // 4) + \
+        dongle_path
+
+
+def buildSignatureApdu(data, dongle_path, what="tx", schnorr=True):
+    apdu = []
+    path_len = len(dongle_path)
+
+    if len(data) > payloadMax:
+        raise CommException(
+            'Payload size:', len(data),
+            'exceeds max length:', payloadMax
+        )
+
+    data = splitData(data, dongle_path)
+    if len(data) == 1:
+        first, body, last = data[0], [], None
+    else:
+        first, *body, last = data
+
+    # print(first, body, last)
+
+    p2 = p2_schnorr_leg if schnorr else p2_ecdsa
+    p1 = p1_single if last is None else p1_first
+    op = getattr(sys.modules[__name__], "op_sign_" + what)
+
+    apdu.append(
+        unhexlify(cla + op + p1 + p2) +
+        intasb(path_len + 1 + len(first)) + intasb(path_len // 4) +
+        dongle_path +
+        first
+    )
+
+    for b in body:
+        apdu.append(
+            unhexlify(cla + op + p1_more + p2) +
+            intasb(len(b)) + b
+        )
+
+    if last is not None:
+        apdu.append(
+            unhexlify(cla + op + p1_last + p2) +
+            intasb(len(last)) + last
+        )
+
+    return apdu
 
 
 def getPublicKey(dongle_path, debug=False):
@@ -94,63 +144,80 @@ def getPublicKey(dongle_path, debug=False):
     Compute the public key associated to a derivation path.
 
     Args:
-        dongle_path (:class:`bytes`):
-            value returned by :func:`parseBip32Path`
-        debug (:class:`bool`):
-            flag to activate debug messages from ledger key [default: False]
-
+        dongle_path (bytes): value returned by
+                             `dposlib.ark.ldgr.parseBip32Path`
+        debug (bool): flag to activate debug messages from ledger key
+                      [default: False]
     Returns:
-        :class:`str`: hexadecimal compressed publicKey
+        hexadecimal compressed publicKey
     """
-
-    apdu = buildPkeyApdu(dongle_path)
     dongle = getDongle(debug)
-    data = bytes(dongle.exchange(apdu, timeout=30))
+    data = bytes(dongle.exchange(buildPukApdu(dongle_path), timeout=30))
     dongle.close()
-    len_pkey = basint(data[0])
-    return hexlify(data[1:len_pkey+1])
+    return hexlify(data[1:])
 
 
-def getSignature(data, dongle_path, debug=False):
-    """
-    Get ledger Nano S signature of given data.
+def signMessage(msg, path, schnorr=True, debug=False):
+    if not isinstance(msg, bytes):
+        msg = msg.encode("ascii", errors="replace")
+    if len(msg) > 255:
+        raise ValueError("message max length is 255, got %d" % len(msg))
 
-    Args:
-        data (:class:`bytes`):
-            transaction as bytes data returned by
-            :func:`getBytes`
-        dongle_path (:class:`bytes`):
-            value returned by :func:`parseBip32Path`
-        debug (:class:`bool`):
-            flag to activate debug messages from ledger key
-
-    Returns:
-        :class:`str`: hexadecimal signature
-    """
-
-    apdu1, apdu2 = buildTxApdu(dongle_path, data)
     dongle = getDongle(debug)
-    result = dongle.exchange(bytes(apdu1), timeout=30)
-    if apdu2:
-        apdu = unhexlify("e0048140") + intasb(len(apdu2)) + apdu2
-        result = dongle.exchange(bytes(apdu), timeout=30)
-    dongle.close()
-    return hexlify(result)
+    try:
+        for apdu in buildSignatureApdu(
+            msg,
+            parseBip32Path(path),
+            "msg",
+            schnorr
+        ):
+            data = bytes(dongle.exchange(apdu, timeout=30))
+    except CommException as comm:
+        if comm.sw == 0x6985:
+            sys.stdout.write("Rejected by user\n")
+        elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
+            sys.stdout.write(
+                "Make sure your Ledger is connected and unlocked",
+                "with the ARK app opened\n"
+            )
+        data = b""
+    finally:
+        dongle.close()
+
+    return hexlify(data)
 
 
-def signTransaction(tx, path, debug=False):
+def signTransaction(tx, path, schnorr=True, debug=False):
     """
     Append signature and sender public key into transaction according to
     derivation path.
 
     Arguments:
-        tx (:class:`dict`): transaction as dictionary
-        path (:class:`str`): derivation path
-        debug (:class:`bool`): flag to activate debug messages from ledger key
+        tx (dict): transaction as dictionary
+        path (str): derivation path
+        debug (bool): flag to activate debug messages from ledger key
     """
-
+    dongle = getDongle(debug)
     dongle_path = parseBip32Path(path)
-    tx["senderPublicKey"] = getPublicKey(dongle_path, debug)
-    tx["signature"] = getSignature(
-        dposlib.core.crypto.getBytes(tx), dongle_path, debug
-    )
+    try:
+        tx["senderPublicKey"] = hexlify(
+            bytes(dongle.exchange(buildPukApdu(dongle_path), timeout=30))
+        )
+        for apdu in buildSignatureApdu(
+            serialize(tx),
+            parseBip32Path(path),
+            "tx",
+            schnorr
+        ):
+            data = bytes(dongle.exchange(apdu, timeout=30))
+        tx["signature"] = hexlify(data)
+    except CommException as comm:
+        if comm.sw == 0x6985:
+            sys.stdout.write("Rejected by user\n")
+        elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
+            sys.stdout.write(
+                "Make sure your Ledger is connected and unlocked",
+                "with the ARK app opened\n"
+            )
+    finally:
+        dongle.close()
