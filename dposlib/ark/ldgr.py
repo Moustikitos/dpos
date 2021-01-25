@@ -14,17 +14,13 @@ from dposlib.blockchain.tx import serialize, Transaction
 from ledgerblue.comm import getDongle
 from ledgerblue.commException import CommException
 
-
 PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
        (lambda f, v: bytes(struct.pack(f, v)))
 
-
-# https://github.com/sleepdefic1t/hardware-sdk-ledger/blob/master/packages/ledger-app-ark/examples/example_helper.py
 # Limits
 chunkSize = 255
 chunkMax = 10
 payloadMax = chunkMax * chunkSize
-
 # Instruction Class
 cla = "e0"
 # Instructions
@@ -112,8 +108,6 @@ def buildSignatureApdu(data, dongle_path, what="tx", schnorr=True):
     else:
         first, body, last = data[0], data[1:-1], data[-1]
 
-    print(first, body, last)
-
     p2 = p2_schnorr_leg if schnorr else p2_ecdsa
     p1 = p1_single if last is None else p1_first
     op = getattr(sys.modules[__name__], "op_sign_" + what)
@@ -178,10 +172,18 @@ def getPublicKey(dongle_path, debug=False):
 
 
 def signMessage(msg, path, schnorr=True, debug=False):
+    """
+    Compute schnorr or ecdsa signature of msg according to derivation path.
+
+    Arguments:
+        msg (str or bytes): transaction as dictionary
+        path (str): derivation path
+        schnorr (bool): use schnorr signature if True else ecdsa
+        debug (bool): flag to activate debug messages from ledger key
+    """
     if not isinstance(msg, bytes):
-        msg = \
-            msg.encode("ascii", errors="replace")\
-            .decode("ascii").encode("utf-8")
+        msg = msg.encode("ascii", errors="replace")
+    msg = msg.decode("ascii").encode("utf-8")
     if len(msg) > 255:
         raise ValueError("message max length is 255, got %d" % len(msg))
 
@@ -197,7 +199,7 @@ def signTransaction(tx, path, schnorr=True, debug=False):
     derivation path.
 
     Arguments:
-        tx (dict): transaction as dictionary
+        tx (dposlib.blockchain.tx.Transaction): transaction
         path (str): derivation path
         schnorr (bool): use schnorr signature if True else ecdsa
         debug (bool): flag to activate debug messages from ledger key
