@@ -307,23 +307,26 @@ class Wallet(Content):
         ""
     )
 
-    def _finalizeTx(self, tx, fee=None, fee_included=False):
+    def __init__(self, ndpt, *args, **kwargs):
+        self._fee_included = kwargs.pop("fee_included", False)
+        self._fee = kwargs.pop("fee", None)
+        Content.__init__(self, ndpt, *args, **kwargs)
+
+    def _finalizeTx(self, tx):
         if hasattr(self, "_publicKey"):
             tx.senderPublicKey = self._publicKey
             tx._privateKey = self._privateKey
         if hasattr(self, "_secondPrivateKey"):
             tx._secondPublicKey = self._secondPublicKey
             tx._secondPrivateKey = self._secondPrivateKey
-        tx.finalize(fee=fee, fee_included=fee_included)
+        tx.finalize(fee=self._fee, fee_included=self._fee_included)
         return tx
 
     @isLinked
-    def send(self, amount, address, vendorField=None, fee_included=False):
+    def send(self, amount, address, vendorField=None):
         "See :func:`dposlib.ark.v2.transfer`."
         tx = dposlib.core.transfer(amount, address, vendorField)
-        return dposlib.core.broadcastTransactions(
-            self._finalizeTx(tx, fee_included=fee_included)
-        )
+        return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def registerSecondSecret(self, secondSecret):

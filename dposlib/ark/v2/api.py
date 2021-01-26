@@ -119,10 +119,10 @@ if LEDGERBLUE:
             ldgr_wlt.update()
             return ldgr_wlt
 
-        def _finalizeTx(self, tx, fee=None, fee_included=False):
-            if "fee" not in tx or fee is not None:
-                tx.fee = fee
-            tx.feeIncluded = fee_included
+        def _finalizeTx(self, tx):
+            if "fee" not in tx or self._fee is not None:
+                tx.fee = self._fee
+            tx.feeIncluded = self._fee_included
             tx["senderPublicKey"] = self.publicKey
             tx["signature"] = ldgr.sendApdu(
                 ldgr.buildSignatureApdu(
