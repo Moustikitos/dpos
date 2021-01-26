@@ -147,6 +147,8 @@ def sendApdu(apdus, debug=True):
                 "Make sure your Ledger is connected and unlocked",
                 "with the ARK app opened\n"
             )
+        else:
+            sys.stdout.write("%r\n" % comm)
         data = b""
     finally:
         dongle.close()
@@ -212,7 +214,7 @@ def signTransaction(tx, path, schnorr=True, debug=False):
         )
 
     dongle_path = parseBip32Path(path)
-    tx["senderublicKey"] = sendApdu([buildPukApdu(dongle_path)], debug=debug)
+    tx["senderPublicKey"] = sendApdu([buildPukApdu(dongle_path)], debug=debug)
     tx["signature"] = sendApdu(
         buildSignatureApdu(serialize(tx), dongle_path, "tx", schnorr),
         debug=debug

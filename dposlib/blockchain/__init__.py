@@ -41,7 +41,7 @@ def isLinked(func):
     """
     def wrapper(*args, **kw):
         obj = args[0]
-        if hasattr(obj, "derivationPath"):
+        if hasattr(obj, "_derivationPath"):
             return func(*args, **kw)
         elif not hasattr(obj, "address"):
             raise Exception("not a wallet")
