@@ -87,18 +87,20 @@ if LEDGERBLUE:
 
     class Ledger(Wallet):
 
-        def __init__(self, account, index, network=1, **kw):
-            # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+        def __init__(self, account, index, network=0, **kw):
             self._debug = kw.pop("debug", False)
             self._schnorr = kw.pop("schnorr", True)
-            self._derivationPath = "44'/%s'/%s'/%s'/%s" % (
+            # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+            self._derivationPath = "44'/%s'/%s'/%s/%s" % (
                 dposlib.rest.cfg.slip44,
                 getattr(dposlib.rest.cfg, "aip20", network),
                 account,
                 index
             )
             self._dongle_path = ldgr.parseBip32Path(self._derivationPath)
-            puk = ldgr.getPublicKey(self._dongle_path)
+            puk = ldgr.sendApdu(
+                [ldgr.buildPukApdu(self._dongle_path)], debug=self._debug
+            )[2:]
             object.__setattr__(self, "publicKey", puk)
             object.__setattr__(
                 self, "address", dposlib.core.crypto.getAddress(puk)
@@ -110,7 +112,10 @@ if LEDGERBLUE:
             ldgr_wlt = Ledger(0, 0, 0, **kw)
             ldgr_wlt._derivationPath = derivationPath
             ldgr_wlt._dongle_path = ldgr.parseBip32Path(derivationPath)
-            puk = ldgr.getPublicKey(ldgr_wlt._dongle_path)
+            puk = ldgr.sendApdu(
+                [ldgr.buildPukApdu(ldgr_wlt._dongle_path)],
+                debug=ldgr_wlt._debug
+            )[2:]
             object.__setattr__(ldgr_wlt, "publicKey", puk)
             object.__setattr__(
                 ldgr_wlt, "address", dposlib.core.crypto.getAddress(puk)

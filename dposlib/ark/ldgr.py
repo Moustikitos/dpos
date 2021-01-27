@@ -40,7 +40,11 @@ p2_ecdsa = "40"
 p2_schnorr_leg = "50"
 
 
-def parseBip32Path(path="44'/111'/0'/0/0"):
+def _default_path():
+    return "44'/%s'/0'/0/0" % dposlib.rest.cfg.slip44
+
+
+def parseBip32Path(path):
     """
     Parse a BIP44 derivation path.
     https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
@@ -144,7 +148,7 @@ def sendApdu(apdus, debug=True):
             sys.stdout.write("Rejected by user\n")
         elif comm.sw in [0x6D00, 0x6F00, 0x6700]:
             sys.stdout.write(
-                "Make sure your Ledger is connected and unlocked",
+                "Make sure your Ledger is connected and unlocked "
                 "with the ARK app opened\n"
             )
         else:
@@ -155,25 +159,22 @@ def sendApdu(apdus, debug=True):
     return hexlify(data)
 
 
-def getPublicKey(dongle_path, debug=False):
+def getPublicKey(path=None, debug=False):
     """
     Compute the public key associated to a derivation path.
 
     Args:
-        dongle_path (bytes): value returned by
-                             `dposlib.ark.ldgr.parseBip32Path`
+        path (str): derivation path
         debug (bool): flag to activate debug messages from ledger key
                       [default: False]
     Returns:
         hexadecimal compressed publicKey
     """
-    dongle = getDongle(debug)
-    data = bytes(dongle.exchange(buildPukApdu(dongle_path), timeout=30))
-    dongle.close()
-    return hexlify(data[1:])
+    path = _default_path() if path is None else path
+    return sendApdu([buildPukApdu(parseBip32Path(path))], debug=debug)[2:]
 
 
-def signMessage(msg, path, schnorr=True, debug=False):
+def signMessage(msg, path=None, schnorr=True, debug=False):
     """
     Compute schnorr or ecdsa signature of msg according to derivation path.
 
@@ -183,6 +184,7 @@ def signMessage(msg, path, schnorr=True, debug=False):
         schnorr (bool): use schnorr signature if True else ecdsa
         debug (bool): flag to activate debug messages from ledger key
     """
+    path = _default_path() if path is None else path
     if not isinstance(msg, bytes):
         msg = msg.encode("ascii", errors="replace")
     msg = msg.decode("ascii").encode("utf-8")
@@ -195,7 +197,7 @@ def signMessage(msg, path, schnorr=True, debug=False):
     )
 
 
-def signTransaction(tx, path, schnorr=True, debug=False):
+def signTransaction(tx, path=None, schnorr=True, debug=False):
     """
     Append sender public key and signature into transaction according to
     derivation path.
@@ -213,8 +215,11 @@ def signTransaction(tx, path, schnorr=True, debug=False):
             )
         )
 
+    path = _default_path() if path is None else path
     dongle_path = parseBip32Path(path)
-    tx["senderPublicKey"] = sendApdu([buildPukApdu(dongle_path)], debug=debug)
+    tx["senderPublicKey"] = sendApdu(
+        [buildPukApdu(dongle_path)], debug=debug
+    )[2:]
     tx["signature"] = sendApdu(
         buildSignatureApdu(serialize(tx), dongle_path, "tx", schnorr),
         debug=debug
