@@ -57,10 +57,7 @@ def getMultiSignaturePublicKey(minimum, *publicKeys):
     """
     if 2 > minimum > len(publicKeys):
         raise ValueError("min signatures value error")
-    secret = "%02x" % minimum
-    P = secp256k1.PublicKey.from_secret(
-        ("0" if len(secret) % 2 else "") + secret
-    )
+    P = secp256k1.PublicKey.from_secret("%02x" % minimum)
     for publicKey in publicKeys:
         P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
     return hexlify(P.encode())
