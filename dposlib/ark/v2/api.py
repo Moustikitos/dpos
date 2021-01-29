@@ -92,7 +92,7 @@ if LEDGERBLUE:
             self._schnorr = kw.pop("schnorr", True)
             # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
             self._derivationPath = "44'/%s'/%s'/%s/%s" % (
-                dposlib.rest.cfg.slip44,
+                getattr(dposlib.rest.cfg, "slip44", "111"),
                 getattr(dposlib.rest.cfg, "aip20", network),
                 account,
                 index
