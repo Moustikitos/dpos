@@ -10,6 +10,5 @@ headers = {
     "User-Agent": "Python/dposlib"
 }
 timeout = 5
-verify = True
 peers = []
 txversion = 1
