@@ -41,7 +41,10 @@ p2_schnorr_leg = "50"
 
 
 def _default_path():
-    return "44'/%s'/0'/0/0" % dposlib.rest.cfg.slip44
+    return "44'/%s'/%s'/0/0" % (
+        getattr(dposlib.rest.cfg, "slip44", "111"),
+        getattr(dposlib.rest.cfg, "aip20", "0"),
+    )
 
 
 def parseBip32Path(path):
