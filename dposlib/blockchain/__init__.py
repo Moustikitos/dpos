@@ -1,19 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-"""
-:mod:`dposlib.blockchain` package provides :class:`Content` and
-:class:`Wallet` classes.
-
->>> from dposlib import rest
->>> rest.use("dark")
-True
->>> # initialize wallet using rest endpoint
->>> wlt = blockchain.Wallet(rest.GET.api.wallets.darktoons)
->>> wlt.address
-'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk'
-"""
-
 import re
 import sys
 import json
@@ -33,11 +20,10 @@ if dposlib.PY3:
 def isLinked(func):
     """
     `Python decorator`.
-    First argument of decorated function have to be a
-    :class:`Content` or an object containing a valid :attr:`address`,
-    :attr:`derivationPath` or :attr:`publicKey` attribute. It executes the
-    decorated :func:`function` if the object is correctly linked using
-    :func:`dposlib.blockchain.link`.
+    First argument of decorated function  have to be a `Content` or an
+    object containing a valid `address`, `_derivationPath` or `publicKey`
+    attribute. It executes the decorated `function` if the object is correctly
+    linked using [`dposlib.blockchain.link`](blockchain.md#link) definition.
     """
     def wrapper(*args, **kw):
         obj = args[0]
@@ -64,16 +50,16 @@ def isLinked(func):
 
 def link(cls, secret=None, secondSecret=None):
     """
-    Associates crypto keys into an :class:`Content` object according to
-    secrets. If :attr:`secret` or :attr:`secondSecret` are not :class:`str`,
-    they are considered as :attr:`None`.
+    Associates crypto keys into a `dposlib.blockchain.Content` object according
+    to secrets. If `secret` or `secondSecret` are not `str`, they are
+    considered as `None`.
 
     Arguments:
-        cls (:class:`Content`): content object
-        secret (:class:`str`): secret string
-        secondSecret (:class:`str`): second secret string
+        cls (Content): content object
+        secret (str): secret string
+        secondSecret (str): second secret string
     Returns:
-        :class:`bool`: True if secret and second secret match crypto keys
+        True if secret and second secret match
     """
     if not hasattr(cls, "address") or not hasattr(cls, "publicKey"):
         raise AttributeError("%s seems not to be linkable" % cls)
@@ -153,7 +139,7 @@ def link(cls, secret=None, secondSecret=None):
 
 def unLink(cls):
     """
-    Remove crypot keys association.
+    Remove crypto keys association.
     """
     for attr in [
         '_privateKey',
@@ -168,6 +154,14 @@ def unLink(cls):
 class JSDict(dict):
     """
     Read only dictionary with js object behaviour.
+
+    ```python
+    >>> jsdic = blockchain.JSDict(value=5)
+    >>> jsdic
+    {'value': 5}
+    >>> jsdic.value
+    5
+    ```
     """
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -179,11 +173,9 @@ class JSDict(dict):
         raise KeyError("%s is readonly" % self.__class__)
 
     def pop(self, value, default):
-        ""
         raise KeyError("%s is readonly" % self.__class__)
 
     def update(self, *args, **kwargs):
-        ""
         raise KeyError("%s is readonly" % self.__class__)
 
     __setattr__ = __setitem__
@@ -192,11 +184,40 @@ class JSDict(dict):
 
 class Content(object):
     """
+    Live object connected to blockchain. It is initialized with
+    `dposlib.rest.GET` request. Object is updated every 30s. Endpoint response
+    can be a `dict` or a `list`. If it is a `list`, it is stored in `data`
+    attribute else all fields are stored as instance attribute.
+
+    ```python
+    >>> txs = blockchain.Content(rest.GET.api.transactions)
+    >>> txs.data[0]["timestamp"]
+    {
+        'epoch': 121912776,
+        'unix': 1612013976,
+        'human': '2021-01-30T13:39:36.000Z'
+    }
+    >>> tx = blockchain.Content(
+        rest.GET.api.transactions,
+        "d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9",
+    )
+    >>> tx.timestamp
+    {
+        'epoch': 121919704,
+        'unix': 1612020904,
+        'human': '2021-01-30T15:35:04.000Z'
+    }
+    >>> tx.amount
+    212963052
+    >>> tx.datetime
+    datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
+    ```
     """
 
     REF = set()
     EVENT = False
 
+    #: if timestamp attributes exists, return associated python datetime object
     datetime = property(
         lambda cls: slots.getRealTime(cls.timestamp["epoch"]),
         None, None, ""
@@ -247,6 +268,8 @@ class Content(object):
         return getattr(self, item, default)
 
     def filter(self, data):
+        if not isinstance(data, dict):
+            return JSDict(data=data)
         for k in data:
             v = data[k]
             if isinstance(v, dict):
@@ -287,19 +310,29 @@ def contentUpdate():
 
 
 class Wallet(Content):
+    """
+    Arguments:
+        fee (int or str): set fee level as `fee multiplier` integer or one of
+                          `minFee`, `avgFee`, `maxFee` string
+        fee_included (bool): set to True if amout + fee is the total desired
+                             out flow
+    """
 
+    #: return delegate attributes if wallet is registered as delegate
     delegate = property(
         lambda cls: cls.attributes.get("delegate", None),
         None,
         None,
         ""
     )
+    #: return delegate username if wallet is registered as delegate
     username = property(
         lambda cls: cls.attributes.get("delegate", {}).get("username", None),
         None,
         None,
         ""
     )
+    #: return second public key if second signature is set to wallet
     secondPublicKey = property(
         lambda cls: cls.attributes.get("secondPublicKey", None),
         None,
@@ -324,36 +357,48 @@ class Wallet(Content):
 
     @isLinked
     def send(self, amount, address, vendorField=None):
-        "See :func:`dposlib.ark.v2.transfer`."
+        "See [`dposlib.ark.v2.transfer`](blockchain.md#send)."
         tx = dposlib.core.transfer(amount, address, vendorField)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def registerSecondSecret(self, secondSecret):
-        "See :func:`dposlib.ark.v2.registerSecondSecret`."
+        """
+        See [`dposlib.ark.v2.registerSecondSecret`](
+            blockchain.md#registersecondsecret
+        ).
+        """
         tx = dposlib.core.registerSecondSecret(secondSecret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def registerSecondPublicKey(self, secondPublicKey):
-        "See :func:`dposlib.ark.v2.registerSecondPublicKey`."
+        """
+        See [`dposlib.ark.v2.registerSecondPublicKey`](
+            blockchain.md#registersecondpublickey
+        ).
+        """
         tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def registerAsDelegate(self, username):
-        "See :func:`dposlib.ark.v2.registerAsDelegate`."
+        """
+        See [`dposlib.ark.v2.registerAsDelegate`](
+            blockchain.md#registerasdelegate
+        ).
+        """
         tx = dposlib.core.registerAsDelegate(username)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def upVote(self, *usernames):
-        "See :func:`dposlib.ark.v2.upVote`."
+        "See [`dposlib.ark.v2.upVote`](blockchain.md#upvote)."
         tx = dposlib.core.upVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def downVote(self, *usernames):
-        "See :func:`dposlib.ark.v2.downVote`."
+        "See [`dposlib.ark.v2.downVote`](blockchain.md#downvote)."
         tx = dposlib.core.downVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
