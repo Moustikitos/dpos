@@ -13,8 +13,8 @@ Generate keyring containing secp256k1 keys-pair and wallet import format
 
 **Arguments**:
 
-  secret (str, bytes or int):
-  anything that could issue a private key on secp256k1 curve
+- `secret` _str, bytes or int_ - anything that could issue a private key on
+  secp256k1 curve
 
 **Returns**:
 

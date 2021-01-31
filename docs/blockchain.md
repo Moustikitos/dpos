@@ -8,7 +8,9 @@
 init(seed=None)
 ```
 
-Blockchain initialisation. It stores root values in :mod:`cfg` modules.
+Blockchain initialisation. It stores root values in [`rest.cfg`](
+    network.md#rest
+) modules.
 
 <a name="dposlib.ark.v2.stop"></a>
 #### stop
@@ -17,7 +19,7 @@ Blockchain initialisation. It stores root values in :mod:`cfg` modules.
 stop()
 ```
 
-Stop daemon initialized by `init` call.
+Stop daemon initialized by [`init`](blockchain.md#init) call.
 
 <a name="dposlib.ark.v2.transfer"></a>
 #### transfer
@@ -355,9 +357,6 @@ See [`dposlib.ark.v2.htlcClaim`](blockchain.md#claimhtlc).
 
 See [`dposlib.ark.v2.htlcRefund`](blockchain.md#refundhtlc).
 
-<a name="dposlib.ark.v2.mixin"></a>
-# dposlib.ark.v2.mixin
-
 <a name="dposlib.blockchain"></a>
 # dposlib.blockchain
 
@@ -590,23 +589,6 @@ This module stores blockchain parameters.
   * txversion:
   * version:
   * wif:
-
-<a name="dposlib.blockchain.slots"></a>
-# dposlib.blockchain.slots
-
-<a name="dposlib.blockchain.slots.getTimestamp"></a>
-#### getTimestamp
-
-```python
-getTimestamp(**kw)
-```
-
-Return blockchain timestamp from timedelta given as keyword arument.
-
-```python
->>> from dposlib.blockchain import slots
->>> slots.getTimestamp(days=6, hours=4, minutes=20)
-```
 
 <a name="dposlib.blockchain.tx"></a>
 # dposlib.blockchain.tx
