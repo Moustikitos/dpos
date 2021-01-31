@@ -115,3 +115,4 @@ simple_history.html
 # custom
 .registry/
 .synch/
+.generated-files.txt
