@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Network - The dposlib Project</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">The dposlib Project</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Network</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../crypto/" class="nav-link">Crypto</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../blockchain/" class="nav-link">Blockchain</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../crypto/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Moustikitos/dposlib/edit/master/docs/network.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#dposlibrest" class="nav-link">dposlib.rest</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#use-rest-http-request-builder" class="nav-link">Use rest HTTP request builder</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#use-api-and-core-modules" class="nav-link">Use api and core modules</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><a name="dposlib.rest"></a></p>
+<h1 id="dposlibrest">dposlib.rest<a class="headerlink" href="#dposlibrest" title="Permanent link">#</a></h1>
+<p><code>rest</code> module provides network loaders and <code>usrv.get.EndPoint</code> root class to
+implement <code>GET</code>, <code>POST</code>, <code>PUT</code> and <code>DELETE</code> HTTP requests. See
+<a href="https://api.ark.dev/public-rest-api/getting-started">Ark API documentation</a> to see how to use http calls.</p>
+<p><code>rest</code> also creates a <code>core</code> module containing
+<code>dposlib.blockchain.tx.Transaction</code> builders, <code>dposlib.ark.crypto</code>
+and <code>dposlib.ark.v2.api</code> interface.</p>
+<h2 id="use-rest-http-request-builder">Use <code>rest</code> HTTP request builder<a class="headerlink" href="#use-rest-http-request-builder" title="Permanent link">#</a></h2>
+<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
+&gt;&gt;&gt; rest.use(&quot;ark&quot;)
+True
+&gt;&gt;&gt; # reach http://api.ark.io/api/delegates/arky endpoint using GET
+&gt;&gt;&gt; # HTTP request builder
+&gt;&gt;&gt; rest.GET.api.delegates.arky()[&quot;username&quot;]
+'arky'
+</code></pre>
+<h2 id="use-api-and-core-modules">Use <code>api</code> and <code>core</code> modules<a class="headerlink" href="#use-api-and-core-modules" title="Permanent link">#</a></h2>
+<pre><code class="language-python">&gt;&gt;&gt; import dposlib
+&gt;&gt;&gt; dlgt = dposlib.core.api.Delegate(&quot;arky&quot;)
+&gt;&gt;&gt; dlgt.forged
+{u'rewards': 397594.0, u'total': 401908.71166083, u'fees': 4314.71166083}
+&gt;&gt;&gt; dposlib.core.crypto.getKeys(&quot;secret&quot;)[&quot;publicKey&quot;]
+'03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
+&gt;&gt;&gt; dposlib.core.transfer(
+...     1, &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+...     u&quot;\u2728 simple transfer vendorField&quot;
+... )
+{
+  &quot;amount&quot;: 100000000,
+  &quot;asset&quot;: {},
+  &quot;recipientId&quot;: &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+  &quot;type&quot;: 0,
+  &quot;vendorField&quot;: &quot;\u2728 simple transfer vendorField&quot;,
+  &quot;version&quot;: 1
+}
+&gt;&gt;&gt; dposlib.core.htlcLock(
+...     1, &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+...     &quot;my secret lock&quot;, expiration=12,
+...     vendorField=u&quot;\u2728 simple htlcLock vendorField&quot;
+... )
+{
+  &quot;amount&quot;: 100000000,
+  &quot;asset&quot;: {
+    &quot;lock&quot;: {
+      &quot;secretHash&quot;:
+        &quot;dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb&quot;,
+      &quot;expiration&quot;: {
+        &quot;type&quot;: 1,
+        &quot;value&quot;: 82567745
+      }
+    }
+  },
+  &quot;network&quot;: 23,
+  &quot;recipientId&quot;: &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+  &quot;type&quot;: 8,
+  &quot;typeGroup&quot;: 1,
+  &quot;vendorField&quot;: &quot;\u2728 simple htlcLock vendorField&quot;,
+  &quot;version&quot;: 2
+}
+</code></pre>
+<p><a name="dposlib.rest.GET"></a></p>
+<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">#</a></h4>
+<p>GET HTTP request builder</p>
+<p><a name="dposlib.rest.POST"></a></p>
+<h4 id="post">POST<a class="headerlink" href="#post" title="Permanent link">#</a></h4>
+<p>POST HTTP request builder</p>
+<p><a name="dposlib.rest.PUT"></a></p>
+<h4 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">#</a></h4>
+<p>PUT HTTP request builder</p>
+<p><a name="dposlib.rest.DELETE"></a></p>
+<h4 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">#</a></h4>
+<p>DELETE HTTP request builder</p>
+<p><a name="dposlib.rest.load"></a></p>
+<h4 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h4>
+<pre><code class="language-python">load(name)
+</code></pre>
+<p>Load a given blockchain package as <code>dposlib.core</code> module. A valid
+blockchain package must provide <code>init(peer=None)</code> and <code>stop()</code> definitions.
+Available blockchains are referenced in <code>dposli.net</code> module.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>name</code> <em>str</em> - package name to load</li>
+</ul>
+<p><a name="dposlib.rest.use"></a></p>
+<h4 id="use">use<a class="headerlink" href="#use" title="Permanent link">#</a></h4>
+<pre><code class="language-python">use(network, **kwargs)
+</code></pre>
+<p>Sets the blockchain parameters in the <code>dposlib.rest.cfg</code> module and
+initializes blockchain package. Network options can be created or overriden
+using <code>**kwargs</code> argument.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>network</code> <em>str</em> - network to initialize</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>True if network connection established</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

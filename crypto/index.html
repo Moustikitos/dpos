@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Crypto - The dposlib Project</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">The dposlib Project</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../network/" class="nav-link">Network</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Crypto</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../blockchain/" class="nav-link">Blockchain</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../network/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../blockchain/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Moustikitos/dposlib/edit/master/docs/crypto.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#dposlibarkcrypto" class="nav-link">dposlib.ark.crypto</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#dposlibarkldgr" class="nav-link">dposlib.ark.ldgr</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><a name="dposlib.ark.crypto"></a></p>
+<h1 id="dposlibarkcrypto">dposlib.ark.crypto<a class="headerlink" href="#dposlibarkcrypto" title="Permanent link">#</a></h1>
+<p><a name="dposlib.ark.crypto.getKeys"></a></p>
+<h4 id="getkeys">getKeys<a class="headerlink" href="#getkeys" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getKeys(secret)
+</code></pre>
+<p>Generate keyring containing secp256k1 keys-pair and wallet import format
+(WIF).</p>
+<p><strong>Arguments</strong>:</p>
+<p>secret (str, bytes or int):
+  anything that could issue a private key on secp256k1 curve</p>
+<p><strong>Returns</strong>:</p>
+<p>public, private and WIF keys</p>
+<p><a name="dposlib.ark.crypto.getMultiSignaturePublicKey"></a></p>
+<h4 id="getmultisignaturepublickey">getMultiSignaturePublicKey<a class="headerlink" href="#getmultisignaturepublickey" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getMultiSignaturePublicKey(minimum, *publicKeys)
+</code></pre>
+<p>Compute ARK multi signature public key according to <a href="https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md">ARK AIP <code>18</code></a>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>minimum</code> <em>int</em> - minimum signature required</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>the multisignature public key</p>
+<p><a name="dposlib.ark.crypto.getAddressFromSecret"></a></p>
+<h4 id="getaddressfromsecret">getAddressFromSecret<a class="headerlink" href="#getaddressfromsecret" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getAddressFromSecret(secret, marker=None)
+</code></pre>
+<p>Compute ARK address from secret.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - secret string</li>
+<li><code>marker</code> <em>int</em> - network marker (optional)</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>the address</p>
+<p><a name="dposlib.ark.crypto.getAddress"></a></p>
+<h4 id="getaddress">getAddress<a class="headerlink" href="#getaddress" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getAddress(publicKey, marker=None)
+</code></pre>
+<p>Compute ARK address from publicKey.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>publicKey</code> <em>str</em> - public key</li>
+<li><code>marker</code> <em>int</em> - network marker (optional)</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>the address</p>
+<p><a name="dposlib.ark.crypto.getWIF"></a></p>
+<h4 id="getwif">getWIF<a class="headerlink" href="#getwif" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getWIF(seed)
+</code></pre>
+<p>Compute WIF address from seed.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>seed</code> <em>bytes</em> - a sha256 sequence bytes</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>WIF address</p>
+<p><a name="dposlib.ark.crypto.wifSignature"></a></p>
+<h4 id="wifsignature">wifSignature<a class="headerlink" href="#wifsignature" title="Permanent link">#</a></h4>
+<pre><code class="language-python">wifSignature(tx, wif)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description</li>
+<li><code>wif</code> <em>str</em> - wif key</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>signature</p>
+<p><a name="dposlib.ark.crypto.wifSignatureFromBytes"></a></p>
+<h4 id="wifsignaturefrombytes">wifSignatureFromBytes<a class="headerlink" href="#wifsignaturefrombytes" title="Permanent link">#</a></h4>
+<pre><code class="language-python">wifSignatureFromBytes(data, wif)
+</code></pre>
+<p>Generate signature from data using WIF key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence</li>
+<li><code>wif</code> <em>str</em> - wif key</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>signature</p>
+<p><a name="dposlib.ark.crypto.getSignature"></a></p>
+<h4 id="getsignature">getSignature<a class="headerlink" href="#getsignature" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getSignature(tx, privateKey, **options)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string
+  Keyword args:
+  exclude_sig (bool):
+  exclude signature during tx serialization [defalut: True]
+  exclude_multi_sig(bool):
+  exclude signatures during tx serialization [defalut: True]
+  exclude_second_sig(bool):
+  exclude second signatures during tx serialization [defalut: True]</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>signature</p>
+<p><a name="dposlib.ark.crypto.getSignatureFromBytes"></a></p>
+<h4 id="getsignaturefrombytes">getSignatureFromBytes<a class="headerlink" href="#getsignaturefrombytes" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getSignatureFromBytes(data, privateKey)
+</code></pre>
+<p>Generate signature from data using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>signature as hex string</p>
+<p><a name="dposlib.ark.crypto.verifySignature"></a></p>
+<h4 id="verifysignature">verifySignature<a class="headerlink" href="#verifysignature" title="Permanent link">#</a></h4>
+<pre><code class="language-python">verifySignature(value, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>value</code> <em>str</em> - value as hex string</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string</li>
+<li><code>signature</code> <em>str</em> - signature as hex string</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>True if signature matches the public key</p>
+<p><a name="dposlib.ark.crypto.verifySignatureFromBytes"></a></p>
+<h4 id="verifysignaturefrombytes">verifySignatureFromBytes<a class="headerlink" href="#verifysignaturefrombytes" title="Permanent link">#</a></h4>
+<pre><code class="language-python">verifySignatureFromBytes(data, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string</li>
+<li><code>signature</code> <em>str</em> - signature as hex string</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>True if signature matches the public key</p>
+<p><a name="dposlib.ark.crypto.getId"></a></p>
+<h4 id="getid">getId<a class="headerlink" href="#getid" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getId(tx)
+</code></pre>
+<p>Generate transaction id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>id as hex string</p>
+<p><a name="dposlib.ark.crypto.getIdFromBytes"></a></p>
+<h4 id="getidfrombytes">getIdFromBytes<a class="headerlink" href="#getidfrombytes" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getIdFromBytes(data)
+</code></pre>
+<p>Generate data id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data as bytes sequence</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>id as hex string</p>
+<p><a name="dposlib.ark.crypto.getBytes"></a></p>
+<h4 id="getbytes">getBytes<a class="headerlink" href="#getbytes" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getBytes(tx, **options)
+</code></pre>
+<p>Hash transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object
+  Keyword args:
+  exclude_sig (bool):
+  exclude signature during tx serialization [defalut: True]
+  exclude_multi_sig(bool):
+  exclude signatures during tx serialization [defalut: True]
+  exclude_second_sig(bool):
+  exclude second signatures during tx serialization [defalut: True]</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>bytes sequence</p>
+<p><a name="dposlib.ark.crypto.checkTransaction"></a></p>
+<h4 id="checktransaction">checkTransaction<a class="headerlink" href="#checktransaction" title="Permanent link">#</a></h4>
+<pre><code class="language-python">checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[])
+</code></pre>
+<p>Verify transaction validity.</p>
+<p><strong>Arguments</strong>:</p>
+<p>tx (dict or Transaction):
+  transaction object
+  secondPublicKey (str):
+  second public key to use if needed
+  multiPublicKeys (list):
+  owners public keys (sorted according to associated type-4-tx asset)</p>
+<p><strong>Returns</strong>:</p>
+<p>True if transaction is valid</p>
+<p><a name="dposlib.ark.ldgr"></a></p>
+<h1 id="dposlibarkldgr">dposlib.ark.ldgr<a class="headerlink" href="#dposlibarkldgr" title="Permanent link">#</a></h1>
+<p>This module contains functions to interoperate with <a href="https://ledger.com">Ledger</a> hard wallet.</p>
+<p><a name="dposlib.ark.ldgr.parseBip44Path"></a></p>
+<h4 id="parsebip44path">parseBip44Path<a class="headerlink" href="#parsebip44path" title="Permanent link">#</a></h4>
+<pre><code class="language-python">parseBip44Path(path)
+</code></pre>
+<p>Parse a <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">BIP44</a> derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>path</code> <em>str</em> - the derivation path</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>parsed bip44 path as bytes</p>
+<p><a name="dposlib.ark.ldgr.buildPukApdu"></a></p>
+<h4 id="buildpukapdu">buildPukApdu<a class="headerlink" href="#buildpukapdu" title="Permanent link">#</a></h4>
+<pre><code class="language-python">buildPukApdu(dongle_path)
+</code></pre>
+<p>Generate apdu to get public key from ledger key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>dongle_path</code> <em>bytes</em> - value returned by
+  <a href="./#parsebip44path"><code>dposlib.ark.ldgr.parseBip44Path</code></a></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>public key apdu data as bytes</p>
+<p><a name="dposlib.ark.ldgr.getPublicKey"></a></p>
+<h4 id="getpublickey">getPublicKey<a class="headerlink" href="#getpublickey" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getPublicKey(path=None, debug=False)
+</code></pre>
+<p>Compute the public key associated to a derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>hexadecimal compressed publicKey</p>
+<p><a name="dposlib.ark.ldgr.signMessage"></a></p>
+<h4 id="signmessage">signMessage<a class="headerlink" href="#signmessage" title="Permanent link">#</a></h4>
+<pre><code class="language-python">signMessage(msg, path=None, schnorr=True, debug=False)
+</code></pre>
+<p>Compute schnorr or ecdsa signature of msg according to derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>msg</code> <em>str or bytes</em> - transaction as dictionary</li>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul>
+<p><a name="dposlib.ark.ldgr.signTransaction"></a></p>
+<h4 id="signtransaction">signTransaction<a class="headerlink" href="#signtransaction" title="Permanent link">#</a></h4>
+<pre><code class="language-python">signTransaction(tx, path=None, schnorr=True, debug=False)
+</code></pre>
+<p>Append sender public key and signature into transaction according to
+derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dposlib.blockchain.tx.Transaction</em> - transaction</li>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
