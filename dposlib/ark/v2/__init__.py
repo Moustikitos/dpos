@@ -103,7 +103,7 @@ def _write_module(path, configuration={}, fees={}):
 def init(seed=None):
     """
     Blockchain initialisation. It stores root values in [`rest.cfg`](
-        network.md#rest
+        blockchain.md#dposlibblockchaincfg
     ) modules.
     """
     global DAEMON_PEERS
