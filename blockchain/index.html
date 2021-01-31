@@ -1,167 +1,142 @@
 <!DOCTYPE html>
+
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
-        <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Blockchain - The dposlib Project</title>
-        <link href="../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-
-        <script src="../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body>
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href="..">The dposlib Project</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="navitem">
-                                <a href=".." class="nav-link">Home</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../network/" class="nav-link">Network</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../crypto/" class="nav-link">Crypto</a>
-                            </li>
-                            <li class="navitem active">
-                                <a href="./" class="nav-link">Blockchain</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Blockchain - The dposlib Project</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+<div class="container">
+<a class="navbar-brand" href="..">The dposlib Project</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<!-- Main navigation -->
+<ul class="nav navbar-nav">
+<li class="navitem">
+<a class="nav-link" href="..">Home</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../network/">Network</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../crypto/">Crypto</a>
+</li>
+<li class="navitem active">
+<a class="nav-link" href="./">Blockchain</a>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" data-target="#mkdocs_search_modal" data-toggle="modal" href="#">
+<i class="fa fa-search"></i> Search
                             </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" href="../crypto/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../crypto/" rel="prev">
+<i class="fa fa-arrow-left"></i> Previous
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+</li>
+<li class="nav-item">
+<a class="nav-link disabled" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://github.com/Moustikitos/dposlib/edit/master/docs/blockchain.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
-
-    
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
-        <ul class="nav flex-column">
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibarkv2" class="nav-link">dposlib.ark.v2</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibarkv2api" class="nav-link">dposlib.ark.v2.api</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#wallet-objects" class="nav-link">Wallet Objects</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibarkv2mixin" class="nav-link">dposlib.ark.v2.mixin</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibblockchain" class="nav-link">dposlib.blockchain</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#jsdict-objects" class="nav-link">JSDict Objects</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#content-objects" class="nav-link">Content Objects</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#wallet-objects_1" class="nav-link">Wallet Objects</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibblockchaincfg" class="nav-link">dposlib.blockchain.cfg</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibblockchainslots" class="nav-link">dposlib.blockchain.slots</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#dposlibblockchaintx" class="nav-link">dposlib.blockchain.tx</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#transaction-objects" class="nav-link">Transaction Objects</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-        </ul>
-    </div>
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/Moustikitos/dposlib/edit/master/docs/blockchain.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibarkv2">dposlib.ark.v2</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibarkv2api">dposlib.ark.v2.api</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#wallet-objects">Wallet Objects</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchain">dposlib.blockchain</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#jsdict-objects">JSDict Objects</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#content-objects">Content Objects</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#wallet-objects_1">Wallet Objects</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchaincfg">dposlib.blockchain.cfg</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchaintx">dposlib.blockchain.tx</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#transaction-objects">Transaction Objects</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </div></div>
-                    <div class="col-md-9" role="main">
-
+<div class="col-md-9" role="main">
 <p><a name="dposlib.ark.v2"></a></p>
 <h1 id="dposlibarkv2">dposlib.ark.v2<a class="headerlink" href="#dposlibarkv2" title="Permanent link">#</a></h1>
 <p><a name="dposlib.ark.v2.init"></a></p>
 <h4 id="init">init<a class="headerlink" href="#init" title="Permanent link">#</a></h4>
 <pre><code class="language-python">init(seed=None)
 </code></pre>
-<p>Blockchain initialisation. It stores root values in :mod:<code>cfg</code> modules.</p>
+<p>Blockchain initialisation. It stores root values in <a href="./#dposlibblockchaincfg"><code>rest.cfg</code></a> modules.</p>
 <p><a name="dposlib.ark.v2.stop"></a></p>
 <h4 id="stop">stop<a class="headerlink" href="#stop" title="Permanent link">#</a></h4>
 <pre><code class="language-python">stop()
 </code></pre>
-<p>Stop daemon initialized by <code>init</code> call.</p>
+<p>Stop daemon initialized by <a href="./#init"><code>init</code></a> call.</p>
 <p><a name="dposlib.ark.v2.transfer"></a></p>
 <h4 id="transfer">transfer<a class="headerlink" href="#transfer" title="Permanent link">#</a></h4>
 <pre><code class="language-python">transfer(amount, address, vendorField=None, expiration=0)
 </code></pre>
 <p>Build a transfer transaction. Emoji can be included in transaction
 vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u&quot;message with sparkles \u2728&quot;
+<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -259,7 +234,7 @@ vendorField using unicode formating.</p>
 </code></pre>
 <p>Build multi-payment transaction. Emoji can be included in transaction
 vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u&quot;message with sparkles \u2728&quot;
+<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -292,7 +267,7 @@ vendorField using unicode formating.</p>
 </code></pre>
 <p>Build an HTLC lock transaction. Emoji can be included in transaction
 vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u&quot;message with sparkles \u2728&quot;
+<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -369,8 +344,6 @@ vendorField using unicode formating.</p>
  | refundHtlc(txid)
 </code></pre>
 <p>See <a href="./#refundhtlc"><code>dposlib.ark.v2.htlcRefund</code></a>.</p>
-<p><a name="dposlib.ark.v2.mixin"></a></p>
-<h1 id="dposlibarkv2mixin">dposlib.ark.v2.mixin<a class="headerlink" href="#dposlibarkv2mixin" title="Permanent link">#</a></h1>
 <p><a name="dposlib.blockchain"></a></p>
 <h1 id="dposlibblockchain">dposlib.blockchain<a class="headerlink" href="#dposlibblockchain" title="Permanent link">#</a></h1>
 <p><a name="dposlib.blockchain.isLinked"></a></p>
@@ -422,7 +395,7 @@ considered as <code>None</code>.</p>
 can be a <code>dict</code> or a <code>list</code>. If it is a <code>list</code>, it is stored in <code>data</code>
 attribute else all fields are stored as instance attribute.</p>
 <pre><code class="language-python">&gt;&gt;&gt; txs = blockchain.Content(rest.GET.api.transactions)
-&gt;&gt;&gt; txs.data[0][&quot;timestamp&quot;]
+&gt;&gt;&gt; txs.data[0]["timestamp"]
 {
     'epoch': 121912776,
     'unix': 1612013976,
@@ -430,7 +403,7 @@ attribute else all fields are stored as instance attribute.</p>
 }
 &gt;&gt;&gt; tx = blockchain.Content(
     rest.GET.api.transactions,
-    &quot;d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9&quot;,
+    "d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9",
 )
 &gt;&gt;&gt; tx.timestamp
 {
@@ -535,16 +508,6 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 <li>version:</li>
 <li>wif:</li>
 </ul>
-<p><a name="dposlib.blockchain.slots"></a></p>
-<h1 id="dposlibblockchainslots">dposlib.blockchain.slots<a class="headerlink" href="#dposlibblockchainslots" title="Permanent link">#</a></h1>
-<p><a name="dposlib.blockchain.slots.getTimestamp"></a></p>
-<h4 id="gettimestamp">getTimestamp<a class="headerlink" href="#gettimestamp" title="Permanent link">#</a></h4>
-<pre><code class="language-python">getTimestamp(**kw)
-</code></pre>
-<p>Return blockchain timestamp from timedelta given as keyword arument.</p>
-<pre><code class="language-python">&gt;&gt;&gt; from dposlib.blockchain import slots
-&gt;&gt;&gt; slots.getTimestamp(days=6, hours=4, minutes=20)
-</code></pre>
 <p><a name="dposlib.blockchain.tx"></a></p>
 <h1 id="dposlibblockchaintx">dposlib.blockchain.tx<a class="headerlink" href="#dposlibblockchaintx" title="Permanent link">#</a></h1>
 <p><a name="dposlib.blockchain.tx.computeDynamicFees"></a></p>
@@ -593,7 +556,7 @@ generate valid transactions.</p>
 <p><a name="dposlib.blockchain.tx.Transaction.useDynamicFee"></a></p>
 <h4 id="usedynamicfee">useDynamicFee<a class="headerlink" href="#usedynamicfee" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @staticmethod
- | useDynamicFee(value=&quot;minFee&quot;)
+ | useDynamicFee(value="minFee")
 </code></pre>
 <p>Activate and configure dynamic fees parameters. Value can be either an
 integer defining the fee multiplier constant or a string defining the
@@ -713,84 +676,81 @@ privateKey.</p>
 <li><code>fee</code> <em>int</em> - manually set fee value in <code>satoshi</code></li>
 <li><code>fee_included</code> <em>bool</em> - see <a href="./#feeincluded"><code>Transaction.feeIncluded</code></a></li>
 </ul></div>
-            </div>
-        </div>
-
-        <footer class="col-md-12">
-            <hr>
-                <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
             var base_url = "..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../js/base.js" defer></script>
-        <script src="../search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-                <p>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="../search/main.js"></script>
+<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="searchModalLabel">Search</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<p>
                     From here you can search these documents. Enter
                     your search terms below.
                 </p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
+<form>
+<div class="form-group">
+<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
 </div>
-
-    </body>
+</form>
+<div id="mkdocs-search-results"></div>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
 </html>

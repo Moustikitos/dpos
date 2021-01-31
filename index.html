@@ -1,491 +1,237 @@
 <!DOCTYPE html>
+
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="None">
-        
-        
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <title>The dposlib Project</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body class="homepage">
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href=".">The dposlib Project</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="navitem active">
-                                <a href="." class="nav-link">Home</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="network/" class="nav-link">Network</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="crypto/" class="nav-link">Crypto</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="blockchain/" class="nav-link">Blockchain</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="None" name="description"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>The dposlib Project</title>
+<link href="css/bootstrap.min.css" rel="stylesheet"/>
+<link href="css/font-awesome.min.css" rel="stylesheet"/>
+<link href="css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script defer="" src="js/jquery-1.10.2.min.js"></script>
+<script defer="" src="js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body class="homepage">
+<div class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+<div class="container">
+<a class="navbar-brand" href=".">The dposlib Project</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<!-- Main navigation -->
+<ul class="nav navbar-nav">
+<li class="navitem active">
+<a class="nav-link" href=".">Home</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="network/">Network</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="crypto/">Crypto</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="blockchain/">Blockchain</a>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" data-target="#mkdocs_search_modal" data-toggle="modal" href="#">
+<i class="fa fa-search"></i> Search
                             </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" class="nav-link disabled">
-                                    <i class="fa fa-arrow-left"></i> Previous
+</li>
+<li class="nav-item">
+<a class="nav-link disabled" rel="prev">
+<i class="fa fa-arrow-left"></i> Previous
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="network/" class="nav-link">
+</li>
+<li class="nav-item">
+<a class="nav-link" href="network/" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://github.com/Moustikitos/dposlib/edit/master/docs/index.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
-
-    
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
-        <ul class="nav flex-column">
-            
-            
-            <li class="nav-item" data-level="1"><a href="#quick-view" class="nav-link">Quick View</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#ubuntu-dependencies-installation" class="nav-link">Ubuntu dependencies installation</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#available-network" class="nav-link">Available network</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#main-features" class="nav-link">Main features</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#version" class="nav-link">Version</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-        </ul>
-    </div>
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/Moustikitos/dposlib/edit/master/docs/index.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlib-ark-api-for-humans">dposlib: Ark API for Humans</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</div>
 </div></div>
-                    <div class="col-md-9" role="main">
-
-<blockquote>
-<p><code>dposlib</code> package aims to provide a simple API to ARK blockchain and forks.</p>
-</blockquote>
-<p><a href="https://travis-ci.com/Moustikitos/dpos"><img alt="Build Status" src="https://travis-ci.com/Moustikitos/dpos.svg?branch=master" /></a>
-<a href="https://dpos.readthedocs.io/en/latest/?badge=latest"><img alt="Sphinx Status" src="https://readthedocs.org/projects/dpos/badge/?version=latest" /></a>
-<a href="https://pypi.python.org/pypi/dposlib"><img alt="PyPI pyversions" src="https://img.shields.io/pypi/pyversions/dposlib.svg" /></a>
-<a href="https://pypi.python.org/pypi/dposlib"><img alt="PyPI version shields.io" src="https://img.shields.io/pypi/v/dposlib.svg" /></a>
-<a href="https://GitHub.com/Moustikitos/dpos/tags"><img alt="GitHub release" src="https://img.shields.io/github/tag/Moustikitos/dpos.svg" /></a>
-<a href="https://pepy.tech/project/dposlib"><img alt="Downloads" src="https://pepy.tech/badge/dposlib/week" /></a></p>
-<h3 id="support-this-project">Support this project<a class="headerlink" href="#support-this-project" title="Permanent link">#</a></h3>
-<p><a href="https://liberapay.com/Toons/donate"><img alt="Liberapay receiving" src="https://img.shields.io/liberapay/goal/Toons?logo=liberapay" /></a></p>
-<p><a href="https://bittrex.com/Account/Register?referralCode=NW5-DQO-QMT">Buy &#1126;</a> and:</p>
-<ul>
-<li>[X] Send &#1126; to <code>AUahWfkfr5J4tYakugRbfow7RWVTK35GPW</code></li>
-<li>[X] Vote <code>arky</code> on <a href="https://explorer.ark.io">Ark blockchain</a> and <a href="http://arky-delegate.info/arky">earn &#1126; weekly</a></li>
-</ul>
-<h1 id="quick-view">Quick View<a class="headerlink" href="#quick-view" title="Permanent link">#</a></h1>
-<h2 id="ubuntu-dependencies-installation">Ubuntu dependencies installation<a class="headerlink" href="#ubuntu-dependencies-installation" title="Permanent link">#</a></h2>
-<pre><code class="language-bash">sudo apt-get install python python-dev python3 python3-dev
-sudo apt-get install python-setuptools python3-setuptools
-sudo apt-get install python-pip python3-pip
-</code></pre>
-<h2 id="available-network">Available network<a class="headerlink" href="#available-network" title="Permanent link">#</a></h2>
-<ul>
-<li>Ark-core 3.0 (<code>API</code>+ transaction type <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>, <code>8</code>, <code>9</code> &amp; <code>10</code>)<ul>
-<li>[X] devnet : <code>dark</code></li>
-</ul>
-</li>
-<li>Ark-core 2.6 (<code>API</code>+ transaction type <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>, <code>8</code>, <code>9</code> &amp; <code>10</code>)<ul>
-<li>[X] mainet : <code>ark</code></li>
-<li>[X] devnet : <code>dark2</code></li>
-</ul>
-</li>
-<li>Ark forks (<code>API</code>+ transaction type <code>0</code>, <code>1</code>, <code>2</code> &amp; <code>3</code>)<ul>
-<li>[x] Internet of People</li>
-<li>[X] mainet : <code>iop</code></li>
-<li>[X] devnet : <code>diop</code></li>
-<li>[x] Ripa : <code>ripa</code></li>
-<li>[x] Phantom : <code>phantom</code></li>
-<li>[x] Qredit : <code>qredit</code></li>
-</ul>
-</li>
-</ul>
-<h2 id="main-features">Main features<a class="headerlink" href="#main-features" title="Permanent link">#</a></h2>
-<h3 id="an-intuitive-rest-api">An intuitive REST API<a class="headerlink" href="#an-intuitive-rest-api" title="Permanent link">#</a></h3>
+<div class="col-md-9" role="main">
+<h1 id="dposlib-ark-api-for-humans">dposlib: Ark API for Humans<a class="headerlink" href="#dposlib-ark-api-for-humans" title="Permanent link">#</a></h1>
+<p><a href="https://pepy.tech/project/dposlib"><img alt="Downloads" src="https://pepy.tech/badge/dposlib/week"/></a>
+<a href="https://pypi.python.org/pypi/dposlib"><img alt="PyPI version shields.io" src="https://img.shields.io/pypi/v/dposlib.svg"/></a>
+<a href="https://GitHub.com/Moustikitos/dpos/tags"><img alt="GitHub release" src="https://img.shields.io/github/tag/Moustikitos/dpos.svg"/></a></p>
+<p><code>dposlib</code> is a simple package providing efficient API to interact with Ark blockchain and its forks. It is designed to run with both python 2 and 3.</p>
+<p>Simplicity of <code>REST</code> API:</p>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use(&quot;dark&quot;)
-True
-&gt;&gt;&gt; # ~/api/delegates/darktoons endpoint
-&gt;&gt;&gt; rest.GET.api.delegates.darktoons()
-{'data': {'username': 'darktoons', 'address': 'D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk', 'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'votes': 9385785081642, 'rank': 45, 'blocks': {'produced': 32015, 'last': {'id': '9d5085e503e09c656152b541bc243155f560347aa8b377d3f2f9a1cb71900d90', 'height': 2544602, 'timestamp': {'epoch': 69406864, 'unix': 1559508064, 'human': '2019-06-02T20:41:04.000Z'}}}, 'production': {'approval': 0.07}, 'forged': {'fees': 14640580130, 'rewards': 6403000000000, 'total': 6417640580130}}}
-&gt;&gt;&gt; # ~/api/node/fees endpoint
-&gt;&gt;&gt; rest.GET.api.node.fees()
-{'meta': {'days': 7}, 'data': [{'type': '0', 'min': '200000', 'max': '10000000', 'avg': '1089596', 'sum': '14887144978', 'median': '460000'}, {'type': '1', 'min': '500000000', 'max': '500000000', 'avg': '500000000', 'sum': '313500000000', 'median': '500000000'}, {'type': '3', 'min': '10000000', 'max': '100000000', 'avg': '58541781', 'sum': '1756253430', 'median': '61114510'}]}
-&gt;&gt;&gt; rest.use(&quot;ark&quot;)
-True
-&gt;&gt;&gt; delegate0 = rest.GET.api.delegates(returnKey=&quot;data&quot;)[0]
-&gt;&gt;&gt; delegate0[&quot;username&quot;]
-u'binance_staking'
+&gt;&gt;&gt; # ~ https://explorer.ark.io:8443/api/delegates/arky
+&gt;&gt;&gt; rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
+{u'data': {u'username': u'arky', u'votes': u'172572088664599', u'blocks': {u'produced': 199859, u'last': {u'timestamp': {u'epoch': 84182056, u'unix': 1574283256, u'human': u'2019-11-20T20:54:16.000Z'}, u'id': u'5f5f9897f8fca2a5600ace0d75d67811c67df8111a7deea13d7d6b2c532fae43', u'height': 10380869}}, u'rank': 11, u'publicKey': u'030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e9', u'production': {u'approval': 1.35}, u'forged': {u'total': u'40118247659340', u'rewards': u'39687400000000', u'fees': u'430847659340'}, u'address': u'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE'}}
+&gt;&gt;&gt; # using returnKey arktoshi values are converted to ark
+&gt;&gt;&gt; rest.GET.api.transactions(peer="https://explorer.ark.io:8443", returnKey="data")[0]
+{u'fee': 0.00816, u'type': 0, u'sender': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY', u'timestamp': {u'epoch': 84182307, u'unix': 1574283507, u'human': u'2019-11-20T20:58:27.000Z'}, u'blockId': u'a1b305a87217c2f622a922a97a778c677f7dbd23031dae42e3b494883b855a70', u'vendorField': u'Payout from arkmoon', u'senderPublicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'amount': 20.52064264, u'version': 1, u'signSignature': u'304402200ac41802f33a5f377975efc9ebf39a666a9d76c2facb8773783289df7f6a9cd302206c5d2aed3359d3858fb3f4d5fc2a76952eb518cf9d242bb91fd11c0801e4ea4e', u'confirmations': 21, u'signature': u'3045022100dc6dbaa4b056f10268b587da290900725246e3239df1fa3e3c53445da36f03ee02206d57bbdff6d7f9ebca719a41112f23128f1a84161dd82597d63351e3c4d868b0', u'recipient': u'AXPLW2TzBsXcPiaeVGBSELEAXj4RPaWNjB', u'id': u'efeab09925c3347b4a18854a9192d7d722ee32850a7bf91d57628cb77714192e'}
+&gt;&gt;&gt; # peer keyword is not mandatory when a blockchain is linked using rest.use directive
+&gt;&gt;&gt; rest.use("ark")
+&gt;&gt;&gt; # ~ GET /api/blocks endpoint
+&gt;&gt;&gt; rest.GET.api.blocks(returnKey="data")[0]
+{u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 </code></pre>
-<h3 id="fast-way-to-interact-with-blockchain">Fast way to interact with blockchain<a class="headerlink" href="#fast-way-to-interact-with-blockchain" title="Permanent link">#</a></h3>
-<pre><code class="language-python">&gt;&gt;&gt; import dposlib
-&gt;&gt;&gt; rest.use(&quot;dark&quot;)
-&gt;&gt;&gt; # send 1 token to D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk with a simple message
-&gt;&gt;&gt; tx = dposlib.core.transfer(1, &quot;D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk&quot;, &quot;message&quot;)
-&gt;&gt;&gt; # sign tx with secret and [optional second secret]
-&gt;&gt;&gt; tx.finalize(&quot;first secret&quot;, &quot;second secret&quot;)
+<p>ECDSA and SCHNORR signatures can be performed using <code>dposlib.ark.sig</code> and <code>dposlib.ark.crypto</code> modules:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import dposlib.ark.sig as sig
+&gt;&gt;&gt; import dposlib.ark.crypto as crypto
+&gt;&gt;&gt; keys = crypto.getKeys("secret")
+&gt;&gt;&gt; keys
+{'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
+&gt;&gt;&gt; s = sig.Signature.ecdsa_sign("simple message", keys["privateKey"])
+&gt;&gt;&gt; s
+&lt;secp256k1 signature:
+  r:d811a0321a2e31b0492c1b1b1c4dc3b58055b53cdc9308492b3de71c765f5914
+  s:4747219a0d74d49a42305c040a91e6a8acd39e6d06b21ec1805bd31c6d871b4f
+&gt;
+&gt;&gt;&gt; s.der
+b"0D\x02N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe1\xdf&amp;\xf7\xdd\xce\\u\x02g\x8b\xa9\x90V\xaa\xdf\xa7\xf2-;z\xa5.D\x8bq8ehG\xb7\x11\x07-`\xd2\xd9\xd3.\xc4v"
+&gt;&gt;&gt; crypto.hexlify(s.der)
+'3044022041e5aa3da79523a2b342180cb7c04056f8f02e005ea6ec1f14094c66d692f04402200261177cdd88525249a0619d6009adbc6681c250c83748c0cde611f21f543008'
+&gt;&gt;&gt; crypto.hexlify(s.raw)
+'4e1310384ad0d6ff8027f2f860d628b2a640030b4623a393e1df26f7ddce5c75678ba99056aadfa7f22d3b7aa52e448b7138656847b711072d60d2d9d32ec476'
+&gt;&gt;&gt; crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
+'5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
+</code></pre>
+<p><code>dposlib.ark.v2</code> package provides <code>dposlib.blockchain.Transaction</code> class and its associated builders:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
+&gt;&gt;&gt; rest.use("dark")
+True
+&gt;&gt;&gt; from dposlib.ark.v2 import *
+&gt;&gt;&gt; tx = transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"simple message with sparkle \u2728", version=2)
+&gt;&gt;&gt; tx.finalize("first secret", "second secret")
 &gt;&gt;&gt; tx
 {
-  &quot;amount&quot;: 100000000,
-  &quot;asset&quot;: {},
-  &quot;fee&quot;: 1090241,
-  &quot;id&quot;: &quot;1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d&quot;,
-  &quot;recipientId&quot;: &quot;D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk&quot;,
-  &quot;senderId&quot;: &quot;D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk&quot;,
-  &quot;senderPublicKey&quot;: &quot;03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933&quot;,
-  &quot;signSignature&quot;: &quot;3045022100a8dd9c50b18002bd6f8ffe9f1c0700cafb95de18670b48fa76afd85c3003a2d202200a1cc102c13857a38d8311a5c80a9222329f0c53f3305c70c91979efd5288d21&quot;,
-  &quot;signature&quot;: &quot;304402206576aee7893f3c038d58a6def5180881077531c4b1ebe87e835da2dbe40d0670022064ae37be3f160b0c969459e06912ee619997ccf303e6d919135cdf594a74b77d&quot;,
-  &quot;timestamp&quot;: 69407340,
-  &quot;type&quot;: 0,
-  &quot;vendorField&quot;: &quot;message&quot;
+    "amount": 100000000,
+    "asset": {},
+    "expiration": 0,
+    "fee": 4013642,
+    "id": "041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38",
+    "network": 30,
+    "nonce": 377,
+    "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+    "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+    "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+    "signSignature": "3d29356c77b63c2d6ce679dad95961b40ea606823bf729a158df5c8378c79c5588ad675ee147a7f77b18518c5bdf9b1a73567d72c3af0bfbe22043b9e1a95e6f",
+    "signature": "871ac31e7bad08b684b27f1b8a4b9f9f760bb32d1d36cc03e03872edc6070f8d9fec2621ea87e2ea0ae7750e0e7a5db52f39b32e05af76a4331a92e17dbe9f4a",
+    "timestamp": 84186531,
+    "type": 0,
+    "typeGroup": 1,
+    "vendorField": "simple message with sparkle \u2728",
+    "version": 2
 }
-&gt;&gt;&gt; # broadcast transaction
-&gt;&gt;&gt; rest.POST.api.transactions(transactions=[tx])
-{'data': {'accept': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'broadcast': ['1e967879eb134712afd2b2a606be8460468b80aab857fa99a88cf8da0d72bd5d'], 'excess': [], 'invalid': []}}
-</code></pre>
-<h3 id="network-api">Network API<a class="headerlink" href="#network-api" title="Permanent link">#</a></h3>
-<pre><code class="language-python">&gt;&gt;&gt; import dposlib
-&gt;&gt;&gt; rest.use(&quot;ark&quot;)
-&gt;&gt;&gt; dlgt = dposlib.core.api.Delegate(&quot;arky&quot;)  # get delegate by username
-&gt;&gt;&gt; dlgt.forged
-{'fees': 3294.7, 'forged': 227230.7, 'rewards': 223936.0}
-&gt;&gt;&gt; dlgt.address
-'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE'
-&gt;&gt;&gt; blk = dlgt.lastBlock  # get last forged block
-&gt;&gt;&gt; blk
-{
-  &quot;blockSignature&quot;: &quot;304402200a496a628c2741537538f0492f9d683d3c4f1b30c8dd03c33ad8fbe79d08b6eb02206cdec7e1210db53a3ca22da30912479ff3644d3a1ed1d878417d5965f34dfd6d&quot;,
-  &quot;confirmations&quot;: 68,
-  &quot;generatorId&quot;: &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
-  &quot;generatorPublicKey&quot;: &quot;030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e9&quot;,
-  &quot;height&quot;: 5862354,
-  &quot;id&quot;: &quot;1894085440657345411&quot;,
-  &quot;numberOfTransactions&quot;: 0,
-  &quot;payloadHash&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;,
-  &quot;payloadLength&quot;: 0,
-  &quot;previousBlock&quot;: &quot;11181074894913507025&quot;,
-  &quot;reward&quot;: 2.0,
-  &quot;timestamp&quot;: 47535768,
-  &quot;totalAmount&quot;: 0.0,
-  &quot;totalFee&quot;: 0.0,
-  &quot;totalForged&quot;: 2.0,
-  &quot;version&quot;: 0
-}
-&gt;&gt;&gt; blk.transactions()
-[]
-&gt;&gt;&gt; wlt = dposlib.core.api.Wallet(dlgt.address) # get wallet by address
-&gt;&gt;&gt; wlt.balance
-2537.42979112
-&gt;&gt;&gt; for elem in [(tx[&quot;recipientId&quot;], tx[&quot;amount&quot;]) for tx in wlt.lastTransactions(2)]:
-...     print(elem)
-...
-('AHMXV6UdkVxsTwMqeoeqdpotRRmGZZaAtj', 0.08403461)
-('AUahWfkfr5J4tYakugRbfow7RWVTK35GPW', 329.32420472)
-&gt;&gt;&gt; wlt.link(&quot;secret passphrase here&quot;)
-&gt;&gt;&gt; wlt.send(1, &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;)
-{'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
-</code></pre>
-<!-- ### Ledger.com wallet integration
-
-If you want to use `dposlib.ark.ldgr` module, you need to install ledgerblue
-package and its dependencies:
-
-
-<pre><code class="language-bash">sudo apt-get install libudev-dev libusb-1.0.0-dev
-pip install ledgerblue
-</code></pre>
-
-
-
-<pre><code class="language-python">&gt;&gt;&gt; rest.use(&quot;dark&quot;)
-&gt;&gt;&gt; ldg = dposlib.core.api.NanoS(0, 0, 0)
-&gt;&gt;&gt; ldg
-{
-  &quot;address&quot;: &quot;DEVx3osw9Rj1wZhoUf2dMbPmmUN9P3XFpb&quot;,
-  &quot;balance&quot;: 69.9939675,
-  &quot;isDelegate&quot;: true,
-  &quot;publicKey&quot;: &quot;025993c687f1e3418e0aa47b6ab091e414b51c45b32a107745c01c124652112c7a&quot;,
-}
-&gt;&gt;&gt; ldg.derivationPath
-&quot;44'/1'/1'/0'/0&quot;
-&gt;&gt;&gt; ldg.send(1, &quot;DGuuCwJYoEheBAC4PZTBSBasaDHxg2e6j7&quot;)
-</code></pre>
-
-<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/doc/static/ledger_confirm.png" />
-
-
-<pre><code class="language-python">{'data': {'accept': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'broadcast': ['7445b0748aae8778bcd73d2ca40d8cc19ffee7b68ea89f05e1934b96dd73ed2f'], 'excess': [], 'invalid': []}}
-&gt;&gt;&gt; ldg.upVote(&quot;darktoons&quot;)
-</code></pre>
-
-<img src="https://raw.githubusercontent.com/Moustikitos/dpos/master/doc/static/ledger_confirm.png" />
-
-```python
-{'data': {'accept': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'broadcast': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'excess': [], 'invalid': []}}
->>> dposlib.core.api.NanoS.fromDerivationPath("44'/1'/0'/0/0")
-{
-  "address": "DDC7kWToyvfKa8dvRTXitr7o5FHMVKtBve",
-  "balance": 95.20477813,
-  "publicKey": "038473178d89988b1f8428efe758b99ebf1d49c47b679f3f4a9cdc0829fa6ece2b",
-  "vote": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933"
-}
-``` -->
-
-<h2 id="version">Version<a class="headerlink" href="#version" title="Permanent link">#</a></h2>
-<h3 id="035-current-work">0.3.5 <a href="https://github.com/Moustikitos/dpos/archive/master.zip">current work</a><a class="headerlink" href="#035-current-work" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] ledger.com Ark app support</li>
-<li>[ ] Ark-core v 3.0.x compliancy</li>
-<li>[ ] <code>entity</code> and <code>business</code> transactions implementation</li>
-</ul>
-<h3 id="034">0.3.4<a class="headerlink" href="#034" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] removed <code>requests</code> dependency</li>
-<li>[x] multisignature api and app run as system services</li>
-</ul>
-<h3 id="033">0.3.3<a class="headerlink" href="#033" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] offline start fixed</li>
-<li>[x] <code>api.Wallet</code> fixed</li>
-<li>[x] added pythonic <code>datetime</code> attribute to <code>Transaction</code> class</li>
-</ul>
-<h3 id="032">0.3.2<a class="headerlink" href="#032" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] better <code>vendorFieldHex</code> field  handling</li>
-<li>[x] <code>dposlib.blockchain.Transaction</code> behaviour improvement</li>
-<li>[x] tx versioning defined in <code>net</code> module</li>
-<li>[x] bridge for ark-core 2.5 and 2.6</li>
-</ul>
-<h3 id="031">0.3.1<a class="headerlink" href="#031" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] multisignature client-server api</li>
-</ul>
-<h3 id="030">0.3.0<a class="headerlink" href="#030" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] <code>flake8</code> compliancy</li>
-<li>[x] Ark 2.6 compatibility</li>
-<li>[x] removed package resources dependencies</li>
-<li>[x] <code>ecdsa</code> lib replaced by builtin <code>secp256k1</code></li>
-<li>[x] added <a href="https://iop.global/">Iop</a> mainnet and devnet</li>
-<li>[x] Lisk and forks dev stopped</li>
-<li>[x] <code>ldgr</code> import now optional</li>
-<li>[x] sphinx doc added</li>
-</ul>
-<h3 id="022">0.2.2<a class="headerlink" href="#022" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] Ark v2.5 headers fix</li>
-<li>[x] Ark v2.5 BigInt fix</li>
-<li>[x] packaging improvement</li>
-<li>[x] rest <code>returnKey</code> behaviour improvement</li>
-</ul>
-<h3 id="021">0.2.1<a class="headerlink" href="#021" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] added <code>lisk</code> blockchain</li>
-<li>[x] added <code>shift</code>, <code>t.shift</code> and <code>qredit</code> network</li>
-<li>[x] added .cold data in package distribution</li>
-<li>[x] transaction types <code>0</code>, <code>1</code> and <code>3</code> added to lisk.v09 network</li>
-<li>[x] python 2.x compliancy for util.data package</li>
-</ul>
-<h3 id="020">0.2.0<a class="headerlink" href="#020" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] ark.v2 api improvement</li>
-<li>[x] dposlib.util.misc module improvement</li>
-<li>[x] upVote/downVote bugfix</li>
-</ul>
-<h3 id="019">0.1.9<a class="headerlink" href="#019" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] <a href="https://travis-ci.com">travis-ci</a> integration</li>
-<li>[x] dposlib.core.Transaction interface improvement</li>
-<li>[x] Ark v1 and v2 cross-dependency removed</li>
-<li>[x] offline work feature added</li>
-</ul>
-<h3 id="018">0.1.8<a class="headerlink" href="#018" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] added ark v2.4 compatibility</li>
-<li>[x] api wallet link using getpass library</li>
-<li>[x] added ledger nano S support (transaction type 0, 1, 2 &amp; 3)</li>
-<li>[x] peer selection now checks syncing status</li>
-</ul>
-<h3 id="017">0.1.7<a class="headerlink" href="#017" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] added <code>transaction</code> and <code>rest</code> MarkDown documentation files</li>
-<li>[x] dposlib.core.api is both python 2.x and 3.x compliant</li>
-<li>[x] added Webhook api (experimental)</li>
-<li>[x] fee data initialisation improvement</li>
-<li>[x] transaction broadcasting improvement</li>
-<li>[x] peer selection improvement</li>
-<li>[x] Lisk blockchain and forks developpement frozen</li>
-</ul>
-<h3 id="016">0.1.6<a class="headerlink" href="#016" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] Ark-core v 2.1.x compatibility</li>
-</ul>
-<h3 id="015">0.1.5<a class="headerlink" href="#015" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] compatibility with both ark-core v2 devnet and mainnet</li>
-</ul>
-<h3 id="014">0.1.4<a class="headerlink" href="#014" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] Python 2.x compatibility fix</li>
-<li>[x] dposlib.core.Transaction.sign does not set fees anymore</li>
-<li>[x] dposlib.core.Transaction.finalize set fees before signature</li>
-<li>[x] dposlib.core.Transaction fee management improved</li>
-</ul>
-<h3 id="013">0.1.3<a class="headerlink" href="#013" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] REST requests header bugfix (ubuntu)</li>
-</ul>
-<h3 id="012">0.1.2<a class="headerlink" href="#012" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] Packaging improvement</li>
-</ul>
-<h3 id="011">0.1.1<a class="headerlink" href="#011" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] ARK packaging improvement (<code>v1</code> and <code>v2</code>)</li>
-<li>[x] LISK packaging improvement (<code>v09</code> and <code>v10</code>)</li>
-<li>[x] ARK dynamicFee implementation</li>
-<li>[x] Network API created</li>
-</ul>
-<h3 id="010">0.1.0<a class="headerlink" href="#010" title="Permanent link">#</a></h3>
-<ul>
-<li>[x] First rebrand</li>
-</ul></div>
-            </div>
-        </div>
-
-        <footer class="col-md-12">
-            <hr>
-                <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
+&gt;&gt;&gt; broadcastTransactions(tx)
+{u'data': {u'broadcast': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'invalid': [], u'accept': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'excess': []}}
+</code></pre></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
             var base_url = ".",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-                <p>
+<script defer="" src="js/base.js"></script>
+<script defer="" src="search/main.js"></script>
+<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="searchModalLabel">Search</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<p>
                     From here you can search these documents. Enter
                     your search terms below.
                 </p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
+<form>
+<div class="form-group">
+<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
 </div>
-
-    </body>
+</form>
+<div id="mkdocs-search-results"></div>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
 </html>
-
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-01-31 10:13:25.940521+00:00
+Build Date UTC : 2021-01-31 14:11:00.819704+00:00
 -->
