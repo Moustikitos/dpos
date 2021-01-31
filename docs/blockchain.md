@@ -9,7 +9,7 @@ init(seed=None)
 ```
 
 Blockchain initialisation. It stores root values in [`rest.cfg`](
-    network.md#rest
+    blockchain.md#dposlibblockchaincfg
 ) modules.
 
 <a name="dposlib.ark.v2.stop"></a>

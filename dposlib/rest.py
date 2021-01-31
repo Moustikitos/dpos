@@ -9,8 +9,10 @@ implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
 ) to see how to use http calls.
 
 `rest` also creates a `core` module containing
-`dposlib.blockchain.tx.Transaction` builders, `dposlib.ark.crypto`
-and `dposlib.ark.v2.api` interface.
+[`dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects)
+builders, [`dposlib.ark.crypto`](crypto.md) and [`dposlib.ark.v2.api`](
+    blockchain.md#dposlibarkv2api
+) interface.
 
 ## `rest` HTTP request builder
 ```python
