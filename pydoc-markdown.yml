@@ -1,0 +1,38 @@
+loaders:
+  - type: python
+processors:
+  - type: crossref
+  - type: filter
+    expression: not 'cold' in name and default()
+  - type: smart
+renderer:
+  output_directory: .
+  content_directory_name: docs
+  type: mkdocs
+  pages:
+    - title: Home
+      name: index
+      source: README.md
+    - title: Network
+      contents:
+        - dposlib.rest*
+    - title: Crypto
+      contents:
+        - dposlib.ark.crypto*
+        - dposlib.ark.ldgr*
+    - title: Blockchain
+      contents:
+        - dposlib.blockchain
+        - dposlib.blockchain*
+        - dposlib.ark.v2.*
+        - dposlib.ark.v2.api*
+  mkdocs_config:
+    site_name: The dposlib Project
+    repo_url: https://github.com/Moustikitos/dposlib
+    repo_name: GitHub
+    copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
+    theme: mkdocs
+    markdown_extensions:
+    - toc:
+        permalink: "#"
+        baselevel: 1

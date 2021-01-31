@@ -21,11 +21,10 @@ def getKeys(secret):
     (WIF).
 
     Args:
-        secret (:class:`str`, :class:`bytes` or :class:`int`):
+        secret (str, bytes or int):
             anything that could issue a private key on secp256k1 curve
-
     Returns:
-        :class:`dict`: public, private and WIF keys
+        public, private and WIF keys
     """
     if isinstance(secret, (str, bytes, unicode)):
         try:
@@ -44,16 +43,15 @@ def getKeys(secret):
 
 def getMultiSignaturePublicKey(minimum, *publicKeys):
     """
-    Compute ARK multi signature public key according to
-    `ARK AIP #18 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18\
-.md>`_.
+    Compute ARK multi signature public key according to [ARK AIP #18](
+        https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md
+    ).
 
     Args:
-        minimum (:class:`int`): minimum signature required
-        publicKeys (:class:`list of str`): public key list
-
+        minimum (int): minimum signature required
+        publicKeys (list of str): public key list
     Returns:
-        :class:`str`: the multisignature public key
+        the multisignature public key
     """
     if 2 > minimum > len(publicKeys):
         raise ValueError("min signatures value error")
@@ -68,11 +66,10 @@ def getAddressFromSecret(secret, marker=None):
     Compute ARK address from secret.
 
     Args:
-        secret (:class:`str`): secret string
-        marker (:class:`int`): network marker (optional)
-
+        secret (str): secret string
+        marker (int): network marker (optional)
     Returns:
-        :class:`str`: the address
+        the address
     """
     return getAddress(getKeys(secret)["publicKey"], marker)
 
@@ -82,11 +79,10 @@ def getAddress(publicKey, marker=None):
     Compute ARK address from publicKey.
 
     Args:
-        publicKey (:class:`str`): public key
-        marker (:class:`int`): network marker (optional)
-
+        publicKey (str): public key
+        marker (int): network marker (optional)
     Returns:
-        :class:`str`: the address
+        the address
     """
     if marker and isinstance(marker, int):
         marker = hex(marker)[2:]
@@ -103,10 +99,9 @@ def getWIF(seed):
     Compute WIF address from seed.
 
     Args:
-        seed (:class:`bytes`): a sha256 sequence bytes
-
+        seed (bytes): a sha256 sequence bytes
     Returns:
-        :class:`str`: WIF address
+        WIF address
     """
     if hasattr(cfg, "wif"):
         seed = unhexlify(cfg.wif) + seed[:32] + b"\x01"  # \x01 -> compressed
@@ -119,13 +114,10 @@ def wifSignature(tx, wif):
     Generate transaction signature using private key.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction description
-        wif (:class:`str`):
-            wif key
-
+        tx (dict or Transaction): transaction description
+        wif (str): wif key
     Returns:
-        :class:`str`: signature
+        signature
     """
     return wifSignatureFromBytes(getBytes(tx), wif)
 
@@ -135,11 +127,10 @@ def wifSignatureFromBytes(data, wif):
     Generate signature from data using WIF key.
 
     Args:
-        data (:class:`bytes`): bytes sequence
-        wif (:class:`str`): wif key
-
+        data (bytes): bytes sequence
+        wif (str): wif key
     Returns:
-        :class:`str`: signature
+        signature
     """
     seed = base58.b58decode_check(
         str(wif) if not isinstance(wif, bytes) else wif
@@ -152,20 +143,17 @@ def getSignature(tx, privateKey, **options):
     Generate transaction signature using private key.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction description
-        privateKey (:class:`str`):
-            private key as hex string
+        tx (dict or Transaction): transaction description
+        privateKey (str): private key as hex string
     Keyword args:
-        exclude_sig (:class:`bool`):
+        exclude_sig (bool):
             exclude signature during tx serialization [defalut: True]
-        exclude_multi_sig(:class:`bool`):
+        exclude_multi_sig(bool):
             exclude signatures during tx serialization [defalut: True]
-        exclude_second_sig(:class:`bool`):
+        exclude_second_sig(bool):
             exclude second signatures during tx serialization [defalut: True]
-
     Returns:
-        :class:`str`: signature
+        signature
     """
     return getSignatureFromBytes(getBytes(tx, **options), privateKey)
 
@@ -175,11 +163,10 @@ def getSignatureFromBytes(data, privateKey):
     Generate signature from data using private key.
 
     Args:
-        data (:class:`bytes`): bytes sequence
-        privateKey (:class:`str`): private key as hex string
-
+        data (bytes): bytes sequence
+        privateKey (str): private key as hex string
     Returns:
-        :class:`str`: signature as hex string
+        signature as hex string
     """
     secret0 = unhexlify(privateKey)
     msg = secp256k1.hash_sha256(data)
@@ -194,12 +181,11 @@ def verifySignature(value, publicKey, signature):
     Verify signature.
 
     Args:
-        value (:class:`str`): value as hex string
-        publicKey (:class:`str`): public key as hex string
-        signature (:class:`str`): signature as hex string
-
+        value (str): value as hex string
+        publicKey (str): public key as hex string
+        signature (str): signature as hex string
     Returns:
-        :class:`bool`: true if signature matches the public key
+        True if signature matches the public key
     """
     return verifySignatureFromBytes(unhexlify(value), publicKey, signature)
 
@@ -209,12 +195,11 @@ def verifySignatureFromBytes(data, publicKey, signature):
     Verify signature.
 
     Args:
-        data (:class:`bytes`): data
-        publicKey (:class:`str`): public key as hex string
-        signature (:class:`str`): signature as hex string
-
+        data (bytes): data
+        publicKey (str): public key as hex string
+        signature (str): signature as hex string
     Returns:
-        :class:`bool`: true if signature matches the public key
+        True if signature matches the public key
     """
     pubkey = unhexlify(publicKey)
     msg = secp256k1.hash_sha256(data)
@@ -230,11 +215,9 @@ def getId(tx):
     Generate transaction id.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction object
-
+        tx (dict or Transaction): transaction object
     Returns:
-        :class:`str`: id as hex string
+        id as hex string
     """
     return getIdFromBytes(getBytes(tx, exclude_multi_sig=False))
 
@@ -244,10 +227,9 @@ def getIdFromBytes(data):
     Generate data id.
 
     Args:
-        data (:class:`bytes`): data as bytes sequence
-
+        data (bytes): data as bytes sequence
     Returns:
-        :class:`str`: id as hex string
+        id as hex string
     """
     return hexlify(secp256k1.hash_sha256(data))
 
@@ -258,18 +240,16 @@ def getBytes(tx, **options):
     Hash transaction.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction object
+        tx (dict or Transaction): transaction object
     Keyword args:
-        exclude_sig (:class:`bool`):
+        exclude_sig (bool):
             exclude signature during tx serialization [defalut: True]
-        exclude_multi_sig(:class:`bool`):
+        exclude_multi_sig(bool):
             exclude signatures during tx serialization [defalut: True]
-        exclude_second_sig(:class:`bool`):
+        exclude_second_sig(bool):
             exclude second signatures during tx serialization [defalut: True]
-
     Returns:
-        :class:`bytes`: bytes sequence
+        bytes sequence
     """
     if tx.get("version", 0x01) >= 0x02:
         return serialize(tx, **options)
@@ -337,15 +317,14 @@ def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
     Verify transaction validity.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
+        tx (dict or Transaction):
             transaction object
-        secondPublicKey (:class:`str`):
+        secondPublicKey (str):
             second public key to use if needed
-        multiPublicKeys (:class:`list`):
+        multiPublicKeys (list):
             owners public keys (sorted according to associated type-4-tx asset)
-
     Returns:
-        :class:`bool`: true if transaction is valid
+        True if transaction is valid
     """
     checks = []
     version = tx.get("version", 0x01)

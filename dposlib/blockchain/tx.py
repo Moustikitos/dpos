@@ -38,13 +38,14 @@ def setDynamicFee(cls, value):
 
 def computeDynamicFees(tx, FMULT=None):
     """
-    Compute transaction fees according to
-    `AIP 16 <https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md>`_
+    Compute transaction fees according to [AIP 16 ](
+        https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
+    ).
 
     Arguments:
-        tx (:class:`dict` or :class:`Transaction`): transaction object
+        tx (dict or Transaction): transaction object
     Returns:
-        :class:`int`: fees
+        fees
     """
     typ_ = tx.get("type", 0)
     version = tx.get("version", 0x01)
@@ -101,7 +102,7 @@ def deleteSenderPublicKey(cls):
 
 def setFeeIncluded(cls):
     """
-    Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
+    Arrange `amount` and `fee` values so the total `arktoshi` flow is
     the desired spent.
     """
     if cls["type"] in [0, 7] and cls["fee"] < cls["amount"]:
@@ -113,7 +114,7 @@ def setFeeIncluded(cls):
 
 def unsetFeeIncluded(cls):
     """
-    Arrange ``amount`` and ``fee`` values so the total ``arktoshi`` flow is
+    Arrange `amount` and `fee` values so the total `arktoshi` flow is
     the desired spent plus the fee.
     """
     if cls["type"] in [0, 7] and "_amount" in cls.__dict__:
@@ -152,419 +153,6 @@ def setTimestamp(cls, value):
     cls._reset()
 
 
-class Transaction(dict):
-    """
-    A python :class:`dict` that implements all the necessities to manually
-    generate valid transactions.
-    """
-
-    FMULT = None
-    FEESL = None
-
-    # custom properties definitions
-    datetime = property(
-        lambda cls: slots.getRealTime(cls["timestamp"]),
-        None,
-        None,
-        "Transaction timestamp returned as python datetime object"
-    )
-    fee = property(
-        lambda cls: cls.get("fee", None),
-        lambda cls, value: cls.setFee(value),
-        None,
-        ""
-    )
-    vendorField = property(
-        lambda cls: cls.get("vendorField", None),
-        lambda cls, value: setVendorField(cls, value),
-        lambda cls: setVendorField(cls, ""),
-        ""
-    )
-    vendorFieldHex = property(
-        lambda cls: hexlify(cls.get("vendorField", "").encode("utf-8")),
-        lambda cls, value: setVendorFieldHex(cls, value),
-        lambda cls: setVendorField(cls, ""),
-        ""
-    )
-    timestamp = property(
-        lambda cls: cls.get("timestamp", None),
-        lambda cls, value: setTimestamp(cls, value),
-        None,
-        "Transaction timestamp setter"
-    )
-    recipientId = recipient = property(
-        lambda cls: cls.get("recipientId", None),
-        lambda cls, value: cls._setitem("recipientId", checkAddress(value)),
-        lambda cls: cls.pop("recipientId", None),
-        "Receiver address checker and setter"
-    )
-    senderId = sender = property(
-        lambda cls: cls.get("senderId", None),
-        lambda cls, value: cls._setitem("senderId", checkAddress(value)),
-        lambda cls: cls.pop("senderId", None),
-        "Sender address checker and setter"
-    )
-    senderPublicKey = property(
-        lambda cls: cls.get("senderPublicKey", None),
-        lambda cls, value: setSenderPublicKey(cls, value),
-        lambda cls: deleteSenderPublicKey(cls),
-        "Initialize transaction according to senderPublicKey value"
-    )
-    secondSignature = signSignature = property(
-        lambda cls: cls.get("signSignature", None),
-        lambda cls, value: cls._setitem("signSignature", value),
-        lambda cls: cls.pop("signSignature", None),
-        "Second signature"
-    )
-    feeIncluded = property(
-        lambda cls: "_amount" in cls.__dict__,
-        lambda cls, value: (
-            setFeeIncluded if bool(value) else unsetFeeIncluded
-        )(cls),
-        None,
-        "if `True` then :attr:`amount` + :attr:`fee` = total arktoshi flow"
-    )
-
-    @staticmethod
-    def useDynamicFee(value="minFee"):
-        """
-        Activate and configure dynamic fees parameters. Value can be either an
-        integer defining the fee multiplier constant or a string defining the
-        fee level to use acccording to the 30-days-average. possible values are
-        ``avgFee`` ``minFee`` (default) and ``maxFee``.
-
-        Args:
-            value (:class:`str` or :class:`int`): constant or fee multiplier
-        """
-        if hasattr(cfg, "doffsets"):
-            if isinstance(value, (int, float, long)):
-                Transaction.FMULT = long(value)
-                Transaction.FEESL = None
-            elif value in ["maxFee", "avgFee", "minFee"]:
-                Transaction.FMULT = None
-                Transaction.FEESL = value
-            else:
-                Transaction.FMULT = None
-                Transaction.FEESL = None
-        else:
-            Transaction.FMULT = None
-            Transaction.FEESL = None
-    setDynamicFee = useDynamicFee
-
-    # private definitions
-    def _setitem(self, item, value):
-        try:
-            cast = dposlib.core.TYPING[item]
-        except KeyError:
-            dict.__setattr__(self, item, value)
-        else:
-            if not isinstance(value, cast):
-                value = cast(value)
-            dict.__setitem__(self, item, value)
-
-    def _reset(self):
-        """remove data linked to validation proces."""
-        self.pop("signature", False)
-        self.pop("signatures", False)
-        self.pop("signSignature", False)
-        self.pop("secondSignature", False)
-        self.pop("id", False)
-
-    def __init__(self, *args, **kwargs):
-        self._ignore_bad_fields = kwargs.pop("ignore_bad_fields", False)
-        self.FEESL = kwargs.pop("FEESL", Transaction.FEESL)
-        self.FMULT = kwargs.pop("FMULT", Transaction.FMULT)
-        # initialize a void dict
-        dict.__init__(self)
-        # if blockchain package loaded merge all elements else return void dict
-        if hasattr(dposlib, "core"):
-            data = dict(*args, **kwargs)
-            last_to_be_set = [
-                (k, data.pop(k, None)) for k in [
-                    "fee", "nonce",
-                    "signatures", "signature", "signSignature",
-                    "secondSignature", "id"
-                ]
-            ]
-            # set default values
-            dict.__setitem__(self, "version", data.pop("version", 2))
-            dict.__setitem__(self, "network", getattr(cfg, "pubkeyHash", 30))
-            dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
-            dict.__setitem__(self, "amount", data.pop("amount", 0))
-            dict.__setitem__(self, "type", data.pop("type", 0))
-            dict.__setitem__(self, "asset", data.pop("asset", {}))
-            # initialize all non-void fields
-            for key, value in [
-                (k, v) for k, v in list(data.items()) + last_to_be_set
-                if v is not None
-            ]:
-                self[key] = value
-
-    def __setitem__(self, item, value):
-        if item == "secret":
-            self.link(value)
-        elif item == "secondSecret":
-            self.link(None, value)
-        else:
-            try:
-                dict.__getattribute__(self, item)
-            except AttributeError:
-                self._setitem(item, value)
-            else:
-                object.__setattr__(self, item, value)
-    __setattr__ = __setitem__
-
-    def __getattr__(self, attr):
-        try:
-            return dict.__getattribute__(self, attr)
-        except AttributeError:
-            return dict.__getitem__(self, attr)
-    __getitem__ = __getattr__
-
-    def __str__(self):
-        return json.dumps(
-            OrderedDict(sorted(self.items(), key=lambda e: e[0]))
-        )
-
-    def __repr__(self):
-        return json.dumps(
-            OrderedDict(sorted(self.items(), key=lambda e: e[0])), indent=2
-        )
-
-    def link(self, secret=None, secondSecret=None):
-        """
-        Save public and private keys derived from secrets. This is equivalent
-        to wallet login. it limits number of secret keyboard entries.
-
-        Args:
-            secret (:class:`str`): passphrase
-            secondSecret (:class:`str`): second passphrase
-        """
-        if hasattr(dposlib, "core"):
-            if secret:
-                keys = dposlib.core.crypto.getKeys(secret)
-                self.senderPublicKey = keys["publicKey"]
-                self._privateKey = keys["privateKey"]
-            if secondSecret:
-                keys = dposlib.core.crypto.getKeys(secondSecret)
-                self._secondPrivateKey = keys["privateKey"]
-
-    def unlink(self):
-        try:
-            deleteSenderPublicKey(self)
-            del self._privateKey
-            del self._secondPrivateKey
-        except Exception:
-            pass
-
-    def setFee(self, value=None):
-        """
-        Set ``fee`` field manually or according to inner parameters.
-
-        Args:
-            value (:class:`int`): fee value in ``statoshi`` to set manually
-        """
-        setDynamicFee(self, value or self.FEESL)
-        self._reset()
-
-    # root sign function called by others
-    def sign(self):
-        """
-        Generate the ``signature`` field. Private key have to be set first. See
-        :func:`link`.
-        """
-        self._reset()
-        if hasattr(self, "_privateKey"):
-            if "fee" not in self:
-                self.setFee()
-            if self.type == 4:
-                missings = \
-                    self.asset["multiSignature"]["min"] - \
-                    len(self.get("signature", []))
-                if missings:
-                    raise Exception("owner signature missing (%d)" % missings)
-            self["signature"] = dposlib.core.crypto.getSignatureFromBytes(
-                serialize(self), self._privateKey
-            )
-        else:
-            raise Exception("orphan transaction can not sign itsef")
-
-    # root second sign function called by others
-    def signSign(self):
-        """
-        Generate the ``signSignature`` field. Transaction have to be signed and
-        second  private key have to be set first. See
-        :func:`link`.
-        """
-        if "signature" in self:  # or "signatures" in self ?
-            try:
-                self["signSignature"] = \
-                    dposlib.core.crypto.getSignatureFromBytes(
-                        serialize(self), self._secondPrivateKey
-                    )
-            except AttributeError:
-                raise Exception("no second private Key available")
-        else:
-            raise Exception("transaction not signed")
-
-    # sign functions using passphrases
-    def signWithSecret(self, secret):
-        """
-        Generate the ``signature`` field using passphrase. The associated
-        public and private keys are stored till
-        :func:`unlink` is called.
-
-        Args:
-            secret (:class:`str`): passphrase
-        """
-        self.link(secret)
-        self.sign()
-
-    def signSignWithSecondSecret(self, secondSecret):
-        """
-        Generate the ``signSignature`` field using second passphrase. The
-        associated second public and private keys are stored till
-        :func:`unlink` is called.
-
-        Args:
-            secondSecret (:class:`str`): second passphrase
-        """
-        self.link(None, secondSecret)
-        self.signSign()
-
-    def multiSignWithSecret(self, secret):
-        """
-        Add a signature in ``signatures`` field.
-
-        Args:
-            index (:class:`int`): signature index
-            secret (:class:`str`): passphrase
-        """
-        keys = dposlib.core.crypto.getKeys(secret)
-        self.multiSignWithKey(keys["privateKey"])
-
-    # sign function using crypto keys
-    def signWithKeys(self, publicKey, privateKey):
-        """
-        Generate the ``signature`` field using public and private keys. They
-        are till :func:`unlink` is called.
-
-        Args:
-            publicKey (:class:`str`): public key as hex string
-            privateKey (:class:`str`): private key as hex string
-        """
-        if self.get("senderPublicKey", None) != publicKey:
-            self.senderPublicKey = publicKey
-        self._privateKey = privateKey
-        self.sign()
-
-    def signSignWithKey(self, secondPrivateKey):
-        """
-        Generate the ``signSignature`` field using second private key. It is
-        stored till :func:`unlink` is called.
-
-        Args:
-            secondPrivateKey (:class:`str`): second private key as hex string
-        """
-        self._secondPrivateKey = secondPrivateKey
-        self.signSign()
-
-    def multiSignWithKey(self, privateKey):
-        """
-        Add a signature in ``signatures`` field according to given index and
-        privateKey.
-
-        Args:
-            privateKey (:class:`str`): private key as hex string
-        """
-        # get public key from private key
-        publicKey = dposlib.core.crypto.secp256k1.PublicKey.from_seed(
-            unhexlify(privateKey)
-        )
-        publicKey = hexlify(publicKey.encode())
-
-        # get public key index :
-        # if type 4 find index in asset
-        # else find it in _multisignature attribute
-        if self["type"] == 4:
-            index = self.asset["multiSignature"]["publicKeys"].index(
-                publicKey
-            )
-        elif self._multisignature:
-            if publicKey not in self._multisignature["publicKeys"]:
-                raise ValueError("public key %s not allowed here" % publicKey)
-            index = self._multisignature["publicKeys"].index(publicKey)
-        else:
-            raise Exception("multisignature not to be used here")
-
-        # remove id if any and set fee
-        self.pop("id", False)
-        if "fee" not in self:
-            self.setFee()
-
-        # concatenate index and signature and fill it in signatures field
-        # sorted(set([...])) returns sorted([...]) with unique values
-        self["signatures"] = sorted(set(
-            self.get("signatures", []) + [
-                "%02x" % index +
-                dposlib.core.crypto.getSignatureFromBytes(
-                    serialize(
-                        self,
-                        exclude_sig=True,
-                        exclude_multi_sig=True,
-                        exclude_second_sig=True
-                    ),
-                    privateKey
-                )
-            ]),
-            key=lambda s: s[:2]
-        )
-
-    def identify(self):
-        """Generate the ``id`` field. Transaction have to be signed."""
-        if "signature" in self or "signatures" in self:
-            if len(self._multisignature):
-                missings = \
-                    self._multisignature["min"] - \
-                    len(self.get("signatures", []))
-                if missings:
-                    raise Exception("owner signature missing (%d)" % missings)
-            elif self._secondPublicKey:
-                if "signSignature" not in self:
-                    raise Exception("second signature is missing")
-            self["id"] = dposlib.core.crypto.getIdFromBytes(
-                serialize(self, exclude_multi_sig=False)
-            )
-        else:
-            raise Exception("transaction not signed")
-
-    def finalize(self, secret=None, secondSecret=None,
-                 fee=None, fee_included=False):
-        """
-        Finalize a transaction by setting ``fee``, signatures and ``id``.
-
-        Args:
-            secret (:class:`str`): passphrase
-            secondSecret (:class:`str`): second passphrase
-            fee (:class:`int`): manually set fee value in ``satoshi``
-            fee_included (:class:`bool`):
-                see :attr:`Transaction.feeIncluded`
-        """
-        self.link(secret, secondSecret)
-        # automatically set fees if needed
-        if "fee" not in self or fee is not None:
-            self.fee = fee
-        self.feeIncluded = fee_included
-        # sign with private keys
-        # if transaction is not from a multisignature wallet
-        if not self._multisignature:
-            self.sign()
-            if hasattr(self, "_secondPrivateKey"):
-                self.signSign()
-        # generate the id
-        self.identify()
-
-
 # Reference:
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-102.md
@@ -573,11 +161,9 @@ def serialize(tx, **options):
     Serialize transaction.
 
     Args:
-        tx (:class:`dict` or :class:`Transaction`):
-            transaction object
-
+        tx (dict or Transaction): transaction object
     Returns:
-        :class:`bytes`: bytes sequence
+        bytes sequence
     """
     buf = BytesIO()
     vendorField = tx.get("vendorField", "").encode("utf-8")[:255]
@@ -753,3 +339,421 @@ def serializePayload(tx):
     result = buf.getvalue()
     buf.close()
     return result
+
+
+class Transaction(dict):
+    """
+    A python `dict` that implements all the necessities to manually
+    generate valid transactions.
+    """
+
+    FMULT = None
+    FEESL = None
+
+    # custom properties definitions
+    datetime = property(
+        lambda cls: slots.getRealTime(cls["timestamp"]),
+        None,
+        None,
+        "Transaction timestamp returned as python datetime object"
+    )
+    fee = property(
+        lambda cls: cls.get("fee", None),
+        lambda cls, value: cls.setFee(value),
+        None,
+        ""
+    )
+    vendorField = property(
+        lambda cls: cls.get("vendorField", None),
+        lambda cls, value: setVendorField(cls, value),
+        lambda cls: setVendorField(cls, ""),
+        ""
+    )
+    vendorFieldHex = property(
+        lambda cls: hexlify(cls.get("vendorField", "").encode("utf-8")),
+        lambda cls, value: setVendorFieldHex(cls, value),
+        lambda cls: setVendorField(cls, ""),
+        ""
+    )
+    timestamp = property(
+        lambda cls: cls.get("timestamp", None),
+        lambda cls, value: setTimestamp(cls, value),
+        None,
+        "Transaction timestamp setter"
+    )
+    recipientId = recipient = property(
+        lambda cls: cls.get("recipientId", None),
+        lambda cls, value: cls._setitem("recipientId", checkAddress(value)),
+        lambda cls: cls.pop("recipientId", None),
+        "Receiver address checker and setter"
+    )
+    senderId = sender = property(
+        lambda cls: cls.get("senderId", None),
+        lambda cls, value: cls._setitem("senderId", checkAddress(value)),
+        lambda cls: cls.pop("senderId", None),
+        "Sender address checker and setter"
+    )
+    senderPublicKey = property(
+        lambda cls: cls.get("senderPublicKey", None),
+        lambda cls, value: setSenderPublicKey(cls, value),
+        lambda cls: deleteSenderPublicKey(cls),
+        "Initialize transaction according to senderPublicKey value"
+    )
+    secondSignature = signSignature = property(
+        lambda cls: cls.get("signSignature", None),
+        lambda cls, value: cls._setitem("signSignature", value),
+        lambda cls: cls.pop("signSignature", None),
+        "Second signature"
+    )
+    #: use feeIncluded option
+    feeIncluded = property(
+        lambda cls: "_amount" in cls.__dict__,
+        lambda cls, value: (
+            setFeeIncluded if bool(value) else unsetFeeIncluded
+        )(cls),
+        None,
+        "if `True` then `amount` + `fee` = total arktoshi flow"
+    )
+
+    @staticmethod
+    def useDynamicFee(value="minFee"):
+        """
+        Activate and configure dynamic fees parameters. Value can be either an
+        integer defining the fee multiplier constant or a string defining the
+        fee level to use acccording to the 30-days-average. possible values are
+        `avgFee` `minFee` (default) and `maxFee`.
+
+        Args:
+            value (str or int): constant or fee multiplier
+        """
+        if hasattr(cfg, "doffsets"):
+            if isinstance(value, (int, float, long)):
+                Transaction.FMULT = long(value)
+                Transaction.FEESL = None
+            elif value in ["maxFee", "avgFee", "minFee"]:
+                Transaction.FMULT = None
+                Transaction.FEESL = value
+            else:
+                Transaction.FMULT = None
+                Transaction.FEESL = None
+        else:
+            Transaction.FMULT = None
+            Transaction.FEESL = None
+    setDynamicFee = useDynamicFee
+
+    # private definitions
+    def _setitem(self, item, value):
+        try:
+            cast = dposlib.core.TYPING[item]
+        except KeyError:
+            dict.__setattr__(self, item, value)
+        else:
+            if not isinstance(value, cast):
+                value = cast(value)
+            dict.__setitem__(self, item, value)
+
+    def _reset(self):
+        """remove data linked to validation proces."""
+        self.pop("signature", False)
+        self.pop("signatures", False)
+        self.pop("signSignature", False)
+        self.pop("secondSignature", False)
+        self.pop("id", False)
+
+    def __init__(self, *args, **kwargs):
+        self._ignore_bad_fields = kwargs.pop("ignore_bad_fields", False)
+        self.FEESL = kwargs.pop("FEESL", Transaction.FEESL)
+        self.FMULT = kwargs.pop("FMULT", Transaction.FMULT)
+        # initialize a void dict
+        dict.__init__(self)
+        # if blockchain package loaded merge all elements else return void dict
+        if hasattr(dposlib, "core"):
+            data = dict(*args, **kwargs)
+            last_to_be_set = [
+                (k, data.pop(k, None)) for k in [
+                    "fee", "nonce",
+                    "signatures", "signature", "signSignature",
+                    "secondSignature", "id"
+                ]
+            ]
+            # set default values
+            dict.__setitem__(self, "version", data.pop("version", 2))
+            dict.__setitem__(self, "network", getattr(cfg, "pubkeyHash", 30))
+            dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
+            dict.__setitem__(self, "amount", data.pop("amount", 0))
+            dict.__setitem__(self, "type", data.pop("type", 0))
+            dict.__setitem__(self, "asset", data.pop("asset", {}))
+            # initialize all non-void fields
+            for key, value in [
+                (k, v) for k, v in list(data.items()) + last_to_be_set
+                if v is not None
+            ]:
+                self[key] = value
+
+    def __setitem__(self, item, value):
+        if item == "secret":
+            self.link(value)
+        elif item == "secondSecret":
+            self.link(None, value)
+        else:
+            try:
+                dict.__getattribute__(self, item)
+            except AttributeError:
+                self._setitem(item, value)
+            else:
+                object.__setattr__(self, item, value)
+    __setattr__ = __setitem__
+
+    def __getattr__(self, attr):
+        try:
+            return dict.__getattribute__(self, attr)
+        except AttributeError:
+            return dict.__getitem__(self, attr)
+    __getitem__ = __getattr__
+
+    def __str__(self):
+        return json.dumps(
+            OrderedDict(sorted(self.items(), key=lambda e: e[0]))
+        )
+
+    def __repr__(self):
+        return json.dumps(
+            OrderedDict(sorted(self.items(), key=lambda e: e[0])), indent=2
+        )
+
+    def link(self, secret=None, secondSecret=None):
+        """
+        Save public and private keys derived from secrets. This is equivalent
+        to wallet login. it limits number of secret keyboard entries.
+
+        Args:
+            secret (str): passphrase
+            secondSecret (str): second passphrase
+        """
+        if hasattr(dposlib, "core"):
+            if secret:
+                keys = dposlib.core.crypto.getKeys(secret)
+                self.senderPublicKey = keys["publicKey"]
+                self._privateKey = keys["privateKey"]
+            if secondSecret:
+                keys = dposlib.core.crypto.getKeys(secondSecret)
+                self._secondPrivateKey = keys["privateKey"]
+
+    def unlink(self):
+        try:
+            deleteSenderPublicKey(self)
+            del self._privateKey
+            del self._secondPrivateKey
+        except Exception:
+            pass
+
+    def setFee(self, value=None):
+        """
+        Set `fee` field manually or according to inner parameters.
+
+        Args:
+            value (int): fee value in `arktoshi` to set manually
+        """
+        setDynamicFee(self, value or self.FEESL)
+        self._reset()
+
+    # root sign function called by others
+    def sign(self):
+        """
+        Generate the `signature` field. Private key have to be set first. See
+        [`link`](blockchain.md#link_1).
+        """
+        self._reset()
+        if hasattr(self, "_privateKey"):
+            if "fee" not in self:
+                self.setFee()
+            if self.type == 4:
+                missings = \
+                    self.asset["multiSignature"]["min"] - \
+                    len(self.get("signature", []))
+                if missings:
+                    raise Exception("owner signature missing (%d)" % missings)
+            self["signature"] = dposlib.core.crypto.getSignatureFromBytes(
+                serialize(self), self._privateKey
+            )
+        else:
+            raise Exception("orphan transaction can not sign itsef")
+
+    # root second sign function called by others
+    def signSign(self):
+        """
+        Generate the `signSignature` field. Transaction have to be signed and
+        second  private key have to be set first. See [`link`](
+            blockchain.md#link_1
+        ).
+        """
+        if "signature" in self:  # or "signatures" in self ?
+            try:
+                self["signSignature"] = \
+                    dposlib.core.crypto.getSignatureFromBytes(
+                        serialize(self), self._secondPrivateKey
+                    )
+            except AttributeError:
+                raise Exception("no second private Key available")
+        else:
+            raise Exception("transaction not signed")
+
+    # sign functions using passphrases
+    def signWithSecret(self, secret):
+        """
+        Generate the `signature` field using passphrase. The associated
+        public and private keys are stored till [`unlink`](
+            blockchain.md#unlink
+        ) is called.
+
+        Args:
+            secret (`str`): passphrase
+        """
+        self.link(secret)
+        self.sign()
+
+    def signSignWithSecondSecret(self, secondSecret):
+        """
+        Generate the `signSignature` field using second passphrase. The
+        associated second public and private keys are stored till [`unlink`](
+            blockchain.md#unlink
+        ) is called.
+
+        Args:
+            secondSecret (`str`): second passphrase
+        """
+        self.link(None, secondSecret)
+        self.signSign()
+
+    def multiSignWithSecret(self, secret):
+        """
+        Add a signature in `signatures` field.
+
+        Args:
+            index (int): signature index
+            secret (str): passphrase
+        """
+        keys = dposlib.core.crypto.getKeys(secret)
+        self.multiSignWithKey(keys["privateKey"])
+
+    # sign function using crypto keys
+    def signWithKeys(self, publicKey, privateKey):
+        """
+        Generate the `signature` field using public and private keys. They
+        are till [`unlink`](blockchain.md#unlink) is called.
+
+        Args:
+            publicKey (str): public key as hex string
+            privateKey (str): private key as hex string
+        """
+        if self.get("senderPublicKey", None) != publicKey:
+            self.senderPublicKey = publicKey
+        self._privateKey = privateKey
+        self.sign()
+
+    def signSignWithKey(self, secondPrivateKey):
+        """
+        Generate the `signSignature` field using second private key. It is
+        stored till [`unlink`](blockchain.md#unlink) is called.
+
+        Args:
+            secondPrivateKey (`str`): second private key as hex string
+        """
+        self._secondPrivateKey = secondPrivateKey
+        self.signSign()
+
+    def multiSignWithKey(self, privateKey):
+        """
+        Add a signature in `signatures` field according to given index and
+        privateKey.
+
+        Args:
+            privateKey (str): private key as hex string
+        """
+        # get public key from private key
+        publicKey = dposlib.core.crypto.secp256k1.PublicKey.from_seed(
+            unhexlify(privateKey)
+        )
+        publicKey = hexlify(publicKey.encode())
+
+        # get public key index :
+        # if type 4 find index in asset
+        # else find it in _multisignature attribute
+        if self["type"] == 4:
+            index = self.asset["multiSignature"]["publicKeys"].index(
+                publicKey
+            )
+        elif self._multisignature:
+            if publicKey not in self._multisignature["publicKeys"]:
+                raise ValueError("public key %s not allowed here" % publicKey)
+            index = self._multisignature["publicKeys"].index(publicKey)
+        else:
+            raise Exception("multisignature not to be used here")
+
+        # remove id if any and set fee
+        self.pop("id", False)
+        if "fee" not in self:
+            self.setFee()
+
+        # concatenate index and signature and fill it in signatures field
+        # sorted(set([...])) returns sorted([...]) with unique values
+        self["signatures"] = sorted(set(
+            self.get("signatures", []) + [
+                "%02x" % index +
+                dposlib.core.crypto.getSignatureFromBytes(
+                    serialize(
+                        self,
+                        exclude_sig=True,
+                        exclude_multi_sig=True,
+                        exclude_second_sig=True
+                    ),
+                    privateKey
+                )
+            ]),
+            key=lambda s: s[:2]
+        )
+
+    def identify(self):
+        """Generate the `id` field. Transaction have to be signed."""
+        if "signature" in self or "signatures" in self:
+            if len(self._multisignature):
+                missings = \
+                    self._multisignature["min"] - \
+                    len(self.get("signatures", []))
+                if missings:
+                    raise Exception("owner signature missing (%d)" % missings)
+            elif self._secondPublicKey:
+                if "signSignature" not in self:
+                    raise Exception("second signature is missing")
+            self["id"] = dposlib.core.crypto.getIdFromBytes(
+                serialize(self, exclude_multi_sig=False)
+            )
+        else:
+            raise Exception("transaction not signed")
+
+    def finalize(self, secret=None, secondSecret=None,
+                 fee=None, fee_included=False):
+        """
+        Finalize a transaction by setting `fee`, signatures and `id`.
+
+        Args:
+            secret (str): passphrase
+            secondSecret (str): second passphrase
+            fee (int): manually set fee value in `satoshi`
+            fee_included (bool): see [`Transaction.feeIncluded`](
+                                     blockchain.md#feeincluded
+                                 )
+        """
+        self.link(secret, secondSecret)
+        # automatically set fees if needed
+        if "fee" not in self or fee is not None:
+            self.fee = fee
+        self.feeIncluded = fee_included
+        # sign with private keys
+        # if transaction is not from a multisignature wallet
+        if not self._multisignature:
+            self.sign()
+            if hasattr(self, "_secondPrivateKey"):
+                self.signSign()
+        # generate the id
+        self.identify()

@@ -2,27 +2,39 @@
 # © Toons
 
 """
-:mod:`rest` module provides network loaders and root
-:class:`EndPoint` ``GET``, ``POST``, ``PUT`` and ``DELETE``. See
-`Ark API documentation <https://api.ark.dev/public-rest-api/getting-started>`_
-to see how to use http calls.
+`rest` module provides network loaders and `usrv.get.EndPoint` root class to
+implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
+[Ark API documentation](
+    https://api.ark.dev/public-rest-api/getting-started
+) to see how to use http calls.
 
-:mod:`rest` also creates a `core <core.html>`_ module containing
-:class:`Transaction` builders, :mod:`crypto` and :mod:`api` modules.
+`rest` also creates a `core` module containing
+`dposlib.blockchain.tx.Transaction` builders, `dposlib.ark.crypto`
+and `dposlib.ark.v2.api` interface.
 
+## Use `rest` HTTP request builder
+```python
 >>> from dposlib import rest
 >>> rest.use("ark")
 True
+>>> # reach http://api.ark.io/api/delegates/arky endpoint using GET
+>>> # HTTP request builder
+>>> rest.GET.api.delegates.arky()["username"]
+'arky'
+```
+
+## Use `api` and `core` modules
+```python
 >>> import dposlib
 >>> dlgt = dposlib.core.api.Delegate("arky")
 >>> dlgt.forged
 {u'rewards': 397594.0, u'total': 401908.71166083, u'fees': 4314.71166083}
->>> dposlib.core.crypto.getKeys("secret")
-{'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de\
-933', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf\
-527a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
->>> dposlib.core.transfer(1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE", u"\u2728 si\
-mple transfer vendorField")
+>>> dposlib.core.crypto.getKeys("secret")["publicKey"]
+'03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
+>>> dposlib.core.transfer(
+...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+...     u"\u2728 simple transfer vendorField"
+... )
 {
   "amount": 100000000,
   "asset": {},
@@ -31,14 +43,17 @@ mple transfer vendorField")
   "vendorField": "\u2728 simple transfer vendorField",
   "version": 1
 }
->>> dposlib.core.htlcLock(1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE", "my secret \
-lock", expiration=12, vendorField=u"\u2728 simple htlcLock vendorField")
+>>> dposlib.core.htlcLock(
+...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+...     "my secret lock", expiration=12,
+...     vendorField=u"\u2728 simple htlcLock vendorField"
+... )
 {
   "amount": 100000000,
   "asset": {
     "lock": {
-      "secretHash": "dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd\
-29d47cb",
+      "secretHash":
+        "dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb",
       "expiration": {
         "type": 1,
         "value": 82567745
@@ -52,6 +67,7 @@ lock", expiration=12, vendorField=u"\u2728 simple htlcLock vendorField")
   "vendorField": "\u2728 simple htlcLock vendorField",
   "version": 2
 }
+```
 """
 
 import sys
@@ -82,24 +98,28 @@ def _random_peer(kwargs):
     return kwargs.pop("peer", None) or random.choice(cfg.peers)
 
 
+#: GET HTTP request builder
 GET = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("GET", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
+#: POST HTTP request builder
 POST = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("POST", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
+#: PUT HTTP request builder
 PUT = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("PUT", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
+#: DELETE HTTP request builder
 DELETE = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
@@ -110,13 +130,12 @@ DELETE = req.EndPoint(
 
 def load(name):
     """
-    Load a given blockchain package as ``dposlib.core`` module. A valid
-    blockchain package must provide :func:`init(peer=None)` and :func:`stop()`
-    definitions. Available blockchains are referenced in :mod:`dposli.net`
-    module.
+    Load a given blockchain package as `dposlib.core` module. A valid
+    blockchain package must provide `init(peer=None)` and `stop()` definitions.
+    Available blockchains are referenced in `dposli.net` module.
 
-    Args:
-        name (:class:`str`): package name to load
+    Arguments:
+        name (str): package name to load
     """
 
     if hasattr(sys.modules[__package__], "core"):
@@ -146,15 +165,14 @@ def load(name):
 
 def use(network, **kwargs):
     """
-    Sets the blockchain parameters in the ``cfg`` module and initialize
-    blockchain package. Network options can be created or overriden using
-    ``**kwargs`` argument.
+    Sets the blockchain parameters in the `dposlib.rest.cfg` module and
+    initializes blockchain package. Network options can be created or overriden
+    using `**kwargs` argument.
 
-    Args:
-        network (:class:`str`): network to initialize
-
+    Arguments:
+        network (str): network to initialize
     Returns:
-        :class:`bool`: True if network connection established
+        True if network connection established
     """
     # clear data in cfg module
     [cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]

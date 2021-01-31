@@ -3,6 +3,35 @@
 
 """
 This module stores blockchain parameters.
+
+  * activeDelegates:
+  * aip20:
+  * begintime:
+  * blockreward:
+  * blocktime:
+  * broadcast:
+  * doffsets:
+  * explorer:
+  * familly:
+  * fees:
+  * feestats:
+  * headers:
+  * hotmode:
+  * marker:
+  * maxTransactions:
+  * maxvote:
+  * maxvotepertx:
+  * network:
+  * peers:
+  * ports:
+  * pubkeyHash:
+  * slip44:
+  * symbol:
+  * timeout:
+  * token:
+  * txversion:
+  * version:
+  * wif:
 """
 
 headers = {

@@ -1,4 +1,0 @@
-recommonmark
-sphinxcontrib-napoleon
-flask
-docopt

@@ -2,7 +2,9 @@
 # © Toons
 
 """
-This module contains functions to interoperate with Ledger Nano S.
+This module contains functions to interoperate with [Ledger](
+    https://ledger.com
+) hard wallet.
 """
 
 import sys
@@ -47,15 +49,16 @@ def _default_path():
     )
 
 
-def parseBip32Path(path):
+def parseBip44Path(path):
     """
-    Parse a BIP44 derivation path.
-    https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+    Parse a [BIP44](
+        https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+    ) derivation path.
 
     Args:
         path (str): the derivation path
     Returns:
-        parsed bip32 path
+        parsed bip44 path as bytes
     """
     if len(path) == 0:
         return b""
@@ -86,9 +89,11 @@ def buildPukApdu(dongle_path):
 
     Args:
         dongle_path (bytes): value returned by
-                             `dposlib.ark.ldgr.parseBip32Path`
+                             [`dposlib.ark.ldgr.parseBip44Path`](
+                                 crypto.md#parsebip44path
+                             )
     Returns:
-        :class:`bytes`: public key apdu data
+        public key apdu data as bytes
     """
     path_len = len(dongle_path)
     return \
@@ -169,12 +174,11 @@ def getPublicKey(path=None, debug=False):
     Args:
         path (str): derivation path
         debug (bool): flag to activate debug messages from ledger key
-                      [default: False]
     Returns:
         hexadecimal compressed publicKey
     """
     path = _default_path() if path is None else path
-    return sendApdu([buildPukApdu(parseBip32Path(path))], debug=debug)[2:]
+    return sendApdu([buildPukApdu(parseBip44Path(path))], debug=debug)[2:]
 
 
 def signMessage(msg, path=None, schnorr=True, debug=False):
@@ -195,7 +199,7 @@ def signMessage(msg, path=None, schnorr=True, debug=False):
         raise ValueError("message max length is 255, got %d" % len(msg))
 
     return sendApdu(
-        buildSignatureApdu(msg, parseBip32Path(path), "msg", schnorr),
+        buildSignatureApdu(msg, parseBip44Path(path), "msg", schnorr),
         debug=debug
     )
 
@@ -219,7 +223,7 @@ def signTransaction(tx, path=None, schnorr=True, debug=False):
         )
 
     path = _default_path() if path is None else path
-    dongle_path = parseBip32Path(path)
+    dongle_path = parseBip44Path(path)
     tx["senderPublicKey"] = sendApdu(
         [buildPukApdu(dongle_path)], debug=debug
     )[2:]

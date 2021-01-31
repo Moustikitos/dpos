@@ -220,7 +220,7 @@ def init(seed=None):
 
 def stop():
     """
-    Stop daemon initialized by ``init`` call.
+    Stop daemon initialized by `init` call.
     """
     global DAEMON_PEERS
     if DAEMON_PEERS is not None:
@@ -246,15 +246,17 @@ def transfer(amount, address, vendorField=None, expiration=0):
     Build a transfer transaction. Emoji can be included in transaction
     vendorField using unicode formating.
 
+    ```python
     >>> u"message with sparkles \u2728"
+    ```
 
     Arguments:
-        amount (:class:`float`): transaction amount in ark
-        address (:class:`str`): valid recipient address
-        vendorField (:class:`str`): vendor field message
-        expiration (:class:`float`): time of persistance in hour
+        amount (float): transaction amount in ark
+        address (str): valid recipient address
+        vendorField (str): vendor field message
+        expiration (float): time of persistance in hour
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     if cfg.txversion > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
@@ -279,9 +281,9 @@ def registerSecondSecret(secondSecret):
     Build a second secret registration transaction.
 
     Arguments:
-        secondSecret (:class:`str`): passphrase
+        secondSecret (str): passphrase
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return registerSecondPublicKey(
         crypto.getKeys(secondSecret)["publicKey"], version=cfg.txversion
@@ -292,13 +294,12 @@ def registerSecondPublicKey(secondPublicKey):
     """
     Build a second secret registration transaction.
 
-      .. note::
-        You must own the secret issuing secondPublicKey
+    *You must own the secret issuing secondPublicKey*
 
     Arguments:
-        secondPublicKey (:class:`str`): public key as hex string
+        secondPublicKey (str): public key as hex string
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         type=1,
@@ -316,9 +317,9 @@ def registerAsDelegate(username):
     Build a delegate registration transaction.
 
     Arguments:
-        username (:class:`str`): delegate username
+        username (str): delegate username
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         type=2,
@@ -336,10 +337,10 @@ def upVote(*usernames):
     Build an upvote transaction.
 
     Arguments:
-        usernames (:class:`iterable`): delegate usernames as :class:`str`
-                                       iterable
+        usernames (iterable): delegate usernames as str
+                              iterable
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     try:
         votes = [
@@ -364,10 +365,10 @@ def downVote(*usernames):
     Build a downvote transaction.
 
     Arguments:
-        usernames (:class:`iterable`): delegate usernames as :class:`str`
-                                       iterable
+        usernames (iterable): delegate usernames as str
+                              iterable
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     try:
         votes = [
@@ -393,10 +394,10 @@ def registerMultiSignature(minSig, *publicKeys):
     Build a multisignature registration transaction.
 
     Args:
-        minSig (:class:`int`): minimum signature required
-        publicKeys (:class:`list of str`): public key list
+        minSig (int): minimum signature required
+        publicKeys (list of str): public key list
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -420,9 +421,9 @@ def registerIpfs(ipfs):
     Build an IPFS registration transaction.
 
     Arguments:
-        ipfs (:class:`str`): ipfs DAG
+        ipfs (str): ipfs DAG
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -438,13 +439,15 @@ def multiPayment(*pairs, **kwargs):
     Build multi-payment transaction. Emoji can be included in transaction
     vendorField using unicode formating.
 
+    ```python
     >>> u"message with sparkles \u2728"
+    ```
 
     Arguments:
-        pairs (:class:`iterable`): recipient-amount pair iterable
-        vendorField (:class:`str`): vendor field message
+        pairs (iterable): recipient-amount pair iterable
+        vendorField (str): vendor field message
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -464,7 +467,7 @@ def delegateResignation():
     Build a delegate resignation transaction.
 
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -477,9 +480,9 @@ def htlcSecret(secret):
     Compute an HTLC secret hex string from passphrase.
 
     Arguments:
-        secret (:class:`str`): passphrase
+        secret (str): passphrase
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return hexlify(hashlib.sha256(
         secret if isinstance(secret, bytes) else
@@ -492,16 +495,18 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
     Build an HTLC lock transaction. Emoji can be included in transaction
     vendorField using unicode formating.
 
+    ```python
     >>> u"message with sparkles \u2728"
+    ```
 
     Arguments:
-        amount (:class:`float`): transaction amount in ark
-        address (:class:`str`): valid recipient address
-        secret (:class:`str`): lock passphrase
-        expiration (:class:`float`): transaction validity in hour
-        vendorField (:class:`str`): vendor field message
+        amount (float): transaction amount in ark
+        address (str): valid recipient address
+        secret (str): lock passphrase
+        expiration (float): transaction validity in hour
+        vendorField (str): vendor field message
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -528,10 +533,10 @@ def htlcClaim(txid, secret):
     Build an HTLC claim transaction.
 
     Arguments:
-        txid (:class:`str`): htlc lock transaction id
-        secret (:class:`str`): passphrase used by htlc lock transaction
+        txid (str): htlc lock transaction id
+        secret (str): passphrase used by htlc lock transaction
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,
@@ -550,9 +555,9 @@ def htlcRefund(txid):
     Build an HTLC refund transaction.
 
     Arguments:
-        txid (:class:`str`): htlc lock transaction id
+        txid (str): htlc lock transaction id
     Returns:
-        :class:`dposlib.blockchain.tx.Transaction`: transaction object
+        transaction object
     """
     return Transaction(
         version=cfg.txversion,

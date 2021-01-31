@@ -9,8 +9,12 @@ import pytz
 
 def getTimestamp(**kw):
     """
-    return blockchain timestamp from timedelta given as keyword arument.
-    >>> getTimestamp(days=6, hours=4, minutes=20)
+    Return blockchain timestamp from timedelta given as keyword arument.
+
+    ```python
+    >>> from dposlib.blockchain import slots
+    >>> slots.getTimestamp(days=6, hours=4, minutes=20)
+    ```
     """
     delta = timedelta(**kw)
     return getTime(datetime.now(pytz.UTC) - delta)

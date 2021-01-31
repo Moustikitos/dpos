@@ -2,20 +2,8 @@
 # © Toons
 
 """
-# dposlib
-
-`dposlib` is a package that provides REST API and to interact with ARK
-blockchain and its forks. It is designed to run with both python 2.x and 3.x.
-
-```python
->>> import dposlib
->>> from dposlib import rest
->>> rest.use("ark")
-True
->>> delegate0 = rest.GET.api.delegates(returnKey="data")[0]
->>> delegate0["username"]
-u'binance_staking'
-```
+`dposlib` is a package that provides simple API to interact with ARK blockchain
+and its forks. It is designed to run with both python 2.x and 3.x.
 """
 
 import os

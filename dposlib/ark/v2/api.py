@@ -44,26 +44,26 @@ class Wallet(dposlib.blockchain.Wallet):
 
     @dposlib.blockchain.isLinked
     def registerIpfs(self, ipfs):
-        "See :func:`dposlib.ark.v2.registerIpfs`."
+        "See [`dposlib.ark.v2.registerIpfs`](blockchain.md#registeripfs)."
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def multiSend(self, *pairs, **kwargs):
-        "See :func:`dposlib.ark.v2.multiPayment`."
+        "See [`dposlib.ark.v2.multiPayment`](blockchain.md#multipayment)."
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def resignate(self):
-        "See :func:`dposlib.ark.v2.delegateResignation`."
+        "See [`dposlib.ark.v2.delegateResignation`](blockchain.md#resignate)."
         tx = dposlib.core.delegateResignation()
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
-        "See :func:`dposlib.ark.v2.htlcLock`."
+        "See [`dposlib.ark.v2.htlcLock`](blockchain.md#sendhtlc)."
         tx = dposlib.core.htlcLock(
             amount, address, secret,
             expiration=expiration, vendorField=vendorField
@@ -72,13 +72,13 @@ class Wallet(dposlib.blockchain.Wallet):
 
     @dposlib.blockchain.isLinked
     def claimHtlc(self, txid, secret):
-        "See :func:`dposlib.ark.v2.htlcClaim`."
+        "See [`dposlib.ark.v2.htlcClaim`](blockchain.md#claimhtlc)."
         tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def refundHtlc(self, txid):
-        "See :func:`dposlib.ark.v2.htlcRefund`."
+        "See [`dposlib.ark.v2.htlcRefund`](blockchain.md#refundhtlc)."
         tx = dposlib.core.htlcRefund(txid)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
@@ -86,6 +86,9 @@ class Wallet(dposlib.blockchain.Wallet):
 if LEDGERBLUE:
 
     class Ledger(Wallet):
+        """
+        Ledger wallet api.
+        """
 
         def __init__(self, account, index, network=0, **kw):
             self._debug = kw.pop("debug", False)
@@ -97,7 +100,7 @@ if LEDGERBLUE:
                 account,
                 index
             )
-            self._dongle_path = ldgr.parseBip32Path(self._derivationPath)
+            self._dongle_path = ldgr.parseBip44Path(self._derivationPath)
             puk = ldgr.sendApdu(
                 [ldgr.buildPukApdu(self._dongle_path)], debug=self._debug
             )[2:]
@@ -111,7 +114,7 @@ if LEDGERBLUE:
         def fromDerivationPath(derivationPath, **kw):
             ldgr_wlt = Ledger(0, 0, 0, **kw)
             ldgr_wlt._derivationPath = derivationPath
-            ldgr_wlt._dongle_path = ldgr.parseBip32Path(derivationPath)
+            ldgr_wlt._dongle_path = ldgr.parseBip44Path(derivationPath)
             puk = ldgr.sendApdu(
                 [ldgr.buildPukApdu(ldgr_wlt._dongle_path)],
                 debug=ldgr_wlt._debug
