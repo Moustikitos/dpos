@@ -12,7 +12,7 @@ implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
 `dposlib.blockchain.tx.Transaction` builders, `dposlib.ark.crypto`
 and `dposlib.ark.v2.api` interface.
 
-## Use `rest` HTTP request builder
+## `rest` HTTP request builder
 ```python
 >>> from dposlib import rest
 >>> rest.use("ark")
@@ -23,7 +23,7 @@ True
 'arky'
 ```
 
-## Use `api` and `core` modules
+## `core` module
 ```python
 >>> import dposlib
 >>> dlgt = dposlib.core.api.Delegate("arky")

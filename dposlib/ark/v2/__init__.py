@@ -102,7 +102,9 @@ def _write_module(path, configuration={}, fees={}):
 
 def init(seed=None):
     """
-    Blockchain initialisation. It stores root values in :mod:`cfg` modules.
+    Blockchain initialisation. It stores root values in [`rest.cfg`](
+        network.md#rest
+    ) modules.
     """
     global DAEMON_PEERS
 
@@ -220,7 +222,7 @@ def init(seed=None):
 
 def stop():
     """
-    Stop daemon initialized by `init` call.
+    Stop daemon initialized by [`init`](blockchain.md#init) call.
     """
     global DAEMON_PEERS
     if DAEMON_PEERS is not None:

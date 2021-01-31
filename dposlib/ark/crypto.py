@@ -21,8 +21,8 @@ def getKeys(secret):
     (WIF).
 
     Args:
-        secret (str, bytes or int):
-            anything that could issue a private key on secp256k1 curve
+        secret (str, bytes or int): anything that could issue a private key on
+                                    secp256k1 curve
     Returns:
         public, private and WIF keys
     """
