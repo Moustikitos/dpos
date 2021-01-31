@@ -3,7 +3,7 @@ loaders:
 processors:
   - type: crossref
   - type: filter
-    expression: not 'cold' in name and default()
+    expression: not 'cold' in name and not 'mixin' in name and 'slots' not in name and default()
   - type: smart
 renderer:
   output_directory: .
@@ -12,7 +12,7 @@ renderer:
   pages:
     - title: Home
       name: index
-      source: README.md
+      source: index.md
     - title: Network
       contents:
         - dposlib.rest*
@@ -31,8 +31,17 @@ renderer:
     repo_url: https://github.com/Moustikitos/dposlib
     repo_name: GitHub
     copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
-    theme: mkdocs
+    theme:
+      name: mkdocs
+      nav_style: light
+    highlightjs: true
+    hljs_languages:
+        - python
     markdown_extensions:
+    - smarty
     - toc:
         permalink: "#"
         baselevel: 1
+    plugins:
+      - search
+      - mermaid2

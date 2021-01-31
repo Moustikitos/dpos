@@ -1,6 +1,10 @@
 copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
 docs_dir: docs
+highlightjs: true
+hljs_languages:
+- python
 markdown_extensions:
+- smarty
 - toc:
     baselevel: 1
     permalink: '#'
@@ -9,7 +13,12 @@ nav:
 - Network: network.md
 - Crypto: crypto.md
 - Blockchain: blockchain.md
+plugins:
+- search
+- mermaid2
 repo_name: GitHub
 repo_url: https://github.com/Moustikitos/dposlib
 site_name: The dposlib Project
-theme: mkdocs
+theme:
+  name: mkdocs
+  nav_style: light
