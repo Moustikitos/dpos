@@ -48,3 +48,7 @@ def getSlotRealTime(slot):
 
 def getLastSlot(slot):
     return slot + cfg.delegate
+
+
+def getEpochFromDatetimeTuple(*args):
+    return getEpoch(datetime.datetime(*args, tzinfo=pytz.UTC))
