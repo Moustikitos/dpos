@@ -9,7 +9,7 @@ processors:
 
 hooks:
   pre-render:
-  - copy docs\index.md index.md
+  - python -c "import shutil;shutil.copy('docs/index.md', 'index.md')"
 
 renderer:
   output_directory: .
