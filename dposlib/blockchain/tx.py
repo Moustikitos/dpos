@@ -439,7 +439,9 @@ class Transaction(dict):
         else:
             Transaction.FMULT = None
             Transaction.FEESL = None
+
     setDynamicFee = useDynamicFee
+    useStaticFee = setStaticFee = lambda self: self.useDynamicFee(None)
 
     # private definitions
     def _setitem(self, item, value):
