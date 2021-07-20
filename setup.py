@@ -39,7 +39,7 @@ kw = {
         "pytz",
         "base58"
     ],
-    "dependecy_list": [
+    "dependency_list": [
         "git+http://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1",
         "git+http://github.com/Moustikitos/micro-server#egg=usrv"
     ],
