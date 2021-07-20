@@ -469,28 +469,28 @@ class Transaction(dict):
         # initialize a void dict
         dict.__init__(self)
         # if blockchain package loaded merge all elements else return void dict
-        if hasattr(dposlib, "core"):
-            data = dict(*args, **kwargs)
-            last_to_be_set = [
-                (k, data.pop(k, None)) for k in [
-                    "fee", "nonce",
-                    "signatures", "signature", "signSignature",
-                    "secondSignature", "id"
-                ]
+        # if hasattr(dposlib, "core"):
+        data = dict(*args, **kwargs)
+        last_to_be_set = [
+            (k, data.pop(k, None)) for k in [
+                "fee", "nonce",
+                "signatures", "signature", "signSignature",
+                "secondSignature", "id"
             ]
-            # set default values
-            dict.__setitem__(self, "version", data.pop("version", 2))
-            dict.__setitem__(self, "network", getattr(cfg, "pubkeyHash", 30))
-            dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
-            dict.__setitem__(self, "amount", data.pop("amount", 0))
-            dict.__setitem__(self, "type", data.pop("type", 0))
-            dict.__setitem__(self, "asset", data.pop("asset", {}))
-            # initialize all non-void fields
-            for key, value in [
-                (k, v) for k, v in list(data.items()) + last_to_be_set
-                if v is not None
-            ]:
-                self[key] = value
+        ]
+        # set default values
+        dict.__setitem__(self, "version", data.pop("version", 2))
+        dict.__setitem__(self, "network", getattr(cfg, "pubkeyHash", 30))
+        dict.__setitem__(self, "typeGroup", data.pop("typeGroup", 1))
+        dict.__setitem__(self, "amount", int(data.pop("amount", 0)))
+        dict.__setitem__(self, "type", data.pop("type", 0))
+        dict.__setitem__(self, "asset", data.pop("asset", {}))
+        # initialize all non-void fields
+        for key, value in [
+            (k, v) for k, v in list(data.items()) + last_to_be_set
+            if v is not None
+        ]:
+            self[key] = value
 
     def __setitem__(self, item, value):
         if item == "secret":
