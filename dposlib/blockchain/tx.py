@@ -469,7 +469,6 @@ class Transaction(dict):
         # initialize a void dict
         dict.__init__(self)
         # if blockchain package loaded merge all elements else return void dict
-        # if hasattr(dposlib, "core"):
         data = dict(*args, **kwargs)
         last_to_be_set = [
             (k, data.pop(k, None)) for k in [
