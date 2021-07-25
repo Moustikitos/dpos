@@ -507,9 +507,9 @@ class Transaction(dict):
 
     def __getattr__(self, attr):
         try:
-            return dict.__getattribute__(self, attr)
-        except AttributeError:
             return dict.__getitem__(self, attr)
+        except KeyError:
+            return dict.__getattribute__(self, attr)
     __getitem__ = __getattr__
 
     def __str__(self):
