@@ -84,6 +84,30 @@
 <ul class="nav flex-column">
 </ul>
 </li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#get">GET</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#post">POST</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#put">PUT</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#delete">DELETE</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#load">load</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#use">use</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -152,19 +176,19 @@ True
 }
 </code></pre>
 <p><a name="dposlib.rest.GET"></a></p>
-<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">#</a></h4>
+<h2 id="get">GET<a class="headerlink" href="#get" title="Permanent link">#</a></h2>
 <p>GET HTTP request builder</p>
 <p><a name="dposlib.rest.POST"></a></p>
-<h4 id="post">POST<a class="headerlink" href="#post" title="Permanent link">#</a></h4>
+<h2 id="post">POST<a class="headerlink" href="#post" title="Permanent link">#</a></h2>
 <p>POST HTTP request builder</p>
 <p><a name="dposlib.rest.PUT"></a></p>
-<h4 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">#</a></h4>
+<h2 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">#</a></h2>
 <p>PUT HTTP request builder</p>
 <p><a name="dposlib.rest.DELETE"></a></p>
-<h4 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">#</a></h4>
+<h2 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">#</a></h2>
 <p>DELETE HTTP request builder</p>
 <p><a name="dposlib.rest.load"></a></p>
-<h4 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h4>
+<h2 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h2>
 <pre><code class="language-python">load(name)
 </code></pre>
 <p>Load a given blockchain package as <code>dposlib.core</code> module. A valid
@@ -175,7 +199,7 @@ Available blockchains are referenced in <code>dposli.net</code> module.</p>
 <li><code>name</code> <em>str</em> - package name to load</li>
 </ul>
 <p><a name="dposlib.rest.use"></a></p>
-<h4 id="use">use<a class="headerlink" href="#use" title="Permanent link">#</a></h4>
+<h2 id="use">use<a class="headerlink" href="#use" title="Permanent link">#</a></h2>
 <pre><code class="language-python">use(network, **kwargs)
 </code></pre>
 <p>Sets the blockchain parameters in the <code>dposlib.rest.cfg</code> module and
