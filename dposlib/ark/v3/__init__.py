@@ -198,6 +198,18 @@ def stop():
         DAEMON_PEERS.set()
 
 
+def multiVote(tx):
+    if hasattr(tx, "senderPublicKey"):
+        vote = rest.GET.api.wallets(tx["senderPublicKey"], returnKey="data")\
+            .get("attributes")\
+            .get("vote", None)
+        if vote is None:
+            pass
+        else:
+            tx["asset"]["votes"].insert(0, "-" + vote)
+    return tx
+
+
 __all__ = [
     "api",
     "crypto",
