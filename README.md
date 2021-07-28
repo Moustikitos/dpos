@@ -183,7 +183,8 @@ pip install ledgerblue
 ### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] switched from `sphinx` to `pydoc-markdown` doc builder
   - [x] ledger.com Ark app support
-  - [ ] Ark-core v 3.0.x compliancy
+  - [x] Ark-core v 3.0.x compliancy
+  - [x] added `dposlib.core.multiVote` function
   - [ ] `entity` and `business` transactions implementation
 
 ### 0.3.4
