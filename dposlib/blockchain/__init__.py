@@ -355,6 +355,9 @@ class Wallet(Content):
         tx.finalize(fee=self._fee, fee_included=self._fee_included)
         return tx
 
+    def link(self, *args, **kwargs): link(self, *args, **kwargs)
+    def unLink(self): unLink(self)
+
     @isLinked
     def send(self, amount, address, vendorField=None):
         "See [`dposlib.ark.v2.transfer`](blockchain.md#send)."
