@@ -8,12 +8,21 @@ import pytz
 from datetime import datetime
 from importlib import import_module
 
-from dposlib.ark.v2 import *
+from dposlib.ark import crypto
 from dposlib.ark.v2 import _write_module
+from dposlib.ark.v3 import api
 from dposlib import HOME, rest
 from dposlib.blockchain import cfg
 from dposlib.blockchain.tx import Transaction
 from dposlib.util.asynch import setInterval
+
+from dposlib.ark.v2.builders import (
+    broadcastTransactions, transfer, registerSecondSecret,
+    registerSecondPublicKey, registerAsDelegate, upVote, downVote,
+    registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
+    htlcSecret, htlcLock, htlcClaim, htlcRefund
+)
+from dposlib.ark.v3.builders import multiVote
 
 from usrv import req
 
@@ -198,18 +207,6 @@ def stop():
         DAEMON_PEERS.set()
 
 
-def multiVote(tx):
-    if hasattr(tx, "senderPublicKey"):
-        vote = rest.GET.api.wallets(tx["senderPublicKey"], returnKey="data")\
-            .get("attributes")\
-            .get("vote", None)
-        if vote is None:
-            pass
-        else:
-            tx["asset"]["votes"].insert(0, "-" + vote)
-    return tx
-
-
 __all__ = [
     "api",
     "crypto",
@@ -217,7 +214,7 @@ __all__ = [
     "Transaction",
     "broadcastTransactions",
     "transfer", "registerSecondSecret", "registerSecondPublicKey",
-    "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
-    "registerIpfs", "multiPayment", "delegateResignation",
-    "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund"
+    "registerAsDelegate", "upVote", "multiVote", "downVote",
+    "registerMultiSignature", "registerIpfs", "multiPayment",
+    "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund"
 ]
