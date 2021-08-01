@@ -185,7 +185,8 @@ pip install ledgerblue
   - [x] ledger.com Ark app support
   - [x] Ark-core v 3.0.x compliancy
   - [x] added `dposlib.core.multiVote` function
-  - [ ] `entity` and `business` transactions implementation
+  - [x] `magistrate` transactions implementation
+  - [x] packaging improvement
 
 ### 0.3.4
   - [x] removed `requests` dependency
