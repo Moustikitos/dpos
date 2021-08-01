@@ -68,9 +68,7 @@ def registerSecondSecret(secondSecret):
     Returns:
         transaction object
     """
-    return registerSecondPublicKey(
-        crypto.getKeys(secondSecret)["publicKey"], version=cfg.txversion
-    )
+    return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
 
 
 def registerSecondPublicKey(secondPublicKey):
