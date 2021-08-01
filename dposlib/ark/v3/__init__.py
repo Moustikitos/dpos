@@ -42,9 +42,6 @@ TRANSACTIONS = {
     8: "htlcLock",
     9: "htlcClaim",
     10: "htlcRefund",
-    # 11: "entityRegistration",
-    # 12: "entityResignation",
-    # 13: "entityUpdate"
 }
 
 TYPING = {
