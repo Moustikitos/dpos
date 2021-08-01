@@ -25,23 +25,6 @@ class Wallet(dposlib.blockchain.Wallet):
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
         )
 
-    # def transactions(self, limit=50):
-    #     sent = loadPages(
-    #         GET.api.wallets.__getattr__(self.address).transactions.sent,
-    #         limit=limit
-    #     )
-    #     received = loadPages(
-    #         GET.api.wallets.__getattr__(self.address).transactions.received,
-    #         limit=limit
-    #     )
-    #     return [
-    #         filter_dic(dic) for dic in sorted(
-    #             received+sent,
-    #             key=lambda e: e.get("timestamp", {}).get("epoch"),
-    #             reverse=True
-    #         )
-    #     ][:limit]
-
     @dposlib.blockchain.isLinked
     def registerIpfs(self, ipfs):
         "See [`dposlib.ark.v2.registerIpfs`](blockchain.md#registeripfs)."
