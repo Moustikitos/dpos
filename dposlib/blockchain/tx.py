@@ -3,12 +3,11 @@
 
 import re
 import json
-import base58
 import dposlib
 
 from collections import OrderedDict
 from dposlib import BytesIO
-from dposlib.blockchain import slots, cfg
+from dposlib.blockchain import cfg, slots, serializer
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 
 if dposlib.PY3:
@@ -55,7 +54,7 @@ def computeDynamicFees(tx, FMULT=None):
         vendorField if isinstance(vendorField, bytes) else \
         vendorField.encode("utf-8")
     lenVF = len(vendorField)
-    payload = serializePayload(tx)
+    payload = serializer.serializePayload(tx)
     T = cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 0)
     return int(
         (T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * FMULT
@@ -155,7 +154,6 @@ def setTimestamp(cls, value):
 
 # Reference:
 # - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
-# - https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-102.md
 def serialize(tx, **options):
     """
     Serialize transaction.
@@ -180,7 +178,7 @@ def serialize(tx, **options):
     pack_bytes(buf, vendorField)
 
     # custom part
-    pack_bytes(buf, serializePayload(tx))
+    pack_bytes(buf, serializer.serializePayload(tx))
 
     # signatures part
     if not options.get("exclude_sig", False):
@@ -194,147 +192,6 @@ def serialize(tx, **options):
 
     # id part
     pack_bytes(buf, unhexlify(tx.get("id", "")))
-
-    result = buf.getvalue()
-    buf.close()
-    return result
-
-
-def serializePayload(tx):
-    asset = tx.get("asset", {})
-    buf = BytesIO()
-    _type = tx["type"]
-
-    # transfer transaction
-    if _type == 0:
-        try:
-            recipientId = str(tx["recipientId"]) if not isinstance(
-                    tx["recipientId"], bytes
-                ) else \
-                tx["recipientId"]
-            recipientId = base58.b58decode_check(recipientId)
-        except Exception:
-            raise Exception("no recipientId defined")
-        pack("<QI", buf, (
-            int(tx.get("amount", 0)),
-            int(tx.get("expiration", 0)),
-        ))
-        pack_bytes(buf, recipientId)
-
-    # secondSignature registration
-    elif _type == 1:
-        if "signature" in asset:
-            secondPublicKey = asset["signature"]["publicKey"]
-        else:
-            raise Exception("no secondSecret or secondPublicKey given")
-        pack_bytes(buf, unhexlify(secondPublicKey))
-
-    # delegate registration
-    elif _type == 2:
-        username = asset.get("delegate", {}).get("username", False)
-        if username:
-            length = len(username)
-            if 3 <= length <= 255:
-                pack("<B", buf, (length, ))
-                pack_bytes(buf, username.encode("utf-8"))
-            else:
-                raise Exception("bad username length [3-255]: %s" % username)
-        else:
-            raise Exception("no username defined")
-
-    # vote
-    elif _type == 3:
-        delegatePublicKeys = asset.get("votes", False)
-        if delegatePublicKeys:
-            pack("<B", buf, (len(delegatePublicKeys), ))
-            for delegatePublicKey in delegatePublicKeys:
-                delegatePublicKey = delegatePublicKey.replace("+", "01")\
-                                    .replace("-", "00")
-                pack_bytes(buf, unhexlify(delegatePublicKey))
-        else:
-            raise Exception("no up/down vote given")
-
-    # Multisignature registration
-    elif _type == 4:
-        multiSignature = asset.get("multiSignature", False)
-        if multiSignature:
-            pack(
-                "<BB", buf,
-                (multiSignature["min"], len(multiSignature["publicKeys"]))
-            )
-            pack_bytes(
-                buf, b"".join(
-                    [unhexlify(sig) for sig in multiSignature["publicKeys"]]
-                )
-            )
-
-    # IPFS
-    elif _type == 5:
-        try:
-            ipfs = str(asset["ipfs"]) if not isinstance(
-                    asset["ipfs"], bytes
-                ) else asset["ipfs"]
-            data = base58.b58decode(ipfs)
-        except Exception as e:
-            raise Exception("bad ipfs autentification\n%r" % e)
-        pack_bytes(buf, data)
-
-    # multipayment
-    elif _type == 6:
-        try:
-            items = [
-                (p["amount"], base58.b58decode_check(
-                    str(p["recipientId"]) if not isinstance(
-                        p["recipientId"], bytes
-                    ) else p["recipientId"]
-                )) for p in asset.get("payments", {})
-            ]
-        except Exception:
-            raise Exception("error in recipientId address list")
-        result = pack("<H", buf, (len(items), ))
-        for amount, address in items:
-            pack("<Q", buf, (amount, ))
-            pack_bytes(buf, address)
-
-    # delegate resignation
-    elif _type == 7:
-        pass
-
-    # HTLC lock
-    elif _type == 8:
-        try:
-            recipientId = str(tx["recipientId"]) if not isinstance(
-                tx["recipientId"], bytes
-            ) else tx["recipientId"]
-            recipientId = base58.b58decode_check(recipientId)
-        except Exception:
-            raise Exception("no recipientId defined")
-        lock = asset.get("lock", False)
-        expiration = lock.get("expiration", False)
-        if not lock or not expiration:
-            raise Exception("no lock nor expiration data found")
-        pack("<Q", buf, (int(tx.get("amount", 0)),))
-        pack_bytes(buf, unhexlify(lock["secretHash"]))
-        pack("<BI", buf, [int(expiration["type"]), int(expiration["value"])])
-        pack_bytes(buf, recipientId)
-
-    # HTLC claim
-    elif _type == 9:
-        claim = asset.get("claim", False)
-        if not claim:
-            raise Exception("no claim data found")
-        pack_bytes(buf, unhexlify(claim["lockTransactionId"]))
-        pack_bytes(buf, claim["unlockSecret"].encode("utf-8"))
-
-    # HTLC refund
-    elif _type == 10:
-        refund = asset.get("refund", False)
-        if not refund:
-            raise Exception("no refund data found")
-        pack_bytes(buf, unhexlify(refund["lockTransactionId"]))
-
-    else:
-        raise Exception("Unknown transaction type %d" % tx["type"])
 
     result = buf.getvalue()
     buf.close()
