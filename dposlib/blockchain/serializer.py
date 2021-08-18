@@ -3,15 +3,23 @@
 
 import sys
 import base58
+import hashlib
+import json
 
 from dposlib import BytesIO
 from dposlib.util.bin import unhexlify, pack, pack_bytes
-
 
 CACHE = {}
 
 
 def serializePayload(tx):
+    md5_asset = hashlib.md5(
+        json.dumps(tx.get("asset", {}), sort_keys=True).encode()
+    ).digest()
+
+    if md5_asset == getattr(tx, "_assetHash", b""):
+        return getattr(tx, "_serializedPayload")
+
     buf = BytesIO()
     name = "_%(typeGroup)d_%(type)d" % tx
     func = CACHE.get(name, False)
@@ -25,11 +33,13 @@ def serializePayload(tx):
             )
         else:
             CACHE[name] = func
-
     func(tx, buf)
 
     result = buf.getvalue()
     buf.close()
+
+    setattr(tx, "_serializedPayload", result)
+    setattr(tx, "_assetHash", md5_asset)
     return result
 
 
@@ -199,10 +209,11 @@ def _2_6(tx, buf):
     data = asset.get("data", {})
 
     try:
+        ipfs = data.get("ipfsData", "")
         ipfs = \
-            str(data["ipfsData"]).encode("utf-8") \
-            if not isinstance(data["ipfsData"], bytes) \
-            else data["ipfsData"]
+            str(ipfs).encode("utf-8") \
+            if not isinstance(ipfs, bytes) \
+            else ipfs
     except Exception as e:
         raise Exception("bad ipfs hash\n%r" % e)
     try:
