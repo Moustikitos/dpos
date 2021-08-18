@@ -28,6 +28,7 @@ from dposlib.ark.v2.builders import (
 cfg.headers["API-Version"] = "2"
 
 DAEMON_PEERS = None
+
 TRANSACTIONS = {
     0: "transfer",
     1: "secondSignature",
@@ -41,6 +42,23 @@ TRANSACTIONS = {
     9: "htlcClaim",
     10: "htlcRefund",
 }
+
+GETNAME = {
+    1: {
+        0: lambda tx: "transfer",
+        1: lambda tx: "secondSignature",
+        2: lambda tx: "delegateRegistration",
+        3: lambda tx: "vote",
+        4: lambda tx: "multiSignature",
+        5: lambda tx: "ipfs",
+        6: lambda tx: "multiPayment",
+        7: lambda tx: "delegateResignation",
+        8: lambda tx: "htlcLock",
+        9: lambda tx: "htlcClaim",
+        10: lambda tx: "htlcRefund",
+    }
+}
+
 TYPING = {
     "amount": int,
     "asset": dict,
@@ -178,44 +196,16 @@ def init(seed=None):
         cfg.wif = "%x" % data["wif"]
     if "slip44" in data:
         cfg.slip44 = str(data["slip44"])
-
     # -- static fee management ------------------------------------------------
     cfg.fees = constants["fees"]
-
     # -- dynamic fee management -----------------------------------------------
-    # on v2.0 dynamicFees are in "fees" field
-    cfg.doffsets = cfg.fees.get("dynamicFees", {}).get("addonBytes", {})
-    # on v2.1 dynamicFees are in "transactionPool" field
-    cfg.doffsets.update(
-        data.get("transactionPool", {})
-        .get("dynamicFees", {})
-        .get("addonBytes", {})
-    )
-    # before ark v2.4 dynamicFees statistics are in "feeStatistics" field
-    cfg.feestats = dict(
-        [i["type"], i["fees"]] for i in data.get("feeStatistics", {})
-    )
+    # since v2.1 dynamicFees are in "transactionPool" field
+    cfg.doffsets = data.get(
+        "transactionPool", {}
+    ).get("dynamicFees", {}).get("addonBytes", {})
     # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
-    if cfg.feestats == {}:
-        fees = FEES["data"]
-        if isinstance(fees, list):
-            cfg.feestats = dict([
-                int(i["type"]), {
-                    "avgFee": int(i["avg"]),
-                    "minFee": int(i["min"]),
-                    "maxFee": int(i["max"]),
-                }
-            ] for i in fees)
-        # since ark v2.6 fee statistic structure is a dictionary
-        elif isinstance(fees, dict):
-            NUM = dict([v, k] for k, v in TRANSACTIONS.items())
-            cfg.feestats = dict([
-                NUM[k], {
-                    "avgFee": int(v["avg"]),
-                    "minFee": int(v["min"]),
-                    "maxFee": int(v["max"]),
-                }
-            ] for k, v in fees.get("1", {}).items())
+    # since ark v2.6 fee statistic structure is a dictionary
+    setattr(cfg, "feestats", FEES["data"])
     # activate dynamic fees
     Transaction.useDynamicFee()
     # -- network connection management ----------------------------------------

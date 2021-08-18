@@ -9,7 +9,7 @@ from datetime import datetime
 from importlib import import_module
 
 from dposlib.ark import crypto
-from dposlib.ark.v2 import _write_module
+from dposlib.ark.v2 import _write_module, TRANSACTIONS, TYPING, GETNAME
 from dposlib.ark.v3 import api
 from dposlib import HOME, rest
 from dposlib.blockchain import cfg
@@ -22,7 +22,9 @@ from dposlib.ark.v2.builders import (
     registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
     htlcSecret, htlcLock, htlcClaim, htlcRefund
 )
-from dposlib.ark.v3.builders import multiVote
+from dposlib.ark.v3.builders import (
+    multiVote, entityRegister, entityUpdate, entityResign
+)
 
 from usrv import req
 
@@ -30,45 +32,13 @@ from usrv import req
 cfg.headers["API-Version"] = "3"
 
 DAEMON_PEERS = None
-TRANSACTIONS = {
-    0: "transfer",
-    1: "secondSignature",
-    2: "delegateRegistration",
-    3: "vote",
-    4: "multiSignature",
-    5: "ipfs",
-    6: "multiPayment",
-    7: "delegateResignation",
-    8: "htlcLock",
-    9: "htlcClaim",
-    10: "htlcRefund",
-}
 
-TYPING = {
-    "amount": int,
-    "asset": dict,
-    "blockId": str,
-    "confirmations": int,
-    "expiration": int,
-    "fee": int,
-    "id": str,
-    "MultiSignatureAddress": str,
-    "network": int,
-    "nonce": int,
-    "recipientId": str,
-    "senderPublicKey": str,
-    "senderId": str,
-    "signature": str,
-    "signSignature": str,
-    "signatures": list,
-    "timestamp": int,
-    "timelockType": int,
-    "timelock": int,
-    "type": int,
-    "typeGroup": int,
-    "vendorField": str,
-    "vendorFieldHex": str,
-    "version": int,
+GETNAME[2] = {
+    6: lambda tx: (
+        "entityRegistration" if tx["asset"]["action"] == 0 else
+        "entityResignation" if tx["asset"]["action"] == 1 else
+        "entityUpdate"
+    )
 }
 
 
@@ -172,19 +142,8 @@ def init(seed=None):
         "transactionPool", {}
     ).get("dynamicFees", {}).get("addonBytes", {})
     # since ark v2.4 fee statistics moved to ~/api/node/fees endpoint
-    fees = FEES["data"]
     # since ark v2.6 fee statistic structure is a dictionary
-    if isinstance(fees, dict):
-        NUM = dict([v, k] for k, v in TRANSACTIONS.items())
-        # for i, d in fees.items():
-        stats = dict(
-            [NUM[k], {
-                "avgFee": int(v["avg"]),
-                "minFee": int(v["min"]),
-                "maxFee": int(v["max"]),
-            }] for k, v in fees.get("1", {}).items()
-        )
-        setattr(cfg, "feestats", stats)
+    setattr(cfg, "feestats", FEES["data"])
     # activate dynamic fees
     Transaction.useDynamicFee("avgFee")
     # -- network connection management ----------------------------------------
@@ -213,5 +172,6 @@ __all__ = [
     "transfer", "registerSecondSecret", "registerSecondPublicKey",
     "registerAsDelegate", "upVote", "multiVote", "downVote",
     "registerMultiSignature", "registerIpfs", "multiPayment",
-    "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund"
+    "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund",
+    "entityRegister", "entityUpdate", "entityResign"
 ]
