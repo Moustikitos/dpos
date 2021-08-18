@@ -14,53 +14,6 @@ if dposlib.PY3:
     long = int
 
 
-def setDynamicFee(cls, value):
-    if isinstance(value, (float, int, long)):
-        fee = value
-    else:
-        static_value = getattr(cfg, "fees", {})\
-            .get("staticFees", getattr(cfg, "fees", {}))\
-            .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
-        feesl = value if isinstance(value, str) else cls.FMULT
-        # use fee statistics if FEESL is not None
-        if feesl is not None:  # and cls["type"] not in [6, ]:
-            # if fee statistics not found, return static fee value
-            fee = cfg.feestats.get(cls["type"], {}).get(feesl, static_value)
-        # else compute fees using fee multiplier and cls size
-        else:
-            try:
-                fee = computeDynamicFees(cls, cls.FMULT)
-            except Exception:
-                fee = static_value
-    dict.__setitem__(cls, "fee", long(fee))
-
-
-def computeDynamicFees(tx, FMULT=None):
-    """
-    Compute transaction fees according to [AIP 16 ](
-        https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
-    ).
-
-    Arguments:
-        tx (dict or Transaction): transaction object
-    Returns:
-        fees
-    """
-    typ_ = tx.get("type", 0)
-    version = tx.get("version", 0x01)
-
-    vendorField = tx.get("vendorField", "")
-    vendorField = \
-        vendorField if isinstance(vendorField, bytes) else \
-        vendorField.encode("utf-8")
-    lenVF = len(vendorField)
-    payload = serializer.serializePayload(tx)
-    T = cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 0)
-    return int(
-        (T + 55 + (4 if version >= 0x02 else 0) + lenVF + len(payload)) * FMULT
-    )
-
-
 def setSenderPublicKey(cls, publicKey):
     # load information from blockchain
     address = dposlib.core.crypto.getAddress(publicKey)
@@ -99,16 +52,68 @@ def deleteSenderPublicKey(cls):
     cls.pop("senderPublicKey", None)
 
 
+def setFees(cls, value=None):
+    fmult = cls.FMULT
+    feesl = cls.FEESL
+
+    # manualy set fees
+    if isinstance(value, (float, int, long)):
+        value = int(value)
+
+    else:
+        try:
+            fmult = int(value)
+        except (ValueError, TypeError):
+            fmult = cls.FMULT
+            feesl = value if value[:3] in ["min", "avg", "max"] else feesl
+        else:
+            feesl = None
+
+        if feesl is None:
+            # use static fees
+            if fmult is None:
+                value = int(
+                    getattr(cfg, "fees", {}).get("staticFees", {})
+                    .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
+                )
+            # compute dynamic fees
+            # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
+            else:
+                typ_ = cls.get("type", 0)
+                version = cls.get("version", 0x01)
+
+                vendorField = cls.get("vendorField", "")
+                lenVF = len(
+                    vendorField if isinstance(vendorField, bytes) else
+                    vendorField.encode("utf-8")
+                )
+
+                value = int(
+                    cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 100) +
+                    55 + (4 if version >= 0x02 else 0) +
+                    lenVF + len(serializer.serializePayload(cls))
+                ) * fmult
+        # use fee statistics
+        else:
+            name = dposlib.core.GETNAME[cls["typeGroup"]][cls["type"]](cls)
+            value = int(
+                cfg.feestats[str(cls["typeGroup"])][name][feesl[:3]]
+            )
+
+    cls._reset()
+    dict.__setitem__(cls, "fee", value)
+
+
 def setFeeIncluded(cls):
     """
     Arrange `amount` and `fee` values so the total `arktoshi` flow is
     the desired spent.
     """
     if cls["type"] in [0, 7] and cls["fee"] < cls["amount"]:
+        cls._reset()
         if "_amount" not in cls.__dict__:
             cls._amount = cls["amount"]
         cls["amount"] = cls._amount - cls["fee"]
-    cls._reset()
 
 
 def unsetFeeIncluded(cls):
@@ -117,9 +122,9 @@ def unsetFeeIncluded(cls):
     the desired spent plus the fee.
     """
     if cls["type"] in [0, 7] and "_amount" in cls.__dict__:
+        cls._reset()
         cls["amount"] = cls._amount
         cls.__dict__.pop("_amount", False)
-    cls._reset()
 
 
 def setVendorField(cls, value, encoding="utf-8"):
@@ -127,8 +132,8 @@ def setVendorField(cls, value, encoding="utf-8"):
         value = value.decode(encoding)
     elif not isinstance(value, str):
         value = "%s" % value
-    cls._setitem("vendorField", value)
     cls._reset()
+    cls._setitem("vendorField", value)
 
 
 def setVendorFieldHex(cls, value, encoding="utf-8"):
@@ -137,8 +142,8 @@ def setVendorFieldHex(cls, value, encoding="utf-8"):
         re.match(r"^[0-9a-fA-F]*$", value) is not None and
         len(value) % 2 == 0
     ):
-        cls._setitem("vendorField", unhexlify(value).decode(encoding))
         cls._reset()
+        cls._setitem("vendorField", unhexlify(value).decode(encoding))
     else:
         raise ValueError("'%s' seems not be a valid hex string" % value)
 
@@ -148,8 +153,8 @@ def setTimestamp(cls, value):
         value = value.get("epoch", slots.getTime())
     elif isinstance(value, slots.datetime):
         value = slots.getTime(value)
-    cls._setitem("timestamp", value)
     cls._reset()
+    cls._setitem("timestamp", value)
 
 
 # Reference:
@@ -216,7 +221,7 @@ class Transaction(dict):
     )
     fee = property(
         lambda cls: cls.get("fee", None),
-        lambda cls, value: cls.setFee(value),
+        lambda cls, value: setFees(cls, value),
         None,
         ""
     )
@@ -262,7 +267,6 @@ class Transaction(dict):
         lambda cls: cls.pop("signSignature", None),
         "Second signature"
     )
-    #: use feeIncluded option
     feeIncluded = property(
         lambda cls: "_amount" in cls.__dict__,
         lambda cls, value: (
@@ -285,7 +289,7 @@ class Transaction(dict):
         """
         if hasattr(cfg, "doffsets"):
             if isinstance(value, (int, float, long)):
-                Transaction.FMULT = long(value)
+                Transaction.FMULT = int(value)
                 Transaction.FEESL = None
             elif value in ["maxFee", "avgFee", "minFee"]:
                 Transaction.FMULT = None
@@ -312,7 +316,7 @@ class Transaction(dict):
             dict.__setitem__(self, item, value)
 
     def _reset(self):
-        """remove data linked to validation proces."""
+        """remove data linked to validation process."""
         self.pop("signature", False)
         self.pop("signatures", False)
         self.pop("signSignature", False)
@@ -405,16 +409,6 @@ class Transaction(dict):
         except Exception:
             pass
 
-    def setFee(self, value=None):
-        """
-        Set `fee` field manually or according to inner parameters.
-
-        Args:
-            value (int): fee value in `arktoshi` to set manually
-        """
-        setDynamicFee(self, value or self.FEESL)
-        self._reset()
-
     # root sign function called by others
     def sign(self):
         """
@@ -424,7 +418,7 @@ class Transaction(dict):
         self._reset()
         if hasattr(self, "_privateKey"):
             if "fee" not in self:
-                self.setFee()
+                setFees(self)
             if self.type == 4:
                 missings = \
                     self.asset["multiSignature"]["min"] - \
@@ -551,7 +545,7 @@ class Transaction(dict):
         # remove id if any and set fee
         self.pop("id", False)
         if "fee" not in self:
-            self.setFee()
+            setFees(self)
 
         # concatenate index and signature and fill it in signatures field
         # sorted(set([...])) returns sorted([...]) with unique values
