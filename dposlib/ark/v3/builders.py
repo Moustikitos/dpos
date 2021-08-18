@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-import re
 from dposlib import rest
 from dposlib.blockchain.tx import Transaction
 
