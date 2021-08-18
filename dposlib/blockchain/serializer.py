@@ -13,14 +13,14 @@ CACHE = {}
 
 
 def serializePayload(tx):
+    asset = tx.get("asset", {})
     md5_asset = hashlib.md5(
-        json.dumps(tx.get("asset", {}), sort_keys=True).encode()
-    ).digest()
+        json.dumps(asset, sort_keys=True).encode("utf-8")
+    ).hexdigest()
 
-    if md5_asset == getattr(tx, "_assetHash", b""):
+    if len(asset) and md5_asset == getattr(tx, "_assetHash", ""):
         return getattr(tx, "_serializedPayload")
 
-    buf = BytesIO()
     name = "_%(typeGroup)d_%(type)d" % tx
     func = CACHE.get(name, False)
 
@@ -33,8 +33,9 @@ def serializePayload(tx):
             )
         else:
             CACHE[name] = func
-    func(tx, buf)
 
+    buf = BytesIO()
+    func(tx, buf)
     result = buf.getvalue()
     buf.close()
 
@@ -202,7 +203,6 @@ def _1_10(tx, buf):
 
 # https://ark.dev/docs/core/transactions/transaction-types/entity
 
-# entity registration
 def _2_6(tx, buf):
     asset = tx.get("asset", {})
     registrationId = asset.get("registrationId", "")
