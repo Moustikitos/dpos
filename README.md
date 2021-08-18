@@ -33,7 +33,6 @@ sudo apt-get install python-pip python3-pip
     * [X] devnet : `dark`
   - Ark-core 2.6 (`API`+ transaction type `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` & `10`)
     * [X] mainet : `ark`
-    * [X] devnet : `dark2`
   - Ark forks (`API`+ transaction type `0`, `1`, `2` & `3`)
     + [x] Internet of People
       * [X] mainet : `iop`
@@ -182,6 +181,7 @@ pip install ledgerblue
 
 ### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] switched from `sphinx` to `pydoc-markdown` doc builder
+  - [x] fee management improvement
   - [x] ledger.com Ark app support
   - [x] Ark-core v 3.0.x compliancy
   - [x] added `dposlib.core.multiVote` function
@@ -281,5 +281,3 @@ pip install ledgerblue
 
 ### 0.1.0
   - [x] First rebrand
-
-
