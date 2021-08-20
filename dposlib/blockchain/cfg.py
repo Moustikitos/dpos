@@ -2,7 +2,7 @@
 # © Toons
 
 """
-This module stores blockchain parameters.
+This module stores blockchain parameters:
 
   * activeDelegates:
   * aip20:
@@ -19,8 +19,6 @@ This module stores blockchain parameters.
   * hotmode:
   * marker:
   * maxTransactions:
-  * maxvote:
-  * maxvotepertx:
   * network:
   * peers:
   * ports:
