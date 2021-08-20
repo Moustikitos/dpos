@@ -3,8 +3,6 @@
 
 ark = {
     "familly": "ark.v2",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 0,
     "txversion": 2,
 
@@ -13,22 +11,8 @@ ark = {
     ]
 }
 
-dark2 = {
-    "familly": "ark.v2",
-    "maxvotepertx": 1,
-    "maxvote": 1,
-    "aip20": 1,
-    "txversion": 2,
-
-    "seeds": [
-        "https://dexplorer.ark.io:8443"
-    ]
-}
-
 dark = {
     "familly": "ark.v3",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 1,
     "txversion": 2,
 
@@ -43,9 +27,8 @@ dark = {
 
 iop = {
     "familly": "ark.v2",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 0,
+    "txversion": 2,
 
     "seeds": [
         "http://35.195.150.223:4703",
@@ -74,9 +57,8 @@ iop = {
 
 diop = {
     "familly": "ark.v2",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 0,
+    "txversion": 2,
 
     "seeds": [
         "http://35.204.124.143:4703",
@@ -90,9 +72,8 @@ diop = {
 
 qredit = {
     "familly": "ark.v2",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 0,
+    "txversion": 2,
 
     "seeds": [
         "http://35.163.173.247:4103",
@@ -104,13 +85,24 @@ qredit = {
     ]
 }
 
-ripa = {
+nos = {
+    "familly": "ark.v2",
+    "aip20": 0,
+    "txversion": 2,
+
+    "seeds": [
+        "https://api.nos.dev"
+    ]
+}
+
+uns = {
     "familly": "ark.v2",
     "maxvotepertx": 1,
     "maxvote": 1,
     "aip20": 0,
+    "txversion": 2,
 
     "seeds": [
-        "http://51.15.84.120:5502"
+        "https://api.uns.network"
     ]
 }
