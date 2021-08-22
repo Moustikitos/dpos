@@ -84,17 +84,6 @@ def splitData(data, dongle_path):
 
 
 def buildPukApdu(dongle_path):
-    """
-    Generate apdu to get public key from ledger key.
-
-    Args:
-        dongle_path (bytes): value returned by
-                             [`dposlib.ark.ldgr.parseBip44Path`](
-                                 crypto.md#parsebip44path
-                             )
-    Returns:
-        public key apdu data as bytes
-    """
     path_len = len(dongle_path)
     return \
         unhexlify(cla + op_puk + p1_non_confirm + p2_no_chaincode) + \

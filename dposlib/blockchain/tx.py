@@ -61,8 +61,10 @@ def setFees(cls, value=None):
         value = int(value)
 
     else:
+        # try to use fee multiplier
         try:
             fmult = int(value)
+        # use fee statistics or static fees
         except (ValueError, TypeError):
             fmult = cls.FMULT
             feesl = value if value[:3] in ["min", "avg", "max"] else feesl
@@ -105,10 +107,6 @@ def setFees(cls, value=None):
 
 
 def setFeeIncluded(cls):
-    """
-    Arrange `amount` and `fee` values so the total `arktoshi` flow is
-    the desired spent.
-    """
     if cls["type"] in [0, 7] and cls["fee"] < cls["amount"]:
         cls._reset()
         if "_amount" not in cls.__dict__:
@@ -117,10 +115,6 @@ def setFeeIncluded(cls):
 
 
 def unsetFeeIncluded(cls):
-    """
-    Arrange `amount` and `fee` values so the total `arktoshi` flow is
-    the desired spent plus the fee.
-    """
     if cls["type"] in [0, 7] and "_amount" in cls.__dict__:
         cls._reset()
         cls["amount"] = cls._amount
@@ -223,19 +217,16 @@ class Transaction(dict):
         lambda cls: cls.get("fee", None),
         lambda cls, value: setFees(cls, value),
         None,
-        ""
     )
     vendorField = property(
         lambda cls: cls.get("vendorField", None),
         lambda cls, value: setVendorField(cls, value),
         lambda cls: setVendorField(cls, ""),
-        ""
     )
     vendorFieldHex = property(
         lambda cls: hexlify(cls.get("vendorField", "").encode("utf-8")),
         lambda cls, value: setVendorFieldHex(cls, value),
         lambda cls: setVendorField(cls, ""),
-        ""
     )
     timestamp = property(
         lambda cls: cls.get("timestamp", None),
@@ -408,6 +399,10 @@ class Transaction(dict):
             del self._secondPrivateKey
         except Exception:
             pass
+
+    def touch(self):
+        if hasattr(self, "_publicKey"):
+            self.senderPublicKey = self._publicKey
 
     # root sign function called by others
     def sign(self):
