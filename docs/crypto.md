@@ -316,26 +316,6 @@ https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 
   parsed bip44 path as bytes
 
-<a name="dposlib.ark.ldgr.buildPukApdu"></a>
-#### buildPukApdu
-
-```python
-buildPukApdu(dongle_path)
-```
-
-Generate apdu to get public key from ledger key.
-
-**Arguments**:
-
-- `dongle_path` _bytes_ - value returned by
-  [`dposlib.ark.ldgr.parseBip44Path`](
-  crypto.md#parsebip44path
-  )
-
-**Returns**:
-
-  public key apdu data as bytes
-
 <a name="dposlib.ark.ldgr.getPublicKey"></a>
 #### getPublicKey
 

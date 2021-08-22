@@ -9,9 +9,7 @@ implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
 
 `rest` also creates a `core` module containing
 [`dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects)
-builders, [`dposlib.ark.crypto`](crypto.md) and [`dposlib.ark.v2.api`](
-    blockchain.md#dposlibarkv2api
-) interface.
+builders, cryptographic and network interface.
 
 ## `rest` HTTP request builder
 ```python
@@ -69,58 +67,4 @@ True
   "version": 2
 }
 ```
-
-<a name="dposlib.rest.GET"></a>
-#### GET
-
-GET HTTP request builder
-
-<a name="dposlib.rest.POST"></a>
-#### POST
-
-POST HTTP request builder
-
-<a name="dposlib.rest.PUT"></a>
-#### PUT
-
-PUT HTTP request builder
-
-<a name="dposlib.rest.DELETE"></a>
-#### DELETE
-
-DELETE HTTP request builder
-
-<a name="dposlib.rest.load"></a>
-#### load
-
-```python
-load(name)
-```
-
-Load a given blockchain package as `dposlib.core` module. A valid
-blockchain package must provide `init(peer=None)` and `stop()` definitions.
-Available blockchains are referenced in `dposli.net` module.
-
-**Arguments**:
-
-- `name` _str_ - package name to load
-
-<a name="dposlib.rest.use"></a>
-#### use
-
-```python
-use(network, **kwargs)
-```
-
-Sets the blockchain parameters in the `dposlib.rest.cfg` module and
-initializes blockchain package. Network options can be created or overriden
-using `**kwargs` argument.
-
-**Arguments**:
-
-- `network` _str_ - network to initialize
-
-**Returns**:
-
-  True if network connection established
 
