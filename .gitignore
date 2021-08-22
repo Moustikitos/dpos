@@ -116,4 +116,5 @@ simple_history.html
 .registry/
 .synch/
 .generated-files.txt
+mkdocs.yml
 index.md
