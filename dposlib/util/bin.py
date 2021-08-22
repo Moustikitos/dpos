@@ -42,8 +42,7 @@ def unpack_bytes(f, n):
 
 def pack_bytes(f, v):
     # write bytes into buffer
-    output = pack("<%ss" % len(v), f, (v,))
-    return output
+    return pack("<%ss" % len(v), f, (v,))
 
 
 def hexlify(data):

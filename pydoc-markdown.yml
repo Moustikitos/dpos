@@ -21,17 +21,20 @@ renderer:
       source: index.md
     - title: Network
       contents:
-        - dposlib.rest*
+        - dposlib.rest
     - title: Crypto
       contents:
         - dposlib.ark.crypto*
         - dposlib.ark.ldgr*
     - title: Blockchain
       contents:
-        - dposlib.blockchain
         - dposlib.blockchain*
-        - dposlib.ark.v2.*
+    - title: Core
+      contents:
         - dposlib.ark.v2.api*
+        - dposlib.ark.v2.builders*
+        - dposlib.ark.v3.api*
+        - dposlib.ark.v3.builders*
 
   mkdocs_config:
     site_name: The dposlib Project
@@ -39,11 +42,10 @@ renderer:
     repo_name: GitHub
     copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
     theme:
-      name: mkdocs
-      nav_style: light
-    highlightjs: true
-    hljs_languages:
-        - python
+      name: readthedocs
+      highlightjs: true
+      hljs_languages:
+      - python
     markdown_extensions:
     - smarty
     - toc:
