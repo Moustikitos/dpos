@@ -67,7 +67,8 @@ def setFees(cls, value=None):
         # use fee statistics or static fees
         except (ValueError, TypeError):
             fmult = cls.FMULT
-            feesl = value if value[:3] in ["min", "avg", "max"] else feesl
+            if isinstance(value, str):
+                feesl = value if value[:3] in ["min", "avg", "max"] else feesl
         else:
             feesl = None
 
