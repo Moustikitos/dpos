@@ -513,50 +513,49 @@ class Transaction(dict):
         """
         Add a signature in `signatures` field according to given index and
         privateKey.
-
         Args:
             privateKey (str): private key as hex string
         """
+        # remove id if any and set fee if needed
+        self.pop("id", False)
+        if "fee" not in self:
+            setFees(self)
         # get public key from private key
         publicKey = dposlib.core.crypto.secp256k1.PublicKey.from_seed(
             unhexlify(privateKey)
         )
         publicKey = hexlify(publicKey.encode())
+        # create a multi-signature
+        signature = dposlib.core.crypto.getSignatureFromBytes(
+            serialize(
+                self,
+                exclude_sig=True,
+                exclude_multi_sig=True,
+                exclude_second_sig=True
+            ),
+            privateKey
+        )
+        # add multisignature in transaction
+        try:
+            self.appendMultiSignature(publicKey, signature)
+        except Exception:
+            raise ValueError("public key %s not allowed here" % publicKey)
 
-        # get public key index :
+    def appendMultiSignature(self, publicKey, signature):
         # if type 4 find index in asset
-        # else find it in _multisignature attribute
         if self["type"] == 4:
             index = self.asset["multiSignature"]["publicKeys"].index(
                 publicKey
             )
+        # else find it in _multisignature attribute
         elif self._multisignature:
-            if publicKey not in self._multisignature["publicKeys"]:
-                raise ValueError("public key %s not allowed here" % publicKey)
             index = self._multisignature["publicKeys"].index(publicKey)
         else:
             raise Exception("multisignature not to be used here")
-
-        # remove id if any and set fee
-        self.pop("id", False)
-        if "fee" not in self:
-            setFees(self)
-
         # concatenate index and signature and fill it in signatures field
         # sorted(set([...])) returns sorted([...]) with unique values
-        self["signatures"] = sorted(set(
-            self.get("signatures", []) + [
-                "%02x" % index +
-                dposlib.core.crypto.getSignatureFromBytes(
-                    serialize(
-                        self,
-                        exclude_sig=True,
-                        exclude_multi_sig=True,
-                        exclude_second_sig=True
-                    ),
-                    privateKey
-                )
-            ]),
+        self["signatures"] = sorted(
+            set(self.get("signatures", []) + ["%02x" % index + signature]),
             key=lambda s: s[:2]
         )
 
