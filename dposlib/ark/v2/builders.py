@@ -194,6 +194,7 @@ def registerMultiSignature(minSig, *publicKeys):
                 "publicKeys": publicKeys
             }
         },
+        signatures=[]
     )
 
 
