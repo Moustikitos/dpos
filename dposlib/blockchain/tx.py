@@ -29,9 +29,8 @@ def setSenderPublicKey(cls, publicKey):
     if "timestamp" not in cls:
         cls["timestamp"] = slots.getTime()
     # deal with recipientId and senderId fields
-    if cls["type"] != 4:
-        cls["senderId"] = address
-    if cls["type"] in [1, 3, 6, 9] and "recipientId" not in cls:
+    cls["senderId"] = address
+    if cls["type"] not in [0, 8] and "recipientId" not in cls:
         cls["recipientId"] = address
     # add "senderPublicKey" and "_publicKey" avoiding recursion loop
     dict.__setitem__(cls, "senderPublicKey", publicKey)
@@ -44,10 +43,16 @@ def deleteSenderPublicKey(cls):
     del cls._multisignature
     del cls._secondPublicKey
     del cls._publicKey
+
+    try:
+        del cls._privateKey
+        del cls._secondPrivateKey
+    except Exception:
+        pass
+
     cls.pop("nonce", None)
-    if cls["type"] != 4:
-        cls.pop("senderId", None)
-    if cls["type"] in [1, 3, 6, 9]:
+    cls.pop("senderId", None)
+    if cls["type"] not in [0, 8]:
         cls.pop("recipientId", None)
     cls.pop("senderPublicKey", None)
 
