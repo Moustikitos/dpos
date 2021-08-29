@@ -200,5 +200,6 @@ def use(network, **kwargs):
             break
     # update information on cfg module
     cfg.__dict__.update(data)
+    req.EndPoint.timeout = cfg.timeout
     load(cfg.familly)
     return cfg.hotmode
