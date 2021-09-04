@@ -20,7 +20,7 @@ if dposlib.PY3:
 def isLinked(func):
     """
     `Python decorator`.
-    First argument of decorated function  have to be a `Content` or an
+    First argument of decorated function have to be a `Content` or an
     object containing a valid `address`, `_derivationPath` or `publicKey`
     attribute. It executes the decorated `function` if the object is correctly
     linked using [`dposlib.blockchain.link`](blockchain.md#link) definition.
@@ -360,7 +360,7 @@ class Wallet(Content):
 
     @isLinked
     def send(self, amount, address, vendorField=None):
-        "See [`dposlib.ark.v2.transfer`](blockchain.md#send)."
+        "See [`dposlib.ark.v2.transfer`](v2.md#transfer)."
         tx = dposlib.core.transfer(amount, address, vendorField)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
@@ -368,7 +368,7 @@ class Wallet(Content):
     def registerSecondSecret(self, secondSecret):
         """
         See [`dposlib.ark.v2.registerSecondSecret`](
-            blockchain.md#registersecondsecret
+            v2.md#registersecondsecret
         ).
         """
         tx = dposlib.core.registerSecondSecret(secondSecret)
@@ -378,7 +378,7 @@ class Wallet(Content):
     def registerSecondPublicKey(self, secondPublicKey):
         """
         See [`dposlib.ark.v2.registerSecondPublicKey`](
-            blockchain.md#registersecondpublickey
+            v2.md#registersecondpublickey
         ).
         """
         tx = dposlib.core.registerSecondPublicKey(secondPublicKey)
@@ -388,7 +388,7 @@ class Wallet(Content):
     def registerAsDelegate(self, username):
         """
         See [`dposlib.ark.v2.registerAsDelegate`](
-            blockchain.md#registerasdelegate
+            v2.md#registerasdelegate
         ).
         """
         tx = dposlib.core.registerAsDelegate(username)
@@ -396,12 +396,12 @@ class Wallet(Content):
 
     @isLinked
     def upVote(self, *usernames):
-        "See [`dposlib.ark.v2.upVote`](blockchain.md#upvote)."
+        "See [`dposlib.ark.v2.upVote`](v2.md#upvote)."
         tx = dposlib.core.upVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
     def downVote(self, *usernames):
-        "See [`dposlib.ark.v2.downVote`](blockchain.md#downvote)."
+        "See [`dposlib.ark.v2.downVote`](v2.md#downvote)."
         tx = dposlib.core.downVote(*usernames)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))

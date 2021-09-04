@@ -9,7 +9,7 @@ isLinked(func)
 ```
 
 `Python decorator`.
-First argument of decorated function  have to be a `Content` or an
+First argument of decorated function have to be a `Content` or an
 object containing a valid `address`, `_derivationPath` or `publicKey`
 attribute. It executes the decorated `function` if the object is correctly
 linked using [`dposlib.blockchain.link`](blockchain.md#link) definition.
@@ -139,7 +139,7 @@ return second public key if second signature is set to wallet
  | send(amount, address, vendorField=None)
 ```
 
-See [`dposlib.ark.v2.transfer`](blockchain.md#send).
+See [`dposlib.ark.v2.transfer`](v2.md#transfer).
 
 <a name="dposlib.blockchain.Wallet.registerSecondSecret"></a>
 #### registerSecondSecret
@@ -150,7 +150,7 @@ See [`dposlib.ark.v2.transfer`](blockchain.md#send).
 ```
 
 See [`dposlib.ark.v2.registerSecondSecret`](
-    blockchain.md#registersecondsecret
+    v2.md#registersecondsecret
 ).
 
 <a name="dposlib.blockchain.Wallet.registerSecondPublicKey"></a>
@@ -162,7 +162,7 @@ See [`dposlib.ark.v2.registerSecondSecret`](
 ```
 
 See [`dposlib.ark.v2.registerSecondPublicKey`](
-    blockchain.md#registersecondpublickey
+    v2.md#registersecondpublickey
 ).
 
 <a name="dposlib.blockchain.Wallet.registerAsDelegate"></a>
@@ -174,7 +174,7 @@ See [`dposlib.ark.v2.registerSecondPublicKey`](
 ```
 
 See [`dposlib.ark.v2.registerAsDelegate`](
-    blockchain.md#registerasdelegate
+    v2.md#registerasdelegate
 ).
 
 <a name="dposlib.blockchain.Wallet.upVote"></a>
@@ -185,7 +185,7 @@ See [`dposlib.ark.v2.registerAsDelegate`](
  | upVote(*usernames)
 ```
 
-See [`dposlib.ark.v2.upVote`](blockchain.md#upvote).
+See [`dposlib.ark.v2.upVote`](v2.md#upvote).
 
 <a name="dposlib.blockchain.Wallet.downVote"></a>
 #### downVote
@@ -195,7 +195,7 @@ See [`dposlib.ark.v2.upVote`](blockchain.md#upvote).
  | downVote(*usernames)
 ```
 
-See [`dposlib.ark.v2.downVote`](blockchain.md#downvote).
+See [`dposlib.ark.v2.downVote`](v2.md#downvote).
 
 <a name="dposlib.blockchain.cfg"></a>
 # dposlib.blockchain.cfg

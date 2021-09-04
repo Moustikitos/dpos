@@ -2,8 +2,9 @@
 # © Toons
 
 """
-`rest` module provides network loaders and `usrv.get.EndPoint` root class to
-implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
+`rest` module provides network loaders and [`usrv.req.EndPoint`](
+    https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L33
+) root class to implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
 [Ark API documentation](
     https://api.ark.dev/public-rest-api/getting-started
 ) to see how to use http calls.
@@ -12,7 +13,6 @@ implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests. See
 [`dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects)
 builders, cryptographic and network interface.
 
-## `rest` HTTP request builder
 ```python
 >>> from dposlib import rest
 >>> rest.use("ark")
@@ -23,7 +23,7 @@ True
 'arky'
 ```
 
-## `core` module
+**`core` module**
 ```python
 >>> import dposlib
 >>> dlgt = dposlib.core.api.Delegate("arky")
@@ -98,28 +98,28 @@ def _random_peer(kwargs):
     return kwargs.pop("peer", None) or random.choice(cfg.peers)
 
 
-#: GET HTTP request builder
+#: HTTP GET request builder
 GET = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("GET", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
-#: POST HTTP request builder
+#: HTTP POST request builder
 POST = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("POST", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
-#: PUT HTTP request builder
+#: HTTP PUT request builder
 PUT = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
         _call("PUT", *a, **dict(kw, headers=cfg.headers))
     ][-1]
 )
-#: DELETE HTTP request builder
+#: HTTP DELETE request builder
 DELETE = req.EndPoint(
     method=lambda *a, **kw: [
         setattr(req.EndPoint, "peer", _random_peer(kw)),
@@ -134,8 +134,12 @@ def load(name):
     blockchain package must provide `init(peer=None)` and `stop()` definitions.
     Available blockchains are referenced in `dposli.net` module.
 
-    Arguments:
-        name (str): package name to load
+    Args:
+        name (str): package name to load.
+
+    Raises:
+        Exception: if package name is not found or if package can not be
+            initialized properly.
     """
 
     if hasattr(sys.modules[__package__], "core"):
@@ -169,10 +173,15 @@ def use(network, **kwargs):
     initializes blockchain package. Network options can be created or overriden
     using `**kwargs` argument.
 
-    Arguments:
-        network (str): network to initialize
+    Args:
+        network (str): network to initialize.
+        **kwargs: parameters to be overriden.
+
     Returns:
-        True if network connection established
+        bool: True if network connection established, False otherwise.
+
+    Raises:
+        Exception: if blockchain not defined or if initialization failed.
     """
     # clear data in cfg module
     [cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]

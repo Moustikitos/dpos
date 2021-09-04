@@ -55,7 +55,7 @@ b"0D\x02N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe
 '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 ```
 
-[`dposlib.ark.v2`](blockchain.md#dposlibarkv2) package provides[ `dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects) class and its associated builders:
+[`dposlib.ark.v2`](v2.md) package provides[ `dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects) class and its associated builders:
 
 ```python
 >>> from dposlib import rest
