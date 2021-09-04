@@ -35,6 +35,9 @@ renderer:
         - dposlib.ark.v2.builders*
         - dposlib.ark.v3.api*
         - dposlib.ark.v3.builders*
+    - title: Ledger
+      contents:
+        - dposlib.ark.ldgr*
 
   mkdocs_config:
     site_name: The dposlib Project
