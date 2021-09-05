@@ -26,27 +26,29 @@ class Wallet(dposlib.blockchain.Wallet):
         )
 
     @dposlib.blockchain.isLinked
-    def registerIpfs(self, ipfs):
-        "See [`dposlib.ark.v2.registerIpfs`](blockchain.md#registeripfs)."
+    def sendIpfs(self, ipfs):
+        "See [`dposlib.ark.v2.registerIpfs`](v2.md#registeripfs)."
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def multiSend(self, *pairs, **kwargs):
-        "See [`dposlib.ark.v2.multiPayment`](blockchain.md#multipayment)."
+        "See [`dposlib.ark.v2.multiPayment`](v2.md#multipayment)."
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def resignate(self):
-        "See [`dposlib.ark.v2.delegateResignation`](blockchain.md#resignate)."
+        """
+        See [`dposlib.ark.v2.delegateResignation`](v2.md#delegateresignation).
+        """
         tx = dposlib.core.delegateResignation()
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
-        "See [`dposlib.ark.v2.htlcLock`](blockchain.md#sendhtlc)."
+        "See [`dposlib.ark.v2.htlcLock`](v2.md#htlclock)."
         tx = dposlib.core.htlcLock(
             amount, address, secret,
             expiration=expiration, vendorField=vendorField
@@ -55,13 +57,13 @@ class Wallet(dposlib.blockchain.Wallet):
 
     @dposlib.blockchain.isLinked
     def claimHtlc(self, txid, secret):
-        "See [`dposlib.ark.v2.htlcClaim`](blockchain.md#claimhtlc)."
+        "See [`dposlib.ark.v2.htlcClaim`](v2.md#htlcclaim)."
         tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @dposlib.blockchain.isLinked
     def refundHtlc(self, txid):
-        "See [`dposlib.ark.v2.htlcRefund`](blockchain.md#refundhtlc)."
+        "See [`dposlib.ark.v2.htlcRefund`](v2.md#htlcrefund)."
         tx = dposlib.core.htlcRefund(txid)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 

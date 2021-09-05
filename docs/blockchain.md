@@ -21,25 +21,27 @@ linked using [`dposlib.blockchain.link`](blockchain.md#link) definition.
 link(cls, secret=None, secondSecret=None)
 ```
 
-Associates crypto keys into a `dposlib.blockchain.Content` object according
-to secrets. If `secret` or `secondSecret` are not `str`, they are
-considered as `None`.
+Associates crypto keys into a [`dposlib.blockchain.Content`](
+blockchain.md#content-objects
+) object according to secrets. If `secret` or `secondSecret` are not `str`,
+they are considered as `None`.
 
 **Arguments**:
 
-- `cls` _Content_ - content object
-- `secret` _str_ - secret string
-- `secondSecret` _str_ - second secret string
+- `cls` _Content_ - content object.
+- `secret` _str_ - secret string. Default set to `None`.
+- `secondSecret` _str_ - second secret string. Default set to `None`.
+  
 
 **Returns**:
 
-  True if secret and second secret match
+- `bool` - True if secret and second secret match.
 
-<a name="dposlib.blockchain.unLink"></a>
-#### unLink
+<a name="dposlib.blockchain.unlink"></a>
+#### unlink
 
 ```python
-unLink(cls)
+unlink(cls)
 ```
 
 Remove crypto keys association.
@@ -73,6 +75,7 @@ Live object connected to blockchain. It is initialized with
 can be a `dict` or a `list`. If it is a `list`, it is stored in `data`
 attribute else all fields are stored as instance attribute.
 
+
 ```python
 >>> txs = blockchain.Content(rest.GET.api.transactions)
 >>> txs.data[0]["timestamp"]
@@ -97,10 +100,11 @@ attribute else all fields are stored as instance attribute.
 datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
 ```
 
-<a name="dposlib.blockchain.Content.datetime"></a>
-#### datetime
+**Arguments**:
 
-if timestamp attributes exists, return associated python datetime object
+- `ndpt` _usrv.req.Endpoint_ - endpoint class to be called.
+- `*args` - Variable length argument list used by `usrv.req.Endpoint`.
+- `**kwargs` - Arbitrary keyword arguments used by `usrv.req.Endpoint`.
 
 <a name="dposlib.blockchain.Wallet"></a>
 ## Wallet Objects
@@ -109,27 +113,37 @@ if timestamp attributes exists, return associated python datetime object
 class Wallet(Content)
 ```
 
+Wallet root class that implements basic wallet behaviour.
+
 **Arguments**:
 
+- `ndpt` _usrv.req.Endpoint_ - endpoint class to be called.
 - `fee` _int or str_ - set fee level as `fee multiplier` integer or one of
-  `minFee`, `avgFee`, `maxFee` string
+  `minFee`, `avgFee`, `maxFee` string.
 - `fee_included` _bool_ - set to True if amout + fee is the total desired
   out flow
+- `*args` - Variable length argument list used by
+  `dposlib.blockchain.Content`.
+- `**kwargs` - Arbitrary keyword arguments used by
+  `dposlib.blockchain.Content`.
 
-<a name="dposlib.blockchain.Wallet.delegate"></a>
-#### delegate
+<a name="dposlib.blockchain.Wallet.link"></a>
+#### link
 
-return delegate attributes if wallet is registered as delegate
+```python
+ | link(*args, **kwargs)
+```
 
-<a name="dposlib.blockchain.Wallet.username"></a>
-#### username
+See [`dposlib.blockchain.link`](blockchain.md#link).
 
-return delegate username if wallet is registered as delegate
+<a name="dposlib.blockchain.Wallet.unlink"></a>
+#### unlink
 
-<a name="dposlib.blockchain.Wallet.secondPublicKey"></a>
-#### secondPublicKey
+```python
+ | unlink()
+```
 
-return second public key if second signature is set to wallet
+See [`dposlib.blockchain.unlink`](blockchain.md#unlink).
 
 <a name="dposlib.blockchain.Wallet.send"></a>
 #### send

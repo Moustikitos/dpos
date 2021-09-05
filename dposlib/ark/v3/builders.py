@@ -15,6 +15,17 @@ MAGISTRATE = {
 
 
 def entityRegister(name, type="business", subtype=0, ipfsData=None):
+    """
+    Build an entity registration.
+
+    Arguments:
+        name (str): entity name
+        type (str): entity type
+        subtype (int): entity subtype
+        ipfsData (dict, optional): ipfs data. Default to None.
+    Returns:
+        transaction object
+    """
     asset = {
         "type": MAGISTRATE[type],
         "subType": subtype,
@@ -39,6 +50,17 @@ def entityRegister(name, type="business", subtype=0, ipfsData=None):
 
 
 def entityUpdate(registrationId, ipfsData, name=None):
+    """
+    Build an entity update.
+
+    Arguments:
+        registrationId (str): registration id
+        ipfsData (dict): ipfs data
+        name (str, optional): entity name
+
+    Returns:
+        transaction object
+    """
     asset = rest.GET.api.transactions(
         registrationId
     ).get("data", {}).get("asset", {})

@@ -50,21 +50,23 @@ def isLinked(func):
 
 def link(cls, secret=None, secondSecret=None):
     """
-    Associates crypto keys into a `dposlib.blockchain.Content` object according
-    to secrets. If `secret` or `secondSecret` are not `str`, they are
-    considered as `None`.
+    Associates crypto keys into a [`dposlib.blockchain.Content`](
+        blockchain.md#content-objects
+    ) object according to secrets. If `secret` or `secondSecret` are not `str`,
+    they are considered as `None`.
 
-    Arguments:
-        cls (Content): content object
-        secret (str): secret string
-        secondSecret (str): second secret string
+    Args:
+        cls (Content): content object.
+        secret (str): secret string. Default set to `None`.
+        secondSecret (str): second secret string. Default set to `None`.
+
     Returns:
-        True if secret and second secret match
+        bool: True if secret and second secret match.
     """
     if not hasattr(cls, "address") or not hasattr(cls, "publicKey"):
         raise AttributeError("%s seems not to be linkable" % cls)
     # clean up private attributes
-    unLink(cls)
+    unlink(cls)
     # filter args according to their types. Considered as None if neither str
     # or unicode
     loop_secret = not isinstance(secret, (str, unicode))
@@ -137,7 +139,7 @@ def link(cls, secret=None, secondSecret=None):
         return True
 
 
-def unLink(cls):
+def unlink(cls):
     """
     Remove crypto keys association.
     """
@@ -212,15 +214,19 @@ class Content(object):
     >>> tx.datetime
     datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
     ```
+
+    Args:
+        ndpt (usrv.req.Endpoint): endpoint class to be called.
+        *args: Variable length argument list used by `usrv.req.Endpoint`.
+        **kwargs: Arbitrary keyword arguments used by `usrv.req.Endpoint`.
     """
 
     REF = set()
     EVENT = False
 
-    #: if timestamp attributes exists, return associated python datetime object
     datetime = property(
         lambda cls: slots.getRealTime(cls.timestamp["epoch"]),
-        None, None, ""
+        None, None, "Associated python datetime object"
     )
 
     def __init__(self, ndpt, *args, **kwargs):
@@ -264,7 +270,7 @@ class Content(object):
     def __getitem__(self, item):
         return getattr(self, item)
 
-    def get(self, item, default):
+    def get(self, item, default=None):
         return getattr(self, item, default)
 
     def filter(self, data):
@@ -311,38 +317,42 @@ def contentUpdate():
 
 class Wallet(Content):
     """
+    Wallet root class that implements basic wallet behaviour.
+
     Arguments:
+        ndpt (usrv.req.Endpoint): endpoint class to be called.
         fee (int or str): set fee level as `fee multiplier` integer or one of
-                          `minFee`, `avgFee`, `maxFee` string
+            `minFee`, `avgFee`, `maxFee` string.
         fee_included (bool): set to True if amout + fee is the total desired
-                             out flow
+            out flow
+        *args: Variable length argument list used by
+            `dposlib.blockchain.Content`.
+        **kwargs: Arbitrary keyword arguments used by
+            `dposlib.blockchain.Content`.
     """
 
-    #: return delegate attributes if wallet is registered as delegate
     delegate = property(
         lambda cls: cls.attributes.get("delegate", None),
         None,
         None,
-        ""
+        "Delegate attributes if wallet is registered as delegate"
     )
-    #: return delegate username if wallet is registered as delegate
     username = property(
         lambda cls: cls.attributes.get("delegate", {}).get("username", None),
         None,
         None,
-        ""
+        "Delegate username if wallet is registered as delegate"
     )
-    #: return second public key if second signature is set to wallet
     secondPublicKey = property(
         lambda cls: cls.attributes.get("secondPublicKey", None),
         None,
         None,
-        ""
+        "Second public key if second signature is set to wallet"
     )
 
     def __init__(self, ndpt, *args, **kwargs):
         self._fee_included = kwargs.pop("fee_included", False)
-        self._fee = kwargs.pop("fee", None)
+        self._fee = str(kwargs.pop("fee", None))
         Content.__init__(self, ndpt, *args, **kwargs)
 
     def _finalizeTx(self, tx):
@@ -355,8 +365,13 @@ class Wallet(Content):
         tx.finalize(fee=self._fee, fee_included=self._fee_included)
         return tx
 
-    def link(self, *args, **kwargs): link(self, *args, **kwargs)
-    def unLink(self): unLink(self)
+    def link(self, *args, **kwargs):
+        "See [`dposlib.blockchain.link`](blockchain.md#link)."
+        link(self, *args, **kwargs)
+
+    def unlink(self):
+        "See [`dposlib.blockchain.unlink`](blockchain.md#unlink)."
+        unlink(self)
 
     @isLinked
     def send(self, amount, address, vendorField=None):
