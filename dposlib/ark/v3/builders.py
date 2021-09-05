@@ -32,14 +32,15 @@ def entityRegister(name, type="business", subtype=0, ipfsData=None):
         "action": 0,
         "data": {
             "name":
-                name.decode("utf-8")
-                if isinstance(name, bytes)
+                name.decode("utf-8") if isinstance(name, bytes)
                 else name,
         }
     }
 
     if ipfsData is not None:
-        asset["data"]["ipfsData"] = ipfsData
+        asset["data"]["ipfsData"] = \
+            ipfsData.decode("utf-8") if isinstance(ipfsData, bytes) \
+            else ipfsData
 
     return Transaction(
         version=rest.cfg.txversion,
@@ -67,7 +68,11 @@ def entityUpdate(registrationId, ipfsData, name=None):
 
     asset["action"] = 1
     asset["registrationId"] = registrationId
-    asset["data"] = {"ipfsData": ipfsData}
+    asset["data"] = {
+        "ipfsData":
+            ipfsData.decode("utf-8") if isinstance(ipfsData, bytes)
+            else ipfsData
+    }
 
     if name is not None:
         asset["data"]["name"] = name

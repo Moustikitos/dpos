@@ -205,22 +205,21 @@ def _1_10(tx, buf):
 
 def _2_6(tx, buf):
     asset = tx.get("asset", {})
-    registrationId = asset.get("registrationId", "")
     data = asset.get("data", {})
+
+    registrationId = unhexlify(asset.get("registrationId", ""))
 
     try:
         ipfs = data.get("ipfsData", "")
         ipfs = \
-            str(ipfs).encode("utf-8") \
-            if not isinstance(ipfs, bytes) \
+            str(ipfs).encode("utf-8") if not isinstance(ipfs, bytes) \
             else ipfs
     except Exception as e:
         raise Exception("bad ipfs hash\n%r" % e)
     try:
         name = data.get("name", "")
         name = \
-            str(name).encode("utf-8") \
-            if not isinstance(name, bytes) \
+            str(name).encode("utf-8") if not isinstance(name, bytes) \
             else name
     except Exception as e:
         raise Exception("bad entity name\n%r" % e)
@@ -233,7 +232,7 @@ def _2_6(tx, buf):
             len(registrationId)
         )
     )
-    pack_bytes(buf, unhexlify(registrationId))
+    pack_bytes(buf, registrationId)
     pack("<B", buf, (len(name),))
     pack_bytes(buf, name)
     pack("<B", buf, (len(ipfs), ))
