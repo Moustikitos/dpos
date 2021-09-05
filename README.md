@@ -121,14 +121,9 @@ u'binance_staking'
 }
 >>> blk.transactions()
 []
->>> wlt = dposlib.core.api.Wallet(dlgt.address) # get wallet by address
+>>> wlt = dlgt.wallet
 >>> wlt.balance
 2537.42979112
->>> for elem in [(tx["recipientId"], tx["amount"]) for tx in wlt.lastTransactions(2)]:
-...     print(elem)
-...
-('AHMXV6UdkVxsTwMqeoeqdpotRRmGZZaAtj', 0.08403461)
-('AUahWfkfr5J4tYakugRbfow7RWVTK35GPW', 329.32420472)
 >>> wlt.link("secret passphrase here")
 >>> wlt.send(1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE")
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
@@ -184,10 +179,10 @@ pip install ledgerblue
   - [x] fee management improvement
   - [x] ledger.com Ark app support
   - [x] Ark-core v 3.0.x compliancy
-  - [x] `multiVote` implementation added
-  - [x] `magistrate` implementation added
-  - [x] added Compendia network
-  - [x] added Unikname network
+  - [x] `multiVote` implementation
+  - [x] `magistrate` implementation
+  - [x] Compendia network added
+  - [x] Unikname network added
   - [x] packaging improvement
 
 ### 0.3.4
