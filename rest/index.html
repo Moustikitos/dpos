@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Network - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Network";
+    var mkdocs_page_input_path = "rest.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> The dposlib Project</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Network</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#get">GET</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#post">POST</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#put">PUT</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#delete">DELETE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#load">load</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use">use</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../blockchain/">Blockchain</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v2/">Core v2</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v3/">Core v3</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>Network</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/rest.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a name="dposlib.rest"></a></p>
+<h1 id="dposlibrest">dposlib.rest<a class="headerlink" href="#dposlibrest" title="Permanent link">#</a></h1>
+<p><code>rest</code> module provides network loaders and <a href="https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L33"><code>usrv.req.EndPoint</code></a> root class to implement <code>GET</code>, <code>POST</code>, <code>PUT</code> and <code>DELETE</code> HTTP requests. See
+<a href="https://api.ark.dev/public-rest-api/getting-started">Ark API documentation</a> to see how to use http calls.</p>
+<p><code>rest</code> also creates a <code>core</code> module containing
+<a href="../blockchain/#transaction-objects"><code>dposlib.blockchain.tx.Transaction</code></a>
+builders, cryptographic and network interface.</p>
+<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
+&gt;&gt;&gt; rest.use("ark")
+True
+&gt;&gt;&gt; # reach http://api.ark.io/api/delegates/arky endpoint using GET
+&gt;&gt;&gt; # HTTP request builder
+&gt;&gt;&gt; rest.GET.api.delegates.arky()["username"]
+'arky'
+</code></pre>
+<p><strong><code>core</code> module</strong></p>
+<pre><code class="language-python">&gt;&gt;&gt; import dposlib
+&gt;&gt;&gt; dlgt = dposlib.core.api.Delegate("arky")
+&gt;&gt;&gt; dlgt.forged
+{u'rewards': 397594.0, u'total': 401908.71166083, u'fees': 4314.71166083}
+&gt;&gt;&gt; dposlib.core.crypto.getKeys("secret")["publicKey"]
+'03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
+&gt;&gt;&gt; dposlib.core.transfer(
+...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+...     u"\u2728 simple transfer vendorField"
+... )
+{
+  "amount": 100000000,
+  "asset": {},
+  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+  "type": 0,
+  "vendorField": "\u2728 simple transfer vendorField",
+  "version": 1
+}
+&gt;&gt;&gt; dposlib.core.htlcLock(
+...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+...     "my secret lock", expiration=12,
+...     vendorField=u"\u2728 simple htlcLock vendorField"
+... )
+{
+  "amount": 100000000,
+  "asset": {
+    "lock": {
+      "secretHash":
+        "dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb",
+      "expiration": {
+        "type": 1,
+        "value": 82567745
+      }
+    }
+  },
+  "network": 23,
+  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
+  "type": 8,
+  "typeGroup": 1,
+  "vendorField": "\u2728 simple htlcLock vendorField",
+  "version": 2
+}
+</code></pre>
+<p><a name="dposlib.rest.GET"></a></p>
+<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">#</a></h4>
+<p>HTTP GET request builder</p>
+<p><a name="dposlib.rest.POST"></a></p>
+<h4 id="post">POST<a class="headerlink" href="#post" title="Permanent link">#</a></h4>
+<p>HTTP POST request builder</p>
+<p><a name="dposlib.rest.PUT"></a></p>
+<h4 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">#</a></h4>
+<p>HTTP PUT request builder</p>
+<p><a name="dposlib.rest.DELETE"></a></p>
+<h4 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">#</a></h4>
+<p>HTTP DELETE request builder</p>
+<p><a name="dposlib.rest.load"></a></p>
+<h4 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h4>
+<pre><code class="language-python">load(name)
+</code></pre>
+<p>Load a given blockchain package as <code>dposlib.core</code> module. A valid
+blockchain package must provide <code>init(peer=None)</code> and <code>stop()</code> definitions.
+Available blockchains are referenced in <code>dposli.net</code> module.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>name</code> <em>str</em> - package name to load.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>Exception</code> - if package name is not found or if package can not be
+  initialized properly.</li>
+</ul>
+<p><a name="dposlib.rest.use"></a></p>
+<h4 id="use">use<a class="headerlink" href="#use" title="Permanent link">#</a></h4>
+<pre><code class="language-python">use(network, **kwargs)
+</code></pre>
+<p>Sets the blockchain parameters in the <code>dposlib.rest.cfg</code> module and
+initializes blockchain package. Network options can be created or overriden
+using <code>**kwargs</code> argument.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>network</code> <em>str</em> - network to initialize.</li>
+<li><code>**kwargs</code> - parameters to be overriden.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if network connection established, False otherwise.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>Exception</code> - if blockchain not defined or if initialization failed.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../crypto/" title="Crypto">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href=".." title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
+<span><a href=".." style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../crypto/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

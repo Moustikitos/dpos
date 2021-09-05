@@ -1,590 +1,154 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../img/favicon.ico" rel="shortcut icon"/>
 <title>Blockchain - The dposlib Project</title>
-<link href="../css/bootstrap.min.css" rel="stylesheet"/>
-<link href="../css/font-awesome.min.css" rel="stylesheet"/>
-<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
-<script defer="" src="../js/jquery-1.10.2.min.js"></script>
-<script defer="" src="../js/bootstrap.min.js"></script>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Blockchain";
+    var mkdocs_page_input_path = "blockchain.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-</head>
-<body>
-<div class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-<div class="container">
-<a class="navbar-brand" href="..">The dposlib Project</a>
-<!-- Expander button -->
-<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
-<span class="navbar-toggler-icon"></span>
-</button>
-<!-- Expanded navigation -->
-<div class="navbar-collapse collapse" id="navbar-collapse">
-<!-- Main navigation -->
-<ul class="nav navbar-nav">
-<li class="navitem">
-<a class="nav-link" href="..">Home</a>
-</li>
-<li class="navitem">
-<a class="nav-link" href="../network/">Network</a>
-</li>
-<li class="navitem">
-<a class="nav-link" href="../crypto/">Crypto</a>
-</li>
-<li class="navitem active">
-<a class="nav-link" href="./">Blockchain</a>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> The dposlib Project</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
 </li>
 </ul>
-<ul class="nav navbar-nav ml-auto">
-<li class="nav-item">
-<a class="nav-link" data-target="#mkdocs_search_modal" data-toggle="modal" href="#">
-<i class="fa fa-search"></i> Search
-                            </a>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rest/">Network</a>
 </li>
-<li class="nav-item">
-<a class="nav-link" href="../crypto/" rel="prev">
-<i class="fa fa-arrow-left"></i> Previous
-                                </a>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
 </li>
-<li class="nav-item">
-<a class="nav-link disabled" rel="next">
-                                    Next <i class="fa fa-arrow-right"></i>
-</a>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Blockchain</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
 </li>
-<li class="nav-item">
-<a class="nav-link" href="https://github.com/Moustikitos/dposlib/edit/master/docs/blockchain.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+<li class="toctree-l2"><a class="reference internal" href="#link">link</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unlink">unlink</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#jsdict-objects">JSDict Objects</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wallet-objects">Wallet Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#link_1">link</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#unlink_1">unlink</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#send">send</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#registersecondsecret">registerSecondSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#registersecondpublickey">registerSecondPublicKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#registerasdelegate">registerAsDelegate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#upvote">upVote</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v2/">Core v2</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v3/">Core v3</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger</a>
 </li>
 </ul>
 </div>
 </div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>Blockchain</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/blockchain.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
 </div>
-<div class="container">
-<div class="row">
-<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-<div class="navbar-header">
-<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
-<span class="fa fa-angle-down"></span>
-</button>
-</div>
-<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
-<ul class="nav flex-column">
-<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibarkv2">dposlib.ark.v2</a>
-<ul class="nav flex-column">
-<li class="nav-item" data-level="2"><a class="nav-link" href="#init">init</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#stop">stop</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#transfer">transfer</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registersecondsecret">registerSecondSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registersecondpublickey">registerSecondPublicKey</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registerasdelegate">registerAsDelegate</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#upvote">upVote</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#downvote">downVote</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registermultisignature">registerMultiSignature</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registeripfs">registerIpfs</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#multipayment">multiPayment</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#delegateresignation">delegateResignation</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#htlcsecret">htlcSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#htlclock">htlcLock</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#htlcclaim">htlcClaim</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#htlcrefund">htlcRefund</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-</ul>
-</li>
-<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibarkv2api">dposlib.ark.v2.api</a>
-<ul class="nav flex-column">
-<li class="nav-item" data-level="2"><a class="nav-link" href="#wallet-objects">Wallet Objects</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registeripfs_1">registerIpfs</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#multisend">multiSend</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#resignate">resignate</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#sendhtlc">sendHtlc</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#claimhtlc">claimHtlc</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#refundhtlc">refundHtlc</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-</ul>
-</li>
-<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchain">dposlib.blockchain</a>
-<ul class="nav flex-column">
-<li class="nav-item" data-level="2"><a class="nav-link" href="#islinked">isLinked</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#link">link</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#unlink">unLink</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#jsdict-objects">JSDict Objects</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#content-objects">Content Objects</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#datetime">datetime</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#wallet-objects_1">Wallet Objects</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#delegate">delegate</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#username">username</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#secondpublickey">secondPublicKey</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#send">send</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registersecondsecret_1">registerSecondSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registersecondpublickey_1">registerSecondPublicKey</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#registerasdelegate_1">registerAsDelegate</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#upvote_1">upVote</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#downvote_1">downVote</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-</ul>
-</li>
-<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchaincfg">dposlib.blockchain.cfg</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="1"><a class="nav-link" href="#dposlibblockchaintx">dposlib.blockchain.tx</a>
-<ul class="nav flex-column">
-<li class="nav-item" data-level="2"><a class="nav-link" href="#computedynamicfees">computeDynamicFees</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#setfeeincluded">setFeeIncluded</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#unsetfeeincluded">unsetFeeIncluded</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#serialize">serialize</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#transaction-objects">Transaction Objects</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#feeincluded">feeIncluded</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#usedynamicfee">useDynamicFee</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#link_1">link</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#setfee">setFee</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#sign">sign</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#signsign">signSign</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#signwithsecret">signWithSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#signsignwithsecondsecret">signSignWithSecondSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#multisignwithsecret">multiSignWithSecret</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#signwithkeys">signWithKeys</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#signsignwithkey">signSignWithKey</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#multisignwithkey">multiSignWithKey</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#identify">identify</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#finalize">finalize</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div></div>
-<div class="col-md-9" role="main">
-<p><a name="dposlib.ark.v2"></a></p>
-<h1 id="dposlibarkv2">dposlib.ark.v2<a class="headerlink" href="#dposlibarkv2" title="Permanent link">#</a></h1>
-<p><a name="dposlib.ark.v2.init"></a></p>
-<h2 id="init">init<a class="headerlink" href="#init" title="Permanent link">#</a></h2>
-<pre><code class="language-python">init(seed=None)
-</code></pre>
-<p>Blockchain initialisation. It stores root values in <a href="./#dposlibblockchaincfg"><code>rest.cfg</code></a> modules.</p>
-<p><a name="dposlib.ark.v2.stop"></a></p>
-<h2 id="stop">stop<a class="headerlink" href="#stop" title="Permanent link">#</a></h2>
-<pre><code class="language-python">stop()
-</code></pre>
-<p>Stop daemon initialized by <a href="./#init"><code>init</code></a> call.</p>
-<p><a name="dposlib.ark.v2.transfer"></a></p>
-<h2 id="transfer">transfer<a class="headerlink" href="#transfer" title="Permanent link">#</a></h2>
-<pre><code class="language-python">transfer(amount, address, vendorField=None, expiration=0)
-</code></pre>
-<p>Build a transfer transaction. Emoji can be included in transaction
-vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
-</code></pre>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>amount</code> <em>float</em> - transaction amount in ark</li>
-<li><code>address</code> <em>str</em> - valid recipient address</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
-<li><code>expiration</code> <em>float</em> - time of persistance in hour</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.registerSecondSecret"></a></p>
-<h2 id="registersecondsecret">registerSecondSecret<a class="headerlink" href="#registersecondsecret" title="Permanent link">#</a></h2>
-<pre><code class="language-python">registerSecondSecret(secondSecret)
-</code></pre>
-<p>Build a second secret registration transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>secondSecret</code> <em>str</em> - passphrase</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.registerSecondPublicKey"></a></p>
-<h2 id="registersecondpublickey">registerSecondPublicKey<a class="headerlink" href="#registersecondpublickey" title="Permanent link">#</a></h2>
-<pre><code class="language-python">registerSecondPublicKey(secondPublicKey)
-</code></pre>
-<p>Build a second secret registration transaction.</p>
-<p><em>You must own the secret issuing secondPublicKey</em></p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>secondPublicKey</code> <em>str</em> - public key as hex string</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.registerAsDelegate"></a></p>
-<h2 id="registerasdelegate">registerAsDelegate<a class="headerlink" href="#registerasdelegate" title="Permanent link">#</a></h2>
-<pre><code class="language-python">registerAsDelegate(username)
-</code></pre>
-<p>Build a delegate registration transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>username</code> <em>str</em> - delegate username</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.upVote"></a></p>
-<h2 id="upvote">upVote<a class="headerlink" href="#upvote" title="Permanent link">#</a></h2>
-<pre><code class="language-python">upVote(*usernames)
-</code></pre>
-<p>Build an upvote transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>usernames</code> <em>iterable</em> - delegate usernames as str
-  iterable</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.downVote"></a></p>
-<h2 id="downvote">downVote<a class="headerlink" href="#downvote" title="Permanent link">#</a></h2>
-<pre><code class="language-python">downVote(*usernames)
-</code></pre>
-<p>Build a downvote transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>usernames</code> <em>iterable</em> - delegate usernames as str
-  iterable</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.registerMultiSignature"></a></p>
-<h2 id="registermultisignature">registerMultiSignature<a class="headerlink" href="#registermultisignature" title="Permanent link">#</a></h2>
-<pre><code class="language-python">registerMultiSignature(minSig, *publicKeys)
-</code></pre>
-<p>Build a multisignature registration transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>minSig</code> <em>int</em> - minimum signature required</li>
-<li><code>publicKeys</code> <em>list of str</em> - public key list</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.registerIpfs"></a></p>
-<h2 id="registeripfs">registerIpfs<a class="headerlink" href="#registeripfs" title="Permanent link">#</a></h2>
-<pre><code class="language-python">registerIpfs(ipfs)
-</code></pre>
-<p>Build an IPFS registration transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>ipfs</code> <em>str</em> - ipfs DAG</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.multiPayment"></a></p>
-<h2 id="multipayment">multiPayment<a class="headerlink" href="#multipayment" title="Permanent link">#</a></h2>
-<pre><code class="language-python">multiPayment(*pairs, **kwargs)
-</code></pre>
-<p>Build multi-payment transaction. Emoji can be included in transaction
-vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
-</code></pre>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>pairs</code> <em>iterable</em> - recipient-amount pair iterable</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.delegateResignation"></a></p>
-<h2 id="delegateresignation">delegateResignation<a class="headerlink" href="#delegateresignation" title="Permanent link">#</a></h2>
-<pre><code class="language-python">delegateResignation()
-</code></pre>
-<p>Build a delegate resignation transaction.</p>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.htlcSecret"></a></p>
-<h2 id="htlcsecret">htlcSecret<a class="headerlink" href="#htlcsecret" title="Permanent link">#</a></h2>
-<pre><code class="language-python">htlcSecret(secret)
-</code></pre>
-<p>Compute an HTLC secret hex string from passphrase.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>secret</code> <em>str</em> - passphrase</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.htlcLock"></a></p>
-<h2 id="htlclock">htlcLock<a class="headerlink" href="#htlclock" title="Permanent link">#</a></h2>
-<pre><code class="language-python">htlcLock(amount, address, secret, expiration=24, vendorField=None)
-</code></pre>
-<p>Build an HTLC lock transaction. Emoji can be included in transaction
-vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
-</code></pre>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>amount</code> <em>float</em> - transaction amount in ark</li>
-<li><code>address</code> <em>str</em> - valid recipient address</li>
-<li><code>secret</code> <em>str</em> - lock passphrase</li>
-<li><code>expiration</code> <em>float</em> - transaction validity in hour</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.htlcClaim"></a></p>
-<h2 id="htlcclaim">htlcClaim<a class="headerlink" href="#htlcclaim" title="Permanent link">#</a></h2>
-<pre><code class="language-python">htlcClaim(txid, secret)
-</code></pre>
-<p>Build an HTLC claim transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>txid</code> <em>str</em> - htlc lock transaction id</li>
-<li><code>secret</code> <em>str</em> - passphrase used by htlc lock transaction</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.htlcRefund"></a></p>
-<h2 id="htlcrefund">htlcRefund<a class="headerlink" href="#htlcrefund" title="Permanent link">#</a></h2>
-<pre><code class="language-python">htlcRefund(txid)
-</code></pre>
-<p>Build an HTLC refund transaction.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>txid</code> <em>str</em> - htlc lock transaction id</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>transaction object</p>
-<p><a name="dposlib.ark.v2.api"></a></p>
-<h1 id="dposlibarkv2api">dposlib.ark.v2.api<a class="headerlink" href="#dposlibarkv2api" title="Permanent link">#</a></h1>
-<p><a name="dposlib.ark.v2.api.Wallet"></a></p>
-<h2 id="wallet-objects">Wallet Objects<a class="headerlink" href="#wallet-objects" title="Permanent link">#</a></h2>
-<pre><code class="language-python">class Wallet(dposlib.blockchain.Wallet)
-</code></pre>
-<p><a name="dposlib.ark.v2.api.Wallet.registerIpfs"></a></p>
-<h2 id="registeripfs_1">registerIpfs<a class="headerlink" href="#registeripfs_1" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | registerIpfs(ipfs)
-</code></pre>
-<p>See <a href="./#registeripfs"><code>dposlib.ark.v2.registerIpfs</code></a>.</p>
-<p><a name="dposlib.ark.v2.api.Wallet.multiSend"></a></p>
-<h2 id="multisend">multiSend<a class="headerlink" href="#multisend" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | multiSend(*pairs, **kwargs)
-</code></pre>
-<p>See <a href="./#multipayment"><code>dposlib.ark.v2.multiPayment</code></a>.</p>
-<p><a name="dposlib.ark.v2.api.Wallet.resignate"></a></p>
-<h2 id="resignate">resignate<a class="headerlink" href="#resignate" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | resignate()
-</code></pre>
-<p>See <a href="./#resignate"><code>dposlib.ark.v2.delegateResignation</code></a>.</p>
-<p><a name="dposlib.ark.v2.api.Wallet.sendHtlc"></a></p>
-<h2 id="sendhtlc">sendHtlc<a class="headerlink" href="#sendhtlc" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | sendHtlc(amount, address, secret, expiration=24, vendorField=None)
-</code></pre>
-<p>See <a href="./#sendhtlc"><code>dposlib.ark.v2.htlcLock</code></a>.</p>
-<p><a name="dposlib.ark.v2.api.Wallet.claimHtlc"></a></p>
-<h2 id="claimhtlc">claimHtlc<a class="headerlink" href="#claimhtlc" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | claimHtlc(txid, secret)
-</code></pre>
-<p>See <a href="./#claimhtlc"><code>dposlib.ark.v2.htlcClaim</code></a>.</p>
-<p><a name="dposlib.ark.v2.api.Wallet.refundHtlc"></a></p>
-<h2 id="refundhtlc">refundHtlc<a class="headerlink" href="#refundhtlc" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
- | refundHtlc(txid)
-</code></pre>
-<p>See <a href="./#refundhtlc"><code>dposlib.ark.v2.htlcRefund</code></a>.</p>
+<div role="main">
+<div class="section">
 <p><a name="dposlib.blockchain"></a></p>
 <h1 id="dposlibblockchain">dposlib.blockchain<a class="headerlink" href="#dposlibblockchain" title="Permanent link">#</a></h1>
 <p><a name="dposlib.blockchain.isLinked"></a></p>
-<h2 id="islinked">isLinked<a class="headerlink" href="#islinked" title="Permanent link">#</a></h2>
+<h4 id="islinked">isLinked<a class="headerlink" href="#islinked" title="Permanent link">#</a></h4>
 <pre><code class="language-python">isLinked(func)
 </code></pre>
 <p><code>Python decorator</code>.
-First argument of decorated function  have to be a <code>Content</code> or an
+First argument of decorated function have to be a <code>Content</code> or an
 object containing a valid <code>address</code>, <code>_derivationPath</code> or <code>publicKey</code>
 attribute. It executes the decorated <code>function</code> if the object is correctly
 linked using <a href="./#link"><code>dposlib.blockchain.link</code></a> definition.</p>
 <p><a name="dposlib.blockchain.link"></a></p>
-<h2 id="link">link<a class="headerlink" href="#link" title="Permanent link">#</a></h2>
+<h4 id="link">link<a class="headerlink" href="#link" title="Permanent link">#</a></h4>
 <pre><code class="language-python">link(cls, secret=None, secondSecret=None)
 </code></pre>
-<p>Associates crypto keys into a <code>dposlib.blockchain.Content</code> object according
-to secrets. If <code>secret</code> or <code>secondSecret</code> are not <code>str</code>, they are
-considered as <code>None</code>.</p>
+<p>Associates crypto keys into a <a href="./#content-objects"><code>dposlib.blockchain.Content</code></a> object according to secrets. If <code>secret</code> or <code>secondSecret</code> are not <code>str</code>,
+they are considered as <code>None</code>.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>cls</code> <em>Content</em> - content object</li>
-<li><code>secret</code> <em>str</em> - secret string</li>
-<li><code>secondSecret</code> <em>str</em> - second secret string</li>
+<li><code>cls</code> <em>Content</em> - content object.</li>
+<li><code>secret</code> <em>str</em> - secret string. Default set to <code>None</code>.</li>
+<li><code>secondSecret</code> <em>str</em> - second secret string. Default set to <code>None</code>.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>True if secret and second secret match</p>
-<p><a name="dposlib.blockchain.unLink"></a></p>
-<h2 id="unlink">unLink<a class="headerlink" href="#unlink" title="Permanent link">#</a></h2>
-<pre><code class="language-python">unLink(cls)
+<ul>
+<li><code>bool</code> - True if secret and second secret match.</li>
+</ul>
+<p><a name="dposlib.blockchain.unlink"></a></p>
+<h4 id="unlink">unlink<a class="headerlink" href="#unlink" title="Permanent link">#</a></h4>
+<pre><code class="language-python">unlink(cls)
 </code></pre>
 <p>Remove crypto keys association.</p>
 <p><a name="dposlib.blockchain.JSDict"></a></p>
@@ -628,68 +192,78 @@ attribute else all fields are stored as instance attribute.</p>
 &gt;&gt;&gt; tx.datetime
 datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 </code></pre>
-<p><a name="dposlib.blockchain.Content.datetime"></a></p>
-<h2 id="datetime">datetime<a class="headerlink" href="#datetime" title="Permanent link">#</a></h2>
-<p>if timestamp attributes exists, return associated python datetime object</p>
-<p><a name="dposlib.blockchain.Wallet"></a></p>
-<h2 id="wallet-objects_1">Wallet Objects<a class="headerlink" href="#wallet-objects_1" title="Permanent link">#</a></h2>
-<pre><code class="language-python">class Wallet(Content)
-</code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
+<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
+<li><code>*args</code> - Variable length argument list used by <code>usrv.req.Endpoint</code>.</li>
+<li><code>**kwargs</code> - Arbitrary keyword arguments used by <code>usrv.req.Endpoint</code>.</li>
+</ul>
+<p><a name="dposlib.blockchain.Wallet"></a></p>
+<h2 id="wallet-objects">Wallet Objects<a class="headerlink" href="#wallet-objects" title="Permanent link">#</a></h2>
+<pre><code class="language-python">class Wallet(Content)
+</code></pre>
+<p>Wallet root class that implements basic wallet behaviour.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
 <li><code>fee</code> <em>int or str</em> - set fee level as <code>fee multiplier</code> integer or one of
-  <code>minFee</code>, <code>avgFee</code>, <code>maxFee</code> string</li>
+  <code>minFee</code>, <code>avgFee</code>, <code>maxFee</code> string.</li>
 <li><code>fee_included</code> <em>bool</em> - set to True if amout + fee is the total desired
   out flow</li>
+<li><code>*args</code> - Variable length argument list used by
+  <code>dposlib.blockchain.Content</code>.</li>
+<li><code>**kwargs</code> - Arbitrary keyword arguments used by
+  <code>dposlib.blockchain.Content</code>.</li>
 </ul>
-<p><a name="dposlib.blockchain.Wallet.delegate"></a></p>
-<h2 id="delegate">delegate<a class="headerlink" href="#delegate" title="Permanent link">#</a></h2>
-<p>return delegate attributes if wallet is registered as delegate</p>
-<p><a name="dposlib.blockchain.Wallet.username"></a></p>
-<h2 id="username">username<a class="headerlink" href="#username" title="Permanent link">#</a></h2>
-<p>return delegate username if wallet is registered as delegate</p>
-<p><a name="dposlib.blockchain.Wallet.secondPublicKey"></a></p>
-<h2 id="secondpublickey">secondPublicKey<a class="headerlink" href="#secondpublickey" title="Permanent link">#</a></h2>
-<p>return second public key if second signature is set to wallet</p>
+<p><a name="dposlib.blockchain.Wallet.link"></a></p>
+<h4 id="link_1">link<a class="headerlink" href="#link_1" title="Permanent link">#</a></h4>
+<pre><code class="language-python"> | link(*args, **kwargs)
+</code></pre>
+<p>See <a href="./#link"><code>dposlib.blockchain.link</code></a>.</p>
+<p><a name="dposlib.blockchain.Wallet.unlink"></a></p>
+<h4 id="unlink_1">unlink<a class="headerlink" href="#unlink_1" title="Permanent link">#</a></h4>
+<pre><code class="language-python"> | unlink()
+</code></pre>
+<p>See <a href="./#unlink"><code>dposlib.blockchain.unlink</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.send"></a></p>
-<h2 id="send">send<a class="headerlink" href="#send" title="Permanent link">#</a></h2>
+<h4 id="send">send<a class="headerlink" href="#send" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | send(amount, address, vendorField=None)
 </code></pre>
-<p>See <a href="./#send"><code>dposlib.ark.v2.transfer</code></a>.</p>
+<p>See <a href="../v2/#transfer"><code>dposlib.ark.v2.transfer</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.registerSecondSecret"></a></p>
-<h2 id="registersecondsecret_1">registerSecondSecret<a class="headerlink" href="#registersecondsecret_1" title="Permanent link">#</a></h2>
+<h4 id="registersecondsecret">registerSecondSecret<a class="headerlink" href="#registersecondsecret" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | registerSecondSecret(secondSecret)
 </code></pre>
-<p>See <a href="./#registersecondsecret"><code>dposlib.ark.v2.registerSecondSecret</code></a>.</p>
+<p>See <a href="../v2/#registersecondsecret"><code>dposlib.ark.v2.registerSecondSecret</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.registerSecondPublicKey"></a></p>
-<h2 id="registersecondpublickey_1">registerSecondPublicKey<a class="headerlink" href="#registersecondpublickey_1" title="Permanent link">#</a></h2>
+<h4 id="registersecondpublickey">registerSecondPublicKey<a class="headerlink" href="#registersecondpublickey" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | registerSecondPublicKey(secondPublicKey)
 </code></pre>
-<p>See <a href="./#registersecondpublickey"><code>dposlib.ark.v2.registerSecondPublicKey</code></a>.</p>
+<p>See <a href="../v2/#registersecondpublickey"><code>dposlib.ark.v2.registerSecondPublicKey</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.registerAsDelegate"></a></p>
-<h2 id="registerasdelegate_1">registerAsDelegate<a class="headerlink" href="#registerasdelegate_1" title="Permanent link">#</a></h2>
+<h4 id="registerasdelegate">registerAsDelegate<a class="headerlink" href="#registerasdelegate" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | registerAsDelegate(username)
 </code></pre>
-<p>See <a href="./#registerasdelegate"><code>dposlib.ark.v2.registerAsDelegate</code></a>.</p>
+<p>See <a href="../v2/#registerasdelegate"><code>dposlib.ark.v2.registerAsDelegate</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.upVote"></a></p>
-<h2 id="upvote_1">upVote<a class="headerlink" href="#upvote_1" title="Permanent link">#</a></h2>
+<h4 id="upvote">upVote<a class="headerlink" href="#upvote" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | upVote(*usernames)
 </code></pre>
-<p>See <a href="./#upvote"><code>dposlib.ark.v2.upVote</code></a>.</p>
+<p>See <a href="../v2/#upvote"><code>dposlib.ark.v2.upVote</code></a>.</p>
 <p><a name="dposlib.blockchain.Wallet.downVote"></a></p>
-<h2 id="downvote_1">downVote<a class="headerlink" href="#downvote_1" title="Permanent link">#</a></h2>
+<h4 id="downvote">downVote<a class="headerlink" href="#downvote" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @isLinked
  | downVote(*usernames)
 </code></pre>
-<p>See <a href="./#downvote"><code>dposlib.ark.v2.downVote</code></a>.</p>
+<p>See <a href="../v2/#downvote"><code>dposlib.ark.v2.downVote</code></a>.</p>
 <p><a name="dposlib.blockchain.cfg"></a></p>
 <h1 id="dposlibblockchaincfg">dposlib.blockchain.cfg<a class="headerlink" href="#dposlibblockchaincfg" title="Permanent link">#</a></h1>
-<p>This module stores blockchain parameters.</p>
+<p>This module stores blockchain parameters:</p>
 <ul>
 <li>activeDelegates:</li>
 <li>aip20:</li>
@@ -706,8 +280,6 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 <li>hotmode:</li>
 <li>marker:</li>
 <li>maxTransactions:</li>
-<li>maxvote:</li>
-<li>maxvotepertx:</li>
 <li>network:</li>
 <li>peers:</li>
 <li>ports:</li>
@@ -720,33 +292,12 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 <li>version:</li>
 <li>wif:</li>
 </ul>
+<p><a name="dposlib.blockchain.serializer"></a></p>
+<h1 id="dposlibblockchainserializer">dposlib.blockchain.serializer<a class="headerlink" href="#dposlibblockchainserializer" title="Permanent link">#</a></h1>
 <p><a name="dposlib.blockchain.tx"></a></p>
 <h1 id="dposlibblockchaintx">dposlib.blockchain.tx<a class="headerlink" href="#dposlibblockchaintx" title="Permanent link">#</a></h1>
-<p><a name="dposlib.blockchain.tx.computeDynamicFees"></a></p>
-<h2 id="computedynamicfees">computeDynamicFees<a class="headerlink" href="#computedynamicfees" title="Permanent link">#</a></h2>
-<pre><code class="language-python">computeDynamicFees(tx, FMULT=None)
-</code></pre>
-<p>Compute transaction fees according to <a href="https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md">AIP 16 </a>.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>tx</code> <em>dict or Transaction</em> - transaction object</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>fees</p>
-<p><a name="dposlib.blockchain.tx.setFeeIncluded"></a></p>
-<h2 id="setfeeincluded">setFeeIncluded<a class="headerlink" href="#setfeeincluded" title="Permanent link">#</a></h2>
-<pre><code class="language-python">setFeeIncluded(cls)
-</code></pre>
-<p>Arrange <code>amount</code> and <code>fee</code> values so the total <code>arktoshi</code> flow is
-the desired spent.</p>
-<p><a name="dposlib.blockchain.tx.unsetFeeIncluded"></a></p>
-<h2 id="unsetfeeincluded">unsetFeeIncluded<a class="headerlink" href="#unsetfeeincluded" title="Permanent link">#</a></h2>
-<pre><code class="language-python">unsetFeeIncluded(cls)
-</code></pre>
-<p>Arrange <code>amount</code> and <code>fee</code> values so the total <code>arktoshi</code> flow is
-the desired spent plus the fee.</p>
 <p><a name="dposlib.blockchain.tx.serialize"></a></p>
-<h2 id="serialize">serialize<a class="headerlink" href="#serialize" title="Permanent link">#</a></h2>
+<h4 id="serialize">serialize<a class="headerlink" href="#serialize" title="Permanent link">#</a></h4>
 <pre><code class="language-python">serialize(tx, **options)
 </code></pre>
 <p>Serialize transaction.</p>
@@ -762,11 +313,8 @@ the desired spent plus the fee.</p>
 </code></pre>
 <p>A python <code>dict</code> that implements all the necessities to manually
 generate valid transactions.</p>
-<p><a name="dposlib.blockchain.tx.Transaction.feeIncluded"></a></p>
-<h2 id="feeincluded">feeIncluded<a class="headerlink" href="#feeincluded" title="Permanent link">#</a></h2>
-<p>use feeIncluded option</p>
 <p><a name="dposlib.blockchain.tx.Transaction.useDynamicFee"></a></p>
-<h2 id="usedynamicfee">useDynamicFee<a class="headerlink" href="#usedynamicfee" title="Permanent link">#</a></h2>
+<h4 id="usedynamicfee">useDynamicFee<a class="headerlink" href="#usedynamicfee" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | @staticmethod
  | useDynamicFee(value="minFee")
 </code></pre>
@@ -779,7 +327,7 @@ fee level to use acccording to the 30-days-average. possible values are
 <li><code>value</code> <em>str or int</em> - constant or fee multiplier</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.link"></a></p>
-<h2 id="link_1">link<a class="headerlink" href="#link_1" title="Permanent link">#</a></h2>
+<h4 id="link_2">link<a class="headerlink" href="#link_2" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | link(secret=None, secondSecret=None)
 </code></pre>
 <p>Save public and private keys derived from secrets. This is equivalent
@@ -789,29 +337,20 @@ to wallet login. it limits number of secret keyboard entries.</p>
 <li><code>secret</code> <em>str</em> - passphrase</li>
 <li><code>secondSecret</code> <em>str</em> - second passphrase</li>
 </ul>
-<p><a name="dposlib.blockchain.tx.Transaction.setFee"></a></p>
-<h2 id="setfee">setFee<a class="headerlink" href="#setfee" title="Permanent link">#</a></h2>
-<pre><code class="language-python"> | setFee(value=None)
-</code></pre>
-<p>Set <code>fee</code> field manually or according to inner parameters.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>value</code> <em>int</em> - fee value in <code>arktoshi</code> to set manually</li>
-</ul>
 <p><a name="dposlib.blockchain.tx.Transaction.sign"></a></p>
-<h2 id="sign">sign<a class="headerlink" href="#sign" title="Permanent link">#</a></h2>
+<h4 id="sign">sign<a class="headerlink" href="#sign" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | sign()
 </code></pre>
 <p>Generate the <code>signature</code> field. Private key have to be set first. See
 <a href="./#link_1"><code>link</code></a>.</p>
 <p><a name="dposlib.blockchain.tx.Transaction.signSign"></a></p>
-<h2 id="signsign">signSign<a class="headerlink" href="#signsign" title="Permanent link">#</a></h2>
+<h4 id="signsign">signSign<a class="headerlink" href="#signsign" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | signSign()
 </code></pre>
 <p>Generate the <code>signSignature</code> field. Transaction have to be signed and
 second  private key have to be set first. See <a href="./#link_1"><code>link</code></a>.</p>
 <p><a name="dposlib.blockchain.tx.Transaction.signWithSecret"></a></p>
-<h2 id="signwithsecret">signWithSecret<a class="headerlink" href="#signwithsecret" title="Permanent link">#</a></h2>
+<h4 id="signwithsecret">signWithSecret<a class="headerlink" href="#signwithsecret" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | signWithSecret(secret)
 </code></pre>
 <p>Generate the <code>signature</code> field using passphrase. The associated
@@ -821,7 +360,7 @@ public and private keys are stored till <a href="./#unlink"><code>unlink</code><
 <li><code>secret</code> <em><code>str</code></em> - passphrase</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.signSignWithSecondSecret"></a></p>
-<h2 id="signsignwithsecondsecret">signSignWithSecondSecret<a class="headerlink" href="#signsignwithsecondsecret" title="Permanent link">#</a></h2>
+<h4 id="signsignwithsecondsecret">signSignWithSecondSecret<a class="headerlink" href="#signsignwithsecondsecret" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | signSignWithSecondSecret(secondSecret)
 </code></pre>
 <p>Generate the <code>signSignature</code> field using second passphrase. The
@@ -831,7 +370,7 @@ associated second public and private keys are stored till <a href="./#unlink"><c
 <li><code>secondSecret</code> <em><code>str</code></em> - second passphrase</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.multiSignWithSecret"></a></p>
-<h2 id="multisignwithsecret">multiSignWithSecret<a class="headerlink" href="#multisignwithsecret" title="Permanent link">#</a></h2>
+<h4 id="multisignwithsecret">multiSignWithSecret<a class="headerlink" href="#multisignwithsecret" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | multiSignWithSecret(secret)
 </code></pre>
 <p>Add a signature in <code>signatures</code> field.</p>
@@ -841,7 +380,7 @@ associated second public and private keys are stored till <a href="./#unlink"><c
 <li><code>secret</code> <em>str</em> - passphrase</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.signWithKeys"></a></p>
-<h2 id="signwithkeys">signWithKeys<a class="headerlink" href="#signwithkeys" title="Permanent link">#</a></h2>
+<h4 id="signwithkeys">signWithKeys<a class="headerlink" href="#signwithkeys" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | signWithKeys(publicKey, privateKey)
 </code></pre>
 <p>Generate the <code>signature</code> field using public and private keys. They
@@ -852,7 +391,7 @@ are till <a href="./#unlink"><code>unlink</code></a> is called.</p>
 <li><code>privateKey</code> <em>str</em> - private key as hex string</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.signSignWithKey"></a></p>
-<h2 id="signsignwithkey">signSignWithKey<a class="headerlink" href="#signsignwithkey" title="Permanent link">#</a></h2>
+<h4 id="signsignwithkey">signSignWithKey<a class="headerlink" href="#signsignwithkey" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | signSignWithKey(secondPrivateKey)
 </code></pre>
 <p>Generate the <code>signSignature</code> field using second private key. It is
@@ -862,7 +401,7 @@ stored till <a href="./#unlink"><code>unlink</code></a> is called.</p>
 <li><code>secondPrivateKey</code> <em><code>str</code></em> - second private key as hex string</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.multiSignWithKey"></a></p>
-<h2 id="multisignwithkey">multiSignWithKey<a class="headerlink" href="#multisignwithkey" title="Permanent link">#</a></h2>
+<h4 id="multisignwithkey">multiSignWithKey<a class="headerlink" href="#multisignwithkey" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | multiSignWithKey(privateKey)
 </code></pre>
 <p>Add a signature in <code>signatures</code> field according to given index and
@@ -872,12 +411,12 @@ privateKey.</p>
 <li><code>privateKey</code> <em>str</em> - private key as hex string</li>
 </ul>
 <p><a name="dposlib.blockchain.tx.Transaction.identify"></a></p>
-<h2 id="identify">identify<a class="headerlink" href="#identify" title="Permanent link">#</a></h2>
+<h4 id="identify">identify<a class="headerlink" href="#identify" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | identify()
 </code></pre>
 <p>Generate the <code>id</code> field. Transaction have to be signed.</p>
 <p><a name="dposlib.blockchain.tx.Transaction.finalize"></a></p>
-<h2 id="finalize">finalize<a class="headerlink" href="#finalize" title="Permanent link">#</a></h2>
+<h4 id="finalize">finalize<a class="headerlink" href="#finalize" title="Permanent link">#</a></h4>
 <pre><code class="language-python"> | finalize(secret=None, secondSecret=None, fee=None, fee_included=False)
 </code></pre>
 <p>Finalize a transaction by setting <code>fee</code>, signatures and <code>id</code>.</p>
@@ -887,82 +426,40 @@ privateKey.</p>
 <li><code>secondSecret</code> <em>str</em> - second passphrase</li>
 <li><code>fee</code> <em>int</em> - manually set fee value in <code>satoshi</code></li>
 <li><code>fee_included</code> <em>bool</em> - see <a href="./#feeincluded"><code>Transaction.feeIncluded</code></a></li>
-</ul></div>
+</ul>
 </div>
 </div>
-<footer class="col-md-12">
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../v2/" title="Core v2">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../crypto/" title="Crypto"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
 <hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
 <p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
-<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-<script>
-            var base_url = "..",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-<script defer="" src="../js/base.js"></script>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
+<span><a href="../crypto/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../v2/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
 <script defer="" src="../search/main.js"></script>
-<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header">
-<h4 class="modal-title" id="searchModalLabel">Search</h4>
-<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-</div>
-<div class="modal-body">
-<p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-<form>
-<div class="form-group">
-<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
-</div>
-</form>
-<div id="mkdocs-search-results"></div>
-</div>
-<div class="modal-footer">
-</div>
-</div>
-</div>
-</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-</div>
-<div class="modal-body">
-<table class="table">
-<thead>
-<tr>
-<th style="width: 20%;">Keys</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="help shortcut"><kbd>?</kbd></td>
-<td>Open this help</td>
-</tr>
-<tr>
-<td class="next shortcut"><kbd>n</kbd></td>
-<td>Next page</td>
-</tr>
-<tr>
-<td class="prev shortcut"><kbd>p</kbd></td>
-<td>Previous page</td>
-</tr>
-<tr>
-<td class="search shortcut"><kbd>s</kbd></td>
-<td>Search</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="modal-footer">
-</div>
-</div>
-</div>
-</div>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 </body>
 </html>

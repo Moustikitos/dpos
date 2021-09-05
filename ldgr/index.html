@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Ledger - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Ledger";
+    var mkdocs_page_input_path = "ldgr.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> The dposlib Project</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rest/">Network</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../blockchain/">Blockchain</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v2/">Core v2</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v3/">Core v3</a>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Ledger</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#parsebip44path">parseBip44Path</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getpublickey">getPublicKey</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#signmessage">signMessage</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#signtransaction">signTransaction</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>Ledger</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ldgr.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a name="dposlib.ark.ldgr"></a></p>
+<h1 id="dposlibarkldgr">dposlib.ark.ldgr<a class="headerlink" href="#dposlibarkldgr" title="Permanent link">#</a></h1>
+<p>This module contains functions to interoperate with <a href="https://ledger.com">Ledger</a> hard wallet.</p>
+<p><a name="dposlib.ark.ldgr.parseBip44Path"></a></p>
+<h4 id="parsebip44path">parseBip44Path<a class="headerlink" href="#parsebip44path" title="Permanent link">#</a></h4>
+<pre><code class="language-python">parseBip44Path(path)
+</code></pre>
+<p>Parse a <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">BIP44</a> derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>path</code> <em>str</em> - the derivation path</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>parsed bip44 path as bytes</p>
+<p><a name="dposlib.ark.ldgr.getPublicKey"></a></p>
+<h4 id="getpublickey">getPublicKey<a class="headerlink" href="#getpublickey" title="Permanent link">#</a></h4>
+<pre><code class="language-python">getPublicKey(path=None, debug=False)
+</code></pre>
+<p>Compute the public key associated to a derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>hexadecimal compressed publicKey</p>
+<p><a name="dposlib.ark.ldgr.signMessage"></a></p>
+<h4 id="signmessage">signMessage<a class="headerlink" href="#signmessage" title="Permanent link">#</a></h4>
+<pre><code class="language-python">signMessage(msg, path=None, schnorr=True, debug=False)
+</code></pre>
+<p>Compute schnorr or ecdsa signature of msg according to derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>msg</code> <em>str or bytes</em> - transaction as dictionary</li>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul>
+<p><a name="dposlib.ark.ldgr.signTransaction"></a></p>
+<h4 id="signtransaction">signTransaction<a class="headerlink" href="#signtransaction" title="Permanent link">#</a></h4>
+<pre><code class="language-python">signTransaction(tx, path=None, schnorr=True, debug=False)
+</code></pre>
+<p>Append sender public key and signature into transaction according to
+derivation path.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dposlib.blockchain.tx.Transaction</em> - transaction</li>
+<li><code>path</code> <em>str</em> - derivation path</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral" href="../v3/" title="Core v3"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
+<span><a href="../v3/" style="color: #fcfcfc;">« Previous</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>
