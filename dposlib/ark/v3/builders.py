@@ -22,7 +22,7 @@ def entityRegister(name, type="business", subtype=0, ipfsData=None):
         name (str): entity name
         type (str): entity type
         subtype (int): entity subtype
-        ipfsData (dict, optional): ipfs data. Default to None.
+        ipfsData (dict): ipfs data. Default to None.
     Returns:
         transaction object
     """
@@ -81,6 +81,15 @@ def entityUpdate(registrationId, ipfsData, name=None):
 
 
 def entityResign(registrationId):
+    """
+    Build an entity resignation.
+
+    Arguments:
+        registrationId (str): registration id
+
+    Returns:
+        transaction object
+    """
     asset = rest.GET.api.transactions(
         registrationId
     ).get("data", {}).get("asset", {})
@@ -98,6 +107,11 @@ def entityResign(registrationId):
 
 
 def multiVote(tx):
+    """
+    Transform an `dposlib.ark.v2.builders.upVote` transaction into a multivote
+    one. It makes the transaction downvote former delegate if any and then
+    apply new vote.
+    """
     if hasattr(tx, "senderPublicKey"):
         vote = rest.GET.api.wallets(tx["senderPublicKey"], returnKey="data")\
             .get("attributes")\
