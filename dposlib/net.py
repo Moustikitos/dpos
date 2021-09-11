@@ -2,12 +2,12 @@
 # © Toons
 
 ark = {
-    "familly": "ark.v2",
+    "familly": "ark.v3",
     "aip20": 0,
     "txversion": 2,
 
     "seeds": [
-        "https://explorer.ark.io:8443"
+        "https://api.ark.io"
     ]
 }
 
@@ -17,11 +17,7 @@ dark = {
     "txversion": 2,
 
     "seeds": [
-        "http://167.114.29.51:4003",
-        "http://167.114.29.52:4003",
-        "http://167.114.29.53:4003",
-        "http://167.114.29.54:4003",
-        "http://167.114.29.55:4003"
+        "https://dwallets.ark.io"
     ]
 }
 
