@@ -48,10 +48,10 @@ def _select_peers():
         version=cfg.version, orderBy="height:desc"
     ).get("data", [])
     for candidate in candidates:
-        api_port = candidate.get(
-            "plugins", {}
-        ).get("@arkecosystem/core-api", {}).get("port", False)
-        if api_port:
+        api_port = candidate.get("ports", {}).get(
+            "@arkecosystem/core-api", -1
+        )
+        if api_port > 0:
             peers.append("http://%s:%s" % (candidate["ip"], api_port))
             if len(peers) >= cfg.broadcast:
                 break
