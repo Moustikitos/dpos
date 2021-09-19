@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import io
 import os
@@ -10,11 +9,10 @@ import pprint
 from datetime import datetime
 from importlib import import_module
 
-from dposlib import rest, PY3, HOME, FROZEN
+from dposlib import rest, cfg, PY3, HOME, FROZEN
 from dposlib.ark import crypto
 from dposlib.ark.v2 import api
-from dposlib.blockchain import cfg
-from dposlib.blockchain.tx import Transaction
+from dposlib.ark.tx import Transaction
 from dposlib.util.asynch import setInterval
 from dposlib.util.bin import hexlify, unhexlify
 

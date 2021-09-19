@@ -18,11 +18,12 @@ https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 
 **Arguments**:
 
-- `path` _str_ - the derivation path
+- `path` _str_ - the derivation path.
+  
 
 **Returns**:
 
-  parsed bip44 path as bytes
+- `bytes` - parsed bip44 path.
 
 <a name="dposlib.ark.ldgr.getPublicKey"></a>
 #### getPublicKey
@@ -35,12 +36,13 @@ Compute the public key associated to a derivation path.
 
 **Arguments**:
 
-- `path` _str_ - derivation path
-- `debug` _bool_ - flag to activate debug messages from ledger key
+- `path` _str_ - derivation path.
+- `debug` _bool_ - flag to activate debug messages from ledger key.
+  
 
 **Returns**:
 
-  hexadecimal compressed publicKey
+- `hex` - secp256k1-compressed publicKey.
 
 <a name="dposlib.ark.ldgr.signMessage"></a>
 #### signMessage
@@ -53,10 +55,15 @@ Compute schnorr or ecdsa signature of msg according to derivation path.
 
 **Arguments**:
 
-- `msg` _str or bytes_ - transaction as dictionary
-- `path` _str_ - derivation path
-- `schnorr` _bool_ - use schnorr signature if True else ecdsa
-- `debug` _bool_ - flag to activate debug messages from ledger key
+- `msg` _str or bytes_ - transaction as dictionary.
+- `path` _str_ - derivation path.
+- `schnorr` _bool_ - use schnorr signature if True else ecdsa.
+- `debug` _bool_ - flag to activate debug messages from ledger key.
+  
+
+**Returns**:
+
+- `hex` - message signature.
 
 <a name="dposlib.ark.ldgr.signTransaction"></a>
 #### signTransaction
@@ -70,8 +77,14 @@ derivation path.
 
 **Arguments**:
 
-- `tx` _dposlib.blockchain.tx.Transaction_ - transaction
-- `path` _str_ - derivation path
-- `schnorr` _bool_ - use schnorr signature if True else ecdsa
-- `debug` _bool_ - flag to activate debug messages from ledger key
+- `tx` _dposlib.ark.tx.Transaction_ - transaction.
+- `path` _str_ - derivation path.
+- `schnorr` _bool_ - use schnorr signature if True else ecdsa.
+- `debug` _bool_ - flag to activate debug messages from ledger key.
+  
+
+**Returns**:
+
+- `hex` - transaction signature. Signature is also added to transaction
+  object as `signature` item.
 

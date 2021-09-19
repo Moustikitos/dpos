@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import os
 import getpass
@@ -7,7 +6,7 @@ import dposlib
 
 from dposlib.util.data import filter_dic, dumpJson
 from dposlib.ark.v2.mixin import loadPages, deltas
-from dposlib.blockchain.tx import serialize
+from dposlib.ark.tx import serialize
 try:
     from dposlib.ark import ldgr
     LEDGERBLUE = True
@@ -18,26 +17,26 @@ deltas = deltas
 GET = dposlib.rest.GET
 
 
-class Wallet(dposlib.blockchain.Wallet):
+class Wallet(dposlib.ark.Wallet):
 
     def __init__(self, address, **kw):
-        dposlib.blockchain.Wallet.__init__(
+        dposlib.ark.Wallet.__init__(
             self, GET.api.wallets, address, **dict({"returnKey": "data"}, **kw)
         )
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def sendIpfs(self, ipfs):
         "See [`dposlib.ark.v2.registerIpfs`](v2.md#registeripfs)."
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def multiSend(self, *pairs, **kwargs):
         "See [`dposlib.ark.v2.multiPayment`](v2.md#multipayment)."
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def resignate(self):
         """
         See [`dposlib.ark.v2.delegateResignation`](v2.md#delegateresignation).
@@ -45,7 +44,7 @@ class Wallet(dposlib.blockchain.Wallet):
         tx = dposlib.core.delegateResignation()
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
         "See [`dposlib.ark.v2.htlcLock`](v2.md#htlclock)."
@@ -55,13 +54,13 @@ class Wallet(dposlib.blockchain.Wallet):
         )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def claimHtlc(self, txid, secret):
         "See [`dposlib.ark.v2.htlcClaim`](v2.md#htlcclaim)."
         tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
-    @dposlib.blockchain.isLinked
+    @dposlib.ark.isLinked
     def refundHtlc(self, txid):
         "See [`dposlib.ark.v2.htlcRefund`](v2.md#htlcrefund)."
         tx = dposlib.core.htlcRefund(txid)
@@ -147,7 +146,7 @@ if LEDGERBLUE:
             return tx
 
 
-class Delegate(dposlib.blockchain.Content):
+class Delegate(dposlib.ark.Content):
 
     wallet = property(lambda cls: Wallet(cls.address), None, None, "")
     voters = property(
@@ -166,7 +165,7 @@ class Delegate(dposlib.blockchain.Content):
     )
 
     def __init__(self, username, **kw):
-        dposlib.blockchain.Content.__init__(
+        dposlib.ark.Content.__init__(
             self, GET.api.delegates, username,
             **dict({"returnKey": "data"}, **kw)
         )
@@ -178,7 +177,7 @@ class Delegate(dposlib.blockchain.Content):
         )
 
 
-class Block(dposlib.blockchain.Content):
+class Block(dposlib.ark.Content):
 
     previous = property(
         lambda cls: Block(cls._Data__dict["previous"]),
@@ -195,12 +194,13 @@ class Block(dposlib.blockchain.Content):
     )
 
     def __init__(self, blk_id, **kw):
-        dposlib.blockchain.Content.__init__(
+        dposlib.ark.Content.__init__(
             self, GET.api.blocks, blk_id, **dict({"returnKey": "data"}, **kw)
         )
 
 
-class Webhook(dposlib.blockchain.Content):
+# TODO: redefine
+class Webhook(dposlib.ark.Content):
 
     @staticmethod
     def create(peer, event, target, conditions):
@@ -217,7 +217,7 @@ class Webhook(dposlib.blockchain.Content):
         return Webhook(data["id"], peer=peer)
 
     def __init__(self, whk_id, **kw):
-        dposlib.blockchain.Content.__init__(
+        dposlib.ark.Content.__init__(
             self, GET.api.webhooks, "%s" % whk_id,
             **dict({"track": False, "returnKey": "data"}, **kw)
         )

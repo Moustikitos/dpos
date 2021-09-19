@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import unittest
 import dposlib
@@ -36,7 +35,7 @@ class TestDposApi(unittest.TestCase):
 
     @connection_enabled
     def test_wallet_link(self):
-        dposlib.blockchain.link(self.wallet, self.secret, self.secondSecret)
+        dposlib.ark.link(self.wallet, self.secret, self.secondSecret)
         self.assertEqual(self.wallet._publicKey,
                          self.wallet.publicKey)
         self.assertEqual(self.wallet._secondPublicKey,

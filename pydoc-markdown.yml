@@ -23,12 +23,12 @@ renderer:
       name: rest
       contents:
         - dposlib.rest*
-    - title: Crypto
+    - title: Ark
       contents:
         - dposlib.ark.crypto*
-    - title: Blockchain
-      contents:
-        - dposlib.blockchain*
+        - dposlib.ark.tx.Transaction*
+        - dposlib.ark.Content*
+        - dposlib.ark.Wallet*
     - title: Core v2
       name: v2
       contents:
@@ -56,9 +56,6 @@ renderer:
       - python
     markdown_extensions:
     - smarty
-    - toc:
-        permalink: "#"
-        baselevel: 1
     plugins:
       - search
       - mermaid2

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import os
 import io
@@ -30,8 +29,7 @@ def dumpJson(data, path):
     except Exception:
         pass
     with io.open(
-        path,
-        "w" if PY3 else "wb",
+        path, "w" if PY3 else "wb",
         **({"encoding": "utf-8"} if PY3 else {})
     ) as out:
         json.dump(data, out, indent=4)

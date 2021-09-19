@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import os
 import sys
@@ -11,9 +10,8 @@ from importlib import import_module
 from dposlib.ark import crypto
 from dposlib.ark.v2 import _write_module, TRANSACTIONS, TYPING, GETNAME
 from dposlib.ark.v3 import api
-from dposlib import HOME, rest
-from dposlib.blockchain import cfg
-from dposlib.blockchain.tx import Transaction
+from dposlib import HOME, rest, cfg
+from dposlib.ark.tx import Transaction
 from dposlib.util.asynch import setInterval
 
 from dposlib.ark.v2.builders import (

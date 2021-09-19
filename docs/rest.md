@@ -8,9 +8,8 @@
     https://api.ark.dev/public-rest-api/getting-started
 ) to see how to use http calls.
 
-`rest` also creates a `core` module containing
-[`dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects)
-builders, cryptographic and network interface.
+`rest` also creates a `core` module containing transaction builders,
+cryptographic and network interface.
 
 ```python
 >>> from dposlib import rest

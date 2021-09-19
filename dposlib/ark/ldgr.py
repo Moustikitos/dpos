@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 """
 This module contains functions to interoperate with [Ledger](
@@ -12,7 +11,7 @@ import struct
 import dposlib
 
 from dposlib.util.bin import unhexlify, hexlify, intasb
-from dposlib.blockchain.tx import serialize, Transaction
+from dposlib.ark.tx import serialize, Transaction
 from ledgerblue.comm import getDongle
 from ledgerblue.commException import CommException
 
@@ -56,9 +55,10 @@ def parseBip44Path(path):
     ) derivation path.
 
     Args:
-        path (str): the derivation path
+        path (str): the derivation path.
+
     Returns:
-        parsed bip44 path as bytes
+        bytes: parsed bip44 path.
     """
     if len(path) == 0:
         return b""
@@ -161,10 +161,11 @@ def getPublicKey(path=None, debug=False):
     Compute the public key associated to a derivation path.
 
     Args:
-        path (str): derivation path
-        debug (bool): flag to activate debug messages from ledger key
+        path (str): derivation path.
+        debug (bool): flag to activate debug messages from ledger key.
+
     Returns:
-        hexadecimal compressed publicKey
+        hex: secp256k1-compressed publicKey.
     """
     path = _default_path() if path is None else path
     return sendApdu([buildPukApdu(parseBip44Path(path))], debug=debug)[2:]
@@ -174,11 +175,14 @@ def signMessage(msg, path=None, schnorr=True, debug=False):
     """
     Compute schnorr or ecdsa signature of msg according to derivation path.
 
-    Arguments:
-        msg (str or bytes): transaction as dictionary
-        path (str): derivation path
-        schnorr (bool): use schnorr signature if True else ecdsa
-        debug (bool): flag to activate debug messages from ledger key
+    Args:
+        msg (str or bytes): transaction as dictionary.
+        path (str): derivation path.
+        schnorr (bool): use schnorr signature if True else ecdsa.
+        debug (bool): flag to activate debug messages from ledger key.
+
+    Returns:
+        hex: message signature.
     """
     path = _default_path() if path is None else path
     if not isinstance(msg, bytes):
@@ -198,11 +202,15 @@ def signTransaction(tx, path=None, schnorr=True, debug=False):
     Append sender public key and signature into transaction according to
     derivation path.
 
-    Arguments:
-        tx (dposlib.blockchain.tx.Transaction): transaction
-        path (str): derivation path
-        schnorr (bool): use schnorr signature if True else ecdsa
-        debug (bool): flag to activate debug messages from ledger key
+    Args:
+        tx (dposlib.ark.tx.Transaction): transaction.
+        path (str): derivation path.
+        schnorr (bool): use schnorr signature if True else ecdsa.
+        debug (bool): flag to activate debug messages from ledger key.
+
+    Returns:
+        hex: transaction signature. Signature is also added to transaction
+            object as `signature` item.
     """
     if not isinstance(tx, Transaction):
         raise ValueError(
@@ -220,3 +228,5 @@ def signTransaction(tx, path=None, schnorr=True, debug=False):
         buildSignatureApdu(serialize(tx), dongle_path, "tx", schnorr),
         debug=debug
     )
+
+    return tx["signature"]

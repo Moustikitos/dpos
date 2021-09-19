@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 """
 `rest` module provides network loaders and [`usrv.req.EndPoint`](
@@ -9,9 +8,8 @@
     https://api.ark.dev/public-rest-api/getting-started
 ) to see how to use http calls.
 
-`rest` also creates a `core` module containing
-[`dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects)
-builders, cryptographic and network interface.
+`rest` also creates a `core` module containing transaction builders,
+cryptographic and network interface.
 
 ```python
 >>> from dposlib import rest
@@ -78,8 +76,8 @@ import pytz
 
 from importlib import import_module
 from usrv import req
-from dposlib import net
-from dposlib.blockchain import cfg
+from dposlib import net, cfg
+# from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
 
 
@@ -95,7 +93,9 @@ def _call(method="GET", *args, **kwargs):
 
 
 def _random_peer(kwargs):
-    return kwargs.pop("peer", None) or random.choice(cfg.peers)
+    return kwargs.pop("peer", None) or (
+        random.choice(cfg.peers) if len(cfg.peers) else None
+    )
 
 
 #: HTTP GET request builder
@@ -210,5 +210,6 @@ def use(network, **kwargs):
     # update information on cfg module
     cfg.__dict__.update(data)
     req.EndPoint.timeout = cfg.timeout
+    req.EndPoint.quiet = True
     load(cfg.familly)
     return cfg.hotmode

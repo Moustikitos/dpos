@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 """
 `dposlib` is a package that provides simple API to interact with ARK blockchain
@@ -41,3 +40,4 @@ else:
 
 if HOME not in sys.path:
     sys.path.append(HOME)
+

@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import hashlib
 
-from dposlib import rest
-from dposlib.ark import crypto
-from dposlib.blockchain import cfg, slots
-from dposlib.blockchain.tx import Transaction
+from dposlib import rest, cfg
+from dposlib.ark import crypto, slots
+from dposlib.ark.tx import Transaction
 from dposlib.util.bin import hexlify
 
 
@@ -30,16 +28,17 @@ def transfer(amount, address, vendorField=None, expiration=0):
     vendorField using unicode formating.
 
     ```python
-    >>> u"message with sparkles \u2728"
+    >>> vendorField = u"message with sparkles \u2728"
     ```
 
-    Arguments:
-        amount (float): transaction amount in ark
-        address (str): valid recipient address
-        vendorField (str): vendor field message
-        expiration (float): time of persistance in hour
+    Args:
+        amount (float): transaction amount in ark.
+        address (str): valid recipient address.
+        vendorField (str): vendor field message.
+        expiration (float): time of persistance in hour.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     if cfg.txversion > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
@@ -63,10 +62,11 @@ def registerSecondSecret(secondSecret):
     """
     Build a second secret registration transaction.
 
-    Arguments:
-        secondSecret (str): passphrase
+    Args:
+        secondSecret (str): passphrase.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
 
@@ -77,10 +77,11 @@ def registerSecondPublicKey(secondPublicKey):
 
     *You must own the secret issuing secondPublicKey*
 
-    Arguments:
-        secondPublicKey (str): public key as hex string
+    Args:
+        secondPublicKey (str): public key as hex string.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         type=1,
@@ -97,10 +98,11 @@ def registerAsDelegate(username):
     """
     Build a delegate registration transaction.
 
-    Arguments:
-        username (str): delegate username
+    Args:
+        username (str): delegate username.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         type=2,
@@ -117,11 +119,11 @@ def upVote(*usernames):
     """
     Build an upvote transaction.
 
-    Arguments:
-        usernames (iterable): delegate usernames as str
-                              iterable
+    Args:
+        usernames (iterable): delegate usernames as str iterable.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     try:
         votes = [
@@ -129,8 +131,9 @@ def upVote(*usernames):
             for username in usernames
         ]
     except KeyError:
-        raise Exception("one of delegate %s does not exist" %
-                        ",".join(usernames))
+        raise Exception(
+            "one of delegate %s does not exist" % ",".join(usernames)
+        )
 
     return Transaction(
         type=3,
@@ -145,11 +148,11 @@ def downVote(*usernames):
     """
     Build a downvote transaction.
 
-    Arguments:
-        usernames (iterable): delegate usernames as str
-                              iterable
+    Args:
+        usernames (iterable): delegate usernames as str iterable.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     try:
         votes = [
@@ -157,8 +160,9 @@ def downVote(*usernames):
             for username in usernames
         ]
     except KeyError:
-        raise Exception("one of delegate %s does not exist" %
-                        ",".join(usernames))
+        raise Exception(
+            "one of delegate %s does not exist" % ",".join(usernames)
+        )
 
     return Transaction(
         type=3,
@@ -175,10 +179,11 @@ def registerMultiSignature(minSig, *publicKeys):
     Build a multisignature registration transaction.
 
     Args:
-        minSig (int): minimum signature required
-        publicKeys (list of str): public key list
+        minSig (int): minimum signature required.
+        publicKeys (list of str): public key list.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -202,10 +207,11 @@ def registerIpfs(ipfs):
     """
     Build an IPFS registration transaction.
 
-    Arguments:
-        ipfs (str): ipfs DAG
+    Args:
+        ipfs (str): ipfs DAG.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -225,11 +231,12 @@ def multiPayment(*pairs, **kwargs):
     >>> u"message with sparkles \u2728"
     ```
 
-    Arguments:
-        pairs (iterable): recipient-amount pair iterable
-        vendorField (str): vendor field message
+    Args:
+        pairs (iterable): recipient-amount pair iterable.
+        vendorField (str): vendor field message.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -249,7 +256,7 @@ def delegateResignation():
     Build a delegate resignation transaction.
 
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -261,10 +268,11 @@ def htlcSecret(secret):
     """
     Compute an HTLC secret hex string from passphrase.
 
-    Arguments:
-        secret (str): passphrase
+    Args:
+        secret (str): passphrase.
+
     Returns:
-        transaction object
+        hex str: HTLC secret.
     """
     return hexlify(hashlib.sha256(
         secret if isinstance(secret, bytes) else
@@ -278,17 +286,18 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
     vendorField using unicode formating.
 
     ```python
-    >>> u"message with sparkles \u2728"
+    >>> vendorField = u"message with sparkles \u2728"
     ```
 
-    Arguments:
-        amount (float): transaction amount in ark
-        address (str): valid recipient address
-        secret (str): lock passphrase
-        expiration (float): transaction validity in hour
-        vendorField (str): vendor field message
+    Args:
+        amount (float): transaction amount in ark.
+        address (str): valid recipient address.
+        secret (str): lock passphrase.
+        expiration (float): transaction validity in hour.
+        vendorField (str): vendor field message.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -314,11 +323,12 @@ def htlcClaim(txid, secret):
     """
     Build an HTLC claim transaction.
 
-    Arguments:
-        txid (str): htlc lock transaction id
-        secret (str): passphrase used by htlc lock transaction
+    Args:
+        txid (str): htlc lock transaction id.
+        secret (str): passphrase used by htlc lock transaction.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -336,10 +346,11 @@ def htlcRefund(txid):
     """
     Build an HTLC refund transaction.
 
-    Arguments:
-        txid (str): htlc lock transaction id
+    Args:
+        txid (str): htlc lock transaction id.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,

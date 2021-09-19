@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import re
 import json
@@ -7,7 +6,8 @@ import dposlib
 
 from collections import OrderedDict
 from dposlib import BytesIO
-from dposlib.blockchain import cfg, slots, serializer
+from dposlib import cfg
+from dposlib.ark import slots, serde
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 
 if dposlib.PY3:
@@ -58,8 +58,8 @@ def deleteSenderPublicKey(cls):
 
 
 def setFees(cls, value=None):
-    fmult = cls.FMULT
-    feesl = cls.FEESL
+    fmult = Transaction.FMULT
+    feesl = Transaction.FEESL
 
     # manualy set fees
     if isinstance(value, (float, int, long)):
@@ -71,7 +71,7 @@ def setFees(cls, value=None):
             fmult = int(value)
         # use fee statistics or static fees
         except (ValueError, TypeError):
-            fmult = cls.FMULT
+            fmult = Transaction.FMULT
             if isinstance(value, str):
                 feesl = value if value[:3] in ["min", "avg", "max"] else feesl
         else:
@@ -99,7 +99,7 @@ def setFees(cls, value=None):
                 value = int(
                     cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 100) +
                     55 + (4 if version >= 0x02 else 0) +
-                    lenVF + len(serializer.serializePayload(cls))
+                    lenVF + len(serde.serializePayload(cls))
                 ) * fmult
         # use fee statistics
         else:
@@ -164,9 +164,10 @@ def serialize(tx, **options):
     Serialize transaction.
 
     Args:
-        tx (dict or Transaction): transaction object
+        tx (dict or Transaction): transaction object.
+
     Returns:
-        bytes sequence
+        bytes: transaction serial representation.
     """
     buf = BytesIO()
     vendorField = tx.get("vendorField", "").encode("utf-8")[:255]
@@ -183,7 +184,7 @@ def serialize(tx, **options):
     pack_bytes(buf, vendorField)
 
     # custom part
-    pack_bytes(buf, serializer.serializePayload(tx))
+    pack_bytes(buf, serde.serializePayload(tx))
 
     # signatures part
     if not options.get("exclude_sig", False):
@@ -205,8 +206,8 @@ def serialize(tx, **options):
 
 class Transaction(dict):
     """
-    A python `dict` that implements all the necessities to manually
-    generate valid transactions.
+    A python `dict` that implements all the necessities to manually generate
+    valid transactions.
     """
 
     FMULT = None
@@ -264,6 +265,7 @@ class Transaction(dict):
         lambda cls: cls.pop("signSignature", None),
         "Second signature"
     )
+    #: If `True` then `amount` + `fee` = total arktoshi flow
     feeIncluded = property(
         lambda cls: "_amount" in cls.__dict__,
         lambda cls, value: (
@@ -282,7 +284,7 @@ class Transaction(dict):
         `avgFee` `minFee` (default) and `maxFee`.
 
         Args:
-            value (str or int): constant or fee multiplier
+            value (str or int): constant or fee multiplier.
         """
         if hasattr(cfg, "doffsets"):
             if isinstance(value, (int, float, long)):
@@ -372,13 +374,12 @@ class Transaction(dict):
 
     def __str__(self):
         return json.dumps(
-            OrderedDict(sorted(self.items(), key=lambda e: e[0]))
+            OrderedDict(sorted(self.items(), key=lambda e: e[0])),
+            indent=2
         )
 
     def __repr__(self):
-        return json.dumps(
-            OrderedDict(sorted(self.items(), key=lambda e: e[0])), indent=2
-        )
+        return "<Blockchain transaction type %(typeGroup)s:%(type)s>" % self
 
     def link(self, secret=None, secondSecret=None):
         """
@@ -386,8 +387,8 @@ class Transaction(dict):
         to wallet login. it limits number of secret keyboard entries.
 
         Args:
-            secret (str): passphrase
-            secondSecret (str): second passphrase
+            secret (str): passphrase.
+            secondSecret (str): second passphrase.
         """
         if hasattr(dposlib, "core"):
             if secret:
@@ -413,8 +414,7 @@ class Transaction(dict):
     # root sign function called by others
     def sign(self):
         """
-        Generate the `signature` field. Private key have to be set first. See
-        [`link`](blockchain.md#link_1).
+        Generate the `signature` field. Private key have to be set first.
         """
         self._reset()
         if hasattr(self, "_privateKey"):
@@ -436,9 +436,7 @@ class Transaction(dict):
     def signSign(self):
         """
         Generate the `signSignature` field. Transaction have to be signed and
-        second  private key have to be set first. See [`link`](
-            blockchain.md#link_1
-        ).
+        second  private key have to be set first.
         """
         if "signature" in self:  # or "signatures" in self ?
             try:
@@ -455,12 +453,12 @@ class Transaction(dict):
     def signWithSecret(self, secret):
         """
         Generate the `signature` field using passphrase. The associated
-        public and private keys are stored till [`unlink`](
-            blockchain.md#unlink
+        public and private keys are stored till [`dposlib.ark.unlink`](
+            ark.md#unlink
         ) is called.
 
         Args:
-            secret (`str`): passphrase
+            secret (`str`): passphrase.
         """
         self.link(secret)
         self.sign()
@@ -468,12 +466,11 @@ class Transaction(dict):
     def signSignWithSecondSecret(self, secondSecret):
         """
         Generate the `signSignature` field using second passphrase. The
-        associated second public and private keys are stored till [`unlink`](
-            blockchain.md#unlink
-        ) is called.
+        associated second public and private keys are stored till
+        [`dposlib.ark.unlink`](ark.md#unlink) is called.
 
         Args:
-            secondSecret (`str`): second passphrase
+            secondSecret (`str`): second passphrase.
         """
         self.link(None, secondSecret)
         self.signSign()
@@ -483,8 +480,8 @@ class Transaction(dict):
         Add a signature in `signatures` field.
 
         Args:
-            index (int): signature index
-            secret (str): passphrase
+            index (int): signature index.
+            secret (str): passphrase.
         """
         keys = dposlib.core.crypto.getKeys(secret)
         self.multiSignWithKey(keys["privateKey"])
@@ -493,11 +490,11 @@ class Transaction(dict):
     def signWithKeys(self, publicKey, privateKey):
         """
         Generate the `signature` field using public and private keys. They
-        are till [`unlink`](blockchain.md#unlink) is called.
+        are stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
 
         Args:
-            publicKey (str): public key as hex string
-            privateKey (str): private key as hex string
+            publicKey (str): public key as hex string.
+            privateKey (str): private key as hex string.
         """
         if self.get("senderPublicKey", None) != publicKey:
             self.senderPublicKey = publicKey
@@ -507,10 +504,10 @@ class Transaction(dict):
     def signSignWithKey(self, secondPrivateKey):
         """
         Generate the `signSignature` field using second private key. It is
-        stored till [`unlink`](blockchain.md#unlink) is called.
+        stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
 
         Args:
-            secondPrivateKey (`str`): second private key as hex string
+            secondPrivateKey (`str`): second private key as hex string.
         """
         self._secondPrivateKey = secondPrivateKey
         self.signSign()
@@ -519,8 +516,9 @@ class Transaction(dict):
         """
         Add a signature in `signatures` field according to given index and
         privateKey.
+
         Args:
-            privateKey (str): private key as hex string
+            privateKey (str): private key as hex string.
         """
         # remove id if any and set fee if needed
         self.pop("id", False)
@@ -589,12 +587,11 @@ class Transaction(dict):
         Finalize a transaction by setting `fee`, signatures and `id`.
 
         Args:
-            secret (str): passphrase
-            secondSecret (str): second passphrase
-            fee (int): manually set fee value in `satoshi`
-            fee_included (bool): see [`Transaction.feeIncluded`](
-                                     blockchain.md#feeincluded
-                                 )
+            secret (str): passphrase.
+            secondSecret (str): second passphrase.
+            fee (int): manually set fee value in `arktoshi`.
+            fee_included (bool): see
+                [`dposlib.ark.tx.Transaction.feeIncluded`](ark.md#feeincluded).
         """
         self.link(secret, secondSecret)
         # automatically set fees if needed

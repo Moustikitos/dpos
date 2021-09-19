@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import sys
 import base58
@@ -233,7 +232,7 @@ def _2_6(tx, buf):
         )
     )
     pack_bytes(buf, registrationId)
-    pack("<B", buf, (len(name),))
+    pack("<B", buf, (len(name), ))
     pack_bytes(buf, name)
     pack("<B", buf, (len(ipfs), ))
     pack_bytes(buf, ipfs)

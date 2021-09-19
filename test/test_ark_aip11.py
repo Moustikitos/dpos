@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import unittest
 import dposlib
 import os
 
 from dposlib import rest
-from dposlib.blockchain import tx as tx_
+from dposlib.ark import tx as tx_
 from dposlib.util import bin as bin_
 from dposlib.util import data
 

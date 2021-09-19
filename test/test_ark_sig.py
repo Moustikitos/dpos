@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import unittest
 import pySecp256k1 as secp256k1

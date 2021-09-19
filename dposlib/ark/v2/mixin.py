@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 import datetime
 from collections import OrderedDict
 
 import pytz
 from dposlib import rest
-from dposlib.blockchain import slots
+from dposlib.ark import slots
 
 
 class DataIterator:

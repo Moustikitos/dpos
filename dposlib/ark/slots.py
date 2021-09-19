@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
-from dposlib.blockchain import cfg
+from dposlib import cfg
 from datetime import datetime, timedelta
 
 import pytz
@@ -12,7 +11,7 @@ def getTimestamp(**kw):
     Return blockchain timestamp from timedelta given as keyword arument.
 
     ```python
-    >>> from dposlib.blockchain import slots
+    >>> from dposlib.ark import slots
     >>> slots.getTimestamp(days=6, hours=4, minutes=20)
     ```
     """

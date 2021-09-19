@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-# © Toons
 
 from dposlib import rest
-from dposlib.blockchain.tx import Transaction
+from dposlib.ark.tx import Transaction
 
 
 MAGISTRATE = {
