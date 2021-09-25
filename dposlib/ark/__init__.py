@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-```python
->>> import dposlib.ark
-```
-"""
-
 import re
 import sys
 import json
@@ -36,7 +30,6 @@ def isLinked(func):
         if getattr(obj, "_isLinked", False) or hasattr(obj, "_derivationPath"):
             return func(*args, **kw)
 
-        # TODO: add multisignature wallet condition
         if not hasattr(obj, "address") \
            or getattr(obj, "attributes", {}).get("multiSignature", False):
             raise Exception("can not be linked with secrets")
@@ -246,8 +239,8 @@ class Content(object):
 
         **Kwargs**:
 
-        * `keep_alive` *bool* - set hook to update data from blockcahin. Default
-            to True.
+        * `keep_alive` *bool* - set hook to update data from blockcahin.
+            Default to True.
         """
         track = kwargs.pop("keep_alive", True)
         self.__ndpt = ndpt
@@ -342,19 +335,21 @@ class Wallet(Content):
     """
     Wallet root class that implements basic wallet behaviour.
     """
-
+    #: Delegate attributes if wallet is registered as delegate.
     delegate = property(
         lambda cls: cls.attributes.get("delegate", None),
         None,
         None,
         "Delegate attributes if wallet is registered as delegate"
     )
+    #: Delegate username if wallet is registered as delegate.
     username = property(
         lambda cls: cls.attributes.get("delegate", {}).get("username", None),
         None,
         None,
         "Delegate username if wallet is registered as delegate"
     )
+    #: Second public key if second signature is set to wallet.
     secondPublicKey = property(
         lambda cls: cls.attributes.get("secondPublicKey", None),
         None,
@@ -375,8 +370,8 @@ class Wallet(Content):
             to True.
         * `fee` *int or str* - set fee level as fee multiplier string value or
             one of **minFee**, **avgFee**, **maxFee**. Default to **avgFee**.
-        * `fee_included` *bool* - set to True if amout + fee is the total desired
-            out flow. Default to False.
+        * `fee_included` *bool* - set to True if amout + fee is the total
+            desired out flow. Default to False.
         """
         self._fee_included = kwargs.pop("fee_included", False)
         self._fee = str(kwargs.pop("fee", "avgFee"))
