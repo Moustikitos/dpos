@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+```python
+>>> import dposlib.ark
+```
+"""
+
 import re
 import sys
 import json
@@ -56,7 +62,8 @@ def link(cls, secret=None, secondSecret=None):
     Associates crypto keys into a [`dposlib.ark.Content`](
         ark.md#content-objects
     ) object according to secrets. If `secret` or `secondSecret` are not `str`,
-    they are considered as `None`.
+    they are considered as `None`. In this case secrets will be asked and
+    checked from console untill success or `Ctrl+c` keyboard interruption.
 
     Args:
         cls (Content): content object.
@@ -221,15 +228,6 @@ class Content(object):
     >>> tx.datetime
     datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
     ```
-
-    Args:
-        ndpt (usrv.req.Endpoint): endpoint class to be called.
-        *args: Variable length argument list used by `usrv.req.Endpoint`.
-
-    **Kwargs**:
-
-      * `keep_alive` *bool* - set hook to update data from blockcahin. Default
-        to True.
     """
 
     REF = set()
@@ -241,6 +239,16 @@ class Content(object):
     )
 
     def __init__(self, ndpt, *args, **kwargs):
+        """
+        Args:
+            ndpt (usrv.req.Endpoint): endpoint class to be called.
+            *args: Variable length argument list used by `usrv.req.Endpoint`.
+
+        **Kwargs**:
+
+        * `keep_alive` *bool* - set hook to update data from blockcahin. Default
+            to True.
+        """
         track = kwargs.pop("keep_alive", True)
         self.__ndpt = ndpt
         self.__args = args
@@ -333,20 +341,6 @@ def contentUpdate():
 class Wallet(Content):
     """
     Wallet root class that implements basic wallet behaviour.
-
-    Args:
-        ndpt (usrv.req.Endpoint): endpoint class to be called.
-        *args: Variable length argument list used by `dposlib.ark.Content`.
-        **kwargs: Variable key argument used by `dposlib.ark.Content`.
-
-    **Specific kwargs**:
-
-      * `keep_alive` *bool* - automatic update data from blockcahin. Default
-        to True.
-      * `fee` *int or str* - set fee level as fee multiplier string value or
-        one of **minFee**, **avgFee**, **maxFee**. Default to **avgFee**.
-      * `fee_included` *bool* - set to True if amout + fee is the total desired
-        out flow. Default to False.
     """
 
     delegate = property(
@@ -369,6 +363,21 @@ class Wallet(Content):
     )
 
     def __init__(self, ndpt, *args, **kwargs):
+        """
+        Args:
+            ndpt (usrv.req.Endpoint): endpoint class to be called.
+            *args: Variable length argument list used by `dposlib.ark.Content`.
+            **kwargs: Variable key argument used by `dposlib.ark.Content`.
+
+        **Specific kwargs**:
+
+        * `keep_alive` *bool* - automatic update data from blockcahin. Default
+            to True.
+        * `fee` *int or str* - set fee level as fee multiplier string value or
+            one of **minFee**, **avgFee**, **maxFee**. Default to **avgFee**.
+        * `fee_included` *bool* - set to True if amout + fee is the total desired
+            out flow. Default to False.
+        """
         self._fee_included = kwargs.pop("fee_included", False)
         self._fee = str(kwargs.pop("fee", "avgFee"))
         Content.__init__(self, ndpt, *args, **kwargs)

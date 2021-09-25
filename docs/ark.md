@@ -1,6 +1,10 @@
 <a name="dposlib.ark"></a>
 # dposlib.ark
 
+```python
+>>> import dposlib.ark
+```
+
 <a name="dposlib.ark.Content"></a>
 ## Content Objects
 
@@ -12,7 +16,6 @@ Live object connected to blockchain. It is initialized with
 `dposlib.rest.GET` request. Object is updated every 30s. Endpoint response
 can be a `dict` or a `list`. If it is a `list`, it is stored in `data`
 attribute else all fields are stored as instance attribute.
-
 
 ```python
 >>> txs = dposlib.ark.Content(rest.GET.api.transactions)
@@ -36,6 +39,13 @@ attribute else all fields are stored as instance attribute.
 212963052
 >>> tx.datetime
 datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
+```
+
+<a name="dposlib.ark.Content.__init__"></a>
+#### \_\_init\_\_
+
+```python
+ | __init__(ndpt, *args, **kwargs)
 ```
 
 **Arguments**:
@@ -66,6 +76,13 @@ class Wallet(Content)
 ```
 
 Wallet root class that implements basic wallet behaviour.
+
+<a name="dposlib.ark.Wallet.__init__"></a>
+#### \_\_init\_\_
+
+```python
+ | __init__(ndpt, *args, **kwargs)
+```
 
 **Arguments**:
 

@@ -77,7 +77,6 @@ import pytz
 from importlib import import_module
 from usrv import req
 from dposlib import net, cfg
-# from dposlib.blockchain import cfg
 from dposlib.util.data import filter_dic
 
 

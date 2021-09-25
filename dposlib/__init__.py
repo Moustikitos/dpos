@@ -40,4 +40,3 @@ else:
 
 if HOME not in sys.path:
     sys.path.append(HOME)
-
