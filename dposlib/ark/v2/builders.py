@@ -38,7 +38,7 @@ def transfer(amount, address, vendorField=None, expiration=0):
         expiration (float): time of persistance in hour.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     if cfg.txversion > 1 and expiration > 0:
         block_remaining = expiration*60*60//rest.cfg.blocktime
@@ -66,7 +66,7 @@ def registerSecondSecret(secondSecret):
         secondSecret (str): passphrase.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return registerSecondPublicKey(crypto.getKeys(secondSecret)["publicKey"])
 
@@ -81,7 +81,7 @@ def registerSecondPublicKey(secondPublicKey):
         secondPublicKey (str): public key as hex string.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         type=1,
@@ -102,7 +102,7 @@ def registerAsDelegate(username):
         username (str): delegate username.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         type=2,
@@ -123,7 +123,7 @@ def upVote(*usernames):
         usernames (iterable): delegate usernames as str iterable.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     try:
         votes = [
@@ -152,7 +152,7 @@ def downVote(*usernames):
         usernames (iterable): delegate usernames as str iterable.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     try:
         votes = [
@@ -183,7 +183,7 @@ def registerMultiSignature(minSig, *publicKeys):
         publicKeys (list of str): public key list.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -211,7 +211,7 @@ def registerIpfs(ipfs):
         ipfs (str): ipfs DAG.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -236,7 +236,7 @@ def multiPayment(*pairs, **kwargs):
         vendorField (str): vendor field message.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -256,7 +256,7 @@ def delegateResignation():
     Build a delegate resignation transaction.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -297,7 +297,7 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
         vendorField (str): vendor field message.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -328,7 +328,7 @@ def htlcClaim(txid, secret):
         secret (str): passphrase used by htlc lock transaction.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,
@@ -350,7 +350,7 @@ def htlcRefund(txid):
         txid (str): htlc lock transaction id.
 
     Returns:
-        dposlib.blockchain.tx.Transaction: orphan transaction.
+        dposlib.ark.tx.Transaction: orphan transaction.
     """
     return Transaction(
         version=cfg.txversion,

@@ -64,7 +64,7 @@ def _rotate_peers():
 
 def init(seed=None):
     """
-    Blockchain initialisation. It stores root values in :mod:`cfg` modules.
+    Blockchain initialisation. It stores root values in `cfg` module.
     """
     global DAEMON_PEERS
     NETWORK = getattr(cfg, "network", "dark")
@@ -154,7 +154,7 @@ def init(seed=None):
 
 def stop():
     """
-    Stop daemon initialized by ``init`` call.
+    Stop daemon initialized by [`init`](ark.md#init) call.
     """
     global DAEMON_PEERS
     if DAEMON_PEERS is not None:
