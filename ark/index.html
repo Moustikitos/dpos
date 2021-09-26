@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Ark - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Ark";
+    var mkdocs_page_input_path = "ark.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> The dposlib Project</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rest/">Network</a>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Ark</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#filter">filter</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wallet-objects">Wallet Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#delegate">delegate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#username">username</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#secondpublickey">secondPublicKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#link">link</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#unlink">unlink</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#send">send</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setsecondsecret">setSecondSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setsecondpublickey">setSecondPublicKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setdelegate">setDelegate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#upvote">upVote</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v2/">Core v2</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../v3/">Core v3</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>Ark</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a name="dposlib.ark"></a></p>
+<h1 id="dposlibark">dposlib.ark</h1>
+<p><a name="dposlib.ark.Content"></a></p>
+<h2 id="content-objects">Content Objects</h2>
+<pre><code class="language-python">class Content(object)
+</code></pre>
+<p>Live object connected to blockchain. It is initialized with
+<code>dposlib.rest.GET</code> request. Object is updated every 30s. Endpoint response
+can be a <code>dict</code> or a <code>list</code>. If it is a <code>list</code>, it is stored in <code>data</code>
+attribute else all fields are stored as instance attribute.</p>
+<pre><code class="language-python">&gt;&gt;&gt; txs = dposlib.ark.Content(rest.GET.api.transactions)
+&gt;&gt;&gt; txs.data[0]["timestamp"]
+{
+    'epoch': 121912776,
+    'unix': 1612013976,
+    'human': '2021-01-30T13:39:36.000Z'
+}
+&gt;&gt;&gt; tx = dposlib.ark.Content(
+    rest.GET.api.transactions,
+    "d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9",
+)
+&gt;&gt;&gt; tx.timestamp
+{
+    'epoch': 121919704,
+    'unix': 1612020904,
+    'human': '2021-01-30T15:35:04.000Z'
+}
+&gt;&gt;&gt; tx.amount
+212963052
+&gt;&gt;&gt; tx.datetime
+datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
+</code></pre>
+<p><a name="dposlib.ark.Content.__init__"></a></p>
+<h4 id="__init__">__init__</h4>
+<pre><code class="language-python"> | __init__(ndpt, *args, **kwargs)
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
+<li><code>*args</code> - Variable length argument list used by <code>usrv.req.Endpoint</code>.</li>
+</ul>
+<p><strong>Kwargs</strong>:</p>
+<ul>
+<li><code>keep_alive</code> <em>bool</em> - set hook to update data from blockcahin.
+  Default to True.</li>
+</ul>
+<p><a name="dposlib.ark.Content.filter"></a></p>
+<h4 id="filter">filter</h4>
+<pre><code class="language-python"> | filter(data)
+</code></pre>
+<p>Convert data as JSDict object converting string values in int if
+possible.</p>
+<p><a name="dposlib.ark.Wallet"></a></p>
+<h2 id="wallet-objects">Wallet Objects</h2>
+<pre><code class="language-python">class Wallet(Content)
+</code></pre>
+<p>Wallet root class that implements basic wallet behaviour.</p>
+<p><a name="dposlib.ark.Wallet.delegate"></a></p>
+<h4 id="delegate">delegate</h4>
+<p>Delegate attributes if wallet is registered as delegate.</p>
+<p><a name="dposlib.ark.Wallet.username"></a></p>
+<h4 id="username">username</h4>
+<p>Delegate username if wallet is registered as delegate.</p>
+<p><a name="dposlib.ark.Wallet.secondPublicKey"></a></p>
+<h4 id="secondpublickey">secondPublicKey</h4>
+<p>Second public key if second signature is set to wallet.</p>
+<p><a name="dposlib.ark.Wallet.__init__"></a></p>
+<h4 id="__init___1">__init__</h4>
+<pre><code class="language-python"> | __init__(ndpt, *args, **kwargs)
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
+<li><code>*args</code> - Variable length argument list used by <code>dposlib.ark.Content</code>.</li>
+<li><code>**kwargs</code> - Variable key argument used by <code>dposlib.ark.Content</code>.</li>
+</ul>
+<p><strong>Specific kwargs</strong>:</p>
+<ul>
+<li><code>keep_alive</code> <em>bool</em> - automatic update data from blockcahin. Default
+  to True.</li>
+<li><code>fee</code> <em>int or str</em> - set fee level as fee multiplier string value or
+  one of <strong>minFee</strong>, <strong>avgFee</strong>, <strong>maxFee</strong>. Default to <strong>avgFee</strong>.</li>
+<li><code>fee_included</code> <em>bool</em> - set to True if amout + fee is the total
+  desired out flow. Default to False.</li>
+</ul>
+<p><a name="dposlib.ark.Wallet.link"></a></p>
+<h4 id="link">link</h4>
+<pre><code class="language-python"> | link(*args, **kwargs)
+</code></pre>
+<p>See <a href="./#link"><code>dposlib.ark.link</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.unlink"></a></p>
+<h4 id="unlink">unlink</h4>
+<pre><code class="language-python"> | unlink()
+</code></pre>
+<p>See <a href="./#unlink"><code>dposlib.ark.unlink</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.send"></a></p>
+<h4 id="send">send</h4>
+<pre><code class="language-python"> | @isLinked
+ | send(amount, address, vendorField=None, expiration=0)
+</code></pre>
+<p>Broadcast a transfer transaction to the ledger.
+See <a href="../v2/#transfer"><code>dposlib.ark.v2.transfer</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.setSecondSecret"></a></p>
+<h4 id="setsecondsecret">setSecondSecret</h4>
+<pre><code class="language-python"> | @isLinked
+ | setSecondSecret(secondSecret)
+</code></pre>
+<p>Broadcast a second secret registration transaction to the ledger.
+See <a href="../v2/#registersecondsecret"><code>dposlib.ark.v2.registerSecondSecret</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.setSecondPublicKey"></a></p>
+<h4 id="setsecondpublickey">setSecondPublicKey</h4>
+<pre><code class="language-python"> | @isLinked
+ | setSecondPublicKey(secondPublicKey)
+</code></pre>
+<p>Broadcast a second secret registration transaction into the ledger.
+See <a href="../v2/#registersecondpublickey"><code>dposlib.ark.v2.registerSecondPublicKey</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.setDelegate"></a></p>
+<h4 id="setdelegate">setDelegate</h4>
+<pre><code class="language-python"> | @isLinked
+ | setDelegate(username)
+</code></pre>
+<p>Broadcast a delegate registration transaction to the ledger.
+See <a href="../v2/#registerasdelegate"><code>dposlib.ark.v2.registerAsDelegate</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.upVote"></a></p>
+<h4 id="upvote">upVote</h4>
+<pre><code class="language-python"> | @isLinked
+ | upVote(*usernames)
+</code></pre>
+<p>Broadcast an up-vote transaction to the ledger.
+See <a href="../v2/#upvote"><code>dposlib.ark.v2.upVote</code></a>.</p>
+<p><a name="dposlib.ark.Wallet.downVote"></a></p>
+<h4 id="downvote">downVote</h4>
+<pre><code class="language-python"> | @isLinked
+ | downVote(*usernames)
+</code></pre>
+<p>Broadcast a down-vote transaction to the ledger.
+See <a href="../v2/#downvote"><code>dposlib.ark.v2.downVote</code></a>.</p>
+<p><a name="dposlib.ark.crypto"></a></p>
+<h1 id="dposlibarkcrypto">dposlib.ark.crypto</h1>
+<p><a name="dposlib.ark.crypto.getKeys"></a></p>
+<h4 id="getkeys">getKeys</h4>
+<pre><code class="language-python">getKeys(secret)
+</code></pre>
+<p>Generate keyring containing secp256k1 keys-pair and wallet import format
+(WIF).</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str, bytes or int</em> - anything that could issue a private key on
+  secp256k1 curve.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dict</code> - public, private and WIF keys.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getMultiSignaturePublicKey"></a></p>
+<h4 id="getmultisignaturepublickey">getMultiSignaturePublicKey</h4>
+<pre><code class="language-python">getMultiSignaturePublicKey(minimum, *publicKeys)
+</code></pre>
+<p>Compute ARK multi signature public key according to <a href="https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md">ARK AIP <code>18</code></a>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>minimum</code> <em>int</em> - minimum signature required.</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - the multisignature public key.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getAddressFromSecret"></a></p>
+<h4 id="getaddressfromsecret">getAddressFromSecret</h4>
+<pre><code class="language-python">getAddressFromSecret(secret, marker=None)
+</code></pre>
+<p>Compute ARK address from secret.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - secret string.</li>
+<li><code>marker</code> <em>int</em> - network marker (optional).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the address.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getAddress"></a></p>
+<h4 id="getaddress">getAddress</h4>
+<pre><code class="language-python">getAddress(publicKey, marker=None)
+</code></pre>
+<p>Compute ARK address from publicKey.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>publicKey</code> <em>str</em> - public key.</li>
+<li><code>marker</code> <em>int</em> - network marker (optional).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the address.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getWIF"></a></p>
+<h4 id="getwif">getWIF</h4>
+<pre><code class="language-python">getWIF(seed)
+</code></pre>
+<p>Compute WIF address from seed.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>seed</code> <em>bytes</em> - a sha256 sequence bytes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the WIF address.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.wifSignature"></a></p>
+<h4 id="wifsignature">wifSignature</h4>
+<pre><code class="language-python">wifSignature(tx, wif)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description.</li>
+<li><code>wif</code> <em>str</em> - wif key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.wifSignatureFromBytes"></a></p>
+<h4 id="wifsignaturefrombytes">wifSignatureFromBytes</h4>
+<pre><code class="language-python">wifSignatureFromBytes(data, wif)
+</code></pre>
+<p>Generate signature from data using WIF key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence.</li>
+<li><code>wif</code> <em>str</em> - wif key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getSignature"></a></p>
+<h4 id="getsignature">getSignature</h4>
+<pre><code class="language-python">getSignature(tx, privateKey, **options)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>exclude_sig</code> <em>bool</em> - exclude signature during tx serialization.
+  Defalut to True.</li>
+<li><code>exclude_multi_sig</code> <em>bool</em> - exclude signatures during tx
+  serialization. Defalut to True.</li>
+<li><code>exclude_second_sig</code> <em>bool</em> - exclude second signatures during tx
+  serialization. Defalut to True.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getSignatureFromBytes"></a></p>
+<h4 id="getsignaturefrombytes">getSignatureFromBytes</h4>
+<pre><code class="language-python">getSignatureFromBytes(data, privateKey)
+</code></pre>
+<p>Generate signature from data using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.verifySignature"></a></p>
+<h4 id="verifysignature">verifySignature</h4>
+<pre><code class="language-python">verifySignature(value, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>value</code> <em>str</em> - value as hex string.</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>signature</code> <em>str</em> - signature as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if signature matches the public key.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.verifySignatureFromBytes"></a></p>
+<h4 id="verifysignaturefrombytes">verifySignatureFromBytes</h4>
+<pre><code class="language-python">verifySignatureFromBytes(data, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data.</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>signature</code> <em>str</em> - signature as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if signature matches the public key.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getId"></a></p>
+<h4 id="getid">getId</h4>
+<pre><code class="language-python">getId(tx)
+</code></pre>
+<p>Generate transaction id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - id.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getIdFromBytes"></a></p>
+<h4 id="getidfrombytes">getIdFromBytes</h4>
+<pre><code class="language-python">getIdFromBytes(data)
+</code></pre>
+<p>Generate data id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data as bytes sequence.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - id.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.getBytes"></a></p>
+<h4 id="getbytes">getBytes</h4>
+<pre><code class="language-python">getBytes(tx, **options)
+</code></pre>
+<p>Hash transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>exclude_sig</code> <em>bool</em> - exclude signature during tx serialization.
+  Defalut to True.</li>
+<li><code>exclude_multi_sig</code> <em>bool</em> - exclude signatures during tx
+  serialization. Defalut to True.</li>
+<li><code>exclude_second_sig</code> <em>bool</em> - exclude second signatures during tx
+  serialization. Defalut to True.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bytes</code> - transaction serial.</li>
+</ul>
+<p><a name="dposlib.ark.crypto.checkTransaction"></a></p>
+<h4 id="checktransaction">checkTransaction</h4>
+<pre><code class="language-python">checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[])
+</code></pre>
+<p>Verify transaction validity.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+<li><code>secondPublicKey</code> <em>str</em> - second public key to use if needed.</li>
+<li><code>multiPublicKeys</code> <em>list</em> - owners public keys (sorted according to
+  associated type-4-tx asset).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if transaction is valid.</li>
+</ul>
+<p><a name="dposlib.ark.tx"></a></p>
+<h1 id="dposlibarktx">dposlib.ark.tx</h1>
+<p><a name="dposlib.ark.tx.Transaction"></a></p>
+<h2 id="transaction-objects">Transaction Objects</h2>
+<pre><code class="language-python">class Transaction(dict)
+</code></pre>
+<p>A python <code>dict</code> that implements all the necessities to manually generate
+valid transactions.</p>
+<p><a name="dposlib.ark.tx.Transaction.feeIncluded"></a></p>
+<h4 id="feeincluded">feeIncluded</h4>
+<p>If <code>True</code> then <code>amount</code> + <code>fee</code> = total arktoshi flow</p>
+<p><a name="dposlib.ark.tx.Transaction.useDynamicFee"></a></p>
+<h4 id="usedynamicfee">useDynamicFee</h4>
+<pre><code class="language-python"> | @staticmethod
+ | useDynamicFee(value="minFee")
+</code></pre>
+<p>Activate and configure dynamic fees parameters. Value can be either an
+integer defining the fee multiplier constant or a string defining the
+fee level to use acccording to the 30-days-average. possible values are
+<code>avgFee</code> <code>minFee</code> (default) and <code>maxFee</code>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>value</code> <em>str or int</em> - constant or fee multiplier.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.link"></a></p>
+<h4 id="link_1">link</h4>
+<pre><code class="language-python"> | link(secret=None, secondSecret=None)
+</code></pre>
+<p>Save public and private keys derived from secrets. This is equivalent
+to wallet login. it limits number of secret keyboard entries.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+<li><code>secondSecret</code> <em>str</em> - second passphrase.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.sign"></a></p>
+<h4 id="sign">sign</h4>
+<pre><code class="language-python"> | sign()
+</code></pre>
+<p>Generate the <code>signature</code> field. Private key have to be set first.</p>
+<p><a name="dposlib.ark.tx.Transaction.signSign"></a></p>
+<h4 id="signsign">signSign</h4>
+<pre><code class="language-python"> | signSign()
+</code></pre>
+<p>Generate the <code>signSignature</code> field. Transaction have to be signed and
+second  private key have to be set first.</p>
+<p><a name="dposlib.ark.tx.Transaction.signWithSecret"></a></p>
+<h4 id="signwithsecret">signWithSecret</h4>
+<pre><code class="language-python"> | signWithSecret(secret)
+</code></pre>
+<p>Generate the <code>signature</code> field using passphrase. The associated
+public and private keys are stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em><code>str</code></em> - passphrase.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.signSignWithSecondSecret"></a></p>
+<h4 id="signsignwithsecondsecret">signSignWithSecondSecret</h4>
+<pre><code class="language-python"> | signSignWithSecondSecret(secondSecret)
+</code></pre>
+<p>Generate the <code>signSignature</code> field using second passphrase. The
+associated second public and private keys are stored till
+<a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondSecret</code> <em><code>str</code></em> - second passphrase.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.multiSignWithSecret"></a></p>
+<h4 id="multisignwithsecret">multiSignWithSecret</h4>
+<pre><code class="language-python"> | multiSignWithSecret(secret)
+</code></pre>
+<p>Add a signature in <code>signatures</code> field.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>index</code> <em>int</em> - signature index.</li>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.signWithKeys"></a></p>
+<h4 id="signwithkeys">signWithKeys</h4>
+<pre><code class="language-python"> | signWithKeys(publicKey, privateKey)
+</code></pre>
+<p>Generate the <code>signature</code> field using public and private keys. They
+are stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.signSignWithKey"></a></p>
+<h4 id="signsignwithkey">signSignWithKey</h4>
+<pre><code class="language-python"> | signSignWithKey(secondPrivateKey)
+</code></pre>
+<p>Generate the <code>signSignature</code> field using second private key. It is
+stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondPrivateKey</code> <em><code>str</code></em> - second private key as hex string.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.multiSignWithKey"></a></p>
+<h4 id="multisignwithkey">multiSignWithKey</h4>
+<pre><code class="language-python"> | multiSignWithKey(privateKey)
+</code></pre>
+<p>Add a signature in <code>signatures</code> field according to given index and
+privateKey.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><a name="dposlib.ark.tx.Transaction.identify"></a></p>
+<h4 id="identify">identify</h4>
+<pre><code class="language-python"> | identify()
+</code></pre>
+<p>Generate the <code>id</code> field. Transaction have to be signed.</p>
+<p><a name="dposlib.ark.tx.Transaction.finalize"></a></p>
+<h4 id="finalize">finalize</h4>
+<pre><code class="language-python"> | finalize(secret=None, secondSecret=None, fee=None, fee_included=False)
+</code></pre>
+<p>Finalize a transaction by setting <code>fee</code>, signatures and <code>id</code>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+<li><code>secondSecret</code> <em>str</em> - second passphrase.</li>
+<li><code>fee</code> <em>int</em> - manually set fee value in <code>arktoshi</code>.</li>
+<li><code>fee_included</code> <em>bool</em> - see
+  <a href="./#feeincluded"><code>dposlib.ark.tx.Transaction.feeIncluded</code></a>.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../v2/" title="Core v2">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
+<span><a href="../rest/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../v2/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

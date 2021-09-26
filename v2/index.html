@@ -46,11 +46,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../blockchain/">Blockchain</a>
+<li class="toctree-l1"><a class="reference internal" href="../ark/">Ark</a>
 </li>
 </ul>
 <ul class="current">
@@ -106,149 +102,163 @@
 <div role="main">
 <div class="section">
 <p><a name="dposlib.ark.v2.api"></a></p>
-<h1 id="dposlibarkv2api">dposlib.ark.v2.api<a class="headerlink" href="#dposlibarkv2api" title="Permanent link">#</a></h1>
+<h1 id="dposlibarkv2api">dposlib.ark.v2.api</h1>
 <p><a name="dposlib.ark.v2.api.Wallet"></a></p>
-<h2 id="wallet-objects">Wallet Objects<a class="headerlink" href="#wallet-objects" title="Permanent link">#</a></h2>
-<pre><code class="language-python">class Wallet(dposlib.blockchain.Wallet)
+<h2 id="wallet-objects">Wallet Objects</h2>
+<pre><code class="language-python">class Wallet(dposlib.ark.Wallet)
 </code></pre>
 <p><a name="dposlib.ark.v2.api.Wallet.sendIpfs"></a></p>
-<h4 id="sendipfs">sendIpfs<a class="headerlink" href="#sendipfs" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="sendipfs">sendIpfs</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | sendIpfs(ipfs)
 </code></pre>
 <p>See <a href="./#registeripfs"><code>dposlib.ark.v2.registerIpfs</code></a>.</p>
 <p><a name="dposlib.ark.v2.api.Wallet.multiSend"></a></p>
-<h4 id="multisend">multiSend<a class="headerlink" href="#multisend" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="multisend">multiSend</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | multiSend(*pairs, **kwargs)
 </code></pre>
 <p>See <a href="./#multipayment"><code>dposlib.ark.v2.multiPayment</code></a>.</p>
 <p><a name="dposlib.ark.v2.api.Wallet.resignate"></a></p>
-<h4 id="resignate">resignate<a class="headerlink" href="#resignate" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="resignate">resignate</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | resignate()
 </code></pre>
 <p>See <a href="./#delegateresignation"><code>dposlib.ark.v2.delegateResignation</code></a>.</p>
 <p><a name="dposlib.ark.v2.api.Wallet.sendHtlc"></a></p>
-<h4 id="sendhtlc">sendHtlc<a class="headerlink" href="#sendhtlc" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="sendhtlc">sendHtlc</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | sendHtlc(amount, address, secret, expiration=24, vendorField=None)
 </code></pre>
 <p>See <a href="./#htlclock"><code>dposlib.ark.v2.htlcLock</code></a>.</p>
 <p><a name="dposlib.ark.v2.api.Wallet.claimHtlc"></a></p>
-<h4 id="claimhtlc">claimHtlc<a class="headerlink" href="#claimhtlc" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="claimhtlc">claimHtlc</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | claimHtlc(txid, secret)
 </code></pre>
 <p>See <a href="./#htlcclaim"><code>dposlib.ark.v2.htlcClaim</code></a>.</p>
 <p><a name="dposlib.ark.v2.api.Wallet.refundHtlc"></a></p>
-<h4 id="refundhtlc">refundHtlc<a class="headerlink" href="#refundhtlc" title="Permanent link">#</a></h4>
-<pre><code class="language-python"> | @dposlib.blockchain.isLinked
+<h4 id="refundhtlc">refundHtlc</h4>
+<pre><code class="language-python"> | @dposlib.ark.isLinked
  | refundHtlc(txid)
 </code></pre>
 <p>See <a href="./#htlcrefund"><code>dposlib.ark.v2.htlcRefund</code></a>.</p>
 <p><a name="dposlib.ark.v2.builders"></a></p>
-<h1 id="dposlibarkv2builders">dposlib.ark.v2.builders<a class="headerlink" href="#dposlibarkv2builders" title="Permanent link">#</a></h1>
+<h1 id="dposlibarkv2builders">dposlib.ark.v2.builders</h1>
 <p><a name="dposlib.ark.v2.builders.transfer"></a></p>
-<h4 id="transfer">transfer<a class="headerlink" href="#transfer" title="Permanent link">#</a></h4>
+<h4 id="transfer">transfer</h4>
 <pre><code class="language-python">transfer(amount, address, vendorField=None, expiration=0)
 </code></pre>
 <p>Build a transfer transaction. Emoji can be included in transaction
 vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>amount</code> <em>float</em> - transaction amount in ark</li>
-<li><code>address</code> <em>str</em> - valid recipient address</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
-<li><code>expiration</code> <em>float</em> - time of persistance in hour</li>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+<li><code>expiration</code> <em>float</em> - time of persistance in hour.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.registerSecondSecret"></a></p>
-<h4 id="registersecondsecret">registerSecondSecret<a class="headerlink" href="#registersecondsecret" title="Permanent link">#</a></h4>
+<h4 id="registersecondsecret">registerSecondSecret</h4>
 <pre><code class="language-python">registerSecondSecret(secondSecret)
 </code></pre>
 <p>Build a second secret registration transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>secondSecret</code> <em>str</em> - passphrase</li>
+<li><code>secondSecret</code> <em>str</em> - passphrase.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.registerSecondPublicKey"></a></p>
-<h4 id="registersecondpublickey">registerSecondPublicKey<a class="headerlink" href="#registersecondpublickey" title="Permanent link">#</a></h4>
+<h4 id="registersecondpublickey">registerSecondPublicKey</h4>
 <pre><code class="language-python">registerSecondPublicKey(secondPublicKey)
 </code></pre>
 <p>Build a second secret registration transaction.</p>
 <p><em>You must own the secret issuing secondPublicKey</em></p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>secondPublicKey</code> <em>str</em> - public key as hex string</li>
+<li><code>secondPublicKey</code> <em>str</em> - public key as hex string.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.registerAsDelegate"></a></p>
-<h4 id="registerasdelegate">registerAsDelegate<a class="headerlink" href="#registerasdelegate" title="Permanent link">#</a></h4>
+<h4 id="registerasdelegate">registerAsDelegate</h4>
 <pre><code class="language-python">registerAsDelegate(username)
 </code></pre>
 <p>Build a delegate registration transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>username</code> <em>str</em> - delegate username</li>
+<li><code>username</code> <em>str</em> - delegate username.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.upVote"></a></p>
-<h4 id="upvote">upVote<a class="headerlink" href="#upvote" title="Permanent link">#</a></h4>
+<h4 id="upvote">upVote</h4>
 <pre><code class="language-python">upVote(*usernames)
 </code></pre>
 <p>Build an upvote transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>usernames</code> <em>iterable</em> - delegate usernames as str
-  iterable</li>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.downVote"></a></p>
-<h4 id="downvote">downVote<a class="headerlink" href="#downvote" title="Permanent link">#</a></h4>
+<h4 id="downvote">downVote</h4>
 <pre><code class="language-python">downVote(*usernames)
 </code></pre>
 <p>Build a downvote transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>usernames</code> <em>iterable</em> - delegate usernames as str
-  iterable</li>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.registerMultiSignature"></a></p>
-<h4 id="registermultisignature">registerMultiSignature<a class="headerlink" href="#registermultisignature" title="Permanent link">#</a></h4>
+<h4 id="registermultisignature">registerMultiSignature</h4>
 <pre><code class="language-python">registerMultiSignature(minSig, *publicKeys)
 </code></pre>
 <p>Build a multisignature registration transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>minSig</code> <em>int</em> - minimum signature required</li>
-<li><code>publicKeys</code> <em>list of str</em> - public key list</li>
+<li><code>minSig</code> <em>int</em> - minimum signature required.</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.registerIpfs"></a></p>
-<h4 id="registeripfs">registerIpfs<a class="headerlink" href="#registeripfs" title="Permanent link">#</a></h4>
+<h4 id="registeripfs">registerIpfs</h4>
 <pre><code class="language-python">registerIpfs(ipfs)
 </code></pre>
 <p>Build an IPFS registration transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>ipfs</code> <em>str</em> - ipfs DAG</li>
+<li><code>ipfs</code> <em>str</em> - ipfs DAG.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.multiPayment"></a></p>
-<h4 id="multipayment">multiPayment<a class="headerlink" href="#multipayment" title="Permanent link">#</a></h4>
+<h4 id="multipayment">multiPayment</h4>
 <pre><code class="language-python">multiPayment(*pairs, **kwargs)
 </code></pre>
 <p>Build multi-payment transaction. Emoji can be included in transaction
@@ -257,76 +267,86 @@ vendorField using unicode formating.</p>
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>pairs</code> <em>iterable</em> - recipient-amount pair iterable</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
+<li><code>pairs</code> <em>iterable</em> - recipient-amount pair iterable.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.delegateResignation"></a></p>
-<h4 id="delegateresignation">delegateResignation<a class="headerlink" href="#delegateresignation" title="Permanent link">#</a></h4>
+<h4 id="delegateresignation">delegateResignation</h4>
 <pre><code class="language-python">delegateResignation()
 </code></pre>
 <p>Build a delegate resignation transaction.</p>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.htlcSecret"></a></p>
-<h4 id="htlcsecret">htlcSecret<a class="headerlink" href="#htlcsecret" title="Permanent link">#</a></h4>
+<h4 id="htlcsecret">htlcSecret</h4>
 <pre><code class="language-python">htlcSecret(secret)
 </code></pre>
 <p>Compute an HTLC secret hex string from passphrase.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>secret</code> <em>str</em> - passphrase</li>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<p>hex str: HTLC secret.</p>
 <p><a name="dposlib.ark.v2.builders.htlcLock"></a></p>
-<h4 id="htlclock">htlcLock<a class="headerlink" href="#htlclock" title="Permanent link">#</a></h4>
+<h4 id="htlclock">htlcLock</h4>
 <pre><code class="language-python">htlcLock(amount, address, secret, expiration=24, vendorField=None)
 </code></pre>
 <p>Build an HTLC lock transaction. Emoji can be included in transaction
 vendorField using unicode formating.</p>
-<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>amount</code> <em>float</em> - transaction amount in ark</li>
-<li><code>address</code> <em>str</em> - valid recipient address</li>
-<li><code>secret</code> <em>str</em> - lock passphrase</li>
-<li><code>expiration</code> <em>float</em> - transaction validity in hour</li>
-<li><code>vendorField</code> <em>str</em> - vendor field message</li>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>secret</code> <em>str</em> - lock passphrase.</li>
+<li><code>expiration</code> <em>float</em> - transaction validity in hour.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.htlcClaim"></a></p>
-<h4 id="htlcclaim">htlcClaim<a class="headerlink" href="#htlcclaim" title="Permanent link">#</a></h4>
+<h4 id="htlcclaim">htlcClaim</h4>
 <pre><code class="language-python">htlcClaim(txid, secret)
 </code></pre>
 <p>Build an HTLC claim transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>txid</code> <em>str</em> - htlc lock transaction id</li>
-<li><code>secret</code> <em>str</em> - passphrase used by htlc lock transaction</li>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
+<li><code>secret</code> <em>str</em> - passphrase used by htlc lock transaction.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.v2.builders.htlcRefund"></a></p>
-<h4 id="htlcrefund">htlcRefund<a class="headerlink" href="#htlcrefund" title="Permanent link">#</a></h4>
+<h4 id="htlcrefund">htlcRefund</h4>
 <pre><code class="language-python">htlcRefund(txid)
 </code></pre>
 <p>Build an HTLC refund transaction.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>txid</code> <em>str</em> - htlc lock transaction id</li>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>transaction object</p>
+<ul>
+<li><code>dposlib.blockchain.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 </div>
 </div>
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
 <a class="btn btn-neutral float-right" href="../v3/" title="Core v3">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../blockchain/" title="Blockchain"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral" href="../ark/" title="Ark"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -343,7 +363,7 @@ vendorField using unicode formating.</p>
 <div aria-label="versions" class="rst-versions" role="note">
 <span class="rst-current-version" data-toggle="rst-current-version">
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
-<span><a href="../blockchain/" style="color: #fcfcfc;">« Previous</a></span>
+<span><a href="../ark/" style="color: #fcfcfc;">« Previous</a></span>
 <span style="margin-left: 15px"><a href="../v3/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>

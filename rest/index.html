@@ -60,11 +60,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../blockchain/">Blockchain</a>
+<li class="toctree-l1"><a class="reference internal" href="../ark/">Ark</a>
 </li>
 </ul>
 <ul>
@@ -102,12 +98,9 @@
 <div role="main">
 <div class="section">
 <p><a name="dposlib.rest"></a></p>
-<h1 id="dposlibrest">dposlib.rest<a class="headerlink" href="#dposlibrest" title="Permanent link">#</a></h1>
+<h1 id="dposlibrest">dposlib.rest</h1>
 <p><code>rest</code> module provides network loaders and <a href="https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L33"><code>usrv.req.EndPoint</code></a> root class to implement <code>GET</code>, <code>POST</code>, <code>PUT</code> and <code>DELETE</code> HTTP requests. See
 <a href="https://api.ark.dev/public-rest-api/getting-started">Ark API documentation</a> to see how to use http calls.</p>
-<p><code>rest</code> also creates a <code>core</code> module containing
-<a href="../blockchain/#transaction-objects"><code>dposlib.blockchain.tx.Transaction</code></a>
-builders, cryptographic and network interface.</p>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
 &gt;&gt;&gt; rest.use("ark")
 True
@@ -117,6 +110,8 @@ True
 'arky'
 </code></pre>
 <p><strong><code>core</code> module</strong></p>
+<p>When <code>ark</code> blockchain package is loaded, a <code>core</code> module containing transaction
+builders, cryptographic and network interface is available.</p>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib
 &gt;&gt;&gt; dlgt = dposlib.core.api.Delegate("arky")
 &gt;&gt;&gt; dlgt.forged
@@ -161,19 +156,19 @@ True
 }
 </code></pre>
 <p><a name="dposlib.rest.GET"></a></p>
-<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">#</a></h4>
+<h4 id="get">GET</h4>
 <p>HTTP GET request builder</p>
 <p><a name="dposlib.rest.POST"></a></p>
-<h4 id="post">POST<a class="headerlink" href="#post" title="Permanent link">#</a></h4>
+<h4 id="post">POST</h4>
 <p>HTTP POST request builder</p>
 <p><a name="dposlib.rest.PUT"></a></p>
-<h4 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">#</a></h4>
+<h4 id="put">PUT</h4>
 <p>HTTP PUT request builder</p>
 <p><a name="dposlib.rest.DELETE"></a></p>
-<h4 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">#</a></h4>
+<h4 id="delete">DELETE</h4>
 <p>HTTP DELETE request builder</p>
 <p><a name="dposlib.rest.load"></a></p>
-<h4 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h4>
+<h4 id="load">load</h4>
 <pre><code class="language-python">load(name)
 </code></pre>
 <p>Load a given blockchain package as <code>dposlib.core</code> module. A valid
@@ -189,7 +184,7 @@ Available blockchains are referenced in <code>dposli.net</code> module.</p>
   initialized properly.</li>
 </ul>
 <p><a name="dposlib.rest.use"></a></p>
-<h4 id="use">use<a class="headerlink" href="#use" title="Permanent link">#</a></h4>
+<h4 id="use">use</h4>
 <pre><code class="language-python">use(network, **kwargs)
 </code></pre>
 <p>Sets the blockchain parameters in the <code>dposlib.rest.cfg</code> module and
@@ -212,7 +207,7 @@ using <code>**kwargs</code> argument.</p>
 </div>
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../crypto/" title="Crypto">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral float-right" href="../ark/" title="Ark">Next <span class="icon icon-circle-arrow-right"></span></a>
 <a class="btn btn-neutral" href=".." title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
@@ -231,7 +226,7 @@ using <code>**kwargs</code> argument.</p>
 <span class="rst-current-version" data-toggle="rst-current-version">
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
 <span><a href=".." style="color: #fcfcfc;">« Previous</a></span>
-<span style="margin-left: 15px"><a href="../crypto/" style="color: #fcfcfc">Next »</a></span>
+<span style="margin-left: 15px"><a href="../ark/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script>var base_url = '..';</script>

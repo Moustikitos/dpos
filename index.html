@@ -43,6 +43,12 @@
 <ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="#support-this-project">Support this project</a>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#http-requests">HTTP Requests</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#signature-issuers">Signature issuers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transaction-builders">Transaction builders</a>
+</li>
 </ul>
 </li>
 </ul>
@@ -51,11 +57,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="crypto/">Crypto</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="blockchain/">Blockchain</a>
+<li class="toctree-l1"><a class="reference internal" href="ark/">Ark</a>
 </li>
 </ul>
 <ul>
@@ -92,19 +94,19 @@
 </div>
 <div role="main">
 <div class="section">
-<h1 id="dposlib-ark-api-for-humans">dposlib: Ark API for Humans<a class="headerlink" href="#dposlib-ark-api-for-humans" title="Permanent link">#</a></h1>
+<h1 id="dposlib-ark-api-for-humans">dposlib: Ark API for Humans</h1>
 <p><a href="https://pepy.tech/project/dposlib"><img alt="Downloads" src="https://pepy.tech/badge/dposlib/week"/></a>
 <a href="https://pypi.python.org/pypi/dposlib"><img alt="PyPI version shields.io" src="https://img.shields.io/pypi/v/dposlib.svg"/></a>
 <a href="https://GitHub.com/Moustikitos/dpos/tags"><img alt="GitHub release" src="https://img.shields.io/github/tag/Moustikitos/dpos.svg"/></a></p>
 <p><code>dposlib</code> is a simple package providing efficient API to interact with Ark blockchain and its forks. It is designed to run with both python 2 and 3.</p>
-<h3 id="support-this-project">Support this project<a class="headerlink" href="#support-this-project" title="Permanent link">#</a></h3>
+<h3 id="support-this-project">Support this project</h3>
 <p><a href="https://liberapay.com/Toons/donate"><img alt="Liberapay receiving" src="https://img.shields.io/liberapay/goal/Toons?logo=liberapay"/></a></p>
 <p><a href="https://bittrex.com/Account/Register?referralCode=NW5-DQO-QMT">Buy Ѧ</a> and:</p>
 <ul>
 <li>[X] Send Ѧ to <code>AUahWfkfr5J4tYakugRbfow7RWVTK35GPW</code></li>
 <li>[X] Vote <code>arky</code> on <a href="https://explorer.ark.io">Ark blockchain</a> and <a href="http://arky-delegate.info/arky">earn Ѧ weekly</a></li>
 </ul>
-<p>Simplicity of <code>REST</code> API:</p>
+<h2 id="http-requests">HTTP Requests</h2>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
 &gt;&gt;&gt; # ~ https://explorer.ark.io:8443/api/delegates/arky
 &gt;&gt;&gt; rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
@@ -118,7 +120,8 @@
 &gt;&gt;&gt; rest.GET.api.blocks(returnKey="data")[0]
 {u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 </code></pre>
-<p>ECDSA and SCHNORR signatures can be performed using <a href="https://github.com/Moustikitos/elliptic-curve/blob/main/pySecp256k1/sig.py"><code>dposlib.ark.sig</code></a> and <a href="crypto/"><code>dposlib.ark.crypto</code></a> modules:</p>
+<h2 id="signature-issuers">Signature issuers</h2>
+<p><code>ECDSA</code> and <code>SCHNORR</code> signatures can be performed using <a href="https://github.com/Moustikitos/elliptic-curve/blob/main/pySecp256k1/sig.py"><code>dposlib.ark.sig</code></a> and <a href="crypto.md"><code>dposlib.ark.crypto</code></a> modules:</p>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib.ark.sig as sig
 &gt;&gt;&gt; import dposlib.ark.crypto as crypto
 &gt;&gt;&gt; keys = crypto.getKeys("secret")
@@ -139,7 +142,8 @@ b"0D\x02N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe
 &gt;&gt;&gt; crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
 '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 </code></pre>
-<p><a href="v2/"><code>dposlib.ark.v2</code></a> package provides<a href="blockchain/#transaction-objects"> <code>dposlib.blockchain.tx.Transaction</code></a> class and its associated builders:</p>
+<h2 id="transaction-builders">Transaction builders</h2>
+<p><a href="v2/"><code>dposlib.ark.v2</code></a> package provides<a href="ark/#transaction-objects"> <code>dposlib.blockchain.tx.Transaction</code></a> class and its associated builders.</p>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
 &gt;&gt;&gt; rest.use("dark")
 True
@@ -205,5 +209,5 @@ True
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-09-05 06:15:15.177422+00:00
+Build Date UTC : 2021-09-26 06:19:03.822495+00:00
 -->

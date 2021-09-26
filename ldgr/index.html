@@ -46,11 +46,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../crypto/">Crypto</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../blockchain/">Blockchain</a>
+<li class="toctree-l1"><a class="reference internal" href="../ark/">Ark</a>
 </li>
 </ul>
 <ul>
@@ -98,55 +94,68 @@
 <div role="main">
 <div class="section">
 <p><a name="dposlib.ark.ldgr"></a></p>
-<h1 id="dposlibarkldgr">dposlib.ark.ldgr<a class="headerlink" href="#dposlibarkldgr" title="Permanent link">#</a></h1>
+<h1 id="dposlibarkldgr">dposlib.ark.ldgr</h1>
 <p>This module contains functions to interoperate with <a href="https://ledger.com">Ledger</a> hard wallet.</p>
 <p><a name="dposlib.ark.ldgr.parseBip44Path"></a></p>
-<h4 id="parsebip44path">parseBip44Path<a class="headerlink" href="#parsebip44path" title="Permanent link">#</a></h4>
+<h4 id="parsebip44path">parseBip44Path</h4>
 <pre><code class="language-python">parseBip44Path(path)
 </code></pre>
 <p>Parse a <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">BIP44</a> derivation path.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>path</code> <em>str</em> - the derivation path</li>
+<li><code>path</code> <em>str</em> - the derivation path.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>parsed bip44 path as bytes</p>
+<ul>
+<li><code>bytes</code> - parsed bip44 path.</li>
+</ul>
 <p><a name="dposlib.ark.ldgr.getPublicKey"></a></p>
-<h4 id="getpublickey">getPublicKey<a class="headerlink" href="#getpublickey" title="Permanent link">#</a></h4>
+<h4 id="getpublickey">getPublicKey</h4>
 <pre><code class="language-python">getPublicKey(path=None, debug=False)
 </code></pre>
 <p>Compute the public key associated to a derivation path.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>path</code> <em>str</em> - derivation path</li>
-<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+<li><code>path</code> <em>str</em> - derivation path.</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key.</li>
 </ul>
 <p><strong>Returns</strong>:</p>
-<p>hexadecimal compressed publicKey</p>
+<ul>
+<li><code>hex</code> - secp256k1-compressed publicKey.</li>
+</ul>
 <p><a name="dposlib.ark.ldgr.signMessage"></a></p>
-<h4 id="signmessage">signMessage<a class="headerlink" href="#signmessage" title="Permanent link">#</a></h4>
+<h4 id="signmessage">signMessage</h4>
 <pre><code class="language-python">signMessage(msg, path=None, schnorr=True, debug=False)
 </code></pre>
 <p>Compute schnorr or ecdsa signature of msg according to derivation path.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>msg</code> <em>str or bytes</em> - transaction as dictionary</li>
-<li><code>path</code> <em>str</em> - derivation path</li>
-<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
-<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+<li><code>msg</code> <em>str or bytes</em> - transaction as dictionary.</li>
+<li><code>path</code> <em>str</em> - derivation path.</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa.</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - message signature.</li>
 </ul>
 <p><a name="dposlib.ark.ldgr.signTransaction"></a></p>
-<h4 id="signtransaction">signTransaction<a class="headerlink" href="#signtransaction" title="Permanent link">#</a></h4>
+<h4 id="signtransaction">signTransaction</h4>
 <pre><code class="language-python">signTransaction(tx, path=None, schnorr=True, debug=False)
 </code></pre>
 <p>Append sender public key and signature into transaction according to
 derivation path.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>tx</code> <em>dposlib.blockchain.tx.Transaction</em> - transaction</li>
-<li><code>path</code> <em>str</em> - derivation path</li>
-<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa</li>
-<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key</li>
+<li><code>tx</code> <em>dposlib.ark.tx.Transaction</em> - transaction.</li>
+<li><code>path</code> <em>str</em> - derivation path.</li>
+<li><code>schnorr</code> <em>bool</em> - use schnorr signature if True else ecdsa.</li>
+<li><code>debug</code> <em>bool</em> - flag to activate debug messages from ledger key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - transaction signature. Signature is also added to transaction
+  object as <code>signature</code> item.</li>
 </ul>
 </div>
 </div>
