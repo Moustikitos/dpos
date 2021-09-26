@@ -19,9 +19,10 @@ def entityRegister(name, type="business", subtype=0, ipfsData=None):
 
     Arguments:
         name (str): entity name
-        type (str): entity type
+        type (str): entity type. Possible values are `business`, `product`,
+            `plugin`, `module` and `delegate`. Default to `business`.
         subtype (int): entity subtype
-        ipfsData (dict): ipfs data. Default to None.
+        ipfsData (base58): ipfs DAG. Default to None.
 
     Returns:
         dposlib.blockchain.tx.Transaction: orphan transaction.
@@ -56,7 +57,7 @@ def entityUpdate(registrationId, ipfsData, name=None):
 
     Arguments:
         registrationId (str): registration id
-        ipfsData (dict): ipfs data
+        ipfsData (base58): ipfs DAG. Default to None.
         name (str, optional): entity name
 
     Returns:
