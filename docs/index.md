@@ -15,7 +15,8 @@
    * [X] Send &#1126; to `AUahWfkfr5J4tYakugRbfow7RWVTK35GPW`
    * [X] Vote `arky` on [Ark blockchain](https://explorer.ark.io) and [earn &#1126; weekly](http://arky-delegate.info/arky)
 
-Simplicity of `REST` API:
+## HTTP Requests
+
 ```python
 >>> from dposlib import rest
 >>> # ~ https://explorer.ark.io:8443/api/delegates/arky
@@ -31,7 +32,9 @@ Simplicity of `REST` API:
 {u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 ```
 
-ECDSA and SCHNORR signatures can be performed using [`dposlib.ark.sig`](https://github.com/Moustikitos/elliptic-curve/blob/main/pySecp256k1/sig.py) and [`dposlib.ark.crypto`](crypto.md) modules:
+## Signature issuers
+
+`ECDSA` and `SCHNORR` signatures can be performed using [`dposlib.ark.sig`](https://github.com/Moustikitos/elliptic-curve/blob/main/pySecp256k1/sig.py) and [`dposlib.ark.crypto`](crypto.md) modules:
 
 ```python
 >>> import dposlib.ark.sig as sig
@@ -55,7 +58,9 @@ b"0D\x02N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe
 '5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
 ```
 
-[`dposlib.ark.v2`](v2.md) package provides[ `dposlib.blockchain.tx.Transaction`](blockchain.md#transaction-objects) class and its associated builders:
+## Transaction builders
+
+[`dposlib.ark.v2`](v2.md) package provides[ `dposlib.blockchain.tx.Transaction`](ark.md#transaction-objects) class and its associated builders.
 
 ```python
 >>> from dposlib import rest

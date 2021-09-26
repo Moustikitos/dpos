@@ -1,10 +1,6 @@
 <a name="dposlib.ark"></a>
 # dposlib.ark
 
-```python
->>> import dposlib.ark
-```
-
 <a name="dposlib.ark.Content"></a>
 ## Content Objects
 
@@ -55,8 +51,8 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
   
   **Kwargs**:
   
-  * `keep_alive` *bool* - set hook to update data from blockcahin. Default
-  to True.
+  * `keep_alive` *bool* - set hook to update data from blockcahin.
+  Default to True.
 
 <a name="dposlib.ark.Content.filter"></a>
 #### filter
@@ -77,6 +73,21 @@ class Wallet(Content)
 
 Wallet root class that implements basic wallet behaviour.
 
+<a name="dposlib.ark.Wallet.delegate"></a>
+#### delegate
+
+Delegate attributes if wallet is registered as delegate.
+
+<a name="dposlib.ark.Wallet.username"></a>
+#### username
+
+Delegate username if wallet is registered as delegate.
+
+<a name="dposlib.ark.Wallet.secondPublicKey"></a>
+#### secondPublicKey
+
+Second public key if second signature is set to wallet.
+
 <a name="dposlib.ark.Wallet.__init__"></a>
 #### \_\_init\_\_
 
@@ -96,8 +107,8 @@ Wallet root class that implements basic wallet behaviour.
   to True.
   * `fee` *int or str* - set fee level as fee multiplier string value or
   one of **minFee**, **avgFee**, **maxFee**. Default to **avgFee**.
-  * `fee_included` *bool* - set to True if amout + fee is the total desired
-  out flow. Default to False.
+  * `fee_included` *bool* - set to True if amout + fee is the total
+  desired out flow. Default to False.
 
 <a name="dposlib.ark.Wallet.link"></a>
 #### link

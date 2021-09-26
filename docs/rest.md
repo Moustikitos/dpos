@@ -8,9 +8,6 @@
     https://api.ark.dev/public-rest-api/getting-started
 ) to see how to use http calls.
 
-`rest` also creates a `core` module containing transaction builders,
-cryptographic and network interface.
-
 ```python
 >>> from dposlib import rest
 >>> rest.use("ark")
@@ -22,6 +19,10 @@ True
 ```
 
 **`core` module**
+
+When `ark` blockchain package is loaded, a `core` module containing transaction
+builders, cryptographic and network interface is available.
+
 ```python
 >>> import dposlib
 >>> dlgt = dposlib.core.api.Delegate("arky")
