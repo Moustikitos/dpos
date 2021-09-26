@@ -22,8 +22,9 @@ def entityRegister(name, type="business", subtype=0, ipfsData=None):
         type (str): entity type
         subtype (int): entity subtype
         ipfsData (dict): ipfs data. Default to None.
+
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     asset = {
         "type": MAGISTRATE[type],
@@ -59,7 +60,7 @@ def entityUpdate(registrationId, ipfsData, name=None):
         name (str, optional): entity name
 
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     asset = rest.GET.api.transactions(
         registrationId
@@ -92,7 +93,7 @@ def entityResign(registrationId):
         registrationId (str): registration id
 
     Returns:
-        transaction object
+        dposlib.blockchain.tx.Transaction: orphan transaction.
     """
     asset = rest.GET.api.transactions(
         registrationId
