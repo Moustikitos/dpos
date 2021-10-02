@@ -39,8 +39,8 @@ kw = {
         "base58"
     ],
     "dependency_links": [
-        "git+https://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1",
-        "git+https://github.com/Moustikitos/micro-server#egg=usrv"
+        "https://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1",
+        "https://github.com/Moustikitos/micro-server#egg=usrv"
     ],
     "license": "Copyright 2018, MIT licence",
     "classifiers": [
