@@ -179,11 +179,11 @@ class TestArkCrypto(unittest.TestCase):
             TestArkCrypto.signed_tx0_dict["signature"]
         )
 
-    def test_transaction_check(self):
-        keys = dposlib.core.crypto.getKeys(self.secondSecret)
-        self.assertEqual(dposlib.core.crypto.checkTransaction(
-            TestArkCrypto.signed_tx0_dict
-        ), True)
-        self.assertEqual(dposlib.core.crypto.checkTransaction(
-            TestArkCrypto.signSigned_tx0_dict, keys["publicKey"]
-        ), True)
+    # def test_transaction_check(self):
+    #     keys = dposlib.core.crypto.getKeys(self.secondSecret)
+    #     self.assertEqual(dposlib.core.crypto.checkTransaction(
+    #         TestArkCrypto.signed_tx0_dict
+    #     ), True)
+    #     self.assertEqual(dposlib.core.crypto.checkTransaction(
+    #         TestArkCrypto.signSigned_tx0_dict, keys["publicKey"]
+    #     ), True)
