@@ -349,6 +349,8 @@ class Transaction(dict):
             (k, v) for k, v in list(data.items()) + last_to_be_set
             if v is not None
         ]:
+            if key == "fee":
+                value = int(value)
             self[key] = value
 
     def __setitem__(self, item, value):

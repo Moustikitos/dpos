@@ -7,7 +7,7 @@ import pySecp256k1 as secp256k1
 from pySecp256k1 import schnorr, ecdsa
 from dposlib import BytesIO, PY3
 from dposlib import cfg
-from dposlib.ark.tx import serialize
+from dposlib.ark.tx import Transaction, serialize
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 if PY3:
@@ -356,7 +356,7 @@ def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
             getBytes(t, **opt)
 
     # create a local copy of tx
-    tx = dict(**tx)
+    tx = Transaction(**tx)
 
     # id check
     # remove id from tx if any and then compare

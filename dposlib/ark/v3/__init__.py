@@ -8,7 +8,7 @@ from datetime import datetime
 from importlib import import_module
 
 from dposlib.ark import crypto
-from dposlib.ark.v2 import _write_module, TRANSACTIONS, TYPING, GETNAME
+from dposlib.ark.v2 import mixin, _write_module, TRANSACTIONS, TYPING, GETNAME
 from dposlib.ark.v3 import api
 from dposlib import HOME, rest, cfg
 from dposlib.ark.tx import Transaction
