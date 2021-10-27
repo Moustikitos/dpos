@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import hashlib
 import getpass
 import dposlib
 
-from dposlib.util.data import filter_dic, dumpJson
+from dposlib.util.data import filter_dic, dumpJson, loadJson
 from dposlib.ark.v2.mixin import loadPages, deltas
 from dposlib.ark.tx import serialize
 try:
@@ -199,7 +200,6 @@ class Block(dposlib.ark.Content):
         )
 
 
-# TODO: redefine
 class Webhook(dposlib.ark.Content):
 
     @staticmethod
@@ -209,12 +209,28 @@ class Webhook(dposlib.ark.Content):
             returnKey="data"
         )
         if "token" in data:
+            # save the used peer to be able to delete it later
+            data["peer"] = peer
+            # build the security hash and keep only second token part
+            data["hash"] = hashlib.sha256(
+                data["token"].encode("utf-8")
+            ).hexdigest()
+            data["token"] = data["token"][32:]
             dumpJson(data, os.path.join(
-                dposlib.ROOT,
-                ".webhooks",
-                dposlib.rest.cfg.network, data["token"][32:]
+                dposlib.ROOT, ".webhooks",
+                dposlib.rest.cfg.network, data["id"]
             ))
         return Webhook(data["id"], peer=peer)
+
+    @staticmethod
+    def open(whk_id):
+        data = loadJson(
+            os.path.join(
+                dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network, whk_id
+            )
+        )
+        if len(data):
+            return Webhook(data["id"], peer=data["peer"])
 
     def __init__(self, whk_id, **kw):
         dposlib.ark.Content.__init__(
@@ -223,12 +239,25 @@ class Webhook(dposlib.ark.Content):
         )
 
     def delete(self):
-        dposlib.rest.DELETE.api.webhooks(
-            "%s" % self.id, peer=self.__kwargs.get("peer", None)
-        )
         whk_path = os.path.join(
-            dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network,
-            self.token[32:]
+            dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network, self.id
+        )
+        resp = dposlib.rest.DELETE.api.webhooks(
+            "%s" % self.id, peer=loadJson(whk_path).get("peer", None)
         )
         if os.path.exists(whk_path):
             os.remove(whk_path)
+        return resp
+
+    def verify(self, auth):
+        data = loadJson(
+            os.path.join(
+                dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network, self.id
+            )
+        )
+        token = (auth + data["token"]).encode("utf-8")
+        return hashlib.sha256(token).hexdigest() == data["hash"]
+
+    # TODO: implement
+    def change(self, event=None, target=None, conditions=[]):
+        pass
