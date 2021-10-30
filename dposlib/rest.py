@@ -72,6 +72,7 @@ builders, cryptographic and network interface is available.
 import sys
 import random
 import datetime
+import traceback
 
 import pytz
 
@@ -162,8 +163,11 @@ def load(name):
             pass
         try:
             sys.modules[__package__].core.init()
-        except Exception as e:
-            raise Exception("package initialization error\n%r" % e)
+        except Exception as error:
+            raise Exception(
+                "package initialization error\n%r\n%s" %
+                (error, traceback.format_exc())
+            )
 
 
 def use(network, **kwargs):
