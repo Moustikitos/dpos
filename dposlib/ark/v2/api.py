@@ -216,11 +216,23 @@ class Webhook(dposlib.ark.Content):
                 data["token"].encode("utf-8")
             ).hexdigest()
             data["token"] = data["token"][32:]
-            dumpJson(data, os.path.join(
-                dposlib.ROOT, ".webhooks",
-                dposlib.rest.cfg.network, data["id"]
-            ))
+            dumpJson(
+                data, os.path.join(
+                    dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network,
+                    data["id"]
+                )
+            )
         return Webhook(data["id"], peer=peer)
+
+    @staticmethod
+    def list():
+        return next(
+            os.walk(
+                os.path.join(
+                    dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network
+                )
+            )
+        )[-1]
 
     @staticmethod
     def open(whk_id):
