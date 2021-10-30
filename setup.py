@@ -39,7 +39,7 @@ kw = {
         "base58"
     ],
     "dependency_links": [
-        "https://github.com/Moustikitos/elliptic-curve#egg=pySecp256k1",
+        "https://github.com/Moustikitos/fast-curve#egg=cSecp256k1",
         "https://github.com/Moustikitos/micro-server#egg=usrv"
     ],
     "license": "Copyright 2018, MIT licence",

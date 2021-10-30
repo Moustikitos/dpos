@@ -2,13 +2,15 @@
 
 import base58
 import hashlib
+import pySecp256k1 as secp256k1
+
 from collections import UserDict
 
-import cSecp256k1 as secp256k1
-from dposlib import BytesIO, PY3, cfg
+from pySecp256k1 import schnorr, ecdsa
+from dposlib import BytesIO, PY3
+from dposlib import cfg
 from dposlib.ark.tx import serialize
-from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, HEX, BHEX
-
+from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes
 
 if PY3:
     unicode = str
@@ -26,21 +28,17 @@ def getKeys(secret):
     Returns:
         dict: public, private and WIF keys.
     """
-    if isinstance(secret, int):
-        privateKey = "%064x" % secret
-        seed = unhexlify(privateKey)
-    elif isinstance(secret, str):
-        privateKey = secret if HEX.match(secret) else \
-            secp256k1.hash_sha256(secret).decode()
-        seed = unhexlify(privateKey)
-    elif isinstance(secret, bytes):
-        privateKey = secret.decode() if BHEX.match(secret) else \
-            secp256k1.hash_sha256(secret).decode()
-        seed = unhexlify(privateKey)
+    if isinstance(secret, (str, bytes, unicode)):
+        try:
+            seed = unhexlify(secret)
+        except Exception:
+            seed = secp256k1.hash_sha256(secret)
+    else:
+        seed = secp256k1.bytes_from_int(secret)
     publicKey = secp256k1.PublicKey.from_seed(seed)
     return {
-        "publicKey": publicKey.encode().decode(),
-        "privateKey": privateKey,
+        "publicKey": hexlify(publicKey.encode()),
+        "privateKey": hexlify(seed),
         "wif": getWIF(seed)
     }
 
@@ -63,7 +61,7 @@ def getMultiSignaturePublicKey(minimum, *publicKeys):
     P = secp256k1.PublicKey.from_secret("%02x" % minimum)
     for publicKey in publicKeys:
         P = P + secp256k1.PublicKey.decode(unhexlify(publicKey))
-    return P.encode().decode()
+    return hexlify(P.encode())
 
 
 def getAddressFromSecret(secret, marker=None):
@@ -182,13 +180,12 @@ def getSignatureFromBytes(data, privateKey):
     Returns:
         hex: signature.
     """
-    secret0 = int(privateKey, base=16)
+    secret0 = unhexlify(privateKey)
+    msg = secp256k1.hash_sha256(data)
     if bytearray(data)[0] == 0xff:
-        return secp256k1.Bcrpt410(secret0).sign(data).raw().decode()
+        return hexlify(schnorr.bcrypto410_sign(msg, secret0))
     else:
-        return secp256k1.Ecdsa(secret0).sign(
-            data, rfc6979=True, canonical=True
-        ).der().decode()
+        return hexlify(ecdsa.rfc6979_sign(msg, secret0, canonical=True))
 
 
 def verifySignature(value, publicKey, signature):
@@ -218,28 +215,13 @@ def verifySignatureFromBytes(data, publicKey, signature):
     Returns:
         bool: True if signature matches the public key.
     """
-    puk = secp256k1.PublicKey.decode(publicKey)
+    pubkey = unhexlify(publicKey)
     msg = secp256k1.hash_sha256(data)
+    sig = unhexlify(signature)
     if len(signature) == 128:
-        hS = secp256k1.HexSig.from_raw(
-            signature if isinstance(signature, bytes) else
-            signature.encode()
-        )
-        return bool(
-            secp256k1._schnorr.bcrypto410_verify(
-                msg, puk.x, puk.y, hS.r, hS.s
-            )
-        )
+        return schnorr.bcrypto410_verify(msg, pubkey, sig)
     else:
-        hS = secp256k1.HexSig.from_der(
-            signature if isinstance(signature, bytes) else
-            signature.encode()
-        )
-        return bool(
-            secp256k1._ecdsa.verify(
-                msg, puk.x, puk.y, hS.r, hS.s
-            )
-        )
+        return ecdsa.verify(msg, pubkey, sig)
 
 
 def getId(tx):
@@ -265,7 +247,7 @@ def getIdFromBytes(data):
     Returns:
         hex: id.
     """
-    return secp256k1.hash_sha256(data).decode()
+    return hexlify(secp256k1.hash_sha256(data))
 
 
 # TO BE DEPRECATED WITH ARK CORE 3.0
