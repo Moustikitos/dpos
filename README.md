@@ -1,6 +1,6 @@
 > `dposlib` package aims to provide a simple API to ARK blockchain and forks.
 
-[![Build Status](https://travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://travis-ci.com/Moustikitos/dpos)
+[![Build Status](https://app.travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://app.travis-ci.com/Moustikitos/dpos)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags)
@@ -29,7 +29,7 @@ sudo apt-get install python-pip python3-pip
 
 ## Available network
 
-  - Ark-core 3.0 (`API`+ transaction type `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10` & `magistrate`)
+  - Ark-core 3.0
     * [X] devnet : `dark`
     * [X] mainet : `ark`
   - Ark forks
@@ -172,6 +172,7 @@ pip install ledgerblue
 ## Version
 
 ### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] api.Webhook improvement
   - [x] Ark-core v 3.0.x compliancy
   - [x] fee management improvement
   - [x] ledger.com Ark app support

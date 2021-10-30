@@ -17,6 +17,7 @@ def serializePayload(tx):
         json.dumps(asset, sort_keys=True).encode("utf-8")
     ).hexdigest()
 
+    # if hash already computed and nothing modified since
     if len(asset) and md5_asset == getattr(tx, "_assetHash", ""):
         return getattr(tx, "_serializedPayload")
 
