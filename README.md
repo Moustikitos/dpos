@@ -188,6 +188,9 @@ pip install ledgerblue
   - [x] packaging improvement
   - [x] switched from `sphinx` to `pydoc-markdown` doc builder
 
+<details>
+  <summary>Older releases&hellip;</summary><p>
+
 ### 0.3.4
   - [x] removed `requests` dependency
   - [x] multisignature api and app run as system services
@@ -281,3 +284,4 @@ pip install ledgerblue
 
 ### 0.1.0
   - [x] First rebrand
+</p></details>
