@@ -171,8 +171,13 @@ pip install ledgerblue
 
 ## Version
 
-### 0.3.5 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] api.Webhook improvement
+  - [x] `pySecp256k1` replaced by `cSecp256k1`
+  - [ ] removed python 2.x compliancy
+  - [ ] ark package simplification
+
+### 0.3.5
   - [x] Ark-core v 3.0.x compliancy
   - [x] fee management improvement
   - [x] ledger.com Ark app support
