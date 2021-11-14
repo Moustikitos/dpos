@@ -1,21 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-`dposlib` is a package that provides simple API to interact with ARK blockchain
-and its forks. It is designed to run with both python 2.x and 3.x.
+`dposlib` is a package that provides simple API to interact with any
+blockchain. More interaction can be provided by specific blockchain packages.
 """
 
 import os
 import sys
-
-PY3 = sys.version_info[0] >= 3
-
-if PY3:
-    import io
-    BytesIO = io.BytesIO
-else:
-    from cStringIO import StringIO
-    BytesIO = StringIO
 
 
 # dposlib can be embeded in a frozen app

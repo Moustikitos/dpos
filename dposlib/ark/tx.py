@@ -3,20 +3,18 @@
 import re
 import json
 import dposlib
-
+from io import BytesIO
 from collections import OrderedDict
-from dposlib import BytesIO
+
 from dposlib import cfg
 from dposlib.ark import slots, serde
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
-
-if dposlib.PY3:
-    long = int
 
 
 def setSenderPublicKey(cls, publicKey):
     # load information from blockchain
     address = dposlib.core.crypto.getAddress(publicKey)
+    # TODO: cache data ?
     data = dposlib.rest.GET.api.wallets(address).get("data", {})
     attributes = data.get("attributes", {})
     # keep original nonce
@@ -62,7 +60,7 @@ def setFees(cls, value=None):
     feesl = Transaction.FEESL
 
     # manualy set fees
-    if isinstance(value, (float, int, long)):
+    if isinstance(value, (float, int)):
         value = int(value)
 
     else:
@@ -197,7 +195,8 @@ def serialize(tx, **options):
         pack_bytes(buf, b"".join([unhexlify(sig) for sig in tx["signatures"]]))
 
     # id part
-    pack_bytes(buf, unhexlify(tx.get("id", "")))
+    if "id" in tx:
+        pack_bytes(buf, unhexlify(tx.get("id", "")))
 
     result = buf.getvalue()
     buf.close()
@@ -287,7 +286,7 @@ class Transaction(dict):
             value (str or int): constant or fee multiplier.
         """
         if hasattr(cfg, "doffsets"):
-            if isinstance(value, (int, float, long)):
+            if isinstance(value, (int, float)):
                 Transaction.FMULT = int(value)
                 Transaction.FEESL = None
             elif value in ["maxFee", "avgFee", "minFee"]:
@@ -428,8 +427,8 @@ class Transaction(dict):
                     len(self.get("signature", []))
                 if missings:
                     raise Exception("owner signature missing (%d)" % missings)
-            self["signature"] = dposlib.core.crypto.getSignatureFromBytes(
-                serialize(self), self._privateKey
+            self["signature"] = dposlib.core.crypto.getSignature(
+               self, self._privateKey
             )
         else:
             raise Exception("orphan transaction can not sign itsef")
@@ -438,14 +437,15 @@ class Transaction(dict):
     def signSign(self):
         """
         Generate the `signSignature` field. Transaction have to be signed and
-        second  private key have to be set first.
+        second private key have to be set first.
         """
         if "signature" in self:  # or "signatures" in self ?
+            self.pop("id", False)
             try:
-                self["signSignature"] = \
-                    dposlib.core.crypto.getSignatureFromBytes(
-                        serialize(self), self._secondPrivateKey
-                    )
+                self["signSignature"] = dposlib.core.crypto.getSignature(
+                    self, self._secondPrivateKey,
+                    exclude_second_sig=True,
+                )
             except AttributeError:
                 raise Exception("no second private Key available")
         else:
@@ -455,9 +455,7 @@ class Transaction(dict):
     def signWithSecret(self, secret):
         """
         Generate the `signature` field using passphrase. The associated
-        public and private keys are stored till [`dposlib.ark.unlink`](
-            ark.md#unlink
-        ) is called.
+        public and private keys are stored till `dposlib.ark.unlink` is called.
 
         Args:
             secret (`str`): passphrase.
@@ -469,7 +467,7 @@ class Transaction(dict):
         """
         Generate the `signSignature` field using second passphrase. The
         associated second public and private keys are stored till
-        [`dposlib.ark.unlink`](ark.md#unlink) is called.
+        `dposlib.ark.unlink` is called.
 
         Args:
             secondSecret (`str`): second passphrase.
@@ -492,7 +490,7 @@ class Transaction(dict):
     def signWithKeys(self, publicKey, privateKey):
         """
         Generate the `signature` field using public and private keys. They
-        are stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
+        are stored till `dposlib.ark.unlink` is called.
 
         Args:
             publicKey (str): public key as hex string.
@@ -506,7 +504,7 @@ class Transaction(dict):
     def signSignWithKey(self, secondPrivateKey):
         """
         Generate the `signSignature` field using second private key. It is
-        stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
+        stored till `dposlib.ark.unlink` is called.
 
         Args:
             secondPrivateKey (`str`): second private key as hex string.
@@ -577,6 +575,7 @@ class Transaction(dict):
             elif self._secondPublicKey:
                 if "signSignature" not in self:
                     raise Exception("second signature is missing")
+            self.pop("id", False)
             self["id"] = dposlib.core.crypto.getIdFromBytes(
                 serialize(self, exclude_multi_sig=False)
             )
@@ -592,8 +591,7 @@ class Transaction(dict):
             secret (str): passphrase.
             secondSecret (str): second passphrase.
             fee (int): manually set fee value in `arktoshi`.
-            fee_included (bool): see
-                [`dposlib.ark.tx.Transaction.feeIncluded`](ark.md#feeincluded).
+            fee_included (bool): see `dposlib.ark.tx.Transaction.feeIncluded`.
         """
         self.link(secret, secondSecret)
         # automatically set fees if needed

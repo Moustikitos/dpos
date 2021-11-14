@@ -2,16 +2,13 @@
 
 import base58
 import hashlib
+from io import BytesIO
 from collections import UserDict
 
 import cSecp256k1 as secp256k1
-from dposlib import BytesIO, PY3, cfg
+from dposlib import cfg
 from dposlib.ark.tx import serialize
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, HEX, BHEX
-
-
-if PY3:
-    unicode = str
 
 
 def getKeys(secret):

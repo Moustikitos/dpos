@@ -4,8 +4,8 @@ import sys
 import base58
 import hashlib
 import json
+from io import BytesIO
 
-from dposlib import BytesIO
 from dposlib.util.bin import unhexlify, pack, pack_bytes
 
 CACHE = {}

@@ -15,8 +15,7 @@ from dposlib.ark.tx import serialize, Transaction
 from ledgerblue.comm import getDongle
 from ledgerblue.commException import CommException
 
-PACK = (lambda f, v: struct.pack(f, v)) if dposlib.PY3 else \
-       (lambda f, v: bytes(struct.pack(f, v)))
+PACK = (lambda f, v: struct.pack(f, v))
 
 # Limits
 chunkSize = 255

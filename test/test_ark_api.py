@@ -35,7 +35,7 @@ class TestDposApi(unittest.TestCase):
 
     @connection_enabled
     def test_wallet_link(self):
-        dposlib.ark.link(self.wallet, self.secret, self.secondSecret)
+        dposlib.core.api.link(self.wallet, self.secret, self.secondSecret)
         self.assertEqual(self.wallet._publicKey,
                          self.wallet.publicKey)
         self.assertEqual(self.wallet._secondPublicKey,

@@ -9,7 +9,7 @@ import struct
 import binascii
 import base58
 
-from dposlib import PY3
+# from dposlib import PY3
 
 HEX = re.compile("[0-9a-fA-F]")
 BHEX = re.compile(b"[0-9a-fA-F]")
@@ -46,7 +46,7 @@ def pack_bytes(f, v):
 
 
 def hexlify(data):
-    if PY3 and isinstance(data, str):
+    if isinstance(data, str):
         if HEX.match(data):
             return data
         else:
@@ -56,7 +56,7 @@ def hexlify(data):
 
 
 def unhexlify(data):
-    if PY3 and isinstance(data, bytes):
+    if isinstance(data, bytes):
         if BHEX.match(data):
             data = data.decode()
         else:
@@ -68,8 +68,5 @@ def unhexlify(data):
 
 
 def checkAddress(address):
-    if base58.b58decode_check(
-        address.encode("utf-8")
-        if not PY3 and not isinstance(address, bytes) else address
-    ):
+    if base58.b58decode_check(address):
         return address
