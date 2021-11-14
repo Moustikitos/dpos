@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
 
+# ada = {
+#     "familly": "ada",
+
+#     "seeds": [
+#         "https://cardanoexplorer.com/api"
+#     ]
+# }
+
 ark = {
-    "familly": "ark.v3",
+    "familly": "ark",
     "aip20": 0,
     "txversion": 2,
 
@@ -11,7 +19,7 @@ ark = {
 }
 
 dark = {
-    "familly": "ark.v3",
+    "familly": "ark",
     "aip20": 1,
     "txversion": 2,
 
@@ -21,7 +29,7 @@ dark = {
 }
 
 iop = {
-    "familly": "ark.v2",
+    "familly": "ark",
     "aip20": 0,
     "txversion": 2,
 
@@ -51,7 +59,7 @@ iop = {
 }
 
 diop = {
-    "familly": "ark.v2",
+    "familly": "ark",
     "aip20": 0,
     "txversion": 2,
 
@@ -66,7 +74,7 @@ diop = {
 }
 
 qredit = {
-    "familly": "ark.v2",
+    "familly": "ark",
     "aip20": 0,
     "txversion": 2,
 
@@ -81,7 +89,7 @@ qredit = {
 }
 
 nos = {
-    "familly": "ark.v2",
+    "familly": "ark",
     "aip20": 0,
     "txversion": 2,
 
@@ -91,7 +99,7 @@ nos = {
 }
 
 uns = {
-    "familly": "ark.v2",
+    "familly": "ark",
     "maxvotepertx": 1,
     "maxvote": 1,
     "aip20": 0,
