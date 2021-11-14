@@ -21,7 +21,6 @@
 <script defer="" src="../js/jquery-2.1.1.min.js"></script>
 <script defer="" src="../js/modernizr-2.8.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 </link></head>
 <body class="wy-body-for-nav" role="document">
@@ -48,6 +47,14 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal current" href="./">Ark</a>
 <ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#link">link</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unlink">unlink</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#jsdict-objects">JSDict Objects</a>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
 <ul>
 <li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
@@ -66,9 +73,9 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#link">link</a>
+<li class="toctree-l3"><a class="reference internal" href="#link_1">link</a>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#unlink">unlink</a>
+<li class="toctree-l3"><a class="reference internal" href="#unlink_1">unlink</a>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#send">send</a>
 </li>
@@ -82,21 +89,27 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
 </li>
-</ul>
+<li class="toctree-l3"><a class="reference internal" href="#sendipfs">sendIpfs</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#multisend">multiSend</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#resignate">resignate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sendhtlc">sendHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#claimhtlc">claimHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#refundhtlc">refundHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#createentity">createEntity</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#updateentity">updateEntity</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#resignentity">resignEntity</a>
 </li>
 </ul>
 </li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../v2/">Core v2</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../v3/">Core v3</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger</a>
 </li>
 </ul>
 </div>
@@ -121,16 +134,60 @@
 </div>
 <div role="main">
 <div class="section">
-<p><a name="dposlib.ark"></a></p>
-<h1 id="dposlibark">dposlib.ark</h1>
-<p><a name="dposlib.ark.Content"></a></p>
+<p><a name="dposlib.ark.api"></a></p>
+<h1 id="dposlibarkapi">dposlib.ark.api</h1>
+<p><a name="dposlib.ark.api.isLinked"></a></p>
+<h4 id="islinked">isLinked</h4>
+<pre><code class="language-python">isLinked(func)
+</code></pre>
+<p><code>Python decorator</code>.
+First argument of decorated function have to be a
+<a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a>
+or an object containing a valid <code>address</code>, <code>_derivationPath</code> or <code>publicKey</code>
+attribute. It executes the decorated <code>function</code> if the object is correctly
+linked using <code>dposlib.ark.api.link</code> definition.</p>
+<p><a name="dposlib.ark.api.link"></a></p>
+<h4 id="link">link</h4>
+<pre><code class="language-python">link(cls, secret=None, secondSecret=None)
+</code></pre>
+<p>Associates crypto keys into a <a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a> object according to secrets. If <code>secret</code> or <code>secondSecret</code> are not <code>str</code>,
+they are considered as <code>None</code>. In this case secrets will be asked and
+checked from console untill success or <code>Ctrl+c</code> keyboard interruption.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>cls</code> <em>Content</em> - content object.</li>
+<li><code>secret</code> <em>str</em> - secret string. Default set to <code>None</code>.</li>
+<li><code>secondSecret</code> <em>str</em> - second secret string. Default set to <code>None</code>.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if secret and second secret match.</li>
+</ul>
+<p><a name="dposlib.ark.api.unlink"></a></p>
+<h4 id="unlink">unlink</h4>
+<pre><code class="language-python">unlink(cls)
+</code></pre>
+<p>Remove crypto keys association.</p>
+<p><a name="dposlib.ark.api.JSDict"></a></p>
+<h2 id="jsdict-objects">JSDict Objects</h2>
+<pre><code class="language-python">class JSDict(dict)
+</code></pre>
+<p>Read only dictionary with js object behaviour.</p>
+<pre><code class="language-python">&gt;&gt;&gt; jsdic = dposlib.ark.JSDict(value=5)
+&gt;&gt;&gt; jsdic
+{'value': 5}
+&gt;&gt;&gt; jsdic.value
+5
+</code></pre>
+<p><a name="dposlib.ark.api.Content"></a></p>
 <h2 id="content-objects">Content Objects</h2>
 <pre><code class="language-python">class Content(object)
 </code></pre>
 <p>Live object connected to blockchain. It is initialized with
-<code>dposlib.rest.GET</code> request. Object is updated every 30s. Endpoint response
-can be a <code>dict</code> or a <code>list</code>. If it is a <code>list</code>, it is stored in <code>data</code>
-attribute else all fields are stored as instance attribute.</p>
+<a href="../rest/#dposlib.rest.GET"><code>dposlib.rest.GET</code></a> request. Object is updated
+every 30s. Endpoint response can be a <code>dict</code> or a <code>list</code>. If it is a
+<code>list</code>, it is stored in <code>data</code> attribute else all fields are stored as
+instance attribute.</p>
 <pre><code class="language-python">&gt;&gt;&gt; txs = dposlib.ark.Content(rest.GET.api.transactions)
 &gt;&gt;&gt; txs.data[0]["timestamp"]
 {
@@ -153,7 +210,7 @@ attribute else all fields are stored as instance attribute.</p>
 &gt;&gt;&gt; tx.datetime
 datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 </code></pre>
-<p><a name="dposlib.ark.Content.__init__"></a></p>
+<p><a name="dposlib.ark.api.Content.__init__"></a></p>
 <h4 id="__init__">__init__</h4>
 <pre><code class="language-python"> | __init__(ndpt, *args, **kwargs)
 </code></pre>
@@ -167,35 +224,35 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
 <li><code>keep_alive</code> <em>bool</em> - set hook to update data from blockcahin.
   Default to True.</li>
 </ul>
-<p><a name="dposlib.ark.Content.filter"></a></p>
+<p><a name="dposlib.ark.api.Content.filter"></a></p>
 <h4 id="filter">filter</h4>
 <pre><code class="language-python"> | filter(data)
 </code></pre>
 <p>Convert data as JSDict object converting string values in int if
 possible.</p>
-<p><a name="dposlib.ark.Wallet"></a></p>
+<p><a name="dposlib.ark.api.Wallet"></a></p>
 <h2 id="wallet-objects">Wallet Objects</h2>
 <pre><code class="language-python">class Wallet(Content)
 </code></pre>
 <p>Wallet root class that implements basic wallet behaviour.</p>
-<p><a name="dposlib.ark.Wallet.delegate"></a></p>
+<p><a name="dposlib.ark.api.Wallet.delegate"></a></p>
 <h4 id="delegate">delegate</h4>
 <p>Delegate attributes if wallet is registered as delegate.</p>
-<p><a name="dposlib.ark.Wallet.username"></a></p>
+<p><a name="dposlib.ark.api.Wallet.username"></a></p>
 <h4 id="username">username</h4>
 <p>Delegate username if wallet is registered as delegate.</p>
-<p><a name="dposlib.ark.Wallet.secondPublicKey"></a></p>
+<p><a name="dposlib.ark.api.Wallet.secondPublicKey"></a></p>
 <h4 id="secondpublickey">secondPublicKey</h4>
 <p>Second public key if second signature is set to wallet.</p>
-<p><a name="dposlib.ark.Wallet.__init__"></a></p>
+<p><a name="dposlib.ark.api.Wallet.__init__"></a></p>
 <h4 id="__init___1">__init__</h4>
-<pre><code class="language-python"> | __init__(ndpt, *args, **kwargs)
+<pre><code class="language-python"> | __init__(address, **kw)
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
-<li><code>*args</code> - Variable length argument list used by <code>dposlib.ark.Content</code>.</li>
-<li><code>**kwargs</code> - Variable key argument used by <code>dposlib.ark.Content</code>.</li>
+<li><code>address</code> <em>str</em> - wallet address or delegate username.</li>
+<li><code>**kwargs</code> - Variable key argument used by
+  <a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a>.</li>
 </ul>
 <p><strong>Specific kwargs</strong>:</p>
 <ul>
@@ -206,58 +263,369 @@ possible.</p>
 <li><code>fee_included</code> <em>bool</em> - set to True if amout + fee is the total
   desired out flow. Default to False.</li>
 </ul>
-<p><a name="dposlib.ark.Wallet.link"></a></p>
-<h4 id="link">link</h4>
+<p><a name="dposlib.ark.api.Wallet.link"></a></p>
+<h4 id="link_1">link</h4>
 <pre><code class="language-python"> | link(*args, **kwargs)
 </code></pre>
-<p>See <a href="./#link"><code>dposlib.ark.link</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.unlink"></a></p>
-<h4 id="unlink">unlink</h4>
+<p>See <a href="./#dposlib.ark.api.link"><code>dposlib.ark.api.link</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.unlink"></a></p>
+<h4 id="unlink_1">unlink</h4>
 <pre><code class="language-python"> | unlink()
 </code></pre>
-<p>See <a href="./#unlink"><code>dposlib.ark.unlink</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.send"></a></p>
+<p>See <a href="./#dposlib.ark.api.unlink"><code>dposlib.ark.api.unlink</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.send"></a></p>
 <h4 id="send">send</h4>
 <pre><code class="language-python"> | @isLinked
  | send(amount, address, vendorField=None, expiration=0)
 </code></pre>
 <p>Broadcast a transfer transaction to the ledger.
-See <a href="../v2/#transfer"><code>dposlib.ark.v2.transfer</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.setSecondSecret"></a></p>
+See <a href="./#dposlib.ark.builders.transfer"><code>dposlib.ark.builders.transfer</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.setSecondSecret"></a></p>
 <h4 id="setsecondsecret">setSecondSecret</h4>
 <pre><code class="language-python"> | @isLinked
  | setSecondSecret(secondSecret)
 </code></pre>
 <p>Broadcast a second secret registration transaction to the ledger.
-See <a href="../v2/#registersecondsecret"><code>dposlib.ark.v2.registerSecondSecret</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.setSecondPublicKey"></a></p>
+See <a href="./#dposlib.ark.builders.registerSecondSecret"><code>dposlib.ark.builders.registerSecondSecret</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.setSecondPublicKey"></a></p>
 <h4 id="setsecondpublickey">setSecondPublicKey</h4>
 <pre><code class="language-python"> | @isLinked
  | setSecondPublicKey(secondPublicKey)
 </code></pre>
 <p>Broadcast a second secret registration transaction into the ledger.
-See <a href="../v2/#registersecondpublickey"><code>dposlib.ark.v2.registerSecondPublicKey</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.setDelegate"></a></p>
+See <a href="./#dposlib.ark.builders.registerSecondPublicKey"><code>dposlib.ark.builders.registerSecondPublicKey</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.setDelegate"></a></p>
 <h4 id="setdelegate">setDelegate</h4>
 <pre><code class="language-python"> | @isLinked
  | setDelegate(username)
 </code></pre>
 <p>Broadcast a delegate registration transaction to the ledger.
-See <a href="../v2/#registerasdelegate"><code>dposlib.ark.v2.registerAsDelegate</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.upVote"></a></p>
+See <a href="./#dposlib.ark.builders.registerAsDelegate"><code>dposlib.ark.builders.registerAsDelegate</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.upVote"></a></p>
 <h4 id="upvote">upVote</h4>
 <pre><code class="language-python"> | @isLinked
  | upVote(*usernames)
 </code></pre>
 <p>Broadcast an up-vote transaction to the ledger.
-See <a href="../v2/#upvote"><code>dposlib.ark.v2.upVote</code></a>.</p>
-<p><a name="dposlib.ark.Wallet.downVote"></a></p>
+See <a href="./#dposlib.ark.builders.multiVote"><code>dposlib.ark.builders.multiVote</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.downVote"></a></p>
 <h4 id="downvote">downVote</h4>
 <pre><code class="language-python"> | @isLinked
  | downVote(*usernames)
 </code></pre>
 <p>Broadcast a down-vote transaction to the ledger.
-See <a href="../v2/#downvote"><code>dposlib.ark.v2.downVote</code></a>.</p>
+See <a href="./#dposlib.ark.builders.downVote"><code>dposlib.ark.builders.downVote</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.sendIpfs"></a></p>
+<h4 id="sendipfs">sendIpfs</h4>
+<pre><code class="language-python"> | @isLinked
+ | sendIpfs(ipfs)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.registerIpfs"><code>dposlib.ark.builders.registerIpfs</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.multiSend"></a></p>
+<h4 id="multisend">multiSend</h4>
+<pre><code class="language-python"> | @isLinked
+ | multiSend(*pairs, **kwargs)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.multiPayment"><code>dposlib.ark.builder.multiPayment</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.resignate"></a></p>
+<h4 id="resignate">resignate</h4>
+<pre><code class="language-python"> | @isLinked
+ | resignate()
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.delegateResignation"><code>dposlib.ark.builders.delegateResignation</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.sendHtlc"></a></p>
+<h4 id="sendhtlc">sendHtlc</h4>
+<pre><code class="language-python"> | @isLinked
+ | sendHtlc(amount, address, secret, expiration=24, vendorField=None)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.htlcLock"><code>dposlib.ark.builders.htlcLock</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.claimHtlc"></a></p>
+<h4 id="claimhtlc">claimHtlc</h4>
+<pre><code class="language-python"> | @isLinked
+ | claimHtlc(txid, secret)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.htlcClaim"><code>dposlib.ark.builders.htlcClaim</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.refundHtlc"></a></p>
+<h4 id="refundhtlc">refundHtlc</h4>
+<pre><code class="language-python"> | @isLinked
+ | refundHtlc(txid)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.htlcRefund"><code>dposlib.ark.builders.htlcRefund</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.createEntity"></a></p>
+<h4 id="createentity">createEntity</h4>
+<pre><code class="language-python"> | @isLinked
+ | createEntity(name, type="business", subtype=0, ipfsData=None)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.entityRegister"><code>dposlib.ark.builders.entityRegister</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.updateEntity"></a></p>
+<h4 id="updateentity">updateEntity</h4>
+<pre><code class="language-python"> | @isLinked
+ | updateEntity(registrationId, ipfsData, name=None)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.entityUpdate"><code>dposlib.ark.builders.entityUpdate</code></a>.</p>
+<p><a name="dposlib.ark.api.Wallet.resignEntity"></a></p>
+<h4 id="resignentity">resignEntity</h4>
+<pre><code class="language-python"> | @isLinked
+ | resignEntity(registrationId)
+</code></pre>
+<p>See <a href="./#dposlib.ark.builders.entityResign"><code>dposlib.ark.builders.entityResign</code></a>.</p>
+<p><a name="dposlib.ark.builders"></a></p>
+<h1 id="dposlibarkbuilders">dposlib.ark.builders</h1>
+<p><a name="dposlib.ark.builders.transfer"></a></p>
+<h4 id="transfer">transfer</h4>
+<pre><code class="language-python">transfer(amount, address, vendorField=None, expiration=0)
+</code></pre>
+<p>Build a transfer transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+<li><code>expiration</code> <em>float</em> - time of persistance in hour.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.registerSecondSecret"></a></p>
+<h4 id="registersecondsecret">registerSecondSecret</h4>
+<pre><code class="language-python">registerSecondSecret(secondSecret)
+</code></pre>
+<p>Build a second secret registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondSecret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.registerSecondPublicKey"></a></p>
+<h4 id="registersecondpublickey">registerSecondPublicKey</h4>
+<pre><code class="language-python">registerSecondPublicKey(secondPublicKey)
+</code></pre>
+<p>Build a second secret registration transaction.</p>
+<p><em>You must own the secret issuing secondPublicKey</em></p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondPublicKey</code> <em>str</em> - public key as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.registerAsDelegate"></a></p>
+<h4 id="registerasdelegate">registerAsDelegate</h4>
+<pre><code class="language-python">registerAsDelegate(username)
+</code></pre>
+<p>Build a delegate registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>username</code> <em>str</em> - delegate username.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.upVote"></a></p>
+<h4 id="upvote_1">upVote</h4>
+<pre><code class="language-python">upVote(*usernames)
+</code></pre>
+<p>Build an upvote transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.downVote"></a></p>
+<h4 id="downvote_1">downVote</h4>
+<pre><code class="language-python">downVote(*usernames)
+</code></pre>
+<p>Build a downvote transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.registerMultiSignature"></a></p>
+<h4 id="registermultisignature">registerMultiSignature</h4>
+<pre><code class="language-python">registerMultiSignature(minSig, *publicKeys)
+</code></pre>
+<p>Build a multisignature registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>minSig</code> <em>int</em> - minimum signature required.</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.registerIpfs"></a></p>
+<h4 id="registeripfs">registerIpfs</h4>
+<pre><code class="language-python">registerIpfs(ipfs)
+</code></pre>
+<p>Build an IPFS registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ipfs</code> <em>str</em> - ipfs DAG.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.multiPayment"></a></p>
+<h4 id="multipayment">multiPayment</h4>
+<pre><code class="language-python">multiPayment(*pairs, **kwargs)
+</code></pre>
+<p>Build multi-payment transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>pairs</code> <em>iterable</em> - recipient-amount pair iterable.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.delegateResignation"></a></p>
+<h4 id="delegateresignation">delegateResignation</h4>
+<pre><code class="language-python">delegateResignation()
+</code></pre>
+<p>Build a delegate resignation transaction.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.htlcSecret"></a></p>
+<h4 id="htlcsecret">htlcSecret</h4>
+<pre><code class="language-python">htlcSecret(secret)
+</code></pre>
+<p>Compute an HTLC secret hex string from passphrase.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>hex str: HTLC secret.</p>
+<p><a name="dposlib.ark.builders.htlcLock"></a></p>
+<h4 id="htlclock">htlcLock</h4>
+<pre><code class="language-python">htlcLock(amount, address, secret, expiration=24, vendorField=None)
+</code></pre>
+<p>Build an HTLC lock transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>secret</code> <em>str</em> - lock passphrase.</li>
+<li><code>expiration</code> <em>float</em> - transaction validity in hour.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.htlcClaim"></a></p>
+<h4 id="htlcclaim">htlcClaim</h4>
+<pre><code class="language-python">htlcClaim(txid, secret)
+</code></pre>
+<p>Build an HTLC claim transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
+<li><code>secret</code> <em>str</em> - passphrase used by htlc lock transaction.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.htlcRefund"></a></p>
+<h4 id="htlcrefund">htlcRefund</h4>
+<pre><code class="language-python">htlcRefund(txid)
+</code></pre>
+<p>Build an HTLC refund transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.entityRegister"></a></p>
+<h4 id="entityregister">entityRegister</h4>
+<pre><code class="language-python">entityRegister(name, type="business", subtype=0, ipfsData=None)
+</code></pre>
+<p>Build an entity registration.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>name</code> <em>str</em> - entity name</li>
+<li><code>type</code> <em>str</em> - entity type. Possible values are <code>business</code>, <code>product</code>,
+  <code>plugin</code>, <code>module</code> and <code>delegate</code>. Default to <code>business</code>.</li>
+<li><code>subtype</code> <em>int</em> - entity subtype</li>
+<li><code>ipfsData</code> <em>base58</em> - ipfs DAG. Default to None.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.entityUpdate"></a></p>
+<h4 id="entityupdate">entityUpdate</h4>
+<pre><code class="language-python">entityUpdate(registrationId, ipfsData, name=None)
+</code></pre>
+<p>Build an entity update.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>registrationId</code> <em>str</em> - registration id</li>
+<li><code>ipfsData</code> <em>base58</em> - ipfs DAG. Default to None.</li>
+<li><code>name</code> <em>str, optional</em> - entity name</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.entityResign"></a></p>
+<h4 id="entityresign">entityResign</h4>
+<pre><code class="language-python">entityResign(registrationId)
+</code></pre>
+<p>Build an entity resignation.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>registrationId</code> <em>str</em> - registration id</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a name="dposlib.ark.builders.multiVote"></a></p>
+<h4 id="multivote">multiVote</h4>
+<pre><code class="language-python">multiVote(tx)
+</code></pre>
+<p>Transform a <a href="./#dposlib.ark.builders.upVote"><code>dposlib.ark.builders.upVote</code></a> transaction into a multivote one. It makes the transaction downvote
+former delegate if any and then apply new vote.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dposlib.ark.tx.Transaction</em> - upVote transaction.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 <p><a name="dposlib.ark.crypto"></a></p>
 <h1 id="dposlibarkcrypto">dposlib.ark.crypto</h1>
 <p><a name="dposlib.ark.crypto.getKeys"></a></p>
@@ -491,6 +859,19 @@ See <a href="../v2/#downvote"><code>dposlib.ark.v2.downVote</code></a>.</p>
 </ul>
 <p><a name="dposlib.ark.tx"></a></p>
 <h1 id="dposlibarktx">dposlib.ark.tx</h1>
+<p><a name="dposlib.ark.tx.serialize"></a></p>
+<h4 id="serialize">serialize</h4>
+<pre><code class="language-python">serialize(tx, **options)
+</code></pre>
+<p>Serialize transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bytes</code> - transaction serial representation.</li>
+</ul>
 <p><a name="dposlib.ark.tx.Transaction"></a></p>
 <h2 id="transaction-objects">Transaction Objects</h2>
 <pre><code class="language-python">class Transaction(dict)
@@ -514,7 +895,7 @@ fee level to use acccording to the 30-days-average. possible values are
 <li><code>value</code> <em>str or int</em> - constant or fee multiplier.</li>
 </ul>
 <p><a name="dposlib.ark.tx.Transaction.link"></a></p>
-<h4 id="link_1">link</h4>
+<h4 id="link_2">link</h4>
 <pre><code class="language-python"> | link(secret=None, secondSecret=None)
 </code></pre>
 <p>Save public and private keys derived from secrets. This is equivalent
@@ -534,13 +915,13 @@ to wallet login. it limits number of secret keyboard entries.</p>
 <pre><code class="language-python"> | signSign()
 </code></pre>
 <p>Generate the <code>signSignature</code> field. Transaction have to be signed and
-second  private key have to be set first.</p>
+second private key have to be set first.</p>
 <p><a name="dposlib.ark.tx.Transaction.signWithSecret"></a></p>
 <h4 id="signwithsecret">signWithSecret</h4>
 <pre><code class="language-python"> | signWithSecret(secret)
 </code></pre>
 <p>Generate the <code>signature</code> field using passphrase. The associated
-public and private keys are stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+public and private keys are stored till <code>dposlib.ark.unlink</code> is called.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
 <li><code>secret</code> <em><code>str</code></em> - passphrase.</li>
@@ -551,7 +932,7 @@ public and private keys are stored till <a href="./#unlink"><code>dposlib.ark.un
 </code></pre>
 <p>Generate the <code>signSignature</code> field using second passphrase. The
 associated second public and private keys are stored till
-<a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+<code>dposlib.ark.unlink</code> is called.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
 <li><code>secondSecret</code> <em><code>str</code></em> - second passphrase.</li>
@@ -571,7 +952,7 @@ associated second public and private keys are stored till
 <pre><code class="language-python"> | signWithKeys(publicKey, privateKey)
 </code></pre>
 <p>Generate the <code>signature</code> field using public and private keys. They
-are stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+are stored till <code>dposlib.ark.unlink</code> is called.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
 <li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
@@ -582,7 +963,7 @@ are stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is calle
 <pre><code class="language-python"> | signSignWithKey(secondPrivateKey)
 </code></pre>
 <p>Generate the <code>signSignature</code> field using second private key. It is
-stored till <a href="./#unlink"><code>dposlib.ark.unlink</code></a> is called.</p>
+stored till <code>dposlib.ark.unlink</code> is called.</p>
 <p><strong>Arguments</strong>:</p>
 <ul>
 <li><code>secondPrivateKey</code> <em><code>str</code></em> - second private key as hex string.</li>
@@ -612,14 +993,12 @@ privateKey.</p>
 <li><code>secret</code> <em>str</em> - passphrase.</li>
 <li><code>secondSecret</code> <em>str</em> - second passphrase.</li>
 <li><code>fee</code> <em>int</em> - manually set fee value in <code>arktoshi</code>.</li>
-<li><code>fee_included</code> <em>bool</em> - see
-  <a href="./#feeincluded"><code>dposlib.ark.tx.Transaction.feeIncluded</code></a>.</li>
+<li><code>fee_included</code> <em>bool</em> - see <code>dposlib.ark.tx.Transaction.feeIncluded</code>.</li>
 </ul>
 </div>
 </div>
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../v2/" title="Core v2">Next <span class="icon icon-circle-arrow-right"></span></a>
 <a class="btn btn-neutral" href="../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
@@ -638,7 +1017,6 @@ privateKey.</p>
 <span class="rst-current-version" data-toggle="rst-current-version">
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
 <span><a href="../rest/" style="color: #fcfcfc;">« Previous</a></span>
-<span style="margin-left: 15px"><a href="../v2/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script>var base_url = '..';</script>
