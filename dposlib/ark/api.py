@@ -725,6 +725,34 @@ class Block(Content):
 
 class Webhook(Content):
 
+    regexp = re.compile(r'^([\w\.]*)\s*([^\w\s\^]*)\s*(.*)\s*$')
+    operators = {
+        "<": "lt", "<=": "lte",
+        ">": "gt", ">=": "gte",
+        "==": "eq", "!=": "ne",
+        "?": "truthy", "!?": "falsy",
+        "\\": "regexp", "$": "contains",
+        "<>": "between", "!<>": "not-between"
+    }
+
+    @staticmethod
+    def _condition(expr):
+        condition = {}
+        try:
+            key, _operator, value = Webhook.regexp.match(expr).groups()
+            operator = Webhook.operators[_operator]
+        except Exception as error:
+            print("%r" % error)
+        else:
+            if "between" in operator:
+                _min, _max = value.split(":")
+                condition["value"] = {"min": _min, "max": _max}
+            elif value != "":
+                condition["value"] = value
+            condition["key"] = key
+            condition["condition"] = operator
+        return condition
+
     @staticmethod
     def dump(token):
         # token =
@@ -735,6 +763,7 @@ class Webhook(Content):
             dposlib.ROOT, ".webhooks", dposlib.rest.cfg.network,
             hashlib.md5(authorization.encode("utf-8")).hexdigest()
         )
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "wb") as out:
             pickle.dump(
                 {
@@ -747,8 +776,17 @@ class Webhook(Content):
 
     @staticmethod
     def create(peer, event, target, *conditions):
+        conditions = [
+            (
+                Webhook._condition(cond) if isinstance(cond, str) else
+                cond if isinstance(cond, dict) else
+                {}
+            )
+            for cond in conditions
+        ]
         data = dposlib.rest.POST.api.webhooks(
-            peer=peer, event=event, target=target, conditions=conditions,
+            peer=peer, event=event, target=target,
+            conditions=[cond for cond in conditions if cond],
             returnKey="data"
         )
         if "token" in data:
@@ -805,6 +843,8 @@ class Webhook(Content):
         )
         if len(data):
             return Webhook(data["id"], peer=data["peer"])
+        else:
+            raise Exception("cannot open webhook %s" % whk_id)
 
     def __init__(self, whk_id, **kw):
         Content.__init__(
@@ -822,9 +862,14 @@ class Webhook(Content):
             resp = dposlib.rest.DELETE.api.webhooks(
                 "%s" % self.id, peer=data.get("peer", None)
             )
-            os.remove(data["dump"])
+            try:
+                os.remove(data["dump"])
+            except Exception:
+                pass
             os.remove(whk_path)
             return resp
+        else:
+            raise Exception("cannot find webhook data")
 
     # TODO: implement
     def change(self, event=None, target=None, *conditions):
