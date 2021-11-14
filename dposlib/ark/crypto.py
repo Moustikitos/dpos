@@ -216,8 +216,6 @@ def verifySignatureFromBytes(data, publicKey, signature):
         bool: True if signature matches the public key.
     """
     puk = secp256k1.PublicKey.decode(publicKey)
-    puk.x = (b"0" if len(puk.x) < 64 else b"") + puk.x
-    puk.y = (b"0" if len(puk.y) < 64 else b"") + puk.y
     msg = secp256k1.hash_sha256(data)
     if len(signature) == 128:
         hS = secp256k1.HexSig.from_raw(
