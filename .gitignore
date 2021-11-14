@@ -113,6 +113,8 @@ simple_history.html
 .vscode
 
 # custom
+*.zip
+.webhooks/
 .registry/
 .synch/
 .generated-files.txt
