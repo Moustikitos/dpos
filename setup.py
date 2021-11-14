@@ -28,10 +28,7 @@ kw = {
         "dposlib",
         "dposlib.util",
         "dposlib.ark",
-        "dposlib.ark.v2",
-        "dposlib.ark.v2.cold",
-        "dposlib.ark.v3",
-        "dposlib.ark.v3.cold",
+        "dposlib.ark.cold",
     ],
     "install_requires": [
         "future",
@@ -52,7 +49,6 @@ kw = {
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
     ],
 }
