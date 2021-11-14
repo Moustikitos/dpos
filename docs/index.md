@@ -32,35 +32,9 @@
 {u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 ```
 
-## Signature issuers
-
-`ECDSA` and `SCHNORR` signatures can be performed using [`dposlib.ark.sig`](https://github.com/Moustikitos/elliptic-curve/blob/main/pySecp256k1/sig.py) and [`dposlib.ark.crypto`](crypto.md) modules:
-
-```python
->>> import dposlib.ark.sig as sig
->>> import dposlib.ark.crypto as crypto
->>> keys = crypto.getKeys("secret")
->>> keys
-{'publicKey': '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933', 'privateKey': '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b', 'wif': 'SB3BGPGRh1SRuQd52h7f5jsHUg1G9ATEvSeA7L5Bz4qySQww4k7N'}
->>> s = sig.Signature.ecdsa_sign("simple message", keys["privateKey"])
->>> s
-<secp256k1 signature:
-  r:d811a0321a2e31b0492c1b1b1c4dc3b58055b53cdc9308492b3de71c765f5914
-  s:4747219a0d74d49a42305c040a91e6a8acd39e6d06b21ec1805bd31c6d871b4f
->
->>> s.der
-b"0D\x02N\x13\x108J\xd0\xd6\xff\x80'\xf2\xf8`\xd6(\xb2\xa6@\x03\x0bF#\xa3\x93\xe1\xdf&\xf7\xdd\xce\\u\x02g\x8b\xa9\x90V\xaa\xdf\xa7\xf2-;z\xa5.D\x8bq8ehG\xb7\x11\x07-`\xd2\xd9\xd3.\xc4v"
->>> crypto.hexlify(s.der)
-'3044022041e5aa3da79523a2b342180cb7c04056f8f02e005ea6ec1f14094c66d692f04402200261177cdd88525249a0619d6009adbc6681c250c83748c0cde611f21f543008'
->>> crypto.hexlify(s.raw)
-'4e1310384ad0d6ff8027f2f860d628b2a640030b4623a393e1df26f7ddce5c75678ba99056aadfa7f22d3b7aa52e448b7138656847b711072d60d2d9d32ec476'
->>> crypto.hexlify(sig.Signature.schnorr_sign("simple message", keys["privateKey"]).raw)
-'5fbb0bb00b043400e1fc435c867c738ac80d2c268cd2d61616785315ad330c884a3cfb50bf0da8de9021d42ce2139b6b6547d2bcd884a2da7f5c2e9bfb9cb206'
-```
-
 ## Transaction builders
 
-[`dposlib.ark.v2`](v2.md) package provides[ `dposlib.blockchain.tx.Transaction`](ark.md#transaction-objects) class and its associated builders.
+[`dposlib.ark.builders`](ark.md#dposlib.ark.builders) package provides[ `dposlib.ark.tx.Transaction`](ark.md#dposlib.ark.tx.Transaction) class and its associated builders.
 
 ```python
 >>> from dposlib import rest

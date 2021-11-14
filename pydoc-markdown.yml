@@ -4,7 +4,7 @@ loaders:
 processors:
   - type: crossref
   - type: filter
-    expression: not 'cold' in name and not 'mixin' in name and 'slots' not in name and default()
+    expression: default()
   - type: smart
 
 hooks:
@@ -24,25 +24,12 @@ renderer:
       contents:
         - dposlib.rest*
     - title: Ark
+      name: ark
       contents:
+        - dposlib.ark.tx*
+        - dposlib.ark.api*
         - dposlib.ark.crypto*
-        - dposlib.ark.tx.Transaction*
-        - dposlib.ark.Content*
-        - dposlib.ark.Wallet*
-    - title: Core v2
-      name: v2
-      contents:
-        - dposlib.ark.v2.api*
-        - dposlib.ark.v2.builders*
-    - title: Core v3
-      name: v3
-      contents:
-        - dposlib.ark.v3.api*
-        - dposlib.ark.v3.builders*
-    - title: Ledger
-      name: ldgr
-      contents:
-        - dposlib.ark.ldgr*
+        - dposlib.ark.builder*
 
   mkdocs_config:
     site_name: The dposlib Project
@@ -51,11 +38,14 @@ renderer:
     copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
     theme:
       name: readthedocs
-      highlightjs: true
-      hljs_languages:
-      - python
+      features:
+        - navigation.tabs
+        - navigation.tabs.sticky
+        - toc.integrate
     markdown_extensions:
-    - smarty
+      - toc:
+          baselevel: 1
+      - smarty
     plugins:
       - search
       - mermaid2

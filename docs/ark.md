@@ -1,7 +1,71 @@
-<a name="dposlib.ark"></a>
-# dposlib.ark
+<a name="dposlib.ark.api"></a>
+# dposlib.ark.api
 
-<a name="dposlib.ark.Content"></a>
+<a name="dposlib.ark.api.isLinked"></a>
+#### isLinked
+
+```python
+isLinked(func)
+```
+
+`Python decorator`.
+First argument of decorated function have to be a
+[`dposlib.ark.api.Content`](ark.md#dposlib.ark.api.Content)
+or an object containing a valid `address`, `_derivationPath` or `publicKey`
+attribute. It executes the decorated `function` if the object is correctly
+linked using `dposlib.ark.api.link` definition.
+
+<a name="dposlib.ark.api.link"></a>
+#### link
+
+```python
+link(cls, secret=None, secondSecret=None)
+```
+
+Associates crypto keys into a [`dposlib.ark.api.Content`](
+ark.md#dposlib.ark.api.Content
+) object according to secrets. If `secret` or `secondSecret` are not `str`,
+they are considered as `None`. In this case secrets will be asked and
+checked from console untill success or `Ctrl+c` keyboard interruption.
+
+**Arguments**:
+
+- `cls` _Content_ - content object.
+- `secret` _str_ - secret string. Default set to `None`.
+- `secondSecret` _str_ - second secret string. Default set to `None`.
+  
+
+**Returns**:
+
+- `bool` - True if secret and second secret match.
+
+<a name="dposlib.ark.api.unlink"></a>
+#### unlink
+
+```python
+unlink(cls)
+```
+
+Remove crypto keys association.
+
+<a name="dposlib.ark.api.JSDict"></a>
+## JSDict Objects
+
+```python
+class JSDict(dict)
+```
+
+Read only dictionary with js object behaviour.
+
+```python
+>>> jsdic = dposlib.ark.JSDict(value=5)
+>>> jsdic
+{'value': 5}
+>>> jsdic.value
+5
+```
+
+<a name="dposlib.ark.api.Content"></a>
 ## Content Objects
 
 ```python
@@ -9,9 +73,10 @@ class Content(object)
 ```
 
 Live object connected to blockchain. It is initialized with
-`dposlib.rest.GET` request. Object is updated every 30s. Endpoint response
-can be a `dict` or a `list`. If it is a `list`, it is stored in `data`
-attribute else all fields are stored as instance attribute.
+[`dposlib.rest.GET`](rest.md#dposlib.rest.GET) request. Object is updated
+every 30s. Endpoint response can be a `dict` or a `list`. If it is a
+`list`, it is stored in `data` attribute else all fields are stored as
+instance attribute.
 
 ```python
 >>> txs = dposlib.ark.Content(rest.GET.api.transactions)
@@ -37,7 +102,7 @@ attribute else all fields are stored as instance attribute.
 datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
 ```
 
-<a name="dposlib.ark.Content.__init__"></a>
+<a name="dposlib.ark.api.Content.__init__"></a>
 #### \_\_init\_\_
 
 ```python
@@ -54,7 +119,7 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
   * `keep_alive` *bool* - set hook to update data from blockcahin.
   Default to True.
 
-<a name="dposlib.ark.Content.filter"></a>
+<a name="dposlib.ark.api.Content.filter"></a>
 #### filter
 
 ```python
@@ -64,7 +129,7 @@ datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=<UTC>)
 Convert data as JSDict object converting string values in int if
 possible.
 
-<a name="dposlib.ark.Wallet"></a>
+<a name="dposlib.ark.api.Wallet"></a>
 ## Wallet Objects
 
 ```python
@@ -73,33 +138,33 @@ class Wallet(Content)
 
 Wallet root class that implements basic wallet behaviour.
 
-<a name="dposlib.ark.Wallet.delegate"></a>
+<a name="dposlib.ark.api.Wallet.delegate"></a>
 #### delegate
 
 Delegate attributes if wallet is registered as delegate.
 
-<a name="dposlib.ark.Wallet.username"></a>
+<a name="dposlib.ark.api.Wallet.username"></a>
 #### username
 
 Delegate username if wallet is registered as delegate.
 
-<a name="dposlib.ark.Wallet.secondPublicKey"></a>
+<a name="dposlib.ark.api.Wallet.secondPublicKey"></a>
 #### secondPublicKey
 
 Second public key if second signature is set to wallet.
 
-<a name="dposlib.ark.Wallet.__init__"></a>
+<a name="dposlib.ark.api.Wallet.__init__"></a>
 #### \_\_init\_\_
 
 ```python
- | __init__(ndpt, *args, **kwargs)
+ | __init__(address, **kw)
 ```
 
 **Arguments**:
 
-- `ndpt` _usrv.req.Endpoint_ - endpoint class to be called.
-- `*args` - Variable length argument list used by `dposlib.ark.Content`.
-- `**kwargs` - Variable key argument used by `dposlib.ark.Content`.
+- `address` _str_ - wallet address or delegate username.
+- `**kwargs` - Variable key argument used by
+  [`dposlib.ark.api.Content`](ark.md#dposlib.ark.api.Content).
   
   **Specific kwargs**:
   
@@ -110,25 +175,25 @@ Second public key if second signature is set to wallet.
   * `fee_included` *bool* - set to True if amout + fee is the total
   desired out flow. Default to False.
 
-<a name="dposlib.ark.Wallet.link"></a>
+<a name="dposlib.ark.api.Wallet.link"></a>
 #### link
 
 ```python
  | link(*args, **kwargs)
 ```
 
-See [`dposlib.ark.link`](ark.md#link).
+See [`dposlib.ark.api.link`](ark.md#dposlib.ark.api.link).
 
-<a name="dposlib.ark.Wallet.unlink"></a>
+<a name="dposlib.ark.api.Wallet.unlink"></a>
 #### unlink
 
 ```python
  | unlink()
 ```
 
-See [`dposlib.ark.unlink`](ark.md#unlink).
+See [`dposlib.ark.api.unlink`](ark.md#dposlib.ark.api.unlink).
 
-<a name="dposlib.ark.Wallet.send"></a>
+<a name="dposlib.ark.api.Wallet.send"></a>
 #### send
 
 ```python
@@ -137,9 +202,11 @@ See [`dposlib.ark.unlink`](ark.md#unlink).
 ```
 
 Broadcast a transfer transaction to the ledger.
-See [`dposlib.ark.v2.transfer`](v2.md#transfer).
+See [`dposlib.ark.builders.transfer`](
+    ark.md#dposlib.ark.builders.transfer
+).
 
-<a name="dposlib.ark.Wallet.setSecondSecret"></a>
+<a name="dposlib.ark.api.Wallet.setSecondSecret"></a>
 #### setSecondSecret
 
 ```python
@@ -148,11 +215,11 @@ See [`dposlib.ark.v2.transfer`](v2.md#transfer).
 ```
 
 Broadcast a second secret registration transaction to the ledger.
-See [`dposlib.ark.v2.registerSecondSecret`](
-    v2.md#registersecondsecret
+See [`dposlib.ark.builders.registerSecondSecret`](
+    ark.md#dposlib.ark.builders.registerSecondSecret
 ).
 
-<a name="dposlib.ark.Wallet.setSecondPublicKey"></a>
+<a name="dposlib.ark.api.Wallet.setSecondPublicKey"></a>
 #### setSecondPublicKey
 
 ```python
@@ -161,11 +228,11 @@ See [`dposlib.ark.v2.registerSecondSecret`](
 ```
 
 Broadcast a second secret registration transaction into the ledger.
-See [`dposlib.ark.v2.registerSecondPublicKey`](
-    v2.md#registersecondpublickey
+See [`dposlib.ark.builders.registerSecondPublicKey`](
+   ark.md#dposlib.ark.builders.registerSecondPublicKey
 ).
 
-<a name="dposlib.ark.Wallet.setDelegate"></a>
+<a name="dposlib.ark.api.Wallet.setDelegate"></a>
 #### setDelegate
 
 ```python
@@ -174,11 +241,11 @@ See [`dposlib.ark.v2.registerSecondPublicKey`](
 ```
 
 Broadcast a delegate registration transaction to the ledger.
-See [`dposlib.ark.v2.registerAsDelegate`](
-    v2.md#registerasdelegate
+See [`dposlib.ark.builders.registerAsDelegate`](
+    ark.md#dposlib.ark.builders.registerAsDelegate
 ).
 
-<a name="dposlib.ark.Wallet.upVote"></a>
+<a name="dposlib.ark.api.Wallet.upVote"></a>
 #### upVote
 
 ```python
@@ -187,9 +254,11 @@ See [`dposlib.ark.v2.registerAsDelegate`](
 ```
 
 Broadcast an up-vote transaction to the ledger.
-See [`dposlib.ark.v2.upVote`](v2.md#upvote).
+See [`dposlib.ark.builders.multiVote`](
+    ark.md#dposlib.ark.builders.multiVote
+).
 
-<a name="dposlib.ark.Wallet.downVote"></a>
+<a name="dposlib.ark.api.Wallet.downVote"></a>
 #### downVote
 
 ```python
@@ -198,7 +267,478 @@ See [`dposlib.ark.v2.upVote`](v2.md#upvote).
 ```
 
 Broadcast a down-vote transaction to the ledger.
-See [`dposlib.ark.v2.downVote`](v2.md#downvote).
+See [`dposlib.ark.builders.downVote`](
+    ark.md#dposlib.ark.builders.downVote
+).
+
+<a name="dposlib.ark.api.Wallet.sendIpfs"></a>
+#### sendIpfs
+
+```python
+ | @isLinked
+ | sendIpfs(ipfs)
+```
+
+See [`dposlib.ark.builders.registerIpfs`](
+    ark.md#dposlib.ark.builders.registerIpfs
+).
+
+<a name="dposlib.ark.api.Wallet.multiSend"></a>
+#### multiSend
+
+```python
+ | @isLinked
+ | multiSend(*pairs, **kwargs)
+```
+
+See [`dposlib.ark.builder.multiPayment`](
+    ark.md#dposlib.ark.builders.multiPayment
+).
+
+<a name="dposlib.ark.api.Wallet.resignate"></a>
+#### resignate
+
+```python
+ | @isLinked
+ | resignate()
+```
+
+See [`dposlib.ark.builders.delegateResignation`](
+    ark.md#dposlib.ark.builders.delegateResignation
+).
+
+<a name="dposlib.ark.api.Wallet.sendHtlc"></a>
+#### sendHtlc
+
+```python
+ | @isLinked
+ | sendHtlc(amount, address, secret, expiration=24, vendorField=None)
+```
+
+See [`dposlib.ark.builders.htlcLock`](
+    ark.md#dposlib.ark.builders.htlcLock
+).
+
+<a name="dposlib.ark.api.Wallet.claimHtlc"></a>
+#### claimHtlc
+
+```python
+ | @isLinked
+ | claimHtlc(txid, secret)
+```
+
+See [`dposlib.ark.builders.htlcClaim`](
+    ark.md#dposlib.ark.builders.htlcClaim
+).
+
+<a name="dposlib.ark.api.Wallet.refundHtlc"></a>
+#### refundHtlc
+
+```python
+ | @isLinked
+ | refundHtlc(txid)
+```
+
+See [`dposlib.ark.builders.htlcRefund`](
+    ark.md#dposlib.ark.builders.htlcRefund
+).
+
+<a name="dposlib.ark.api.Wallet.createEntity"></a>
+#### createEntity
+
+```python
+ | @isLinked
+ | createEntity(name, type="business", subtype=0, ipfsData=None)
+```
+
+See [`dposlib.ark.builders.entityRegister`](
+    ark.md#dposlib.ark.builders.entityRegister
+).
+
+<a name="dposlib.ark.api.Wallet.updateEntity"></a>
+#### updateEntity
+
+```python
+ | @isLinked
+ | updateEntity(registrationId, ipfsData, name=None)
+```
+
+See [`dposlib.ark.builders.entityUpdate`](
+    ark.md#dposlib.ark.builders.entityUpdate
+).
+
+<a name="dposlib.ark.api.Wallet.resignEntity"></a>
+#### resignEntity
+
+```python
+ | @isLinked
+ | resignEntity(registrationId)
+```
+
+See [`dposlib.ark.builders.entityResign`](
+    ark.md#dposlib.ark.builders.entityResign
+).
+
+<a name="dposlib.ark.builders"></a>
+# dposlib.ark.builders
+
+<a name="dposlib.ark.builders.transfer"></a>
+#### transfer
+
+```python
+transfer(amount, address, vendorField=None, expiration=0)
+```
+
+Build a transfer transaction. Emoji can be included in transaction
+vendorField using unicode formating.
+
+
+```python
+>>> vendorField = u"message with sparkles \u2728"
+```
+
+**Arguments**:
+
+- `amount` _float_ - transaction amount in ark.
+- `address` _str_ - valid recipient address.
+- `vendorField` _str_ - vendor field message.
+- `expiration` _float_ - time of persistance in hour.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.registerSecondSecret"></a>
+#### registerSecondSecret
+
+```python
+registerSecondSecret(secondSecret)
+```
+
+Build a second secret registration transaction.
+
+**Arguments**:
+
+- `secondSecret` _str_ - passphrase.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.registerSecondPublicKey"></a>
+#### registerSecondPublicKey
+
+```python
+registerSecondPublicKey(secondPublicKey)
+```
+
+Build a second secret registration transaction.
+
+*You must own the secret issuing secondPublicKey*
+
+**Arguments**:
+
+- `secondPublicKey` _str_ - public key as hex string.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.registerAsDelegate"></a>
+#### registerAsDelegate
+
+```python
+registerAsDelegate(username)
+```
+
+Build a delegate registration transaction.
+
+**Arguments**:
+
+- `username` _str_ - delegate username.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.upVote"></a>
+#### upVote
+
+```python
+upVote(*usernames)
+```
+
+Build an upvote transaction.
+
+**Arguments**:
+
+- `usernames` _iterable_ - delegate usernames as str iterable.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.downVote"></a>
+#### downVote
+
+```python
+downVote(*usernames)
+```
+
+Build a downvote transaction.
+
+**Arguments**:
+
+- `usernames` _iterable_ - delegate usernames as str iterable.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.registerMultiSignature"></a>
+#### registerMultiSignature
+
+```python
+registerMultiSignature(minSig, *publicKeys)
+```
+
+Build a multisignature registration transaction.
+
+**Arguments**:
+
+- `minSig` _int_ - minimum signature required.
+- `publicKeys` _list of str_ - public key list.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.registerIpfs"></a>
+#### registerIpfs
+
+```python
+registerIpfs(ipfs)
+```
+
+Build an IPFS registration transaction.
+
+**Arguments**:
+
+- `ipfs` _str_ - ipfs DAG.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.multiPayment"></a>
+#### multiPayment
+
+```python
+multiPayment(*pairs, **kwargs)
+```
+
+Build multi-payment transaction. Emoji can be included in transaction
+vendorField using unicode formating.
+
+
+```python
+>>> u"message with sparkles \u2728"
+```
+
+**Arguments**:
+
+- `pairs` _iterable_ - recipient-amount pair iterable.
+- `vendorField` _str_ - vendor field message.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.delegateResignation"></a>
+#### delegateResignation
+
+```python
+delegateResignation()
+```
+
+Build a delegate resignation transaction.
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.htlcSecret"></a>
+#### htlcSecret
+
+```python
+htlcSecret(secret)
+```
+
+Compute an HTLC secret hex string from passphrase.
+
+**Arguments**:
+
+- `secret` _str_ - passphrase.
+  
+
+**Returns**:
+
+  hex str: HTLC secret.
+
+<a name="dposlib.ark.builders.htlcLock"></a>
+#### htlcLock
+
+```python
+htlcLock(amount, address, secret, expiration=24, vendorField=None)
+```
+
+Build an HTLC lock transaction. Emoji can be included in transaction
+vendorField using unicode formating.
+
+
+```python
+>>> vendorField = u"message with sparkles \u2728"
+```
+
+**Arguments**:
+
+- `amount` _float_ - transaction amount in ark.
+- `address` _str_ - valid recipient address.
+- `secret` _str_ - lock passphrase.
+- `expiration` _float_ - transaction validity in hour.
+- `vendorField` _str_ - vendor field message.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.htlcClaim"></a>
+#### htlcClaim
+
+```python
+htlcClaim(txid, secret)
+```
+
+Build an HTLC claim transaction.
+
+**Arguments**:
+
+- `txid` _str_ - htlc lock transaction id.
+- `secret` _str_ - passphrase used by htlc lock transaction.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.htlcRefund"></a>
+#### htlcRefund
+
+```python
+htlcRefund(txid)
+```
+
+Build an HTLC refund transaction.
+
+**Arguments**:
+
+- `txid` _str_ - htlc lock transaction id.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.entityRegister"></a>
+#### entityRegister
+
+```python
+entityRegister(name, type="business", subtype=0, ipfsData=None)
+```
+
+Build an entity registration.
+
+**Arguments**:
+
+- `name` _str_ - entity name
+- `type` _str_ - entity type. Possible values are `business`, `product`,
+  `plugin`, `module` and `delegate`. Default to `business`.
+- `subtype` _int_ - entity subtype
+- `ipfsData` _base58_ - ipfs DAG. Default to None.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.entityUpdate"></a>
+#### entityUpdate
+
+```python
+entityUpdate(registrationId, ipfsData, name=None)
+```
+
+Build an entity update.
+
+**Arguments**:
+
+- `registrationId` _str_ - registration id
+- `ipfsData` _base58_ - ipfs DAG. Default to None.
+- `name` _str, optional_ - entity name
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.entityResign"></a>
+#### entityResign
+
+```python
+entityResign(registrationId)
+```
+
+Build an entity resignation.
+
+**Arguments**:
+
+- `registrationId` _str_ - registration id
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
+
+<a name="dposlib.ark.builders.multiVote"></a>
+#### multiVote
+
+```python
+multiVote(tx)
+```
+
+Transform a [`dposlib.ark.builders.upVote`](
+ark.md#dposlib.ark.builders.upVote
+) transaction into a multivote one. It makes the transaction downvote
+former delegate if any and then apply new vote.
+
+**Arguments**:
+
+- `tx` _dposlib.ark.tx.Transaction_ - upVote transaction.
+  
+
+**Returns**:
+
+- `dposlib.ark.tx.Transaction` - orphan transaction.
 
 <a name="dposlib.ark.crypto"></a>
 # dposlib.ark.crypto
@@ -512,6 +1052,24 @@ Verify transaction validity.
 <a name="dposlib.ark.tx"></a>
 # dposlib.ark.tx
 
+<a name="dposlib.ark.tx.serialize"></a>
+#### serialize
+
+```python
+serialize(tx, **options)
+```
+
+Serialize transaction.
+
+**Arguments**:
+
+- `tx` _dict or Transaction_ - transaction object.
+  
+
+**Returns**:
+
+- `bytes` - transaction serial representation.
+
 <a name="dposlib.ark.tx.Transaction"></a>
 ## Transaction Objects
 
@@ -576,7 +1134,7 @@ Generate the `signature` field. Private key have to be set first.
 ```
 
 Generate the `signSignature` field. Transaction have to be signed and
-second  private key have to be set first.
+second private key have to be set first.
 
 <a name="dposlib.ark.tx.Transaction.signWithSecret"></a>
 #### signWithSecret
@@ -586,9 +1144,7 @@ second  private key have to be set first.
 ```
 
 Generate the `signature` field using passphrase. The associated
-public and private keys are stored till [`dposlib.ark.unlink`](
-ark.md#unlink
-) is called.
+public and private keys are stored till `dposlib.ark.unlink` is called.
 
 **Arguments**:
 
@@ -603,7 +1159,7 @@ ark.md#unlink
 
 Generate the `signSignature` field using second passphrase. The
 associated second public and private keys are stored till
-[`dposlib.ark.unlink`](ark.md#unlink) is called.
+`dposlib.ark.unlink` is called.
 
 **Arguments**:
 
@@ -631,7 +1187,7 @@ Add a signature in `signatures` field.
 ```
 
 Generate the `signature` field using public and private keys. They
-are stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
+are stored till `dposlib.ark.unlink` is called.
 
 **Arguments**:
 
@@ -646,7 +1202,7 @@ are stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
 ```
 
 Generate the `signSignature` field using second private key. It is
-stored till [`dposlib.ark.unlink`](ark.md#unlink) is called.
+stored till `dposlib.ark.unlink` is called.
 
 **Arguments**:
 
@@ -689,6 +1245,5 @@ Finalize a transaction by setting `fee`, signatures and `id`.
 - `secret` _str_ - passphrase.
 - `secondSecret` _str_ - second passphrase.
 - `fee` _int_ - manually set fee value in `arktoshi`.
-- `fee_included` _bool_ - see
-  [`dposlib.ark.tx.Transaction.feeIncluded`](ark.md#feeincluded).
+- `fee_included` _bool_ - see `dposlib.ark.tx.Transaction.feeIncluded`.
 
