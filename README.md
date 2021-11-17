@@ -1,4 +1,4 @@
-> `dposlib` package aims to provide a simple API to ARK blockchain and forks.
+> `dposlib` package aims to provide a simple API to any blockchain.
 
 [![Build Status](https://app.travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://app.travis-ci.com/Moustikitos/dpos)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib)

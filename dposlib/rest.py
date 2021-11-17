@@ -5,7 +5,7 @@
     https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L33
 ) root class to implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests.
 
-When a specific blockchain package is loaded through `rest.use` definition,a
+When a specific blockchain package is loaded through `rest.use` definition, a
 `dposlib.core` module is available to provide necessary classes and
 definitions.
 """

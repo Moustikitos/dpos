@@ -1,11 +1,13 @@
 loaders:
   - type: python
     search_path: [./]
+
 processors:
   - type: filter
     expression: default()
   - type: smart
   - type: crossref
+
 hooks:
   pre-render:
   - python -c "import os;os.makedirs('./docs', exist_ok=True)"
@@ -16,11 +18,11 @@ hooks:
   - pydoc-markdown -m dposlib.ark.tx       > ./docs/ark/tx.md
   - pydoc-markdown -m dposlib.ark.builders > ./docs/ark/builders.md
   - pydoc-markdown -m dposlib.ark.crypto   > ./docs/ark/crypto.md
+
 renderer:
   output_directory: .
   content_directory_name: docs
   type: mkdocs
-  render_toc: true
   pages:
   - title: Home
     name: index
@@ -37,6 +39,7 @@ renderer:
       name: builders
     - title: Cryptography
       name: crypto
+
   mkdocs_config:
     site_name: The dposlib Project
     repo_url: https://github.com/Moustikitos/dpos
