@@ -118,6 +118,23 @@
 <div class="section">
 <p><a id="dposlib.ark.builders"></a></p>
 <h1 id="dposlibarkbuilders">dposlib.ark.builders</h1>
+<p><a href="./#dposlib.ark.builders"><code>dposlib.ark.builders</code></a> package
+provides<a href="../tx/#dposlib.ark.tx.Transaction"> <code>dposlib.ark.tx.Transaction</code></a>
+class and its associated builders.</p>
+<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
+&gt;&gt;&gt; rest.use("dark")
+True
+&gt;&gt;&gt; from dposlib.ark.v2 import *
+&gt;&gt;&gt; tx = transfer(
+...   1,
+...   "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
+...   u"simple message with sparkle \u2728",
+...   version=2
+... )
+&gt;&gt;&gt; tx.finalize("first secret", "second secret")
+&gt;&gt;&gt; broadcastTransactions(tx).get("data", {}).get("broadcast", [])
+[u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38']
+</code></pre>
 <p><a id="dposlib.ark.builders.transfer"></a></p>
 <h4 id="transfer">transfer</h4>
 <pre><code class="language-python">def transfer(amount, address, vendorField=None, expiration=0)

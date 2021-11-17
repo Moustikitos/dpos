@@ -40,12 +40,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
 <ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="#support-this-project">Support this project</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#http-requests">HTTP Requests</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#transaction-builders">Transaction builders</a>
-</li>
 </ul>
 </li>
 </ul>
@@ -86,62 +80,23 @@
 </div>
 <div role="main">
 <div class="section">
-<h1 id="dposlib-ark-api-for-humans">dposlib: Ark API for Humans</h1>
 <p><a href="https://pepy.tech/project/dposlib"><img alt="Downloads" src="https://pepy.tech/badge/dposlib/week"/></a>
 <a href="https://pypi.python.org/pypi/dposlib"><img alt="PyPI version shields.io" src="https://img.shields.io/pypi/v/dposlib.svg"/></a>
 <a href="https://GitHub.com/Moustikitos/dpos/tags"><img alt="GitHub release" src="https://img.shields.io/github/tag/Moustikitos/dpos.svg"/></a></p>
-<p><code>dposlib</code> is a simple package providing efficient API to interact with Ark blockchain and its forks. It is designed to run with both python 2 and 3.</p>
-<h3 id="support-this-project">Support this project</h3>
-<p><a href="https://liberapay.com/Toons/donate"><img alt="Liberapay receiving" src="https://img.shields.io/liberapay/goal/Toons?logo=liberapay"/></a></p>
-<p><a href="https://bittrex.com/Account/Register?referralCode=NW5-DQO-QMT">Buy Ѧ</a> and:</p>
-<ul>
-<li>[X] Send Ѧ to <code>AUahWfkfr5J4tYakugRbfow7RWVTK35GPW</code></li>
-<li>[X] Vote <code>arky</code> on <a href="https://explorer.ark.io">Ark blockchain</a> and <a href="http://arky-delegate.info/arky">earn Ѧ weekly</a></li>
-</ul>
-<h2 id="http-requests">HTTP Requests</h2>
+<blockquote>
+<p><code>dposlib</code> package aims to provide a simple API to any blockchain.</p>
+</blockquote>
+<h2 id="human-writable-http-requests">Human writable HTTP Requests</h2>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; # ~ https://explorer.ark.io:8443/api/delegates/arky
-&gt;&gt;&gt; rest.GET.api.delegates.arky(peer="https://explorer.ark.io:8443")
-{u'data': {u'username': u'arky', u'votes': u'172572088664599', u'blocks': {u'produced': 199859, u'last': {u'timestamp': {u'epoch': 84182056, u'unix': 1574283256, u'human': u'2019-11-20T20:54:16.000Z'}, u'id': u'5f5f9897f8fca2a5600ace0d75d67811c67df8111a7deea13d7d6b2c532fae43', u'height': 10380869}}, u'rank': 11, u'publicKey': u'030da05984d579395ce276c0dd6ca0a60140a3c3d964423a04e7abe110d60a15e9', u'production': {u'approval': 1.35}, u'forged': {u'total': u'40118247659340', u'rewards': u'39687400000000', u'fees': u'430847659340'}, u'address': u'ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE'}}
-&gt;&gt;&gt; # using returnKey arktoshi values are converted to ark
-&gt;&gt;&gt; rest.GET.api.transactions(peer="https://explorer.ark.io:8443", returnKey="data")[0]
-{u'fee': 0.00816, u'type': 0, u'sender': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY', u'timestamp': {u'epoch': 84182307, u'unix': 1574283507, u'human': u'2019-11-20T20:58:27.000Z'}, u'blockId': u'a1b305a87217c2f622a922a97a778c677f7dbd23031dae42e3b494883b855a70', u'vendorField': u'Payout from arkmoon', u'senderPublicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'amount': 20.52064264, u'version': 1, u'signSignature': u'304402200ac41802f33a5f377975efc9ebf39a666a9d76c2facb8773783289df7f6a9cd302206c5d2aed3359d3858fb3f4d5fc2a76952eb518cf9d242bb91fd11c0801e4ea4e', u'confirmations': 21, u'signature': u'3045022100dc6dbaa4b056f10268b587da290900725246e3239df1fa3e3c53445da36f03ee02206d57bbdff6d7f9ebca719a41112f23128f1a84161dd82597d63351e3c4d868b0', u'recipient': u'AXPLW2TzBsXcPiaeVGBSELEAXj4RPaWNjB', u'id': u'efeab09925c3347b4a18854a9192d7d722ee32850a7bf91d57628cb77714192e'}
-&gt;&gt;&gt; # peer keyword is not mandatory when a blockchain is linked using rest.use directive
-&gt;&gt;&gt; rest.use("ark")
-&gt;&gt;&gt; # ~ GET /api/blocks endpoint
-&gt;&gt;&gt; rest.GET.api.blocks(returnKey="data")[0]
-{u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
-</code></pre>
-<h2 id="transaction-builders">Transaction builders</h2>
-<p><a href="ark/builders/#dposlib.ark.builders"><code>dposlib.ark.builders</code></a> package provides<a href="ark/tx/#dposlib.ark.tx.Transaction"> <code>dposlib.ark.tx.Transaction</code></a> class and its associated builders.</p>
-<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use("dark")
-True
-&gt;&gt;&gt; from dposlib.ark.v2 import *
-&gt;&gt;&gt; tx = transfer(1, "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk", u"simple message with sparkle \u2728", version=2)
-&gt;&gt;&gt; tx.finalize("first secret", "second secret")
-&gt;&gt;&gt; tx
-{
-    "amount": 100000000,
-    "asset": {},
-    "expiration": 0,
-    "fee": 4013642,
-    "id": "041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38",
-    "network": 30,
-    "nonce": 377,
-    "recipientId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
-    "senderId": "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
-    "senderPublicKey": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-    "signSignature": "3d29356c77b63c2d6ce679dad95961b40ea606823bf729a158df5c8378c79c5588ad675ee147a7f77b18518c5bdf9b1a73567d72c3af0bfbe22043b9e1a95e6f",
-    "signature": "871ac31e7bad08b684b27f1b8a4b9f9f760bb32d1d36cc03e03872edc6070f8d9fec2621ea87e2ea0ae7750e0e7a5db52f39b32e05af76a4331a92e17dbe9f4a",
-    "timestamp": 84186531,
-    "type": 0,
-    "typeGroup": 1,
-    "vendorField": "simple message with sparkle \u2728",
-    "version": 2
-}
-&gt;&gt;&gt; broadcastTransactions(tx)
-{u'data': {u'broadcast': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'invalid': [], u'accept': [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38'], u'excess': []}}
+&gt;&gt;&gt; # ~ https://api.ark.io/api/delegates
+&gt;&gt;&gt; rest.GET.api.delegates(peer="https://api.ark.io")["data"][0]
+{'username': 'dev51', 'address': 'AWBW9QD53oArEEEb965KiRxTXDPKv2iWn8', 'publicKey': '020cafa960cd435d271f4207f1a89900de32ba678a0fbb05455f82cbaf22bce3a5', 'votes': '357110265571266', 'rank': 1, 'isResigned': False, 'blocks': {'produced': 98085, 'last': {'id': 'cca9b41abe637efebe22c49f944f84e92734ee17d6cca457200cb2a37dfef17d', 'height': 18229073, 'timestamp': {'epoch': 147083032, 'unix': 1637184232, 'human': '2021-11-17T21:23:52.000Z'}}}, 'production': {'approval': 2.86}, 'forged': {'fees': '49196332406', 'rewards': '19617000000000', 'total': '19666196332406'}}
+&gt;&gt;&gt; # ~ https://service.lisk.com/api/v2/accounts
+&gt;&gt;&gt; rest.GET.api.v2.accounts(peer="https://service.lisk.com")["data"][0]
+{'summary': {'address': 'lskbwvtd6sp5f5tpvfnu2v3tuvqbwyyfqqeadcawb', 'legacyAddress': '3645487307206542645L', 'balance': '1893122255345680', 'username': '', 'publicKey': '454a1a25a1b603d56a9e924f68238617be00042519fa9ec16f660bc6a13baa78', 'isMigrated': True, 'isDelegate': False, 'isMultisignature': False}, 'knowledge': {'owner': 'Binance', 'description': 'Cold Wallet'}, 'token': {'balance': '1893122255345680'}, 'sequence': {'nonce': '0'}, 'keys': {'numberOfSignatures': 0, 'mandatoryKeys': [], 'optionalKeys': []}, 'dpos': {'delegate': {'username': '', 'consecutiveMissedBlocks': 0, 'lastForgedHeight': 16270293, 'isBanned': False, 'totalVotesReceived': '0'}}}
+&gt;&gt;&gt; # ~ https://blockchain.info/tobtc?currency=USD&amp;value=500
+&gt;&gt;&gt; rest.GET.tobtc(peer="https://blockchain.info", currency="USD", value="500")
+0.00835083
 </code></pre>
 </div>
 </div>
@@ -182,5 +137,5 @@ True
 </html>
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-11-17 20:41:53.911760+00:00
+Build Date UTC : 2021-11-17 21:34:05.117778+00:00
 -->
