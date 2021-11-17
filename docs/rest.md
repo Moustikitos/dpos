@@ -1,4 +1,5 @@
-<a name="dposlib.rest"></a>
+<a id="dposlib.rest"></a>
+
 # dposlib.rest
 
 `rest` module provides network loaders and [`usrv.req.EndPoint`](
@@ -9,31 +10,36 @@ When a specific blockchain package is loaded through `rest.use` definition,a
 `dposlib.core` module is available to provide necessary classes and
 definitions.
 
-<a name="dposlib.rest.GET"></a>
+<a id="dposlib.rest.GET"></a>
+
 #### GET
 
 HTTP GET request builder
 
-<a name="dposlib.rest.POST"></a>
+<a id="dposlib.rest.POST"></a>
+
 #### POST
 
 HTTP POST request builder
 
-<a name="dposlib.rest.PUT"></a>
+<a id="dposlib.rest.PUT"></a>
+
 #### PUT
 
 HTTP PUT request builder
 
-<a name="dposlib.rest.DELETE"></a>
+<a id="dposlib.rest.DELETE"></a>
+
 #### DELETE
 
 HTTP DELETE request builder
 
-<a name="dposlib.rest.load"></a>
+<a id="dposlib.rest.load"></a>
+
 #### load
 
 ```python
-load(name)
+def load(name)
 ```
 
 Load a given blockchain package as `dposlib.core` module. A valid
@@ -50,11 +56,12 @@ Available blockchains are referenced in `dposli.net` module.
 - `Exception` - if package name is not found or if package can not be
   initialized properly.
 
-<a name="dposlib.rest.use"></a>
+<a id="dposlib.rest.use"></a>
+
 #### use
 
 ```python
-use(network, **kwargs)
+def use(network, **kwargs)
 ```
 
 Sets the blockchain parameters in the `dposlib.rest.cfg` module and

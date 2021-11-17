@@ -474,7 +474,7 @@ def entityResign(registrationId):
 def multiVote(tx):
     """
     Transform a [`dposlib.ark.builders.upVote`](
-        ark.md#dposlib.ark.builders.upVote
+        builders.md#dposlib.ark.builders.upVote
     ) transaction into a multivote one. It makes the transaction downvote
     former delegate if any and then apply new vote.
 

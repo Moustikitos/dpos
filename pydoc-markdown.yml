@@ -1,36 +1,42 @@
 loaders:
   - type: python
-
+    search_path: [./]
 processors:
-  - type: crossref
   - type: filter
     expression: default()
   - type: smart
-
+  - type: crossref
 hooks:
   pre-render:
-  - python -c "import shutil;shutil.copy('docs/index.md', 'index.md')"
-
+  - python -c "import os;os.makedirs('./docs', exist_ok=True)"
+  - python -c "import os;os.makedirs('./docs/ark', exist_ok=True)"
+  - python -c "import shutil;shutil.copy('./index.md', './docs/index.md')"
+  - pydoc-markdown -m dposlib.rest         > ./docs/rest.md
+  - pydoc-markdown -m dposlib.ark.api      > ./docs/ark/api.md
+  - pydoc-markdown -m dposlib.ark.tx       > ./docs/ark/tx.md
+  - pydoc-markdown -m dposlib.ark.builders > ./docs/ark/builders.md
+  - pydoc-markdown -m dposlib.ark.crypto   > ./docs/ark/crypto.md
 renderer:
   output_directory: .
   content_directory_name: docs
   type: mkdocs
+  render_toc: true
   pages:
-    - title: Home
-      name: index
-      source: index.md
-    - title: Network
-      name: rest
-      contents:
-        - dposlib.rest*
-    - title: Ark
-      name: ark
-      contents:
-        - dposlib.ark.tx*
-        - dposlib.ark.api*
-        - dposlib.ark.crypto*
-        - dposlib.ark.builder*
-
+  - title: Home
+    name: index
+  - title: Network
+    name: rest
+  - title: Ark.io blockchain
+    name: ark
+    children:
+    - title: API
+      name: api
+    - title: Transaction
+      name: tx
+    - title: Transaction builders
+      name: builders
+    - title: Cryptography
+      name: crypto
   mkdocs_config:
     site_name: The dposlib Project
     repo_url: https://github.com/Moustikitos/dpos
@@ -38,13 +44,7 @@ renderer:
     copyright: Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence
     theme:
       name: readthedocs
-      features:
-        - navigation.tabs
-        - navigation.tabs.sticky
-        - toc.integrate
     markdown_extensions:
-      - toc:
-          baselevel: 1
       - smarty
     plugins:
       - search

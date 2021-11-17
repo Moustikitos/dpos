@@ -34,7 +34,7 @@
 
 ## Transaction builders
 
-[`dposlib.ark.builders`](ark.md#dposlib.ark.builders) package provides[ `dposlib.ark.tx.Transaction`](ark.md#dposlib.ark.tx.Transaction) class and its associated builders.
+[`dposlib.ark.builders`](./ark/builders.md#dposlib.ark.builders) package provides[ `dposlib.ark.tx.Transaction`](./ark/tx.md#dposlib.ark.tx.Transaction) class and its associated builders.
 
 ```python
 >>> from dposlib import rest

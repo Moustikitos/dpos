@@ -30,7 +30,7 @@ def isLinked(func):
     """
     `Python decorator`.
     First argument of decorated function have to be a
-    [`dposlib.ark.api.Content`](ark.md#dposlib.ark.api.Content)
+    [`dposlib.ark.api.Content`](api.md#dposlib.ark.api.Content)
     or an object containing a valid `address`, `_derivationPath` or `publicKey`
     attribute. It executes the decorated `function` if the object is correctly
     linked using `dposlib.ark.api.link` definition.
@@ -64,7 +64,7 @@ def isLinked(func):
 def link(cls, secret=None, secondSecret=None):
     """
     Associates crypto keys into a [`dposlib.ark.api.Content`](
-        ark.md#dposlib.ark.api.Content
+        api.md#dposlib.ark.api.Content
     ) object according to secrets. If `secret` or `secondSecret` are not `str`,
     they are considered as `None`. In this case secrets will be asked and
     checked from console untill success or `Ctrl+c` keyboard interruption.
@@ -205,7 +205,7 @@ class JSDict(dict):
 class Content(object):
     """
     Live object connected to blockchain. It is initialized with
-    [`dposlib.rest.GET`](rest.md#dposlib.rest.GET) request. Object is updated
+    [`dposlib.rest.GET`](../rest.md#dposlib.rest.GET) request. Object is updated
     every 30s. Endpoint response can be a `dict` or a `list`. If it is a
     `list`, it is stored in `data` attribute else all fields are stored as
     instance attribute.
@@ -373,7 +373,7 @@ class Wallet(Content):
         Args:
             address (str): wallet address or delegate username.
             **kwargs: Variable key argument used by
-                [`dposlib.ark.api.Content`](ark.md#dposlib.ark.api.Content).
+                [`dposlib.ark.api.Content`](api.md#dposlib.ark.api.Content).
 
         **Specific kwargs**:
 
@@ -423,11 +423,11 @@ class Wallet(Content):
         return resp
 
     def link(self, *args, **kwargs):
-        "See [`dposlib.ark.api.link`](ark.md#dposlib.ark.api.link)."
+        "See [`dposlib.ark.api.link`](api.md#dposlib.ark.api.link)."
         link(self, *args, **kwargs)
 
     def unlink(self):
-        "See [`dposlib.ark.api.unlink`](ark.md#dposlib.ark.api.unlink)."
+        "See [`dposlib.ark.api.unlink`](api.md#dposlib.ark.api.unlink)."
         unlink(self)
 
     @isLinked
@@ -435,7 +435,7 @@ class Wallet(Content):
         """
         Broadcast a transfer transaction to the ledger.
         See [`dposlib.ark.builders.transfer`](
-            ark.md#dposlib.ark.builders.transfer
+            builders.md#dposlib.ark.builders.transfer
         ).
         """
         return self._broadcastTx(
@@ -447,7 +447,7 @@ class Wallet(Content):
         """
         Broadcast a second secret registration transaction to the ledger.
         See [`dposlib.ark.builders.registerSecondSecret`](
-            ark.md#dposlib.ark.builders.registerSecondSecret
+            builders.md#dposlib.ark.builders.registerSecondSecret
         ).
         """
         return self._broadcastTx(
@@ -459,7 +459,7 @@ class Wallet(Content):
         """
         Broadcast a second secret registration transaction into the ledger.
         See [`dposlib.ark.builders.registerSecondPublicKey`](
-           ark.md#dposlib.ark.builders.registerSecondPublicKey
+           builders.md#dposlib.ark.builders.registerSecondPublicKey
         ).
         """
         return self._broadcastTx(
@@ -471,7 +471,7 @@ class Wallet(Content):
         """
         Broadcast a delegate registration transaction to the ledger.
         See [`dposlib.ark.builders.registerAsDelegate`](
-            ark.md#dposlib.ark.builders.registerAsDelegate
+            builders.md#dposlib.ark.builders.registerAsDelegate
         ).
         """
         return self._broadcastTx(dposlib.core.registerAsDelegate(username))
@@ -481,7 +481,7 @@ class Wallet(Content):
         """
         Broadcast an up-vote transaction to the ledger.
         See [`dposlib.ark.builders.multiVote`](
-            ark.md#dposlib.ark.builders.multiVote
+            builders.md#dposlib.ark.builders.multiVote
         )."""
         tx = dposlib.core.upVote(*usernames)
         if self.attributes.vote is not None:
@@ -493,7 +493,7 @@ class Wallet(Content):
         """
         Broadcast a down-vote transaction to the ledger.
         See [`dposlib.ark.builders.downVote`](
-            ark.md#dposlib.ark.builders.downVote
+            builders.md#dposlib.ark.builders.downVote
         ).
         """
         return self._broadcastTx(dposlib.core.downVote(*usernames))
@@ -502,7 +502,7 @@ class Wallet(Content):
     def sendIpfs(self, ipfs):
         """
         See [`dposlib.ark.builders.registerIpfs`](
-            ark.md#dposlib.ark.builders.registerIpfs
+            builders.md#dposlib.ark.builders.registerIpfs
         )."""
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
@@ -511,7 +511,7 @@ class Wallet(Content):
     def multiSend(self, *pairs, **kwargs):
         """
         See [`dposlib.ark.builder.multiPayment`](
-            ark.md#dposlib.ark.builders.multiPayment
+            builders.md#dposlib.ark.builders.multiPayment
         )."""
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
@@ -520,7 +520,7 @@ class Wallet(Content):
     def resignate(self):
         """
         See [`dposlib.ark.builders.delegateResignation`](
-            ark.md#dposlib.ark.builders.delegateResignation
+            builders.md#dposlib.ark.builders.delegateResignation
         ).
         """
         tx = dposlib.core.delegateResignation()
@@ -531,7 +531,7 @@ class Wallet(Content):
                  expiration=24, vendorField=None):
         """
         See [`dposlib.ark.builders.htlcLock`](
-            ark.md#dposlib.ark.builders.htlcLock
+            builders.md#dposlib.ark.builders.htlcLock
         ).
         """
         tx = dposlib.core.htlcLock(
@@ -544,7 +544,7 @@ class Wallet(Content):
     def claimHtlc(self, txid, secret):
         """
         See [`dposlib.ark.builders.htlcClaim`](
-            ark.md#dposlib.ark.builders.htlcClaim
+            builders.md#dposlib.ark.builders.htlcClaim
         ).
         """
         tx = dposlib.core.htlcClaim(txid, secret)
@@ -554,7 +554,7 @@ class Wallet(Content):
     def refundHtlc(self, txid):
         """
         See [`dposlib.ark.builders.htlcRefund`](
-            ark.md#dposlib.ark.builders.htlcRefund
+            builders.md#dposlib.ark.builders.htlcRefund
         ).
         """
         tx = dposlib.core.htlcRefund(txid)
@@ -564,7 +564,7 @@ class Wallet(Content):
     def createEntity(self, name, type="business", subtype=0, ipfsData=None):
         """
         See [`dposlib.ark.builders.entityRegister`](
-            ark.md#dposlib.ark.builders.entityRegister
+            builders.md#dposlib.ark.builders.entityRegister
         ).
         """
         tx = dposlib.core.entityRegister(name, type, subtype, ipfsData)
@@ -574,7 +574,7 @@ class Wallet(Content):
     def updateEntity(self, registrationId, ipfsData, name=None):
         """
         See [`dposlib.ark.builders.entityUpdate`](
-            ark.md#dposlib.ark.builders.entityUpdate
+            builders.md#dposlib.ark.builders.entityUpdate
         ).
         """
         tx = dposlib.core.entityUpdate(registrationId, ipfsData, name)
@@ -584,7 +584,7 @@ class Wallet(Content):
     def resignEntity(self, registrationId):
         """
         See [`dposlib.ark.builders.entityResign`](
-            ark.md#dposlib.ark.builders.entityResign
+            builders.md#dposlib.ark.builders.entityResign
         ).
         """
         tx = dposlib.core.entityResign(registrationId)
@@ -724,6 +724,21 @@ class Block(Content):
 
 
 class Webhook(Content):
+    """
+    ```python
+    >>> import dposlib
+    >>> peer = "http:/127.0.0.1:4004"
+    >>> target = "http://127.0.0.1/targetted/endpoint"
+    >>> wh = dposlib.core.api.Webhook(
+    ...   peer, "transaction.applied", target, "amount<1"
+    ... )
+    security token: 9f86d081884c7d659a2feaa0c55ad015...2b0b822cd15d6c15b0f00a08
+    >>> dposlib.core.api.webhook.verify("9f86d081884c7d659a2feaa0c55ad015")
+    True
+    >>> wh.delete()
+    {"sucess": True, "status": 204}
+    ```
+    """
 
     regexp = re.compile(r'^([\w\.]*)\s*([^\w\s\^]*)\s*(.*)\s*$')
     operators = {
@@ -736,13 +751,45 @@ class Webhook(Content):
     }
 
     @staticmethod
-    def _condition(expr):
+    def condition(expr):
+        """
+        Webhook condition builder from `str` expression. It is internally used
+        by [`Webhook.create`](api.md#dposlib.ark.api.Webhook.create) method.
+
+        <style>td,th{border:none!important;text-align:left;}</style>
+        webhook                   | dposlib
+        ------------------------- | ------------
+        `lt` / `lte`              | `<` / `<=`
+        `gt` / `gte`              | `>` / `>=`
+        `eq` / `ne`               | `==` / `!=`
+        `truthy` / `falsy`        | `?` / `!?`
+        `regexp` / `contains`     | `\` / `$`
+        `between` / `not-between` | `<>` / `!<>`
+
+        ```python
+        >>> import dposlib.ark.api as api
+        >>> api.Webhook.condition(r"vendorField\^.*payroll.*$")
+        {'value': '^.*payroll.*$', 'key': 'vendorField', 'condition': 'regexp'}
+        >>> api.Webhook.condition("amount<>2000000000000:4000000000000")
+        {
+            'value': {'min': '2000000000000', 'max': '4000000000000'},
+            'condition': 'between',
+            'key': 'amount'
+        }
+        ```
+
+        Args:
+            expr (str): human readable expression.
+
+        Returns:
+            dict: webhook conditions
+        """
         condition = {}
         try:
             key, _operator, value = Webhook.regexp.match(expr).groups()
             operator = Webhook.operators[_operator]
         except Exception as error:
-            print("%r" % error)
+            print(">>> %r" % error)
         else:
             if "between" in operator:
                 _min, _max = value.split(":")
@@ -778,7 +825,7 @@ class Webhook(Content):
     def create(peer, event, target, *conditions):
         conditions = [
             (
-                Webhook._condition(cond) if isinstance(cond, str) else
+                Webhook.condition(cond) if isinstance(cond, str) else
                 cond if isinstance(cond, dict) else
                 {}
             )
@@ -862,11 +909,14 @@ class Webhook(Content):
             resp = dposlib.rest.DELETE.api.webhooks(
                 "%s" % self.id, peer=data.get("peer", None)
             )
-            try:
-                os.remove(data["dump"])
-            except Exception:
-                pass
-            os.remove(whk_path)
+            if resp.get("status", None) == 204:
+                try:
+                    os.remove(data["dump"])
+                except Exception:
+                    pass
+                os.remove(whk_path)
+            resp.pop('except', False)
+            resp.pop('error', False)
             return resp
         else:
             raise Exception("cannot find webhook data")
