@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
 <link href="css/theme.css" rel="stylesheet"/>
 <link href="css/theme_extra.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
 <script>
     // Current page data
     var mkdocs_page_name = "Home";
@@ -21,7 +21,7 @@
   </script>
 <script defer="" src="js/jquery-2.1.1.min.js"></script>
 <script defer="" src="js/modernizr-2.8.3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 </link></head>
 <body class="wy-body-for-nav" role="document">
@@ -53,8 +53,15 @@
 <li class="toctree-l1"><a class="reference internal" href="rest/">Network</a>
 </li>
 </ul>
+<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ark/">Ark</a>
+<li class="toctree-l1"><a class="reference internal" href="ark/api/">API</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ark/tx/">Transaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ark/builders/">Transaction builders</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ark/crypto/">Cryptography</a>
 </li>
 </ul>
 </div>
@@ -106,7 +113,7 @@
 {u'payload': {u'length': 0, u'hash': u'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}, u'generator': {u'username': u'arkmoon', u'publicKey': u'0232b96d57ac27f9a99242bc886e433baa89f596d435153c9dae47222c0d1cecc3', u'address': u'AKATy581uXWrbm8B4DTQh4R9RbqaWRiKRY'}, u'transactions': 0, u'timestamp': {u'epoch': 84183376, u'unix': 1574284576, u'human': u'2019-11-20T21:16:16.000Z'}, u'height': 10381034, u'version': 0, u'forged': {u'fee': 0.0, u'amount': 0.0, u'total': 2.0, u'reward': 2.0}, u'confirmations': 1, u'signature': u'3045022100a8b6b48c0094f9c84b7da5ae457ca33d5ba0d9a3df963c1e17c42cb52fb563a9022020ea96cf76529943b03b864bbb722352ef6faf5701e36bc16f9903ec2234309b', u'id': u'd2e042495ab64e7cf5bb0fc8d4ce6972a98f29a56d960b707f3c6abd2791a5e2', u'previous': u'ea1b7082424592545860a671a77ef7f59c3730665208080d2481e363be6c1ed0'}
 </code></pre>
 <h2 id="transaction-builders">Transaction builders</h2>
-<p><a href="ark/#dposlib.ark.builders"><code>dposlib.ark.builders</code></a> package provides<a href="ark/#dposlib.ark.tx.Transaction"> <code>dposlib.ark.tx.Transaction</code></a> class and its associated builders.</p>
+<p><a href="ark/builders/#dposlib.ark.builders"><code>dposlib.ark.builders</code></a> package provides<a href="ark/tx/#dposlib.ark.tx.Transaction"> <code>dposlib.ark.tx.Transaction</code></a> class and its associated builders.</p>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
 &gt;&gt;&gt; rest.use("dark")
 True
@@ -156,11 +163,14 @@ True
 </div>
 <div aria-label="versions" class="rst-versions" role="note">
 <span class="rst-current-version" data-toggle="rst-current-version">
-<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="float: left; color: #fcfcfc"> GitHub</a>
-<span style="margin-left: 15px"><a href="rest/" style="color: #fcfcfc">Next »</a></span>
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="rest/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script>var base_url = '.';</script>
+<script defer="" src="js/theme_extra.js"></script>
 <script defer="" src="js/theme.js"></script>
 <script defer="" src="search/main.js"></script>
 <script defer="">
@@ -171,6 +181,6 @@ True
 </body>
 </html>
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2021-11-14 06:52:21.842392+00:00
+MkDocs version : 1.2.3
+Build Date UTC : 2021-11-17 20:41:53.911760+00:00
 -->

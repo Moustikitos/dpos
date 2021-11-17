@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Transaction builders - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Transaction builders";
+    var mkdocs_page_input_path = "ark\\builders.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> The dposlib Project</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Transaction builders</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#transfer">transfer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registersecondsecret">registerSecondSecret</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registersecondpublickey">registerSecondPublicKey</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registerasdelegate">registerAsDelegate</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#upvote">upVote</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#downvote">downVote</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registermultisignature">registerMultiSignature</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registeripfs">registerIpfs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#multipayment">multiPayment</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#delegateresignation">delegateResignation</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#htlcsecret">htlcSecret</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#htlclock">htlcLock</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#htlcclaim">htlcClaim</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#htlcrefund">htlcRefund</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#entityregister">entityRegister</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#entityupdate">entityUpdate</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#entityresign">entityResign</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#multivote">multiVote</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="../..">Docs</a> »</li>
+<li>Ark.io blockchain »</li>
+<li>Transaction builders</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/builders.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a id="dposlib.ark.builders"></a></p>
+<h1 id="dposlibarkbuilders">dposlib.ark.builders</h1>
+<p><a id="dposlib.ark.builders.transfer"></a></p>
+<h4 id="transfer">transfer</h4>
+<pre><code class="language-python">def transfer(amount, address, vendorField=None, expiration=0)
+</code></pre>
+<p>Build a transfer transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+<li><code>expiration</code> <em>float</em> - time of persistance in hour.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.registerSecondSecret"></a></p>
+<h4 id="registersecondsecret">registerSecondSecret</h4>
+<pre><code class="language-python">def registerSecondSecret(secondSecret)
+</code></pre>
+<p>Build a second secret registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondSecret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.registerSecondPublicKey"></a></p>
+<h4 id="registersecondpublickey">registerSecondPublicKey</h4>
+<pre><code class="language-python">def registerSecondPublicKey(secondPublicKey)
+</code></pre>
+<p>Build a second secret registration transaction.</p>
+<p><em>You must own the secret issuing secondPublicKey</em></p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondPublicKey</code> <em>str</em> - public key as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.registerAsDelegate"></a></p>
+<h4 id="registerasdelegate">registerAsDelegate</h4>
+<pre><code class="language-python">def registerAsDelegate(username)
+</code></pre>
+<p>Build a delegate registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>username</code> <em>str</em> - delegate username.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.upVote"></a></p>
+<h4 id="upvote">upVote</h4>
+<pre><code class="language-python">def upVote(*usernames)
+</code></pre>
+<p>Build an upvote transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.downVote"></a></p>
+<h4 id="downvote">downVote</h4>
+<pre><code class="language-python">def downVote(*usernames)
+</code></pre>
+<p>Build a downvote transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>usernames</code> <em>iterable</em> - delegate usernames as str iterable.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.registerMultiSignature"></a></p>
+<h4 id="registermultisignature">registerMultiSignature</h4>
+<pre><code class="language-python">def registerMultiSignature(minSig, *publicKeys)
+</code></pre>
+<p>Build a multisignature registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>minSig</code> <em>int</em> - minimum signature required.</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.registerIpfs"></a></p>
+<h4 id="registeripfs">registerIpfs</h4>
+<pre><code class="language-python">def registerIpfs(ipfs)
+</code></pre>
+<p>Build an IPFS registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ipfs</code> <em>str</em> - ipfs DAG.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.multiPayment"></a></p>
+<h4 id="multipayment">multiPayment</h4>
+<pre><code class="language-python">def multiPayment(*pairs, **kwargs)
+</code></pre>
+<p>Build multi-payment transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>pairs</code> <em>iterable</em> - recipient-amount pair iterable.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.delegateResignation"></a></p>
+<h4 id="delegateresignation">delegateResignation</h4>
+<pre><code class="language-python">def delegateResignation()
+</code></pre>
+<p>Build a delegate resignation transaction.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.htlcSecret"></a></p>
+<h4 id="htlcsecret">htlcSecret</h4>
+<pre><code class="language-python">def htlcSecret(secret)
+</code></pre>
+<p>Compute an HTLC secret hex string from passphrase.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>hex str: HTLC secret.</p>
+<p><a id="dposlib.ark.builders.htlcLock"></a></p>
+<h4 id="htlclock">htlcLock</h4>
+<pre><code class="language-python">def htlcLock(amount, address, secret, expiration=24, vendorField=None)
+</code></pre>
+<p>Build an HTLC lock transaction. Emoji can be included in transaction
+vendorField using unicode formating.</p>
+<pre><code class="language-python">&gt;&gt;&gt; vendorField = u"message with sparkles \u2728"
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>amount</code> <em>float</em> - transaction amount in ark.</li>
+<li><code>address</code> <em>str</em> - valid recipient address.</li>
+<li><code>secret</code> <em>str</em> - lock passphrase.</li>
+<li><code>expiration</code> <em>float</em> - transaction validity in hour.</li>
+<li><code>vendorField</code> <em>str</em> - vendor field message.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.htlcClaim"></a></p>
+<h4 id="htlcclaim">htlcClaim</h4>
+<pre><code class="language-python">def htlcClaim(txid, secret)
+</code></pre>
+<p>Build an HTLC claim transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
+<li><code>secret</code> <em>str</em> - passphrase used by htlc lock transaction.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.htlcRefund"></a></p>
+<h4 id="htlcrefund">htlcRefund</h4>
+<pre><code class="language-python">def htlcRefund(txid)
+</code></pre>
+<p>Build an HTLC refund transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>txid</code> <em>str</em> - htlc lock transaction id.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.entityRegister"></a></p>
+<h4 id="entityregister">entityRegister</h4>
+<pre><code class="language-python">def entityRegister(name, type="business", subtype=0, ipfsData=None)
+</code></pre>
+<p>Build an entity registration.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>name</code> <em>str</em> - entity name</li>
+<li><code>type</code> <em>str</em> - entity type. Possible values are <code>business</code>, <code>product</code>,
+  <code>plugin</code>, <code>module</code> and <code>delegate</code>. Default to <code>business</code>.</li>
+<li><code>subtype</code> <em>int</em> - entity subtype</li>
+<li><code>ipfsData</code> <em>base58</em> - ipfs DAG. Default to None.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.entityUpdate"></a></p>
+<h4 id="entityupdate">entityUpdate</h4>
+<pre><code class="language-python">def entityUpdate(registrationId, ipfsData, name=None)
+</code></pre>
+<p>Build an entity update.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>registrationId</code> <em>str</em> - registration id</li>
+<li><code>ipfsData</code> <em>base58</em> - ipfs DAG. Default to None.</li>
+<li><code>name</code> <em>str, optional</em> - entity name</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.entityResign"></a></p>
+<h4 id="entityresign">entityResign</h4>
+<pre><code class="language-python">def entityResign(registrationId)
+</code></pre>
+<p>Build an entity resignation.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>registrationId</code> <em>str</em> - registration id</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.ark.builders.multiVote"></a></p>
+<h4 id="multivote">multiVote</h4>
+<pre><code class="language-python">def multiVote(tx)
+</code></pre>
+<p>Transform a <a href="./#dposlib.ark.builders.upVote"><code>dposlib.ark.builders.upVote</code></a> transaction into a multivote one. It makes the transaction downvote
+former delegate if any and then apply new vote.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dposlib.ark.tx.Transaction</em> - upVote transaction.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../crypto/" title="Cryptography">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../tx/" title="Transaction"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../tx/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../crypto/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '../..';</script>
+<script defer="" src="../../js/theme_extra.js"></script>
+<script defer="" src="../../js/theme.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

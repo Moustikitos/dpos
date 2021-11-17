@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>API - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "API";
+    var mkdocs_page_input_path = "ark\\api.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> The dposlib Project</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#link">link</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unlink">unlink</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#jsdict-objects">JSDict Objects</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#filter">filter</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wallet-objects">Wallet Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#delegate">delegate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#username">username</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#secondpublickey">secondPublicKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#link_1">link</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#unlink_1">unlink</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#send">send</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setsecondsecret">setSecondSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setsecondpublickey">setSecondPublicKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setdelegate">setDelegate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#upvote">upVote</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sendipfs">sendIpfs</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#multisend">multiSend</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#resignate">resignate</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sendhtlc">sendHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#claimhtlc">claimHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#refundhtlc">refundHtlc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#createentity">createEntity</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#updateentity">updateEntity</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#resignentity">resignEntity</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#webhook-objects">Webhook Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#condition">condition</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="../..">Docs</a> »</li>
+<li>Ark.io blockchain »</li>
+<li>API</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/api.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a id="dposlib.ark.api"></a></p>
+<h1 id="dposlibarkapi">dposlib.ark.api</h1>
+<p><a id="dposlib.ark.api.isLinked"></a></p>
+<h4 id="islinked">isLinked</h4>
+<pre><code class="language-python">def isLinked(func)
+</code></pre>
+<p><code>Python decorator</code>.
+First argument of decorated function have to be a
+<a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a>
+or an object containing a valid <code>address</code>, <code>_derivationPath</code> or <code>publicKey</code>
+attribute. It executes the decorated <code>function</code> if the object is correctly
+linked using <code>dposlib.ark.api.link</code> definition.</p>
+<p><a id="dposlib.ark.api.link"></a></p>
+<h4 id="link">link</h4>
+<pre><code class="language-python">def link(cls, secret=None, secondSecret=None)
+</code></pre>
+<p>Associates crypto keys into a <a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a> object according to secrets. If <code>secret</code> or <code>secondSecret</code> are not <code>str</code>,
+they are considered as <code>None</code>. In this case secrets will be asked and
+checked from console untill success or <code>Ctrl+c</code> keyboard interruption.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>cls</code> <em>Content</em> - content object.</li>
+<li><code>secret</code> <em>str</em> - secret string. Default set to <code>None</code>.</li>
+<li><code>secondSecret</code> <em>str</em> - second secret string. Default set to <code>None</code>.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if secret and second secret match.</li>
+</ul>
+<p><a id="dposlib.ark.api.unlink"></a></p>
+<h4 id="unlink">unlink</h4>
+<pre><code class="language-python">def unlink(cls)
+</code></pre>
+<p>Remove crypto keys association.</p>
+<p><a id="dposlib.ark.api.JSDict"></a></p>
+<h2 id="jsdict-objects">JSDict Objects</h2>
+<pre><code class="language-python">class JSDict(dict)
+</code></pre>
+<p>Read only dictionary with js object behaviour.</p>
+<pre><code class="language-python">&gt;&gt;&gt; jsdic = dposlib.ark.JSDict(value=5)
+&gt;&gt;&gt; jsdic
+{'value': 5}
+&gt;&gt;&gt; jsdic.value
+5
+</code></pre>
+<p><a id="dposlib.ark.api.Content"></a></p>
+<h2 id="content-objects">Content Objects</h2>
+<pre><code class="language-python">class Content(object)
+</code></pre>
+<p>Live object connected to blockchain. It is initialized with
+<a href="../../rest/#dposlib.rest.GET"><code>dposlib.rest.GET</code></a> request. Object is updated
+every 30s. Endpoint response can be a <code>dict</code> or a <code>list</code>. If it is a
+<code>list</code>, it is stored in <code>data</code> attribute else all fields are stored as
+instance attribute.</p>
+<pre><code class="language-python">&gt;&gt;&gt; txs = dposlib.ark.Content(rest.GET.api.transactions)
+&gt;&gt;&gt; txs.data[0]["timestamp"]
+{
+    'epoch': 121912776,
+    'unix': 1612013976,
+    'human': '2021-01-30T13:39:36.000Z'
+}
+&gt;&gt;&gt; tx = dposlib.ark.Content(
+    rest.GET.api.transactions,
+    "d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9",
+)
+&gt;&gt;&gt; tx.timestamp
+{
+    'epoch': 121919704,
+    'unix': 1612020904,
+    'human': '2021-01-30T15:35:04.000Z'
+}
+&gt;&gt;&gt; tx.amount
+212963052
+&gt;&gt;&gt; tx.datetime
+datetime.datetime(2021, 1, 30, 15, 35, 4, tzinfo=&lt;UTC&gt;)
+</code></pre>
+<p><a id="dposlib.ark.api.Content.__init__"></a></p>
+<h4 id="__init__">__init__</h4>
+<pre><code class="language-python">def __init__(ndpt, *args, **kwargs)
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>ndpt</code> <em>usrv.req.Endpoint</em> - endpoint class to be called.</li>
+<li><code>*args</code> - Variable length argument list used by <code>usrv.req.Endpoint</code>.</li>
+</ul>
+<p><strong>Kwargs</strong>:</p>
+<ul>
+<li><code>keep_alive</code> <em>bool</em> - set hook to update data from blockcahin.
+  Default to True.</li>
+</ul>
+<p><a id="dposlib.ark.api.Content.filter"></a></p>
+<h4 id="filter">filter</h4>
+<pre><code class="language-python">def filter(data)
+</code></pre>
+<p>Convert data as JSDict object converting string values in int if
+possible.</p>
+<p><a id="dposlib.ark.api.Wallet"></a></p>
+<h2 id="wallet-objects">Wallet Objects</h2>
+<pre><code class="language-python">class Wallet(Content)
+</code></pre>
+<p>Wallet root class that implements basic wallet behaviour.</p>
+<p><a id="dposlib.ark.api.Wallet.delegate"></a></p>
+<h4 id="delegate">delegate</h4>
+<p>Delegate attributes if wallet is registered as delegate.</p>
+<p><a id="dposlib.ark.api.Wallet.username"></a></p>
+<h4 id="username">username</h4>
+<p>Delegate username if wallet is registered as delegate.</p>
+<p><a id="dposlib.ark.api.Wallet.secondPublicKey"></a></p>
+<h4 id="secondpublickey">secondPublicKey</h4>
+<p>Second public key if second signature is set to wallet.</p>
+<p><a id="dposlib.ark.api.Wallet.__init__"></a></p>
+<h4 id="__init___1">__init__</h4>
+<pre><code class="language-python">def __init__(address, **kw)
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - wallet address or delegate username.</li>
+<li><code>**kwargs</code> - Variable key argument used by
+  <a href="./#dposlib.ark.api.Content"><code>dposlib.ark.api.Content</code></a>.</li>
+</ul>
+<p><strong>Specific kwargs</strong>:</p>
+<ul>
+<li><code>keep_alive</code> <em>bool</em> - automatic update data from blockcahin. Default
+  to True.</li>
+<li><code>fee</code> <em>int or str</em> - set fee level as fee multiplier string value or
+  one of <strong>minFee</strong>, <strong>avgFee</strong>, <strong>maxFee</strong>. Default to <strong>avgFee</strong>.</li>
+<li><code>fee_included</code> <em>bool</em> - set to True if amout + fee is the total
+  desired out flow. Default to False.</li>
+</ul>
+<p><a id="dposlib.ark.api.Wallet.link"></a></p>
+<h4 id="link_1">link</h4>
+<pre><code class="language-python">def link(*args, **kwargs)
+</code></pre>
+<p>See <a href="./#dposlib.ark.api.link"><code>dposlib.ark.api.link</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.unlink"></a></p>
+<h4 id="unlink_1">unlink</h4>
+<pre><code class="language-python">def unlink()
+</code></pre>
+<p>See <a href="./#dposlib.ark.api.unlink"><code>dposlib.ark.api.unlink</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.send"></a></p>
+<h4 id="send">send</h4>
+<pre><code class="language-python">@isLinked
+def send(amount, address, vendorField=None, expiration=0)
+</code></pre>
+<p>Broadcast a transfer transaction to the ledger.
+See <a href="../builders/#dposlib.ark.builders.transfer"><code>dposlib.ark.builders.transfer</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.setSecondSecret"></a></p>
+<h4 id="setsecondsecret">setSecondSecret</h4>
+<pre><code class="language-python">@isLinked
+def setSecondSecret(secondSecret)
+</code></pre>
+<p>Broadcast a second secret registration transaction to the ledger.
+See <a href="../builders/#dposlib.ark.builders.registerSecondSecret"><code>dposlib.ark.builders.registerSecondSecret</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.setSecondPublicKey"></a></p>
+<h4 id="setsecondpublickey">setSecondPublicKey</h4>
+<pre><code class="language-python">@isLinked
+def setSecondPublicKey(secondPublicKey)
+</code></pre>
+<p>Broadcast a second secret registration transaction into the ledger.
+See <a href="../builders/#dposlib.ark.builders.registerSecondPublicKey"><code>dposlib.ark.builders.registerSecondPublicKey</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.setDelegate"></a></p>
+<h4 id="setdelegate">setDelegate</h4>
+<pre><code class="language-python">@isLinked
+def setDelegate(username)
+</code></pre>
+<p>Broadcast a delegate registration transaction to the ledger.
+See <a href="../builders/#dposlib.ark.builders.registerAsDelegate"><code>dposlib.ark.builders.registerAsDelegate</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.upVote"></a></p>
+<h4 id="upvote">upVote</h4>
+<pre><code class="language-python">@isLinked
+def upVote(*usernames)
+</code></pre>
+<p>Broadcast an up-vote transaction to the ledger.
+See <a href="../builders/#dposlib.ark.builders.multiVote"><code>dposlib.ark.builders.multiVote</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.downVote"></a></p>
+<h4 id="downvote">downVote</h4>
+<pre><code class="language-python">@isLinked
+def downVote(*usernames)
+</code></pre>
+<p>Broadcast a down-vote transaction to the ledger.
+See <a href="../builders/#dposlib.ark.builders.downVote"><code>dposlib.ark.builders.downVote</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.sendIpfs"></a></p>
+<h4 id="sendipfs">sendIpfs</h4>
+<pre><code class="language-python">@isLinked
+def sendIpfs(ipfs)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.registerIpfs"><code>dposlib.ark.builders.registerIpfs</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.multiSend"></a></p>
+<h4 id="multisend">multiSend</h4>
+<pre><code class="language-python">@isLinked
+def multiSend(*pairs, **kwargs)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.multiPayment"><code>dposlib.ark.builder.multiPayment</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.resignate"></a></p>
+<h4 id="resignate">resignate</h4>
+<pre><code class="language-python">@isLinked
+def resignate()
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.delegateResignation"><code>dposlib.ark.builders.delegateResignation</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.sendHtlc"></a></p>
+<h4 id="sendhtlc">sendHtlc</h4>
+<pre><code class="language-python">@isLinked
+def sendHtlc(amount, address, secret, expiration=24, vendorField=None)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.htlcLock"><code>dposlib.ark.builders.htlcLock</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.claimHtlc"></a></p>
+<h4 id="claimhtlc">claimHtlc</h4>
+<pre><code class="language-python">@isLinked
+def claimHtlc(txid, secret)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.htlcClaim"><code>dposlib.ark.builders.htlcClaim</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.refundHtlc"></a></p>
+<h4 id="refundhtlc">refundHtlc</h4>
+<pre><code class="language-python">@isLinked
+def refundHtlc(txid)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.htlcRefund"><code>dposlib.ark.builders.htlcRefund</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.createEntity"></a></p>
+<h4 id="createentity">createEntity</h4>
+<pre><code class="language-python">@isLinked
+def createEntity(name, type="business", subtype=0, ipfsData=None)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.entityRegister"><code>dposlib.ark.builders.entityRegister</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.updateEntity"></a></p>
+<h4 id="updateentity">updateEntity</h4>
+<pre><code class="language-python">@isLinked
+def updateEntity(registrationId, ipfsData, name=None)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.entityUpdate"><code>dposlib.ark.builders.entityUpdate</code></a>.</p>
+<p><a id="dposlib.ark.api.Wallet.resignEntity"></a></p>
+<h4 id="resignentity">resignEntity</h4>
+<pre><code class="language-python">@isLinked
+def resignEntity(registrationId)
+</code></pre>
+<p>See <a href="../builders/#dposlib.ark.builders.entityResign"><code>dposlib.ark.builders.entityResign</code></a>.</p>
+<p><a id="dposlib.ark.api.Webhook"></a></p>
+<h2 id="webhook-objects">Webhook Objects</h2>
+<pre><code class="language-python">class Webhook(Content)
+</code></pre>
+<pre><code class="language-python">&gt;&gt;&gt; import dposlib
+&gt;&gt;&gt; peer = "http:/127.0.0.1:4004"
+&gt;&gt;&gt; target = "http://127.0.0.1/targetted/endpoint"
+&gt;&gt;&gt; wh = dposlib.core.api.Webhook(
+...   peer, "transaction.applied", target, "amount&lt;1"
+... )
+security token: 9f86d081884c7d659a2feaa0c55ad015...2b0b822cd15d6c15b0f00a08
+&gt;&gt;&gt; dposlib.core.api.webhook.verify("9f86d081884c7d659a2feaa0c55ad015")
+True
+&gt;&gt;&gt; wh.delete()
+{"sucess": True, "status": 204}
+</code></pre>
+<p><a id="dposlib.ark.api.Webhook.condition"></a></p>
+<h4 id="condition">condition</h4>
+<pre><code class="language-python">@staticmethod
+def condition(expr)
+</code></pre>
+<p>Webhook condition builder from <code>str</code> expression. It is internally used
+by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> method.</p>
+<style>td,th{border:none!important;text-align:left;}</style>
+<table>
+<thead>
+<tr>
+<th>webhook</th>
+<th>dposlib</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lt</code> / <code>lte</code></td>
+<td><code>&lt;</code> / <code>&lt;=</code></td>
+</tr>
+<tr>
+<td><code>gt</code> / <code>gte</code></td>
+<td><code>&gt;</code> / <code>&gt;=</code></td>
+</tr>
+<tr>
+<td><code>eq</code> / <code>ne</code></td>
+<td><code>==</code> / <code>!=</code></td>
+</tr>
+<tr>
+<td><code>truthy</code> / <code>falsy</code></td>
+<td><code>?</code> / <code>!?</code></td>
+</tr>
+<tr>
+<td><code>regexp</code> / <code>contains</code></td>
+<td><code>\</code> / <code>$</code></td>
+</tr>
+<tr>
+<td><code>between</code> / <code>not-between</code></td>
+<td><code>&lt;&gt;</code> / <code>!&lt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python">&gt;&gt;&gt; import dposlib.ark.api as api
+&gt;&gt;&gt; api.Webhook.condition(r"vendorField\^.*payroll.*$")
+{'value': '^.*payroll.*$', 'key': 'vendorField', 'condition': 'regexp'}
+&gt;&gt;&gt; api.Webhook.condition("amount&lt;&gt;2000000000000:4000000000000")
+{
+    'value': {'min': '2000000000000', 'max': '4000000000000'},
+    'condition': 'between',
+    'key': 'amount'
+}
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>expr</code> <em>str</em> - human readable expression.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dict</code> - webhook conditions</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../tx/" title="Transaction">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../../rest/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../tx/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '../..';</script>
+<script defer="" src="../../js/theme_extra.js"></script>
+<script defer="" src="../../js/theme.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

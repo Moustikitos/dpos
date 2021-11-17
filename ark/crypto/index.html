@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Cryptography - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Cryptography";
+    var mkdocs_page_input_path = "ark\\crypto.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> The dposlib Project</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Cryptography</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#getkeys">getKeys</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getmultisignaturepublickey">getMultiSignaturePublicKey</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getaddressfromsecret">getAddressFromSecret</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getaddress">getAddress</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getwif">getWIF</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wifsignature">wifSignature</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wifsignaturefrombytes">wifSignatureFromBytes</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getsignature">getSignature</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getsignaturefrombytes">getSignatureFromBytes</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#verifysignature">verifySignature</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#verifysignaturefrombytes">verifySignatureFromBytes</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getid">getId</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getidfrombytes">getIdFromBytes</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getbytes">getBytes</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#checktransaction">checkTransaction</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="../..">Docs</a> »</li>
+<li>Ark.io blockchain »</li>
+<li>Cryptography</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/crypto.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a id="dposlib.ark.crypto"></a></p>
+<h1 id="dposlibarkcrypto">dposlib.ark.crypto</h1>
+<p><a id="dposlib.ark.crypto.getKeys"></a></p>
+<h4 id="getkeys">getKeys</h4>
+<pre><code class="language-python">def getKeys(secret)
+</code></pre>
+<p>Generate keyring containing secp256k1 keys-pair and wallet import format
+(WIF).</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str, bytes or int</em> - anything that could issue a private key on
+  secp256k1 curve.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dict</code> - public, private and WIF keys.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getMultiSignaturePublicKey"></a></p>
+<h4 id="getmultisignaturepublickey">getMultiSignaturePublicKey</h4>
+<pre><code class="language-python">def getMultiSignaturePublicKey(minimum, *publicKeys)
+</code></pre>
+<p>Compute ARK multi signature public key according to <a href="https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-18.md">ARK AIP <code>18</code></a>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>minimum</code> <em>int</em> - minimum signature required.</li>
+<li><code>publicKeys</code> <em>list of str</em> - public key list.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - the multisignature public key.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getAddressFromSecret"></a></p>
+<h4 id="getaddressfromsecret">getAddressFromSecret</h4>
+<pre><code class="language-python">def getAddressFromSecret(secret, marker=None)
+</code></pre>
+<p>Compute ARK address from secret.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - secret string.</li>
+<li><code>marker</code> <em>int</em> - network marker (optional).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the address.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getAddress"></a></p>
+<h4 id="getaddress">getAddress</h4>
+<pre><code class="language-python">def getAddress(publicKey, marker=None)
+</code></pre>
+<p>Compute ARK address from publicKey.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>publicKey</code> <em>str</em> - public key.</li>
+<li><code>marker</code> <em>int</em> - network marker (optional).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the address.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getWIF"></a></p>
+<h4 id="getwif">getWIF</h4>
+<pre><code class="language-python">def getWIF(seed)
+</code></pre>
+<p>Compute WIF address from seed.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>seed</code> <em>bytes</em> - a sha256 sequence bytes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>base58</code> - the WIF address.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.wifSignature"></a></p>
+<h4 id="wifsignature">wifSignature</h4>
+<pre><code class="language-python">def wifSignature(tx, wif)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description.</li>
+<li><code>wif</code> <em>str</em> - wif key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.wifSignatureFromBytes"></a></p>
+<h4 id="wifsignaturefrombytes">wifSignatureFromBytes</h4>
+<pre><code class="language-python">def wifSignatureFromBytes(data, wif)
+</code></pre>
+<p>Generate signature from data using WIF key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence.</li>
+<li><code>wif</code> <em>str</em> - wif key.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getSignature"></a></p>
+<h4 id="getsignature">getSignature</h4>
+<pre><code class="language-python">def getSignature(tx, privateKey, **options)
+</code></pre>
+<p>Generate transaction signature using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction description.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>exclude_sig</code> <em>bool</em> - exclude signature during tx serialization.
+  Defalut to True.</li>
+<li><code>exclude_multi_sig</code> <em>bool</em> - exclude signatures during tx
+  serialization. Defalut to True.</li>
+<li><code>exclude_second_sig</code> <em>bool</em> - exclude second signatures during tx
+  serialization. Defalut to True.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getSignatureFromBytes"></a></p>
+<h4 id="getsignaturefrombytes">getSignatureFromBytes</h4>
+<pre><code class="language-python">def getSignatureFromBytes(data, privateKey)
+</code></pre>
+<p>Generate signature from data using private key.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - bytes sequence.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - signature.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.verifySignature"></a></p>
+<h4 id="verifysignature">verifySignature</h4>
+<pre><code class="language-python">def verifySignature(value, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>value</code> <em>str</em> - value as hex string.</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>signature</code> <em>str</em> - signature as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if signature matches the public key.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.verifySignatureFromBytes"></a></p>
+<h4 id="verifysignaturefrombytes">verifySignatureFromBytes</h4>
+<pre><code class="language-python">def verifySignatureFromBytes(data, publicKey, signature)
+</code></pre>
+<p>Verify signature.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data.</li>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>signature</code> <em>str</em> - signature as hex string.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if signature matches the public key.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getId"></a></p>
+<h4 id="getid">getId</h4>
+<pre><code class="language-python">def getId(tx)
+</code></pre>
+<p>Generate transaction id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - id.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getIdFromBytes"></a></p>
+<h4 id="getidfrombytes">getIdFromBytes</h4>
+<pre><code class="language-python">def getIdFromBytes(data)
+</code></pre>
+<p>Generate data id.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>data</code> <em>bytes</em> - data as bytes sequence.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>hex</code> - id.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.getBytes"></a></p>
+<h4 id="getbytes">getBytes</h4>
+<pre><code class="language-python">def getBytes(tx, **options)
+</code></pre>
+<p>Hash transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>exclude_sig</code> <em>bool</em> - exclude signature during tx serialization.
+  Defalut to True.</li>
+<li><code>exclude_multi_sig</code> <em>bool</em> - exclude signatures during tx
+  serialization. Defalut to True.</li>
+<li><code>exclude_second_sig</code> <em>bool</em> - exclude second signatures during tx
+  serialization. Defalut to True.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bytes</code> - transaction serial.</li>
+</ul>
+<p><a id="dposlib.ark.crypto.checkTransaction"></a></p>
+<h4 id="checktransaction">checkTransaction</h4>
+<pre><code class="language-python">def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[])
+</code></pre>
+<p>Verify transaction validity.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+<li><code>secondPublicKey</code> <em>str</em> - second public key to use if needed.</li>
+<li><code>multiPublicKeys</code> <em>list</em> - owners public keys (sorted according to
+  associated type-4-tx asset).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bool</code> - True if transaction is valid.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral" href="../builders/" title="Transaction builders"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../builders/" style="color: #fcfcfc">« Previous</a></span>
+</span>
+</div>
+<script>var base_url = '../..';</script>
+<script defer="" src="../../js/theme_extra.js"></script>
+<script defer="" src="../../js/theme.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

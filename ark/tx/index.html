@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Transaction - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Transaction";
+    var mkdocs_page_input_path = "ark\\tx.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> The dposlib Project</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Transaction</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#serialize">serialize</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transaction-objects">Transaction Objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#feeincluded">feeIncluded</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#usedynamicfee">useDynamicFee</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#link">link</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sign">sign</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signsign">signSign</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signwithsecret">signWithSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signsignwithsecondsecret">signSignWithSecondSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#multisignwithsecret">multiSignWithSecret</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signwithkeys">signWithKeys</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signsignwithkey">signSignWithKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#multisignwithkey">multiSignWithKey</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#identify">identify</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#finalize">finalize</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="../..">Docs</a> »</li>
+<li>Ark.io blockchain »</li>
+<li>Transaction</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/tx.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a id="dposlib.ark.tx"></a></p>
+<h1 id="dposlibarktx">dposlib.ark.tx</h1>
+<p><a id="dposlib.ark.tx.serialize"></a></p>
+<h4 id="serialize">serialize</h4>
+<pre><code class="language-python">def serialize(tx, **options)
+</code></pre>
+<p>Serialize transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tx</code> <em>dict or Transaction</em> - transaction object.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>bytes</code> - transaction serial representation.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction"></a></p>
+<h2 id="transaction-objects">Transaction Objects</h2>
+<pre><code class="language-python">class Transaction(dict)
+</code></pre>
+<p>A python <code>dict</code> that implements all the necessities to manually generate
+valid transactions.</p>
+<p><a id="dposlib.ark.tx.Transaction.feeIncluded"></a></p>
+<h4 id="feeincluded">feeIncluded</h4>
+<p>If <code>True</code> then <code>amount</code> + <code>fee</code> = total arktoshi flow</p>
+<p><a id="dposlib.ark.tx.Transaction.useDynamicFee"></a></p>
+<h4 id="usedynamicfee">useDynamicFee</h4>
+<pre><code class="language-python">@staticmethod
+def useDynamicFee(value="minFee")
+</code></pre>
+<p>Activate and configure dynamic fees parameters. Value can be either an
+integer defining the fee multiplier constant or a string defining the
+fee level to use acccording to the 30-days-average. possible values are
+<code>avgFee</code> <code>minFee</code> (default) and <code>maxFee</code>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>value</code> <em>str or int</em> - constant or fee multiplier.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.link"></a></p>
+<h4 id="link">link</h4>
+<pre><code class="language-python">def link(secret=None, secondSecret=None)
+</code></pre>
+<p>Save public and private keys derived from secrets. This is equivalent
+to wallet login. it limits number of secret keyboard entries.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+<li><code>secondSecret</code> <em>str</em> - second passphrase.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.sign"></a></p>
+<h4 id="sign">sign</h4>
+<pre><code class="language-python">def sign()
+</code></pre>
+<p>Generate the <code>signature</code> field. Private key have to be set first.</p>
+<p><a id="dposlib.ark.tx.Transaction.signSign"></a></p>
+<h4 id="signsign">signSign</h4>
+<pre><code class="language-python">def signSign()
+</code></pre>
+<p>Generate the <code>signSignature</code> field. Transaction have to be signed and
+second private key have to be set first.</p>
+<p><a id="dposlib.ark.tx.Transaction.signWithSecret"></a></p>
+<h4 id="signwithsecret">signWithSecret</h4>
+<pre><code class="language-python">def signWithSecret(secret)
+</code></pre>
+<p>Generate the <code>signature</code> field using passphrase. The associated
+public and private keys are stored till <code>dposlib.ark.unlink</code> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em><code>str</code></em> - passphrase.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.signSignWithSecondSecret"></a></p>
+<h4 id="signsignwithsecondsecret">signSignWithSecondSecret</h4>
+<pre><code class="language-python">def signSignWithSecondSecret(secondSecret)
+</code></pre>
+<p>Generate the <code>signSignature</code> field using second passphrase. The
+associated second public and private keys are stored till
+<code>dposlib.ark.unlink</code> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondSecret</code> <em><code>str</code></em> - second passphrase.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.multiSignWithSecret"></a></p>
+<h4 id="multisignwithsecret">multiSignWithSecret</h4>
+<pre><code class="language-python">def multiSignWithSecret(secret)
+</code></pre>
+<p>Add a signature in <code>signatures</code> field.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>index</code> <em>int</em> - signature index.</li>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.signWithKeys"></a></p>
+<h4 id="signwithkeys">signWithKeys</h4>
+<pre><code class="language-python">def signWithKeys(publicKey, privateKey)
+</code></pre>
+<p>Generate the <code>signature</code> field using public and private keys. They
+are stored till <code>dposlib.ark.unlink</code> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>publicKey</code> <em>str</em> - public key as hex string.</li>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.signSignWithKey"></a></p>
+<h4 id="signsignwithkey">signSignWithKey</h4>
+<pre><code class="language-python">def signSignWithKey(secondPrivateKey)
+</code></pre>
+<p>Generate the <code>signSignature</code> field using second private key. It is
+stored till <code>dposlib.ark.unlink</code> is called.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secondPrivateKey</code> <em><code>str</code></em> - second private key as hex string.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.multiSignWithKey"></a></p>
+<h4 id="multisignwithkey">multiSignWithKey</h4>
+<pre><code class="language-python">def multiSignWithKey(privateKey)
+</code></pre>
+<p>Add a signature in <code>signatures</code> field according to given index and
+privateKey.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>privateKey</code> <em>str</em> - private key as hex string.</li>
+</ul>
+<p><a id="dposlib.ark.tx.Transaction.identify"></a></p>
+<h4 id="identify">identify</h4>
+<pre><code class="language-python">def identify()
+</code></pre>
+<p>Generate the <code>id</code> field. Transaction have to be signed.</p>
+<p><a id="dposlib.ark.tx.Transaction.finalize"></a></p>
+<h4 id="finalize">finalize</h4>
+<pre><code class="language-python">def finalize(secret=None, secondSecret=None, fee=None, fee_included=False)
+</code></pre>
+<p>Finalize a transaction by setting <code>fee</code>, signatures and <code>id</code>.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>secret</code> <em>str</em> - passphrase.</li>
+<li><code>secondSecret</code> <em>str</em> - second passphrase.</li>
+<li><code>fee</code> <em>int</em> - manually set fee value in <code>arktoshi</code>.</li>
+<li><code>fee_included</code> <em>bool</em> - see <code>dposlib.ark.tx.Transaction.feeIncluded</code>.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../builders/" title="Transaction builders">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../api/" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../api/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../builders/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '../..';</script>
+<script defer="" src="../../js/theme_extra.js"></script>
+<script defer="" src="../../js/theme.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>
