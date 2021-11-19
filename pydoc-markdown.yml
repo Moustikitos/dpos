@@ -1,6 +1,5 @@
 loaders:
   - type: python
-    search_path: [./]
 
 processors:
   - type: filter
@@ -12,12 +11,16 @@ hooks:
   pre-render:
   - python -c "import os;os.makedirs('./docs', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/ark', exist_ok=True)"
+  - python -c "import os;os.makedirs('./docs/ada', exist_ok=True)"
   - python -c "import shutil;shutil.copy('./index.md', './docs/index.md')"
   - pydoc-markdown -m dposlib.rest         > ./docs/rest.md
+  - pydoc-markdown -m dposlib.ark          > ./docs/ark/ark.md
   - pydoc-markdown -m dposlib.ark.api      > ./docs/ark/api.md
   - pydoc-markdown -m dposlib.ark.tx       > ./docs/ark/tx.md
   - pydoc-markdown -m dposlib.ark.builders > ./docs/ark/builders.md
   - pydoc-markdown -m dposlib.ark.crypto   > ./docs/ark/crypto.md
+  - pydoc-markdown -m dposlib.ark.ldgr     > ./docs/ark/ldgr.md
+  - pydoc-markdown -m dposlib.ada          > ./docs/ada/blkfrst.md
 
 renderer:
   output_directory: .
@@ -28,9 +31,18 @@ renderer:
     name: index
   - title: Network
     name: rest
-  - title: Ark.io blockchain
+
+  - title: Cardano blockchain
+    name: ada
+    children:
+    - title: Blockfrost.io
+      name: blkfrst
+
+  - title: Ark blockchain
     name: ark
     children:
+    - title: Ark.io
+      name: ark
     - title: API
       name: api
     - title: Transaction
@@ -39,6 +51,8 @@ renderer:
       name: builders
     - title: Cryptography
       name: crypto
+    - title: Ledger Wallet
+      name: ldgr
 
   mkdocs_config:
     site_name: The dposlib Project

@@ -409,6 +409,16 @@ See [`dposlib.ark.builders.entityResign`](
     builders.md#dposlib.ark.builders.entityResign
 ).
 
+<a id="dposlib.ark.api.Ledger"></a>
+
+## Ledger Objects
+
+```python
+class Ledger(Wallet)
+```
+
+Ledger wallet api.
+
 <a id="dposlib.ark.api.Webhook"></a>
 
 ## Webhook Objects

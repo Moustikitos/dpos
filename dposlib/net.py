@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# ada = {
-#     "familly": "ada",
+shelley = {
+    "familly": "ada",
+    "seeds": [
+        "https://cardano-testnet.blockfrost.io"
+    ]
+}
 
-#     "seeds": [
-#         "https://cardanoexplorer.com/api"
-#     ]
-# }
+ada = {
+    "familly": "ada",
+    "slip44": 1815,
+    "seeds": [
+        "https://cardano-mainnet.blockfrost.io"
+    ]
+}
 
 ark = {
     "familly": "ark",
