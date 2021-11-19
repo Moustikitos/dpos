@@ -44,8 +44,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Ark.io blockchain</span></p>
+<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark blockchain</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../ark/">Ark.io</a>
+</li>
 <li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
 <ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
@@ -110,6 +117,8 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#ledger-objects">Ledger Objects</a>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#webhook-objects">Webhook Objects</a>
 <ul>
 <li class="toctree-l3"><a class="reference internal" href="#condition">condition</a>
@@ -123,6 +132,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
 </li>
 </ul>
 </div>
@@ -138,7 +149,7 @@
 <div aria-label="breadcrumbs navigation" role="navigation">
 <ul class="wy-breadcrumbs">
 <li><a href="../..">Docs</a> »</li>
-<li>Ark.io blockchain »</li>
+<li>Ark blockchain »</li>
 <li>API</li>
 <li class="wy-breadcrumbs-aside">
 <a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/api.md"> Edit on GitHub</a>
@@ -383,6 +394,11 @@ def updateEntity(registrationId, ipfsData, name=None)
 def resignEntity(registrationId)
 </code></pre>
 <p>See <a href="../builders/#dposlib.ark.builders.entityResign"><code>dposlib.ark.builders.entityResign</code></a>.</p>
+<p><a id="dposlib.ark.api.Ledger"></a></p>
+<h2 id="ledger-objects">Ledger Objects</h2>
+<pre><code class="language-python">class Ledger(Wallet)
+</code></pre>
+<p>Ledger wallet api.</p>
 <p><a id="dposlib.ark.api.Webhook"></a></p>
 <h2 id="webhook-objects">Webhook Objects</h2>
 <pre><code class="language-python">class Webhook(Content)
@@ -464,7 +480,7 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
 <a class="btn btn-neutral float-right" href="../tx/" title="Transaction">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral" href="../ark/" title="Ark.io"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -483,7 +499,7 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 <span>
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
 </span>
-<span><a href="../../rest/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../ark/" style="color: #fcfcfc">« Previous</a></span>
 <span><a href="../tx/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
