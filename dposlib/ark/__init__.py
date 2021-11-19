@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-ARK.io specific package. See [Ark API documentation](
+ARK.io specific package.
+
+See [Ark API documentation](
     https://api.ark.dev/public-rest-api/getting-started
 ) to see how to use http calls.
 

@@ -2,7 +2,7 @@
 
 """
 `rest` module provides network loaders and [`usrv.req.EndPoint`](
-    https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L33
+    https://github.com/Moustikitos/micro-server/blob/master/usrv/req.py#L38
 ) root class to implement `GET`, `POST`, `PUT` and `DELETE` HTTP requests.
 
 When a specific blockchain package is loaded through `rest.use` definition, a
