@@ -591,83 +591,77 @@ class Wallet(Content):
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
 
-if LEDGERBLUE:
+class Ledger(Wallet):
+    """
+    Ledger wallet api.
+    """
 
-    class Ledger(Wallet):
-        """
-        Ledger wallet api.
-        """
+    d_path = re.compile(r"^44'/[0-9]*'/[0-9]*'/[0-9]/[0-9]$")
 
-        def __init__(self, account, index, network=0, **kw):
-            self._debug = kw.pop("debug", False)
-            self._schnorr = kw.pop("schnorr", True)
-            # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+    def __init__(self, account=0, index=0, network=0, **kw):
+        if not LEDGERBLUE:
+            raise Exception("ledgerblue is not installed")
+        self._debug = kw.pop("debug", False)
+        self._schnorr = kw.pop("schnorr", True)
+
+        # aip20 : https://github.com/ArkEcosystem/AIPs/issues/29
+        d_path = kw.pop("derivation_path", kw.pop("path", False))
+        if d_path is not False:
+            if Ledger.d_path.match(d_path) is not None:
+                self._derivationPath
+            else:
+                raise Exception("%s not a valid derivation path" % d_path)
+        else:
             self._derivationPath = "44'/%s'/%s'/%s/%s" % (
                 getattr(dposlib.rest.cfg, "slip44", "111"),
                 getattr(dposlib.rest.cfg, "aip20", network),
                 account,
                 index
             )
-            self._dongle_path = ldgr.parseBip44Path(self._derivationPath)
-            puk = ldgr.sendApdu(
-                [ldgr.buildPukApdu(self._dongle_path)], debug=self._debug
-            )[2:]
-            object.__setattr__(self, "publicKey", puk)
-            object.__setattr__(
-                self, "address", crypto.getAddress(puk)
-            )
-            Wallet.__init__(self, self.address, **kw)
 
-        @staticmethod
-        def fromDerivationPath(derivationPath, **kw):
-            ldgr_wlt = Ledger(0, 0, 0, **kw)
-            ldgr_wlt._derivationPath = derivationPath
-            ldgr_wlt._dongle_path = ldgr.parseBip44Path(derivationPath)
-            puk = ldgr.sendApdu(
-                [ldgr.buildPukApdu(ldgr_wlt._dongle_path)],
-                debug=ldgr_wlt._debug
-            )[2:]
-            object.__setattr__(ldgr_wlt, "publicKey", puk)
-            object.__setattr__(
-                ldgr_wlt, "address", crypto.getAddress(puk)
-            )
-            ldgr_wlt._Content__args = (ldgr_wlt.address,)
-            ldgr_wlt.update()
-            return ldgr_wlt
+        self._dongle_path = ldgr.parseBip44Path(self._derivationPath)
+        puk = ldgr.sendApdu(
+            [ldgr.buildPukApdu(self._dongle_path)], debug=self._debug
+        )[2:]
+        object.__setattr__(self, "publicKey", puk)
+        object.__setattr__(
+            self, "address", crypto.getAddress(puk)
+        )
+        Wallet.__init__(self, self.address, **kw)
 
-        def _finalizeTx(self, tx):
-            if "fee" not in tx or self._fee is not None:
-                tx.fee = self._fee
-            tx.feeIncluded = self._fee_included
-            tx["senderPublicKey"] = self.publicKey
-            tx["signature"] = ldgr.sendApdu(
-                ldgr.buildSignatureApdu(
-                    serialize(tx),
-                    self._dongle_path,
-                    "tx",
-                    self._schnorr
-                ),
-                debug=self._debug
-            )
+    def _finalizeTx(self, tx):
+        if "fee" not in tx or self._fee is not None:
+            tx.fee = self._fee
+        tx.feeIncluded = self._fee_included
+        tx["senderPublicKey"] = self.publicKey
+        tx["signature"] = ldgr.sendApdu(
+            ldgr.buildSignatureApdu(
+                serialize(tx),
+                self._dongle_path,
+                "tx",
+                self._schnorr
+            ),
+            debug=self._debug
+        )
 
-            if tx._secondPublicKey is not None:
-                try:
+        if tx._secondPublicKey is not None:
+            try:
+                k2 = crypto.getKeys(
+                    getpass.getpass("second secret > ")
+                )
+                while k2.get("publicKey", None) != tx._secondPublicKey:
                     k2 = crypto.getKeys(
                         getpass.getpass("second secret > ")
                     )
-                    while k2.get("publicKey", None) != tx._secondPublicKey:
-                        k2 = crypto.getKeys(
-                            getpass.getpass("second secret > ")
-                        )
-                except KeyboardInterrupt:
-                    raise Exception("transaction cancelled")
-                else:
-                    tx["signSignature"] = crypto.getSignature(
-                        tx, k2["privateKey"]
-                    )
+            except KeyboardInterrupt:
+                raise Exception("transaction cancelled")
+            else:
+                tx["signSignature"] = crypto.getSignature(
+                    tx, k2["privateKey"]
+                )
 
-            tx.identify()
-            return tx
+        tx.identify()
+        return tx
 
 
 class Delegate(Content):
@@ -896,7 +890,7 @@ class Webhook(Content):
     def __init__(self, whk_id, **kw):
         Content.__init__(
             self, GET.api.webhooks, "%s" % whk_id,
-            **dict({"track": False, "returnKey": "data"}, **kw)
+            **dict({"keep_alive": False, "returnKey": "data"}, **kw)
         )
 
     def delete(self):

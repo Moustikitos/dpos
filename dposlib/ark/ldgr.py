@@ -63,12 +63,20 @@ def parseBip44Path(path):
         return b""
     result = b""
     elements = path.split('/')
-    for pathElement in elements:
-        element = pathElement.split("'")
-        if len(element) == 1:
-            result = result + PACK(">I", int(element[0]))
+    for elem in elements:
+        value = int(elem.replace("'", ""))
+        if not elem.endswith("'"):
+            result = result + PACK(">I", 0x80000000 | value)
         else:
-            result = result + PACK(">I", 0x80000000 | int(element[0]))
+            result = result + PACK(">I", value)
+
+    # for pathElement in elements:
+    #     element = pathElement.split("'")
+    #     if len(element) == 1:
+        #     result = result + PACK(">I", int(element[0]))
+        # else:
+        #     result = result + PACK(">I", 0x80000000 | int(element[0]))
+
     return result
 
 
@@ -175,7 +183,7 @@ def signMessage(msg, path=None, schnorr=True, debug=False):
     Compute schnorr or ecdsa signature of msg according to derivation path.
 
     Args:
-        msg (str or bytes): transaction as dictionary.
+        msg (str or bytes): message to sign.
         path (str): derivation path.
         schnorr (bool): use schnorr signature if True else ecdsa.
         debug (bool): flag to activate debug messages from ledger key.
