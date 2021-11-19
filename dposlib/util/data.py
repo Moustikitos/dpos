@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 import os
 import io
 import json
@@ -28,10 +29,6 @@ def dumpJson(data, path):
         os.makedirs(os.path.dirname(path))
     except Exception:
         pass
-    # with io.open(
-    #     path, "w" if PY3 else "wb",
-    #     **({"encoding": "utf-8"} if PY3 else {})
-    # ) as out:
     with io.open(path, "w", encoding="utf-8") as out:
         json.dump(data, out, indent=4)
     try:
