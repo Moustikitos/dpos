@@ -85,20 +85,6 @@ from dposlib.ark.builders import (
 
 cfg.headers["API-Version"] = "3"
 
-TRANSACTIONS = {
-    0: "transfer",
-    1: "secondSignature",
-    2: "delegateRegistration",
-    3: "vote",
-    4: "multiSignature",
-    5: "ipfs",
-    6: "multiPayment",
-    7: "delegateResignation",
-    8: "htlcLock",
-    9: "htlcClaim",
-    10: "htlcRefund",
-}
-
 GETNAME = {
     1: {
         0: lambda tx: "transfer",
@@ -284,11 +270,11 @@ def stop():
 
 
 __all__ = [
-    "api", "cfg", "rest", "crypto",
-    "hexlify", "unhexlify", "broadcastTransactions",
-    "transfer", "registerSecondSecret", "registerSecondPublicKey",
-    "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
-    "registerIpfs", "multiPayment", "delegateResignation",
-    "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund",
-    "entityRegister", "entityUpdate", "entityResign"
+    api, cfg, rest, crypto,
+    hexlify, unhexlify, broadcastTransactions,
+    transfer, registerSecondSecret, registerSecondPublicKey,
+    registerAsDelegate, upVote, downVote, registerMultiSignature,
+    registerIpfs, multiPayment, delegateResignation,
+    htlcSecret, htlcLock, htlcClaim, htlcRefund,
+    entityRegister, entityUpdate, entityResign
 ]

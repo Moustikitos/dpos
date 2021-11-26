@@ -61,7 +61,7 @@ def setFees(cls, value=None):
     name = dposlib.core.GETNAME.get(
         cls["typeGroup"], 1
     ).get(cls["type"], 0)(cls)
-    
+
     # manualy set fees
     if isinstance(value, (float, int)):
         value = int(value)
@@ -104,9 +104,7 @@ def setFees(cls, value=None):
                 ) * fmult
         # use fee statistics
         else:
-            value = int(
-                cfg.feestats[str(cls["typeGroup"])][name][feesl[:3]]
-            )
+            value = int(cfg.feestats[str(cls["typeGroup"])][name][feesl[:3]])
 
     cls._reset()
     dict.__setitem__(cls, "fee", value)
