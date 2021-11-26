@@ -59,7 +59,7 @@ def setFees(cls, value=None):
     fmult = Transaction.FMULT
     feesl = Transaction.FEESL
     name = dposlib.core.GETNAME.get(
-        cls["typeGroup"], 0
+        cls["typeGroup"], 1
     ).get(cls["type"], 0)(cls)
     
     # manualy set fees
