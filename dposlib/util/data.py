@@ -11,7 +11,7 @@ import json
 def loadJson(path):
     """Load JSON data from path"""
     if os.path.exists(path):
-        with io.open(path, encoding="utf-8") as in_:
+        with io.open(path, "r", encoding="utf-8") as in_:
             data = json.load(in_)
     else:
         data = {}
