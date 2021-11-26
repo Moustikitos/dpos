@@ -12,7 +12,7 @@ can be requested using `rest` module.
 >>> rest.use("shelley")
 Paste your blockfrost.io token > testnetTQemTkbWv...YceJXT
 True
->>> rest.GET.api.v0.blocks.latest()
+>>> rest.GET.blocks.latest()
 {
     'time': 1637339033,
     'height': 3086136,
@@ -34,14 +34,45 @@ True
     'status': 200
 }
 ```
+
+[Available endpoints](https://docs.blockfrost.io)
 """
 
-from dposlib import cfg, rest
+import os
+import sys
+
+from dposlib import cfg, rest, ROOT
+from dposlib.util import data
 
 
 def init(seed=None):
-    cfg.headers["project_id"] = input("Paste your blockfrost.io token > ")
-    return rest.GET.api.v0.health.clock().get("status", False) == 200
+    token = None
+    json_file = os.path.join(ROOT, ".json", "blockfrost.token")
+    tokens = data.loadJson(json_file)
+
+    available = [t for t in tokens if tokens[t] == rest.cfg.network]
+    if available:
+        try:
+            sys.stdout.write("Available token [0=last]:\n")
+            for t in available:
+                sys.stdout.write(" - %d : %s\n" % (available.index(t)+1, t))
+            token = available[int(input("Select token number > "))-1]
+        except Exception:
+            pass
+        else:
+            sys.stdout.write("Blockfrost account: %s\n" % token)
+
+    if not token:
+        token = input("Paste your blockfrost.io token > ")
+
+    cfg.headers["project_id"] = token
+
+    check = rest.GET.health.clock().get("status", False) == 200
+    if check:
+        tokens[token] = rest.cfg.network
+        data.dumpJson(tokens, json_file)
+
+    return check
 
 
 def stop():
