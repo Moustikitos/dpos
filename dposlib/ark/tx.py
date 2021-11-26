@@ -58,7 +58,10 @@ def deleteSenderPublicKey(cls):
 def setFees(cls, value=None):
     fmult = Transaction.FMULT
     feesl = Transaction.FEESL
-
+    name = dposlib.core.GETNAME.get(
+        cls["typeGroup"], 0
+    ).get(cls["type"], 0)(cls)
+    
     # manualy set fees
     if isinstance(value, (float, int)):
         value = int(value)
@@ -80,7 +83,7 @@ def setFees(cls, value=None):
             if fmult is None:
                 value = int(
                     getattr(cfg, "fees", {}).get("staticFees", {})
-                    .get(dposlib.core.TRANSACTIONS[cls["type"]], 10000000)
+                    .get(name, 10000000)
                 )
             # compute dynamic fees
             # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
@@ -95,13 +98,12 @@ def setFees(cls, value=None):
                 )
 
                 value = int(
-                    cfg.doffsets.get(dposlib.core.TRANSACTIONS[typ_], 100) +
+                    cfg.doffsets.get(name, 100) +
                     55 + (4 if version >= 0x02 else 0) +
                     lenVF + len(serde.serializePayload(cls))
                 ) * fmult
         # use fee statistics
         else:
-            name = dposlib.core.GETNAME[cls["typeGroup"]][cls["type"]](cls)
             value = int(
                 cfg.feestats[str(cls["typeGroup"])][name][feesl[:3]]
             )
