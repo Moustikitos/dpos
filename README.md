@@ -33,6 +33,7 @@ sudo apt-get install python-pip python3-pip
     * [X] devnet : `dark`
     * [X] mainet : `ark`
   - Ark forks
+    + [x] Protokol/nft : `protokol` (beta)
     + [x] Compendia : `nos`
     + [x] Qredit : `qredit`
     + [x] Unikname : `uns`
@@ -172,6 +173,7 @@ pip install ledgerblue
 ## Version
 
 ### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] [`protokol/nft`](https://www.protokol.com/protokol-nft-platform/) added
   - [x] `ark.api.Webhook` improvement
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [ ] removed python 2.x compliancy

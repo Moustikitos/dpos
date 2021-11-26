@@ -3,7 +3,7 @@
 shelley = {
     "familly": "ada",
     "seeds": [
-        "https://cardano-testnet.blockfrost.io"
+        "https://cardano-testnet.blockfrost.io/api/v0"
     ]
 }
 
@@ -11,7 +11,17 @@ ada = {
     "familly": "ada",
     "slip44": 1815,
     "seeds": [
-        "https://cardano-mainnet.blockfrost.io"
+        "https://cardano-mainnet.blockfrost.io/api/v0"
+    ]
+}
+
+protokol = {
+    "familly": "protokol",
+    "aip20": 1,
+    "txversion": 2,
+
+    "seeds": [
+        "https://dwallets.ark.io"
     ]
 }
 

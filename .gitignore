@@ -114,6 +114,7 @@ simple_history.html
 
 # custom
 *.zip
+.json/
 .webhooks/
 .registry/
 .synch/
