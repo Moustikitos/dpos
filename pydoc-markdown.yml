@@ -27,6 +27,7 @@ hooks:
   - pydoc-markdown -m dposlib.protokol.builders > ./docs/protokol/builders.md
   - pydoc-markdown -m dposlib.qslp              > ./docs/qslp/qslp.md
   - pydoc-markdown -m dposlib.qslp.api          > ./docs/qslp/api.md
+  - pydoc-markdown -m dposlib.qslp.builders     > ./docs/qslp/builders.md
 
 renderer:
   output_directory: .
@@ -75,6 +76,8 @@ renderer:
       name: qslp
     - title: API
       name: api
+    - title: Transaction builders
+      name: builders
 
   mkdocs_config:
     site_name: The dposlib Project
