@@ -33,13 +33,19 @@ sudo apt-get install python-pip python3-pip
     * [x] devnet : `dark`
     * [x] mainet : `ark`
   - Ark forks
-    + [x] Protokol/nft : `protokol` (beta)
-    + [x] Compendia : `nos`
-    + [x] Qredit : `qredit`
-    + [x] Unikname : `uns`
-    + [x] Internet of People : `iop`
+    * [x] Protokol/nft : `protokol` (beta)
+    * [x] Compendia : `nos`
+    * [] Qredit
+      + [] mainnet :
+      + [x] devnet : `qredit`
+    * [x] Unikname : `uns`
+    * [x] Internet of People : `iop`
+  - Qredit Side Ledger Protocol
+    * [x] mainnet : `qslp`
   - Cardano
-    * [x] Blockfrost gateway: `ada`
+    * [x] Blockfrost gateway
+      + [x] mainnet : `ada`
+      + [x] testnet : `shelley`
 
 ## Main features
 
@@ -179,6 +185,7 @@ pip install ledgerblue
 ### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added
   - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added
+  - [x] [`QSLP`](https://www.qredit.io/blockchain-qslp) side ledger protocol added
   - [x] `ark.api.Webhook` improvement
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy
