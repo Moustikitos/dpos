@@ -11,9 +11,9 @@ can be requested using `rest` module.
 ```python
 >>> from dposlib import rest
 >>> rest.use("shelley")
-Paste your blockfrost.io token > testnetTQemTkbWv...YceJXT
+Paste your blockfrost.io token > testn...YceJXT
 True
->>> rest.GET.api.v0.blocks.latest()
+>>> rest.GET.blocks.latest()
 {
     'time': 1637339033,
     'height': 3086136,
@@ -35,4 +35,6 @@ True
     'status': 200
 }
 ```
+
+[Available endpoints](https://docs.blockfrost.io)
 
