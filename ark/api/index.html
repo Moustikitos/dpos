@@ -136,6 +136,20 @@
 <li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
 </li>
 </ul>
+<p class="caption"><span class="caption-text">Protokol NFT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">QSLP</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../qslp/qslp/">Qredit.io</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../qslp/api/">API</a>
+</li>
+</ul>
 </div>
 </div>
 </nav>
@@ -209,9 +223,9 @@ checked from console untill success or <code>Ctrl+c</code> keyboard interruption
 <pre><code class="language-python">class Content(object)
 </code></pre>
 <p>Live object connected to blockchain. It is initialized with
-<a href="../../rest/#dposlib.rest.GET"><code>dposlib.rest.GET</code></a> request. Object is updated
-every 30s. Endpoint response can be a <code>dict</code> or a <code>list</code>. If it is a
-<code>list</code>, it is stored in <code>data</code> attribute else all fields are stored as
+<a href="../../rest/#dposlib.rest.GET"><code>dposlib.rest.GET</code></a> request. Object is
+updated every 30s. Endpoint response can be a <code>dict</code> or a <code>list</code>. If it is
+a <code>list</code>, it is stored in <code>data</code> attribute else all fields are stored as
 instance attribute.</p>
 <pre><code class="language-python">&gt;&gt;&gt; txs = dposlib.ark.Content(rest.GET.api.transactions)
 &gt;&gt;&gt; txs.data[0]["timestamp"]
@@ -449,7 +463,7 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 </tr>
 <tr>
 <td><code>regexp</code> / <code>contains</code></td>
-<td><code>\</code> / <code>$</code></td>
+<td><code>\\</code> / <code>$</code></td>
 </tr>
 <tr>
 <td><code>between</code> / <code>not-between</code></td>
@@ -458,7 +472,7 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 </tbody>
 </table>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib.ark.api as api
-&gt;&gt;&gt; api.Webhook.condition(r"vendorField\^.*payroll.*$")
+&gt;&gt;&gt; api.Webhook.condition("vendorField\\^.*payroll.*$")
 {'value': '^.*payroll.*$', 'key': 'vendorField', 'condition': 'regexp'}
 &gt;&gt;&gt; api.Webhook.condition("amount&lt;&gt;2000000000000:4000000000000")
 {

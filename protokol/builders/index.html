@@ -7,15 +7,15 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../../img/favicon.ico" rel="shortcut icon"/>
-<title>Blockfrost.io - The dposlib Project</title>
+<title>Transaction builders - The dposlib Project</title>
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
 <link href="../../css/theme.css" rel="stylesheet"/>
 <link href="../../css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
 <script>
     // Current page data
-    var mkdocs_page_name = "Blockfrost.io";
-    var mkdocs_page_input_path = "ada\\blkfrst.md";
+    var mkdocs_page_name = "Transaction builders";
+    var mkdocs_page_input_path = "protokol\\builders.md";
     var mkdocs_page_url = null;
   </script>
 <script defer="" src="../../js/jquery-2.1.1.min.js"></script>
@@ -45,10 +45,8 @@
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Cardano blockchain</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal current" href="./">Blockfrost.io</a>
-<ul class="current">
-</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Ark blockchain</span></p>
@@ -67,10 +65,20 @@
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Protokol NFT</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../prtkl/">Protokol.com</a>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Transaction builders</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#nftregistercollection">nftRegisterCollection</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nftcreate">nftCreate</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nfttransfer">nftTransfer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nftburn">nftBurn</a>
+</li>
+</ul>
 </li>
 </ul>
 <p class="caption"><span class="caption-text">QSLP</span></p>
@@ -93,55 +101,84 @@
 <div aria-label="breadcrumbs navigation" role="navigation">
 <ul class="wy-breadcrumbs">
 <li><a href="../..">Docs</a> »</li>
-<li>Cardano blockchain »</li>
-<li>Blockfrost.io</li>
+<li>Protokol NFT »</li>
+<li>Transaction builders</li>
 <li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ada/blkfrst.md"> Edit on GitHub</a>
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/protokol/builders.md"> Edit on GitHub</a>
 </li>
 </ul>
 <hr/>
 </div>
 <div role="main">
 <div class="section">
-<p><a id="dposlib.ada"></a></p>
-<h1 id="dposlibada">dposlib.ada</h1>
-<p>Cardano specific package trough <a href="https://blockfrost.io"><code>Blockfrost</code></a> provider.</p>
-<p>You have to signup first and create a project. Token can be used on cardano
-testnet <code>shelley</code> or mainnet <code>ada</code> according to your project. <code>blockfrost</code> API
-can be requested using <code>rest</code> module.</p>
-<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use("shelley")
-Paste your blockfrost.io token &gt; testn...YceJXT
-True
-&gt;&gt;&gt; rest.GET.blocks.latest()
-{
-    'time': 1637339033,
-    'height': 3086136,
-    'hash': '72cd383b6c6c5a1a1027b11da58b637eb60ab1520247da10f1558ce2544cb129',
-    'slot': 42969817,
-    'epoch': 169,
-    'epoch_slot': 331417,
-    'slot_leader': 'pool1ta0df6et5d22k2khezze70dvly6kgcm6zp0gpjxc5lwrce0seyq',
-    'size': 630,
-    'tx_count': 2,
-    'output': '49900070463',
-    'fees': '339142',
-    'block_vrf':
-        'vrf_vk1rm9kkh9czf6v2a2qe5ah3jzrh4gr8y04ezsjak79wkspfnn4e73qfdxp5n',
-    'previous_block':
-        'fa98d456b0be6ac38f86222f3606d122e4b2d9216280fd861c06a3b08caeb078',
-    'next_block': None,
-    'confirmations': 0,
-    'status': 200
-}
+<p><a id="dposlib.protokol.builders"></a></p>
+<h1 id="dposlibprotokolbuilders">dposlib.protokol.builders</h1>
+<p><a id="dposlib.protokol.builders.nftRegisterCollection"></a></p>
+<h4 id="nftregistercollection">nftRegisterCollection</h4>
+<pre><code class="language-python">def nftRegisterCollection(name, desc, supply, schema, *issuers, **meta)
 </code></pre>
-<p><a href="https://docs.blockfrost.io">Available endpoints</a></p>
+<p>Build a NFT collection registration transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>name</code> <em>str</em> - NFT name.</li>
+<li><code>desc</code> <em>str</em> - NFT description.</li>
+<li><code>supply</code> <em>int</em> - NFT maximum supply.</li>
+<li><code>schema</code> <em>dict</em> - NFT json schema.</li>
+<li><code>issuers</code> <em>*args</em> - list of public keys allowed to issue the NFT.</li>
+<li><code>meta</code> <em>**kwargs</em> - NFT metadata.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.protokol.builders.nftCreate"></a></p>
+<h4 id="nftcreate">nftCreate</h4>
+<pre><code class="language-python">def nftCreate(collectionId, attributes, address=None)
+</code></pre>
+<p>Build a NFT mint transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>collectionId</code> <em>str</em> - NFT collection id.</li>
+<li><code>attributes</code> <em>dict</em> - NFT attributes matching defined schema.</li>
+<li><code>address</code> <em>str</em> - recipient address.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.protokol.builders.nftTransfer"></a></p>
+<h4 id="nfttransfer">nftTransfer</h4>
+<pre><code class="language-python">def nftTransfer(address, *ids)
+</code></pre>
+<p>Build a NFT transfer transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - recipient address.</li>
+<li><code>ids</code> <em>list</em> - list of NFT id to send (maximum=10).</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
+<p><a id="dposlib.protokol.builders.nftBurn"></a></p>
+<h4 id="nftburn">nftBurn</h4>
+<pre><code class="language-python">def nftBurn(txid)
+</code></pre>
+<p>Build a NFT burn transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>txid</code> <em>str</em> - NFT mint transaction id.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction.</li>
+</ul>
 </div>
 </div>
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../../ark/ark/" title="Ark.io">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../../qslp/qslp/" title="Qredit.io">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../prtkl/" title="Protokol.com"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -160,8 +197,8 @@ True
 <span>
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
 </span>
-<span><a href="../../rest/" style="color: #fcfcfc">« Previous</a></span>
-<span><a href="../../ark/ark/" style="color: #fcfcfc">Next »</a></span>
+<span><a href="../prtkl/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../../qslp/qslp/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script>var base_url = '../..';</script>

@@ -7,15 +7,15 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../../img/favicon.ico" rel="shortcut icon"/>
-<title>Blockfrost.io - The dposlib Project</title>
+<title>Qredit.io - The dposlib Project</title>
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
 <link href="../../css/theme.css" rel="stylesheet"/>
 <link href="../../css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
 <script>
     // Current page data
-    var mkdocs_page_name = "Blockfrost.io";
-    var mkdocs_page_input_path = "ada\\blkfrst.md";
+    var mkdocs_page_name = "Qredit.io";
+    var mkdocs_page_input_path = "qslp\\qslp.md";
     var mkdocs_page_url = null;
   </script>
 <script defer="" src="../../js/jquery-2.1.1.min.js"></script>
@@ -45,10 +45,8 @@
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Cardano blockchain</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal current" href="./">Blockfrost.io</a>
-<ul class="current">
-</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Ark blockchain</span></p>
@@ -74,10 +72,16 @@
 </li>
 </ul>
 <p class="caption"><span class="caption-text">QSLP</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../qslp/qslp/">Qredit.io</a>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Qredit.io</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#init">init</a>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../qslp/api/">API</a>
+<li class="toctree-l2"><a class="reference internal" href="#stop">stop</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
 </li>
 </ul>
 </div>
@@ -93,55 +97,35 @@
 <div aria-label="breadcrumbs navigation" role="navigation">
 <ul class="wy-breadcrumbs">
 <li><a href="../..">Docs</a> »</li>
-<li>Cardano blockchain »</li>
-<li>Blockfrost.io</li>
+<li>QSLP »</li>
+<li>Qredit.io</li>
 <li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ada/blkfrst.md"> Edit on GitHub</a>
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/qslp/qslp.md"> Edit on GitHub</a>
 </li>
 </ul>
 <hr/>
 </div>
 <div role="main">
 <div class="section">
-<p><a id="dposlib.ada"></a></p>
-<h1 id="dposlibada">dposlib.ada</h1>
-<p>Cardano specific package trough <a href="https://blockfrost.io"><code>Blockfrost</code></a> provider.</p>
-<p>You have to signup first and create a project. Token can be used on cardano
-testnet <code>shelley</code> or mainnet <code>ada</code> according to your project. <code>blockfrost</code> API
-can be requested using <code>rest</code> module.</p>
-<pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use("shelley")
-Paste your blockfrost.io token &gt; testn...YceJXT
-True
-&gt;&gt;&gt; rest.GET.blocks.latest()
-{
-    'time': 1637339033,
-    'height': 3086136,
-    'hash': '72cd383b6c6c5a1a1027b11da58b637eb60ab1520247da10f1558ce2544cb129',
-    'slot': 42969817,
-    'epoch': 169,
-    'epoch_slot': 331417,
-    'slot_leader': 'pool1ta0df6et5d22k2khezze70dvly6kgcm6zp0gpjxc5lwrce0seyq',
-    'size': 630,
-    'tx_count': 2,
-    'output': '49900070463',
-    'fees': '339142',
-    'block_vrf':
-        'vrf_vk1rm9kkh9czf6v2a2qe5ah3jzrh4gr8y04ezsjak79wkspfnn4e73qfdxp5n',
-    'previous_block':
-        'fa98d456b0be6ac38f86222f3606d122e4b2d9216280fd861c06a3b08caeb078',
-    'next_block': None,
-    'confirmations': 0,
-    'status': 200
-}
+<p><a id="dposlib.qslp"></a></p>
+<h1 id="dposlibqslp">dposlib.qslp</h1>
+<p>QSLP specific package.</p>
+<p><a id="dposlib.qslp.init"></a></p>
+<h4 id="init">init</h4>
+<pre><code class="language-python">def init(seed=None)
 </code></pre>
-<p><a href="https://docs.blockfrost.io">Available endpoints</a></p>
+<p>Blockchain initialisation. It stores root values in <code>cfg</code> module.</p>
+<p><a id="dposlib.qslp.stop"></a></p>
+<h4 id="stop">stop</h4>
+<pre><code class="language-python">def stop()
+</code></pre>
+<p>Stop daemon initialized by <code>init</code> call.</p>
 </div>
 </div>
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../../ark/ark/" title="Ark.io">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../api/" title="API">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../../protokol/builders/" title="Transaction builders"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -160,8 +144,8 @@ True
 <span>
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
 </span>
-<span><a href="../../rest/" style="color: #fcfcfc">« Previous</a></span>
-<span><a href="../../ark/ark/" style="color: #fcfcfc">Next »</a></span>
+<span><a href="../../protokol/builders/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../api/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script>var base_url = '../..';</script>
