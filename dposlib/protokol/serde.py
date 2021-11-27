@@ -37,9 +37,9 @@ def _9000_0(tx, buf):
     for allowedIssuer in allowedIssuers:
         pack_bytes(buf, unhexlify(allowedIssuer))
 
-    metadata = compactJson(asset["metadata"])
+    metadata = compactJson(asset.get("metadata", {}))
     pack("<I", buf, (len(metadata), ))
-    pack_bytes(buf, jsonSchema.encode("utf-8"))
+    pack_bytes(buf, metadata.encode("utf-8"))
 
 
 def _9000_1(tx, buf):
