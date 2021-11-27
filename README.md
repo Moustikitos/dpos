@@ -30,14 +30,16 @@ sudo apt-get install python-pip python3-pip
 ## Available network
 
   - Ark-core 3.0
-    * [X] devnet : `dark`
-    * [X] mainet : `ark`
+    * [x] devnet : `dark`
+    * [x] mainet : `ark`
   - Ark forks
     + [x] Protokol/nft : `protokol` (beta)
     + [x] Compendia : `nos`
     + [x] Qredit : `qredit`
     + [x] Unikname : `uns`
     + [x] Internet of People : `iop`
+  - Cardano
+    * [x] Blockfrost gateway: `ada`
 
 ## Main features
 
@@ -173,11 +175,12 @@ pip install ledgerblue
 ## Version
 
 ### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [x] [`protokol/nft`](https://www.protokol.com/protokol-nft-platform/) added
+  - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added
+  - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added
   - [x] `ark.api.Webhook` improvement
   - [x] `pySecp256k1` replaced by `cSecp256k1`
-  - [ ] removed python 2.x compliancy
-  - [ ] ark package simplification
+  - [x] removed python 2.x compliancy
+  - [x] ark package simplification
   - [ ] deserialization
 
 ### 0.3.5
