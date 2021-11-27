@@ -3,7 +3,21 @@
 from dposlib.ark.tx import Transaction
 
 
-def NftRegisterCollection(name, desc, supply, schema, *issuers, **meta):
+def nftRegisterCollection(name, desc, supply, schema, *issuers, **meta):
+    """
+    Build a NFT collection registration transaction.
+
+    Args:
+        name (str): NFT name.
+        desc (str): NFT description.
+        supply (int): NFT maximum supply.
+        schema (dict): NFT json schema.
+        issuers (*args): list of public keys allowed to issue the NFT.
+        meta (**kwargs): NFT metadata.
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
     asset = {
         "nftCollection": {
             "name": name,
@@ -22,7 +36,18 @@ def NftRegisterCollection(name, desc, supply, schema, *issuers, **meta):
     return Transaction(typeGroup=9000, type=0, asset=asset)
 
 
-def NftCreate(collectionId, attributes, address=None):
+def nftCreate(collectionId, attributes, address=None):
+    """
+    Build a NFT mint transaction.
+
+    Args:
+        collectionId (str): NFT collection id.
+        attributes (dict): NFT attributes matching defined schema.
+        address (str): recipient address.
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
     asset = {
         "nftToken": {
             "collectionId": collectionId,
@@ -36,7 +61,17 @@ def NftCreate(collectionId, attributes, address=None):
     return Transaction(typeGroup=9000, type=1, asset=asset)
 
 
-def NftTransfer(address, *ids):
+def nftTransfer(address, *ids):
+    """
+    Build a NFT transfer transaction.
+
+    Args:
+        address (str): recipient address.
+        ids (list): list of NFT id to send (maximum=10).
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
     return Transaction(
         typeGroup=9000, type=2,
         asset={
@@ -48,11 +83,20 @@ def NftTransfer(address, *ids):
     )
 
 
-def NftBurn(txid):
+def nftBurn(txid):
+    """
+    Build a NFT burn transaction.
+
+    Args:
+        txid (str): NFT mint transaction id.
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
     return Transaction(
         typeGroup=9000, type=3,
         asset={"nftBurn": {"nftId": txid}}
     )
 
 
-__all__ = [NftRegisterCollection, NftCreate, NftTransfer, NftBurn]
+__all__ = [nftRegisterCollection, nftCreate, nftTransfer, nftBurn]

@@ -10,7 +10,7 @@ can be requested using `rest` module.
 ```python
 >>> from dposlib import rest
 >>> rest.use("shelley")
-Paste your blockfrost.io token > testnetTQemTkbWv...YceJXT
+Paste your blockfrost.io token > testn...YceJXT
 True
 >>> rest.GET.blocks.latest()
 {

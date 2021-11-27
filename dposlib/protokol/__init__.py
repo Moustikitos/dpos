@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+[Protokol/NFT](https://www.protokol.com) platform specific package.
+"""
+
 import dposlib.ark
 
 from dposlib.ark import init, stop, GETNAME, TYPING
@@ -39,7 +43,7 @@ from dposlib.ark.builders import (
     registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
     htlcSecret, htlcLock, htlcClaim, htlcRefund,
     entityRegister, entityUpdate, entityResign,
-    NftRegisterCollection, NftCreate, NftTransfer, NftBurn,
+    nftRegisterCollection, nftCreate, nftTransfer, nftBurn
 )
 
 __all__ = [
@@ -50,5 +54,5 @@ __all__ = [
     registerIpfs, multiPayment, delegateResignation,
     htlcSecret, htlcLock, htlcClaim, htlcRefund,
     entityRegister, entityUpdate, entityResign,
-    NftRegisterCollection, NftCreate, NftTransfer, NftBurn,
+    nftRegisterCollection, nftCreate, nftTransfer, nftBurn
 ]
