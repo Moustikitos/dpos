@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Transaction builders - The dposlib Project</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Transaction builders";
+    var mkdocs_page_input_path = "qslp\\builders.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> The dposlib Project</a>
+<div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Ark blockchain</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/ark/">Ark.io</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/api/">API</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/tx/">Transaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/builders/">Transaction builders</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/crypto/">Cryptography</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ark/ldgr/">Ledger Wallet</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Protokol NFT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">QSLP</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../qslp/">Qredit.io</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Transaction builders</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#qslpgenesis">qslpGenesis</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpburn">qslpBurn</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpmint">qslpMint</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpsend">qslpSend</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslppause">qslpPause</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpresume">qslpResume</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpnewowner">qslpNewOwner</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpfreeze">qslpFreeze</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslpunfreeze">qslpUnFreeze</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2genesis">qslp2Genesis</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2pause">qslp2Pause</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2resume">qslp2Resume</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2newowner">qslp2NewOwner</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2authmeta">qslp2AuthMeta</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2revokemeta">qslp2RevokeMeta</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2clone">qslp2Clone</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2addmeta">qslp2AddMeta</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qslp2voidmeta">qslp2VoidMeta</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">The dposlib Project</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="../..">Docs</a> »</li>
+<li>QSLP »</li>
+<li>Transaction builders</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/qslp/builders.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p><a id="dposlib.qslp.builders"></a></p>
+<h1 id="dposlibqslpbuilders">dposlib.qslp.builders</h1>
+<p>QSLP transaction builders. See <a href="https://aslp.qredit.dev">QSLP API</a> for more
+information.</p>
+<ul>
+<li>QSLP1 token is an ERC20-equivalent-smartbridge-embeded token.</li>
+<li>QSLP2 token is an NFT-equivalent-smartbridge-embeded token.</li>
+</ul>
+<pre><code class="language-python">&gt;&gt;&gt; t = dposlib.core.qslpGenesis(
+...    2, "TTK", "Toon's token", 250000,
+...    du="ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq",
+...    no="For testing purpose only.", pa=True, mi=True
+... )
+&gt;&gt;&gt; t.vendorField
+'{"aslp1":{"tp":"GENESIS","de":"2","sy":"TTK","na":"Toon\'s token","qt":"25000\
+000","du":"ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq"\
+,"no":"For testing purpose only."}}'
+&gt;&gt;&gt;
+</code></pre>
+<p><a id="dposlib.qslp.builders.qslpGenesis"></a></p>
+<h4 id="qslpgenesis">qslpGenesis</h4>
+<pre><code class="language-python">def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False)
+</code></pre>
+<p>Build a QSLP1 genesis transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>de</code> <em>int</em> - decimal number.</li>
+<li><code>sy</code> <em>str</em> - token symbol.</li>
+<li><code>na</code> <em>str</em> - token name.</li>
+<li><code>qt</code> <em>int</em> - maximum supply.</li>
+<li><code>du</code> <em>str</em> - document URI.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+<li><code>pa</code> <em>bool</em> - pausable token ?</li>
+<li><code>mi</code> <em>bool</em> - mintable token ?</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpBurn"></a></p>
+<h4 id="qslpburn">qslpBurn</h4>
+<pre><code class="language-python">def qslpBurn(tkid, qt, no=None)
+</code></pre>
+<p>Build a QSLP1 burn transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>qt</code> <em>int</em> - quantity to burn.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpMint"></a></p>
+<h4 id="qslpmint">qslpMint</h4>
+<pre><code class="language-python">def qslpMint(tkid, qt, no=None)
+</code></pre>
+<p>Build a QSLP1 mint transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>qt</code> <em>int</em> - quantity to burn.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpSend"></a></p>
+<h4 id="qslpsend">qslpSend</h4>
+<pre><code class="language-python">def qslpSend(address, tkid, qt, no=None)
+</code></pre>
+<p>Build a QSLP1 send transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - recipient wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>qt</code> <em>int</em> - quantity to burn.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpPause"></a></p>
+<h4 id="qslppause">qslpPause</h4>
+<pre><code class="language-python">def qslpPause(tkid, no=None)
+</code></pre>
+<p>Build a QSLP1 pause transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpResume"></a></p>
+<h4 id="qslpresume">qslpResume</h4>
+<pre><code class="language-python">def qslpResume(tkid, no=None)
+</code></pre>
+<p>Build a QSLP1 resume transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpNewOwner"></a></p>
+<h4 id="qslpnewowner">qslpNewOwner</h4>
+<pre><code class="language-python">def qslpNewOwner(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP1 owner change transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - new owner wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpFreeze"></a></p>
+<h4 id="qslpfreeze">qslpFreeze</h4>
+<pre><code class="language-python">def qslpFreeze(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP1 freeze transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - frozen wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslpUnFreeze"></a></p>
+<h4 id="qslpunfreeze">qslpUnFreeze</h4>
+<pre><code class="language-python">def qslpUnFreeze(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP1 unfreeze transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - unfrozen wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP1
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2Genesis"></a></p>
+<h4 id="qslp2genesis">qslp2Genesis</h4>
+<pre><code class="language-python">def qslp2Genesis(sy, na, du=None, no=None, pa=False)
+</code></pre>
+<p>Build a QSLP2 genesis transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>sy</code> <em>str</em> - token symbol.</li>
+<li><code>na</code> <em>str</em> - token name.</li>
+<li><code>du</code> <em>str</em> - URI.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+<li><code>pa</code> <em>bool</em> - pausable token ?</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2Pause"></a></p>
+<h4 id="qslp2pause">qslp2Pause</h4>
+<pre><code class="language-python">def qslp2Pause(tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 pause transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2Resume"></a></p>
+<h4 id="qslp2resume">qslp2Resume</h4>
+<pre><code class="language-python">def qslp2Resume(tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 resume transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2NewOwner"></a></p>
+<h4 id="qslp2newowner">qslp2NewOwner</h4>
+<pre><code class="language-python">def qslp2NewOwner(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 owner change transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - new owner wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2AuthMeta"></a></p>
+<h4 id="qslp2authmeta">qslp2AuthMeta</h4>
+<pre><code class="language-python">def qslp2AuthMeta(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 meta change authorization transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - authorized wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2RevokeMeta"></a></p>
+<h4 id="qslp2revokemeta">qslp2RevokeMeta</h4>
+<pre><code class="language-python">def qslp2RevokeMeta(address, tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 meta change revokation transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>address</code> <em>str</em> - revoked wallet address.</li>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2Clone"></a></p>
+<h4 id="qslp2clone">qslp2Clone</h4>
+<pre><code class="language-python">def qslp2Clone(tkid, no=None)
+</code></pre>
+<p>Build a QSLP2 clone transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>no</code> <em>str</em> - token notes.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2AddMeta"></a></p>
+<h4 id="qslp2addmeta">qslp2AddMeta</h4>
+<pre><code class="language-python">def qslp2AddMeta(tkid, na, dt, ch=None)
+</code></pre>
+<p>Build a QSLP2 metadata edition transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>na</code> <em>str</em> - name of the metadata info.</li>
+<li><code>dt</code> <em>str</em> - data of metadata.</li>
+<li><code>ch</code> <em>int</em> - chunk number.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+<p><a id="dposlib.qslp.builders.qslp2VoidMeta"></a></p>
+<h4 id="qslp2voidmeta">qslp2VoidMeta</h4>
+<pre><code class="language-python">def qslp2VoidMeta(tkid, tx)
+</code></pre>
+<p>Build a QSLP2 metadata cleaning transaction.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tkid</code> <em>str</em> - token id.</li>
+<li><code>tx</code> <em>str</em> - transaction id of metadata to void.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>dposlib.ark.tx.Transaction</code> - orphan transaction with appropriate QSLP2
+  <code>vendorField</code>.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral" href="../api/" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../api/" style="color: #fcfcfc">« Previous</a></span>
+</span>
+</div>
+<script>var base_url = '../..';</script>
+<script defer="" src="../../js/theme_extra.js"></script>
+<script defer="" src="../../js/theme.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>
