@@ -37,7 +37,7 @@ Build a QSLP1 genesis transaction.
 - `sy` _str_ - token symbol.
 - `na` _str_ - token name.
 - `qt` _int_ - maximum supply.
-- `du` _str_ - URI.
+- `du` _str_ - document URI.
 - `no` _str_ - token notes.
 - `pa` _bool_ - pausable token ?
 - `mi` _bool_ - mintable token ?
