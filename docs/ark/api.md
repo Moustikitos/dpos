@@ -79,9 +79,9 @@ class Content(object)
 ```
 
 Live object connected to blockchain. It is initialized with
-[`dposlib.rest.GET`](../rest.md#dposlib.rest.GET) request. Object is updated
-every 30s. Endpoint response can be a `dict` or a `list`. If it is a
-`list`, it is stored in `data` attribute else all fields are stored as
+[`dposlib.rest.GET`](../rest.md#dposlib.rest.GET) request. Object is
+updated every 30s. Endpoint response can be a `dict` or a `list`. If it is
+a `list`, it is stored in `data` attribute else all fields are stored as
 instance attribute.
 
 ```python
@@ -460,13 +460,13 @@ webhook                   | dposlib
 `gt` / `gte`              | `>` / `>=`
 `eq` / `ne`               | `==` / `!=`
 `truthy` / `falsy`        | `?` / `!?`
-`regexp` / `contains`     | `\` / `$`
+`regexp` / `contains`     | `\\` / `$`
 `between` / `not-between` | `<>` / `!<>`
 
 
 ```python
 >>> import dposlib.ark.api as api
->>> api.Webhook.condition(r"vendorField\^.*payroll.*$")
+>>> api.Webhook.condition("vendorField\\^.*payroll.*$")
 {'value': '^.*payroll.*$', 'key': 'vendorField', 'condition': 'regexp'}
 >>> api.Webhook.condition("amount<>2000000000000:4000000000000")
 {
