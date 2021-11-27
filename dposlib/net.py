@@ -2,17 +2,15 @@
 
 shelley = {
     "familly": "ada",
-    "seeds": [
-        "https://cardano-testnet.blockfrost.io/api/v0"
-    ]
+
+    "seeds": ["https://cardano-testnet.blockfrost.io/api/v0"]
 }
 
 ada = {
     "familly": "ada",
     "slip44": 1815,
-    "seeds": [
-        "https://cardano-mainnet.blockfrost.io/api/v0"
-    ]
+
+    "seeds": ["https://cardano-mainnet.blockfrost.io/api/v0"]
 }
 
 protokol = {
@@ -20,9 +18,7 @@ protokol = {
     "aip20": 1,
     "txversion": 2,
 
-    "seeds": [
-        "https://dwallets.ark.io"
-    ]
+    "seeds": ["https://dwallets.ark.io"]
 }
 
 ark = {
@@ -30,9 +26,7 @@ ark = {
     "aip20": 0,
     "txversion": 2,
 
-    "seeds": [
-        "https://api.ark.io"
-    ]
+    "seeds": ["https://api.ark.io"]
 }
 
 dark = {
@@ -40,9 +34,7 @@ dark = {
     "aip20": 1,
     "txversion": 2,
 
-    "seeds": [
-        "https://dwallets.ark.io"
-    ]
+    "seeds": ["https://dwallets.ark.io"]
 }
 
 iop = {
@@ -111,9 +103,10 @@ qslp = {
     "aip20": 0,
     "txversion": 2,
 
-    "seeds": [
-        "https://api.ark.io"
-    ]
+    "master_address": "ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr",
+    "qsl_api": ["https://aslp.qredit.dev"],
+
+    "seeds": ["https://api.ark.io"]
 }
 
 nos = {
@@ -121,9 +114,7 @@ nos = {
     "aip20": 0,
     "txversion": 2,
 
-    "seeds": [
-        "https://api.nos.dev"
-    ]
+    "seeds": ["https://api.nos.dev"]
 }
 
 uns = {
@@ -133,7 +124,5 @@ uns = {
     "aip20": 0,
     "txversion": 2,
 
-    "seeds": [
-        "https://api.uns.network"
-    ]
+    "seeds": ["https://api.uns.network"]
 }
