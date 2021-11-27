@@ -90,6 +90,7 @@ diop = {
     ]
 }
 
+# mainnet: https://qredit.cloud/api
 qredit = {
     "familly": "ark",
     "aip20": 0,
@@ -102,6 +103,16 @@ qredit = {
         "http://116.203.58.165:4103",
         "http://159.69.89.111:4103",
         "http://159.69.89.41:4103"
+    ]
+}
+
+qslp = {
+    "familly": "qslp",
+    "aip20": 0,
+    "txversion": 2,
+
+    "seeds": [
+        "https://api.ark.io"
     ]
 }
 
