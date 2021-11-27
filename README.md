@@ -129,7 +129,7 @@ u'binance_staking'
 {'transactionIds': ['bbce72e7a76f5f71209c8ab29b4b4299a409241dfc77835150459a34bd5a5c16'], 'success': True}
 ```
 
-### Ledger.com hard wallet
+<!-- ### Ledger.com hard wallet
 
 If you want to use `dposlib.ark.ldgr` module, you need to install ledgerblue
 package and its dependencies:
@@ -140,6 +140,8 @@ pip install ledgerblue
 ```
 
 ```python
+>>> from dposlb import rest
+>>> from dposlib.ark import api
 >>> rest.use("dark")
 >>> ldg = dposlib.core.api.NanoS(0, 0, 0)
 >>> ldg
@@ -170,7 +172,7 @@ pip install ledgerblue
   "publicKey": "038473178d89988b1f8428efe758b99ebf1d49c47b679f3f4a9cdc0829fa6ece2b",
   "vote": "03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933"
 }
-```
+``` -->
 
 ## Version
 
