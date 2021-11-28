@@ -290,11 +290,11 @@ Hash transaction.
   **Options**:
   
   * `exclude_sig` *bool* - exclude signature during tx serialization.
-  Defalut to True.
+  Defalut to False.
   * `exclude_multi_sig` *bool* - exclude signatures during tx
-  serialization. Defalut to True.
+  serialization. Defalut to False.
   * `exclude_second_sig` *bool* - exclude second signatures during tx
-  serialization. Defalut to True.
+  serialization. Defalut to False.
   
 
 **Returns**:
