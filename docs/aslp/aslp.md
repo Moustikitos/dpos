@@ -1,10 +1,10 @@
-<a id="dposlib.qslp"></a>
+<a id="dposlib.aslp"></a>
 
-# dposlib.qslp
+# dposlib.aslp
 
-QSLP specific package.
+ASLP specific package.
 
-<a id="dposlib.qslp.init"></a>
+<a id="dposlib.aslp.init"></a>
 
 #### init
 
@@ -14,7 +14,7 @@ def init(seed=None)
 
 Blockchain initialisation. It stores root values in `cfg` module.
 
-<a id="dposlib.qslp.stop"></a>
+<a id="dposlib.aslp.stop"></a>
 
 #### stop
 

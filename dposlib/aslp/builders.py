@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-QSLP transaction builders. See [QSLP API](https://aslp.qredit.dev) for more
+ASLP transaction builders. See [ASLP API](https://aslp.qredit.dev) for more
 information.
 
-  - QSLP1 token is an ERC20-equivalent-smartbridge-embeded token.
-  - QSLP2 token is an NFT-equivalent-smartbridge-embeded token.
+  - ASLP1 token is an ERC20-equivalent-smartbridge-embeded token.
+  - ASLP2 token is an NFT-equivalent-smartbridge-embeded token.
 
 ```python
->>> t = dposlib.core.qslpGenesis(
+>>> t = dposlib.core.aslpGenesis(
 ...    2, "TTK", "Toon's token", 250000,
 ...    du="ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq",
 ...    no="For testing purpose only.", pa=True, mi=True
@@ -69,12 +69,12 @@ import json
 
 from dposlib import cfg
 from dposlib.ark.tx import Transaction
-from dposlib.qslp.api import GET
+from dposlib.aslp.api import GET
 
 
-def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False):
+def aslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False):
     """
-    Build a QSLP1 genesis transaction.
+    Build a aslp1 genesis transaction.
 
     Args:
         de (int): decimal number.
@@ -87,7 +87,7 @@ def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False):
         mi (bool): mintable token ?
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(decimals=de, symbol=sy, name=na, quantity=qt)
@@ -102,7 +102,7 @@ def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False):
 
     smartbridge = GET.api.vendor_aslp1_genesis(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -113,9 +113,9 @@ def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False):
     )
 
 
-def qslpBurn(tkid, qt, no=None):
+def aslpBurn(tkid, qt, no=None):
     """
-    Build a QSLP1 burn transaction.
+    Build a aslp1 burn transaction.
 
     Args:
         tkid (str): token id.
@@ -123,7 +123,7 @@ def qslpBurn(tkid, qt, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid, quantity=qt)
@@ -132,7 +132,7 @@ def qslpBurn(tkid, qt, no=None):
 
     smartbridge = GET.api.vendor_aslp1_burn(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -143,9 +143,9 @@ def qslpBurn(tkid, qt, no=None):
     )
 
 
-def qslpMint(tkid, qt, no=None):
+def aslpMint(tkid, qt, no=None):
     """
-    Build a QSLP1 mint transaction.
+    Build a aslp1 mint transaction.
 
     Args:
         tkid (str): token id.
@@ -153,7 +153,7 @@ def qslpMint(tkid, qt, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid, quantity=qt)
@@ -162,7 +162,7 @@ def qslpMint(tkid, qt, no=None):
 
     smartbridge = GET.api.vendor_aslp1_mint(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -173,9 +173,9 @@ def qslpMint(tkid, qt, no=None):
     )
 
 
-def qslpSend(address, tkid, qt, no=None):
+def aslpSend(address, tkid, qt, no=None):
     """
-    Build a QSLP1 send transaction.
+    Build a aslp1 send transaction.
 
     Args:
         address (str): recipient wallet address.
@@ -184,7 +184,7 @@ def qslpSend(address, tkid, qt, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid, quantity=qt)
@@ -193,7 +193,7 @@ def qslpSend(address, tkid, qt, no=None):
 
     smartbridge = GET.api.vendor_aslp1_send(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -204,16 +204,16 @@ def qslpSend(address, tkid, qt, no=None):
     )
 
 
-def qslpPause(tkid, no=None):
+def aslpPause(tkid, no=None):
     """
-    Build a QSLP1 pause transaction.
+    Build a aslp1 pause transaction.
 
     Args:
         tkid (str): token id.
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -222,7 +222,7 @@ def qslpPause(tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp1_pause(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -233,16 +233,16 @@ def qslpPause(tkid, no=None):
     )
 
 
-def qslpResume(tkid, no=None):
+def aslpResume(tkid, no=None):
     """
-    Build a QSLP1 resume transaction.
+    Build a aslp1 resume transaction.
 
     Args:
         tkid (str): token id.
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -251,7 +251,7 @@ def qslpResume(tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp1_resume(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -262,9 +262,9 @@ def qslpResume(tkid, no=None):
     )
 
 
-def qslpNewOwner(address, tkid, no=None):
+def aslpNewOwner(address, tkid, no=None):
     """
-    Build a QSLP1 owner change transaction.
+    Build a aslp1 owner change transaction.
 
     Args:
         address (str): new owner wallet address.
@@ -272,7 +272,7 @@ def qslpNewOwner(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -281,7 +281,7 @@ def qslpNewOwner(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp1_newowner(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -292,9 +292,9 @@ def qslpNewOwner(address, tkid, no=None):
     )
 
 
-def qslpFreeze(address, tkid, no=None):
+def aslpFreeze(address, tkid, no=None):
     """
-    Build a QSLP1 freeze transaction.
+    Build a aslp1 freeze transaction.
 
     Args:
         address (str): frozen wallet address.
@@ -302,7 +302,7 @@ def qslpFreeze(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -311,7 +311,7 @@ def qslpFreeze(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp1_freeze(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -322,9 +322,9 @@ def qslpFreeze(address, tkid, no=None):
     )
 
 
-def qslpUnFreeze(address, tkid, no=None):
+def aslpUnFreeze(address, tkid, no=None):
     """
-    Build a QSLP1 unfreeze transaction.
+    Build a aslp1 unfreeze transaction.
 
     Args:
         address (str): unfrozen wallet address.
@@ -332,7 +332,7 @@ def qslpUnFreeze(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP1
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp1
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -341,7 +341,7 @@ def qslpUnFreeze(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp1_unfreeze(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -352,9 +352,9 @@ def qslpUnFreeze(address, tkid, no=None):
     )
 
 
-def qslp2Genesis(sy, na, du=None, no=None, pa=False):
+def aslp2Genesis(sy, na, du=None, no=None, pa=False):
     """
-    Build a QSLP2 genesis transaction.
+    Build a aslp2 genesis transaction.
 
     Args:
         sy (str): token symbol.
@@ -364,7 +364,7 @@ def qslp2Genesis(sy, na, du=None, no=None, pa=False):
         pa (bool): pausable token ?
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(symbol=sy, name=na)
@@ -377,7 +377,7 @@ def qslp2Genesis(sy, na, du=None, no=None, pa=False):
 
     smartbridge = GET.api.vendor_aslp2_genesis(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -388,16 +388,16 @@ def qslp2Genesis(sy, na, du=None, no=None, pa=False):
     )
 
 
-def qslp2Pause(tkid, no=None):
+def aslp2Pause(tkid, no=None):
     """
-    Build a QSLP2 pause transaction.
+    Build a aslp2 pause transaction.
 
     Args:
         tkid (str): token id.
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -406,7 +406,7 @@ def qslp2Pause(tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_pause(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -417,16 +417,16 @@ def qslp2Pause(tkid, no=None):
     )
 
 
-def qslp2Resume(tkid, no=None):
+def aslp2Resume(tkid, no=None):
     """
-    Build a QSLP2 resume transaction.
+    Build a aslp2 resume transaction.
 
     Args:
         tkid (str): token id.
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -435,7 +435,7 @@ def qslp2Resume(tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_resume(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -446,9 +446,9 @@ def qslp2Resume(tkid, no=None):
     )
 
 
-def qslp2NewOwner(address, tkid, no=None):
+def aslp2NewOwner(address, tkid, no=None):
     """
-    Build a QSLP2 owner change transaction.
+    Build a aslp2 owner change transaction.
 
     Args:
         address (str): new owner wallet address.
@@ -456,7 +456,7 @@ def qslp2NewOwner(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -465,7 +465,7 @@ def qslp2NewOwner(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_newowner(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -476,9 +476,9 @@ def qslp2NewOwner(address, tkid, no=None):
     )
 
 
-def qslp2AuthMeta(address, tkid, no=None):
+def aslp2AuthMeta(address, tkid, no=None):
     """
-    Build a QSLP2 meta change authorization transaction.
+    Build a aslp2 meta change authorization transaction.
 
     Args:
         address (str): authorized wallet address.
@@ -486,7 +486,7 @@ def qslp2AuthMeta(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -495,7 +495,7 @@ def qslp2AuthMeta(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_authmeta(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -506,9 +506,9 @@ def qslp2AuthMeta(address, tkid, no=None):
     )
 
 
-def qslp2RevokeMeta(address, tkid, no=None):
+def aslp2RevokeMeta(address, tkid, no=None):
     """
-    Build a QSLP2 meta change revokation transaction.
+    Build a aslp2 meta change revokation transaction.
 
     Args:
         address (str): revoked wallet address.
@@ -516,7 +516,7 @@ def qslp2RevokeMeta(address, tkid, no=None):
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -525,7 +525,7 @@ def qslp2RevokeMeta(address, tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_revokemeta(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -536,16 +536,16 @@ def qslp2RevokeMeta(address, tkid, no=None):
     )
 
 
-def qslp2Clone(tkid, no=None):
+def aslp2Clone(tkid, no=None):
     """
-    Build a QSLP2 clone transaction.
+    Build a aslp2 clone transaction.
 
     Args:
         tkid (str): token id.
         no (str): token notes.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid)
@@ -554,7 +554,7 @@ def qslp2Clone(tkid, no=None):
 
     smartbridge = GET.api.vendor_aslp2_clone(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -565,9 +565,9 @@ def qslp2Clone(tkid, no=None):
     )
 
 
-def qslp2AddMeta(tkid, na, dt, ch=None):
+def aslp2AddMeta(tkid, na, dt, ch=None):
     """
-    Build a QSLP2 metadata edition transaction.
+    Build a aslp2 metadata edition transaction.
 
     Args:
         tkid (str): token id.
@@ -576,7 +576,7 @@ def qslp2AddMeta(tkid, na, dt, ch=None):
         ch (int): chunk number.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid, name=na, data=dt)
@@ -585,7 +585,7 @@ def qslp2AddMeta(tkid, na, dt, ch=None):
 
     smartbridge = GET.api.vendor_aslp2_addmeta(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -596,23 +596,23 @@ def qslp2AddMeta(tkid, na, dt, ch=None):
     )
 
 
-def qslp2VoidMeta(tkid, tx):
+def aslp2VoidMeta(tkid, tx):
     """
-    Build a QSLP2 metadata cleaning transaction.
+    Build a aslp2 metadata cleaning transaction.
 
     Args:
         tkid (str): token id.
         tx (str): transaction id of metadata to void.
 
     Returns:
-        dposlib.ark.tx.Transaction: orphan transaction with appropriate QSLP2
+        dposlib.ark.tx.Transaction: orphan transaction with appropriate aslp2
             `vendorField`.
     """
     args = dict(tokenid=tkid, txid=tx)
 
     smartbridge = GET.api.vendor_aslp2_voidmeta(**args)
     if smartbridge.pop("status", 0) != 200:
-        raise Exception(smartbridge.get("error", "QSLP smartbridge error"))
+        raise Exception(smartbridge.get("error", "aslp smartbridge error"))
 
     return Transaction(
         typeGroup=1,
@@ -624,9 +624,9 @@ def qslp2VoidMeta(tkid, tx):
 
 
 __all__ = [
-    qslpGenesis, qslpBurn, qslpMint, qslpSend, qslpPause, qslpResume,
-    qslpNewOwner, qslpFreeze, qslpUnFreeze,
-    qslp2Genesis, qslp2Pause, qslp2Resume,
-    qslp2NewOwner, qslp2AuthMeta, qslp2RevokeMeta,
-    qslp2Clone, qslp2AddMeta, qslp2VoidMeta
+    aslpGenesis, aslpBurn, aslpMint, aslpSend, aslpPause, aslpResume,
+    aslpNewOwner, aslpFreeze, aslpUnFreeze,
+    aslp2Genesis, aslp2Pause, aslp2Resume,
+    aslp2NewOwner, aslp2AuthMeta, aslp2RevokeMeta,
+    aslp2Clone, aslp2AddMeta, aslp2VoidMeta
 ]

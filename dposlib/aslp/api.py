@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This module provides both [Ark API](../ark/api.md) and [QSLP API](
+This module provides both [Ark API](../ark/api.md) and [ASLP API](
     https://aslp.qredit.dev
 ) interface.
 
@@ -11,8 +11,8 @@ Below a request to `https://aslp.qredit.dev/api/tokens` endpoint:
 
 ```python
 >>> from dposlib import rest
->>> rest.use("qslp")
->>> from dposlib.qslp.api import GET
+>>> rest.use("aslp")
+>>> from dposlib.aslp.api import GET
 >>> GET.api.status()
 {'downloadedBlocks': 18333367, 'scannedBlocks': None, 'status': 200}
 >>> tokens = GET.api.tokens()
@@ -70,7 +70,7 @@ from dposlib import rest, cfg
 from dposlib.ark.api import *
 
 
-def qslp_filter(**kwargs):
+def aslp_filter(**kwargs):
     return dict(
         kwargs, peer=random.choice(
             getattr(cfg, "qsl_api", ["https://aslp.qredit.dev"])
@@ -80,6 +80,6 @@ def qslp_filter(**kwargs):
 
 GET = rest.req.EndPoint(
     method=lambda *a, **kw: rest.req.EndPoint._call(
-        "GET", *a, **qslp_filter(**kw)
+        "GET", *a, **aslp_filter(**kw)
     )
 )

@@ -1,8 +1,8 @@
-<a id="dposlib.qslp.api"></a>
+<a id="dposlib.aslp.api"></a>
 
-# dposlib.qslp.api
+# dposlib.aslp.api
 
-This module provides both [Ark API](../ark/api.md) and [QSLP API](
+This module provides both [Ark API](../ark/api.md) and [ASLP API](
     https://aslp.qredit.dev
 ) interface.
 
@@ -12,8 +12,8 @@ Below a request to `https://aslp.qredit.dev/api/tokens` endpoint:
 
 ```python
 >>> from dposlib import rest
->>> rest.use("qslp")
->>> from dposlib.qslp.api import GET
+>>> rest.use("aslp")
+>>> from dposlib.aslp.api import GET
 >>> GET.api.status()
 {'downloadedBlocks': 18333367, 'scannedBlocks': None, 'status': 200}
 >>> tokens = GET.api.tokens()

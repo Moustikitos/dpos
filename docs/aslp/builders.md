@@ -1,15 +1,15 @@
-<a id="dposlib.qslp.builders"></a>
+<a id="dposlib.aslp.builders"></a>
 
-# dposlib.qslp.builders
+# dposlib.aslp.builders
 
-QSLP transaction builders. See [QSLP API](https://aslp.qredit.dev) for more
+ASLP transaction builders. See [ASLP API](https://aslp.qredit.dev) for more
 information.
 
-  - QSLP1 token is an ERC20-equivalent-smartbridge-embeded token.
-  - QSLP2 token is an NFT-equivalent-smartbridge-embeded token.
+  - ASLP1 token is an ERC20-equivalent-smartbridge-embeded token.
+  - ASLP2 token is an NFT-equivalent-smartbridge-embeded token.
 
 ```python
->>> t = dposlib.core.qslpGenesis(
+>>> t = dposlib.core.aslpGenesis(
 ...    2, "TTK", "Toon's token", 250000,
 ...    du="ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq",
 ...    no="For testing purpose only.", pa=True, mi=True
@@ -65,15 +65,15 @@ information.
 }
 ```
 
-<a id="dposlib.qslp.builders.qslpGenesis"></a>
+<a id="dposlib.aslp.builders.aslpGenesis"></a>
 
-#### qslpGenesis
+#### aslpGenesis
 
 ```python
-def qslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False)
+def aslpGenesis(de, sy, na, qt, du=None, no=None, pa=False, mi=False)
 ```
 
-Build a QSLP1 genesis transaction.
+Build a aslp1 genesis transaction.
 
 **Arguments**:
 
@@ -89,18 +89,18 @@ Build a QSLP1 genesis transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpBurn"></a>
+<a id="dposlib.aslp.builders.aslpBurn"></a>
 
-#### qslpBurn
+#### aslpBurn
 
 ```python
-def qslpBurn(tkid, qt, no=None)
+def aslpBurn(tkid, qt, no=None)
 ```
 
-Build a QSLP1 burn transaction.
+Build a aslp1 burn transaction.
 
 **Arguments**:
 
@@ -111,18 +111,18 @@ Build a QSLP1 burn transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpMint"></a>
+<a id="dposlib.aslp.builders.aslpMint"></a>
 
-#### qslpMint
+#### aslpMint
 
 ```python
-def qslpMint(tkid, qt, no=None)
+def aslpMint(tkid, qt, no=None)
 ```
 
-Build a QSLP1 mint transaction.
+Build a aslp1 mint transaction.
 
 **Arguments**:
 
@@ -133,18 +133,18 @@ Build a QSLP1 mint transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpSend"></a>
+<a id="dposlib.aslp.builders.aslpSend"></a>
 
-#### qslpSend
+#### aslpSend
 
 ```python
-def qslpSend(address, tkid, qt, no=None)
+def aslpSend(address, tkid, qt, no=None)
 ```
 
-Build a QSLP1 send transaction.
+Build a aslp1 send transaction.
 
 **Arguments**:
 
@@ -156,18 +156,18 @@ Build a QSLP1 send transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpPause"></a>
+<a id="dposlib.aslp.builders.aslpPause"></a>
 
-#### qslpPause
+#### aslpPause
 
 ```python
-def qslpPause(tkid, no=None)
+def aslpPause(tkid, no=None)
 ```
 
-Build a QSLP1 pause transaction.
+Build a aslp1 pause transaction.
 
 **Arguments**:
 
@@ -177,18 +177,18 @@ Build a QSLP1 pause transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpResume"></a>
+<a id="dposlib.aslp.builders.aslpResume"></a>
 
-#### qslpResume
+#### aslpResume
 
 ```python
-def qslpResume(tkid, no=None)
+def aslpResume(tkid, no=None)
 ```
 
-Build a QSLP1 resume transaction.
+Build a aslp1 resume transaction.
 
 **Arguments**:
 
@@ -198,18 +198,18 @@ Build a QSLP1 resume transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpNewOwner"></a>
+<a id="dposlib.aslp.builders.aslpNewOwner"></a>
 
-#### qslpNewOwner
+#### aslpNewOwner
 
 ```python
-def qslpNewOwner(address, tkid, no=None)
+def aslpNewOwner(address, tkid, no=None)
 ```
 
-Build a QSLP1 owner change transaction.
+Build a aslp1 owner change transaction.
 
 **Arguments**:
 
@@ -220,18 +220,18 @@ Build a QSLP1 owner change transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpFreeze"></a>
+<a id="dposlib.aslp.builders.aslpFreeze"></a>
 
-#### qslpFreeze
+#### aslpFreeze
 
 ```python
-def qslpFreeze(address, tkid, no=None)
+def aslpFreeze(address, tkid, no=None)
 ```
 
-Build a QSLP1 freeze transaction.
+Build a aslp1 freeze transaction.
 
 **Arguments**:
 
@@ -242,18 +242,18 @@ Build a QSLP1 freeze transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslpUnFreeze"></a>
+<a id="dposlib.aslp.builders.aslpUnFreeze"></a>
 
-#### qslpUnFreeze
+#### aslpUnFreeze
 
 ```python
-def qslpUnFreeze(address, tkid, no=None)
+def aslpUnFreeze(address, tkid, no=None)
 ```
 
-Build a QSLP1 unfreeze transaction.
+Build a aslp1 unfreeze transaction.
 
 **Arguments**:
 
@@ -264,18 +264,18 @@ Build a QSLP1 unfreeze transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP1
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp1
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2Genesis"></a>
+<a id="dposlib.aslp.builders.aslp2Genesis"></a>
 
-#### qslp2Genesis
+#### aslp2Genesis
 
 ```python
-def qslp2Genesis(sy, na, du=None, no=None, pa=False)
+def aslp2Genesis(sy, na, du=None, no=None, pa=False)
 ```
 
-Build a QSLP2 genesis transaction.
+Build a aslp2 genesis transaction.
 
 **Arguments**:
 
@@ -288,18 +288,18 @@ Build a QSLP2 genesis transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2Pause"></a>
+<a id="dposlib.aslp.builders.aslp2Pause"></a>
 
-#### qslp2Pause
+#### aslp2Pause
 
 ```python
-def qslp2Pause(tkid, no=None)
+def aslp2Pause(tkid, no=None)
 ```
 
-Build a QSLP2 pause transaction.
+Build a aslp2 pause transaction.
 
 **Arguments**:
 
@@ -309,18 +309,18 @@ Build a QSLP2 pause transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2Resume"></a>
+<a id="dposlib.aslp.builders.aslp2Resume"></a>
 
-#### qslp2Resume
+#### aslp2Resume
 
 ```python
-def qslp2Resume(tkid, no=None)
+def aslp2Resume(tkid, no=None)
 ```
 
-Build a QSLP2 resume transaction.
+Build a aslp2 resume transaction.
 
 **Arguments**:
 
@@ -330,18 +330,18 @@ Build a QSLP2 resume transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2NewOwner"></a>
+<a id="dposlib.aslp.builders.aslp2NewOwner"></a>
 
-#### qslp2NewOwner
+#### aslp2NewOwner
 
 ```python
-def qslp2NewOwner(address, tkid, no=None)
+def aslp2NewOwner(address, tkid, no=None)
 ```
 
-Build a QSLP2 owner change transaction.
+Build a aslp2 owner change transaction.
 
 **Arguments**:
 
@@ -352,18 +352,18 @@ Build a QSLP2 owner change transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2AuthMeta"></a>
+<a id="dposlib.aslp.builders.aslp2AuthMeta"></a>
 
-#### qslp2AuthMeta
+#### aslp2AuthMeta
 
 ```python
-def qslp2AuthMeta(address, tkid, no=None)
+def aslp2AuthMeta(address, tkid, no=None)
 ```
 
-Build a QSLP2 meta change authorization transaction.
+Build a aslp2 meta change authorization transaction.
 
 **Arguments**:
 
@@ -374,18 +374,18 @@ Build a QSLP2 meta change authorization transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2RevokeMeta"></a>
+<a id="dposlib.aslp.builders.aslp2RevokeMeta"></a>
 
-#### qslp2RevokeMeta
+#### aslp2RevokeMeta
 
 ```python
-def qslp2RevokeMeta(address, tkid, no=None)
+def aslp2RevokeMeta(address, tkid, no=None)
 ```
 
-Build a QSLP2 meta change revokation transaction.
+Build a aslp2 meta change revokation transaction.
 
 **Arguments**:
 
@@ -396,18 +396,18 @@ Build a QSLP2 meta change revokation transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2Clone"></a>
+<a id="dposlib.aslp.builders.aslp2Clone"></a>
 
-#### qslp2Clone
+#### aslp2Clone
 
 ```python
-def qslp2Clone(tkid, no=None)
+def aslp2Clone(tkid, no=None)
 ```
 
-Build a QSLP2 clone transaction.
+Build a aslp2 clone transaction.
 
 **Arguments**:
 
@@ -417,18 +417,18 @@ Build a QSLP2 clone transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2AddMeta"></a>
+<a id="dposlib.aslp.builders.aslp2AddMeta"></a>
 
-#### qslp2AddMeta
+#### aslp2AddMeta
 
 ```python
-def qslp2AddMeta(tkid, na, dt, ch=None)
+def aslp2AddMeta(tkid, na, dt, ch=None)
 ```
 
-Build a QSLP2 metadata edition transaction.
+Build a aslp2 metadata edition transaction.
 
 **Arguments**:
 
@@ -440,18 +440,18 @@ Build a QSLP2 metadata edition transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 
-<a id="dposlib.qslp.builders.qslp2VoidMeta"></a>
+<a id="dposlib.aslp.builders.aslp2VoidMeta"></a>
 
-#### qslp2VoidMeta
+#### aslp2VoidMeta
 
 ```python
-def qslp2VoidMeta(tkid, tx)
+def aslp2VoidMeta(tkid, tx)
 ```
 
-Build a QSLP2 metadata cleaning transaction.
+Build a aslp2 metadata cleaning transaction.
 
 **Arguments**:
 
@@ -461,6 +461,6 @@ Build a QSLP2 metadata cleaning transaction.
 
 **Returns**:
 
-- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate QSLP2
+- `dposlib.ark.tx.Transaction` - orphan transaction with appropriate aslp2
   `vendorField`.
 

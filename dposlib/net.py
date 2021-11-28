@@ -98,13 +98,13 @@ qredit = {
     ]
 }
 
-qslp = {
-    "familly": "qslp",
+aslp = {
+    "familly": "aslp",
     "aip20": 0,
     "txversion": 2,
 
     "master_address": "ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr",
-    "qsl_api": ["https://aslp.qredit.dev"],
+    "aslp_api": ["https://aslp.qredit.dev"],
 
     "seeds": ["https://api.ark.io"]
 }

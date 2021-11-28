@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-QSLP specific package.
+ASLP specific package.
 """
 
 import dposlib.ark
@@ -10,10 +10,10 @@ from dposlib import rest, cfg
 from dposlib.ark import crypto, GETNAME, TYPING
 from dposlib.ark.tx import Transaction
 from dposlib.util.bin import hexlify, unhexlify
-from dposlib.qslp import api
+from dposlib.aslp import api
 
 # --- TWEAKS --- inject the new definitions into the ark package
-from dposlib.qslp import builders
+from dposlib.aslp import builders
 import dposlib.ark.builders
 
 for func in builders.__all__:
@@ -24,7 +24,7 @@ del builders
 # --- TWEAKS ---
 
 
-def _get_qslp_peers():
+def _get_aslp_peers():
     setattr(cfg, "qsl_api", [
         "http://%s" % key for key in rest.req.GET.api.peerInfo(
             peer="https://aslp.qredit.dev"
@@ -38,7 +38,7 @@ def init(seed=None):
     """
     check = dposlib.ark.init(seed)
     if getattr(cfg, "hotmode", False):
-        _get_qslp_peers()
+        _get_aslp_peers()
     return check
 
 
@@ -55,11 +55,11 @@ from dposlib.ark.builders import (
     registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
     htlcSecret, htlcLock, htlcClaim, htlcRefund,
     entityRegister, entityUpdate, entityResign,
-    qslpGenesis, qslpBurn, qslpMint, qslpSend, qslpPause, qslpResume,
-    qslpNewOwner, qslpFreeze, qslpUnFreeze,
-    qslp2Genesis, qslp2Pause, qslp2Resume,
-    qslp2NewOwner, qslp2AuthMeta, qslp2RevokeMeta,
-    qslp2Clone, qslp2AddMeta, qslp2VoidMeta
+    aslpGenesis, aslpBurn, aslpMint, aslpSend, aslpPause, aslpResume,
+    aslpNewOwner, aslpFreeze, aslpUnFreeze,
+    aslp2Genesis, aslp2Pause, aslp2Resume,
+    aslp2NewOwner, aslp2AuthMeta, aslp2RevokeMeta,
+    aslp2Clone, aslp2AddMeta, aslp2VoidMeta
 )
 
 
@@ -71,9 +71,9 @@ __all__ = [
     registerIpfs, multiPayment, delegateResignation,
     htlcSecret, htlcLock, htlcClaim, htlcRefund,
     entityRegister, entityUpdate, entityResign,
-    qslpGenesis, qslpBurn, qslpMint, qslpSend, qslpPause, qslpResume,
-    qslpNewOwner, qslpFreeze, qslpUnFreeze,
-    qslp2Genesis, qslp2Pause, qslp2Resume,
-    qslp2NewOwner, qslp2AuthMeta, qslp2RevokeMeta,
-    qslp2Clone, qslp2AddMeta, qslp2VoidMeta
+    aslpGenesis, aslpBurn, aslpMint, aslpSend, aslpPause, aslpResume,
+    aslpNewOwner, aslpFreeze, aslpUnFreeze,
+    aslp2Genesis, aslp2Pause, aslp2Resume,
+    aslp2NewOwner, aslp2AuthMeta, aslp2RevokeMeta,
+    aslp2Clone, aslp2AddMeta, aslp2VoidMeta
 ]

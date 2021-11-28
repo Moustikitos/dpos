@@ -12,7 +12,7 @@ hooks:
   - python -c "import os;os.makedirs('./docs', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/ark', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/ada', exist_ok=True)"
-  - python -c "import os;os.makedirs('./docs/qslp', exist_ok=True)"
+  - python -c "import os;os.makedirs('./docs/aslp', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/protokol', exist_ok=True)"
   - python -c "import shutil;shutil.copy('./index.md', './docs/index.md')"
   - pydoc-markdown -m dposlib.rest              > ./docs/rest.md
@@ -25,9 +25,9 @@ hooks:
   - pydoc-markdown -m dposlib.ada               > ./docs/ada/blkfrst.md
   - pydoc-markdown -m dposlib.protokol          > ./docs/protokol/prtkl.md
   - pydoc-markdown -m dposlib.protokol.builders > ./docs/protokol/builders.md
-  - pydoc-markdown -m dposlib.qslp              > ./docs/qslp/qslp.md
-  - pydoc-markdown -m dposlib.qslp.api          > ./docs/qslp/api.md
-  - pydoc-markdown -m dposlib.qslp.builders     > ./docs/qslp/builders.md
+  - pydoc-markdown -m dposlib.aslp              > ./docs/aslp/aslp.md
+  - pydoc-markdown -m dposlib.aslp.api          > ./docs/aslp/api.md
+  - pydoc-markdown -m dposlib.aslp.builders     > ./docs/aslp/builders.md
 
 renderer:
   output_directory: .
@@ -55,6 +55,16 @@ renderer:
     - title: Ledger Wallet
       name: ldgr
 
+  - title: Ark Side LEvel Protocol
+    name: aslp
+    children:
+    - title: Qredit.io
+      name: aslp
+    - title: API
+      name: api
+    - title: Transaction builders
+      name: builders
+
   - title: Cardano blockchain
     name: ada
     children:
@@ -66,16 +76,6 @@ renderer:
     children:
     - title: Protokol.com
       name: prtkl
-    - title: Transaction builders
-      name: builders
-
-  - title: Qredit SLP
-    name: qslp
-    children:
-    - title: Qredit.io
-      name: qslp
-    - title: API
-      name: api
     - title: Transaction builders
       name: builders
 
