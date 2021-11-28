@@ -39,12 +39,6 @@ renderer:
   - title: Network
     name: rest
 
-  - title: Cardano blockchain
-    name: ada
-    children:
-    - title: Blockfrost.io
-      name: blkfrst
-
   - title: Ark blockchain
     name: ark
     children:
@@ -60,6 +54,12 @@ renderer:
       name: crypto
     - title: Ledger Wallet
       name: ldgr
+
+  - title: Cardano blockchain
+    name: ada
+    children:
+    - title: Blockfrost.io
+      name: blkfrst
 
   - title: Protokol NFT
     name: protokol
