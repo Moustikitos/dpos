@@ -15,7 +15,7 @@
 <script>
     // Current page data
     var mkdocs_page_name = "API";
-    var mkdocs_page_input_path = "qslp\\api.md";
+    var mkdocs_page_input_path = "aslp\\api.md";
     var mkdocs_page_url = null;
   </script>
 <script defer="" src="../../js/jquery-2.1.1.min.js"></script>
@@ -59,21 +59,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../ark/ldgr/">Ledger Wallet</a>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Protokol NFT</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Qredit SLP</span></p>
+<p class="caption"><span class="caption-text">Ark Side LEvel Protocol</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../qslp/">Qredit.io</a>
+<li class="toctree-l1"><a class="reference internal" href="../aslp/">Qredit.io</a>
 </li>
 <li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
 <ul class="current">
@@ -84,6 +72,18 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Protokol NFT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
 </li>
 </ul>
 </div>
@@ -99,24 +99,24 @@
 <div aria-label="breadcrumbs navigation" role="navigation">
 <ul class="wy-breadcrumbs">
 <li><a href="../..">Docs</a> »</li>
-<li>Qredit SLP »</li>
+<li>Ark Side LEvel Protocol »</li>
 <li>API</li>
 <li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/qslp/api.md"> Edit on GitHub</a>
+<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/aslp/api.md"> Edit on GitHub</a>
 </li>
 </ul>
 <hr/>
 </div>
 <div role="main">
 <div class="section">
-<p><a id="dposlib.qslp.api"></a></p>
-<h1 id="dposlibqslpapi">dposlib.qslp.api</h1>
-<p>This module provides both <a href="../../ark/api/">Ark API</a> and <a href="https://aslp.qredit.dev">QSLP API</a> interface.</p>
+<p><a id="dposlib.aslp.api"></a></p>
+<h1 id="dposlibaslpapi">dposlib.aslp.api</h1>
+<p>This module provides both <a href="../../ark/api/">Ark API</a> and <a href="https://aslp.qredit.dev">ASLP API</a> interface.</p>
 <h2 id="write-endpoints">Write endpoints</h2>
 <p>Below a request to <code>https://aslp.qredit.dev/api/tokens</code> endpoint:</p>
 <pre><code class="language-python">&gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use("qslp")
-&gt;&gt;&gt; from dposlib.qslp.api import GET
+&gt;&gt;&gt; rest.use("aslp")
+&gt;&gt;&gt; from dposlib.aslp.api import GET
 &gt;&gt;&gt; GET.api.status()
 {'downloadedBlocks': 18333367, 'scannedBlocks': None, 'status': 200}
 &gt;&gt;&gt; tokens = GET.api.tokens()
@@ -167,7 +167,7 @@
 <footer>
 <div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
 <a class="btn btn-neutral float-right" href="../builders/" title="Transaction builders">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../qslp/" title="Qredit.io"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral" href="../aslp/" title="Qredit.io"><span class="icon icon-circle-arrow-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -186,7 +186,7 @@
 <span>
 <a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
 </span>
-<span><a href="../qslp/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../aslp/" style="color: #fcfcfc">« Previous</a></span>
 <span><a href="../builders/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
