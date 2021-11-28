@@ -15,10 +15,54 @@ information.
 ...    no="For testing purpose only.", pa=True, mi=True
 ... )
 >>> t.vendorField
-'{"aslp1":{"tp":"GENESIS","de":"2","sy":"TTK","na":"Toon\'s token","qt":"25000\
-000","du":"ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq"\
-,"no":"For testing purpose only."}}'
+'{"aslp1":{"tp":"GENESIS","de":"2","sy":"TTK","na":"Toon\'s token","qt":"25000'
+'000","du":"ipfs://bafkreigfxalrf52xm5ecn4lorfhiocw4x5cxpktnkiq3atq6jp2elktobq'
+'","no":"For testing purpose only."}}'
 >>>
+>>> t.finalize("secret passphrase")
+>>> print(t)
+{
+  "version": 2,
+  "amount": 100000000,
+  "asset": {},
+  "fee": 5000000,
+  "id": "ff2c7e5300a1457b289ced0644ec36fe073958d01d2b2b9976dbcff21064781b",
+  "network": 23,
+  "nonce": 1,
+  "recipientId": "ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr",
+  "senderId": "AdzCBJt2F2Q2RYL7vnp96QhTeGdDZNZGeJ",
+  "senderPublicKey":
+    "03aacac6c98daaf3d433fe90e9295ce380916946f850bcdc6f6880ae6503ca1e40",
+  "signature":
+    "fa754a2966d44197c08093263e8a1287fce7ab0c05dcccc4e0f7a0f00a1a781527d911629"
+    "c67c58dea6873d8841e37c1057d247813b06e47cf3b59033ed7bc91",
+  "timestamp": 147979327,
+  "type": 0,
+  "typeGroup": 1,
+  "vendorField":
+    "{\"aslp1\":{\"tp\":\"GENESIS\",\"de\":\"2\",\"sy\":\"TTK\",\"na\":\"Toon'"
+    "s token\",\"qt\":\"25000000\",\"du\":\"ipfs://bafkreigfxalrf52xm5ecn4lorf"
+    "hiocw4x5cxpktnkiq3atq6jp2elktobq\",\"no\":\"For testing purpose only.\"}}"
+}
+>>> dposlib.core.broadcastTransactions(t)
+{
+  'data': {
+    'accept': [],
+    'broadcast': [],
+    'excess': [],
+    'invalid': [
+      'ff2c7e5300a1457b289ced0644ec36fe073958d01d2b2b9976dbcff21064781b'
+    ]
+  }, 'errors': {
+    'ff2c7e5300a1457b289ced0644ec36fe073958d01d2b2b9976dbcff21064781b': {
+      'type': 'ERR_APPLY',
+      'message':
+        'AdzCBJt2F2Q2RYL7vnp96QhTeGdDZNZGeJ#1 1064781b Transfer v2 cannot be a'
+        'pplied: Insufficient balance in the wallet.'
+    }
+  },
+  'status': 200
+}
 ```
 
 <a id="dposlib.qslp.builders.qslpGenesis"></a>
