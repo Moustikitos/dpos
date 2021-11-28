@@ -35,8 +35,8 @@ sudo apt-get install python-pip python3-pip
   - Ark forks
     * [x] Protokol/nft : `protokol` (beta)
     * [x] Compendia : `nos`
-    * [] Qredit
-      + [] mainnet :
+    * [ ] Qredit
+      + [ ] mainnet :
       + [x] devnet : `qredit`
     * [x] Unikname : `uns`
     * [x] Internet of People : `iop`
