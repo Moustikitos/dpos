@@ -69,7 +69,7 @@ renderer:
     - title: Transaction builders
       name: builders
 
-  - title: QSLP
+  - title: Qredit SLP
     name: qslp
     children:
     - title: Qredit.io
