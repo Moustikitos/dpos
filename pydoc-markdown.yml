@@ -55,10 +55,10 @@ renderer:
     - title: Ledger Wallet
       name: ldgr
 
-  - title: Ark Side LEvel Protocol
+  - title: Ark Side Level Protocol
     name: aslp
     children:
-    - title: Qredit.io
+    - title: ASLP
       name: aslp
     - title: API
       name: api
