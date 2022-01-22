@@ -119,10 +119,16 @@ nos = {
 
 uns = {
     "familly": "ark",
-    "maxvotepertx": 1,
-    "maxvote": 1,
     "aip20": 0,
     "txversion": 2,
 
     "seeds": ["https://api.uns.network"]
+}
+
+tsxp = {
+    "familly": "ark",
+    "aip20": 0,
+    "txversion": 2,
+
+    "seeds": ["https://sxp.testnet.sh"]
 }
