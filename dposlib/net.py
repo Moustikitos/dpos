@@ -82,8 +82,7 @@ diop = {
     ]
 }
 
-# mainnet: https://qredit.cloud/api
-qredit = {
+tqredit = {
     "familly": "ark",
     "aip20": 0,
     "txversion": 2,
@@ -96,6 +95,14 @@ qredit = {
         "http://159.69.89.111:4103",
         "http://159.69.89.41:4103"
     ]
+}
+
+qredit = {
+    "familly": "ark",
+    "aip20": 0,
+    "txversion": 2,
+
+    "seeds": ["https://qredit.cloud"]
 }
 
 aslp = {

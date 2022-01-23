@@ -35,11 +35,12 @@ sudo apt-get install python-pip python3-pip
   - Ark forks
     * [x] Protokol/nft : `protokol` (beta)
     * [x] Compendia : `nos`
-    * [ ] Qredit
-      + [ ] mainnet :
-      + [x] devnet : `qredit`
+    * [x] Qredit
+      + [x] mainnet : `qredit`
+      + [x] testnet : `tqredit`
     * [x] Unikname : `uns`
     * [x] Internet of People : `iop`
+    * [x] Swipe : `tsxp`
   - Qredit Side Ledger Protocol
     * [x] mainnet : `qslp`
   - Cardano
@@ -190,6 +191,7 @@ pip install ledgerblue
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy
   - [x] ark package simplification
+  - [x] added `swipe` testnet
   - [ ] deserialization
 
 ### 0.3.5
