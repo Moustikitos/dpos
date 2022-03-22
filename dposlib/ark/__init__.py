@@ -241,7 +241,7 @@ def init(seed=None):
     if "slip44" in data:
         cfg.slip44 = str(data["slip44"])
     # -- static fee management ------------------------------------------------
-    cfg.fees = constants["fees"]
+    cfg.fees = constants.get("fees", {})
     # -- dynamic fee management -----------------------------------------------
     # since v2.1 dynamicFees offsets are in "transactionPool" field
     cfg.doffsets = data.get(
