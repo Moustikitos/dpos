@@ -40,7 +40,8 @@ sudo apt-get install python-pip python3-pip
       + [x] testnet : `tqredit`
     * [x] Unikname : `uns`
     * [x] Internet of People : `iop`
-    * [x] Swipe : `tsxp`
+    * [x] Solar : `tsxp`
+      + [x] testnet : `tsxp`
   - Qredit Side Ledger Protocol
     * [x] mainnet : `qslp`
   - Cardano
