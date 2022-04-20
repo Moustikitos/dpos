@@ -42,8 +42,6 @@ sudo apt-get install python-pip python3-pip
     * [x] Internet of People : `iop`
     * [x] Solar : `tsxp`
       + [x] testnet : `tsxp`
-  - Qredit Side Ledger Protocol
-    * [x] mainnet : `qslp`
   - Cardano
     * [x] Blockfrost gateway
       + [x] mainnet : `ada`
@@ -187,7 +185,6 @@ pip install ledgerblue
 ### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added
   - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added
-  - [x] [`QSLP`](https://www.qredit.io/blockchain-qslp) side ledger protocol added
   - [x] `ark.api.Webhook` improvement
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy

@@ -82,39 +82,39 @@ diop = {
     ]
 }
 
-tqredit = {
-    "familly": "ark",
-    "aip20": 0,
-    "txversion": 2,
+# tqredit = {
+#     "familly": "ark",
+#     "aip20": 0,
+#     "txversion": 2,
 
-    "seeds": [
-        "http://35.163.173.247:4103",
-        "http://116.203.33.4:4103",
-        "http://116.203.56.119:4103",
-        "http://116.203.58.165:4103",
-        "http://159.69.89.111:4103",
-        "http://159.69.89.41:4103"
-    ]
-}
+#     "seeds": [
+#         "http://35.163.173.247:4103",
+#         "http://116.203.33.4:4103",
+#         "http://116.203.56.119:4103",
+#         "http://116.203.58.165:4103",
+#         "http://159.69.89.111:4103",
+#         "http://159.69.89.41:4103"
+#     ]
+# }
 
-qredit = {
-    "familly": "ark",
-    "aip20": 0,
-    "txversion": 2,
+# qredit = {
+#     "familly": "ark",
+#     "aip20": 0,
+#     "txversion": 2,
 
-    "seeds": ["https://qredit.cloud"]
-}
+#     "seeds": ["https://qredit.cloud"]
+# }
 
-aslp = {
-    "familly": "aslp",
-    "aip20": 0,
-    "txversion": 2,
+# aslp = {
+#     "familly": "aslp",
+#     "aip20": 0,
+#     "txversion": 2,
 
-    "master_address": "ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr",
-    "aslp_api": ["https://aslp.qredit.dev"],
+#     "master_address": "ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr",
+#     "aslp_api": ["https://aslp.qredit.dev"],
 
-    "seeds": ["https://api.ark.io"]
-}
+#     "seeds": ["https://api.ark.io"]
+# }
 
 nos = {
     "familly": "ark",
@@ -138,4 +138,16 @@ tsxp = {
     "txversion": 2,
 
     "seeds": ["https://sxp.testnet.sh"]
+}
+
+sxp = {
+    "familly": "ark",
+    "aip20": 0,
+    "txversion": 2,
+    "pubKeyHash": 63,
+    "nethash":
+        "16db20c30c52d53638ca537ad0ed113408da3ae686e2c4bfa7e315d4347196dc",
+    "wif": 252,
+    "slip44": 3333,
+    "seeds": ["http://45.32.148.40:6003"]
 }
