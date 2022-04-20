@@ -517,13 +517,13 @@ def multiVote(tx):
     return tx
 
 
-def burn(amount, vendorField=None):
+def burn(amount):
     """
     Build a burn transaction.
     ```
 
     Args:
-        amount (float): transaction amount in ark.
+        amount (float): transaction amount as human value.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
@@ -533,6 +533,5 @@ def burn(amount, vendorField=None):
         fee=0,
         typeGroup=2,
         amount=amount*100000000,
-        vendorField=vendorField,
         version=cfg.txversion,
     )
