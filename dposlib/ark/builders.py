@@ -517,7 +517,7 @@ def multiVote(tx):
     return tx
 
 
-def burn(amount):
+def burn(amount, vendorField=None):
     """
     Build a burn transaction.
     ```
@@ -533,5 +533,6 @@ def burn(amount):
         fee=0,
         typeGroup=2,
         amount=amount*100000000,
+        vendorField=vendorField,
         version=cfg.txversion,
     )
