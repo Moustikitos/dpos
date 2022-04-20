@@ -201,6 +201,13 @@ def _1_10(tx, buf):
     pack_bytes(buf, unhexlify(refund["lockTransactionId"]))
 
 
+# solar-network burn transaction
+
+def _2_0(tx, buf):
+    dict.__setitem__(tx, "fee", 0)
+    pack("<Q", buf, (int(tx.get("amount", 0)), ))
+
+
 # https://ark.dev/docs/core/transactions/transaction-types/entity
 
 def _2_6(tx, buf):

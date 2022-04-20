@@ -100,6 +100,7 @@ GETNAME = {
         10: lambda tx: "htlcRefund",
     },
     2: {
+        0: lambda tx: "burn",
         6: lambda tx: (
             "entityRegistration" if tx["asset"]["action"] == 0 else
             "entityResignation" if tx["asset"]["action"] == 1 else

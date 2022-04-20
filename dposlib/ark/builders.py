@@ -515,3 +515,24 @@ def multiVote(tx):
         else:
             tx["asset"]["votes"].insert(0, "-" + vote)
     return tx
+
+
+def burn(amount, vendorField=None):
+    """
+    Build a burn transaction.
+    ```
+
+    Args:
+        amount (float): transaction amount in ark.
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
+    return Transaction(
+        type=0,
+        fee=0,
+        typeGroup=2,
+        amount=amount*100000000,
+        vendorField=vendorField,
+        version=cfg.txversion,
+    )

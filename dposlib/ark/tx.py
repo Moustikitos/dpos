@@ -575,7 +575,7 @@ class Transaction(dict):
             elif self._secondPublicKey:
                 if "signSignature" not in self:
                     raise Exception("second signature is missing")
-            self.pop("id", False)
+            dict.pop(self, "id", False)
             self["id"] = dposlib.core.crypto.getIdFromBytes(
                 serialize(self, exclude_multi_sig=False)
             )
