@@ -42,6 +42,7 @@ sudo apt-get install python-pip python3-pip
     * [x] Internet of People : `iop`
     * [x] Solar : `tsxp`
       + [x] testnet : `tsxp`
+      + [x] mainnet : `sxp`
   - Cardano
     * [x] Blockfrost gateway
       + [x] mainnet : `ada`
@@ -189,7 +190,9 @@ pip install ledgerblue
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy
   - [x] ark package simplification
-  - [x] added `swipe` testnet
+  - [x] added `solar` testnet
+  - [x] added `solar` mainnet
+  - [x] added `solar` burn transaction
   - [ ] deserialization
 
 ### 0.3.5
