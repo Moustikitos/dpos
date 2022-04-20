@@ -35,12 +35,7 @@ sudo apt-get install python-pip python3-pip
   - Ark forks
     * [x] Protokol/nft : `protokol` (beta)
     * [x] Compendia : `nos`
-    * [x] Qredit
-      + [x] mainnet : `qredit`
-      + [x] testnet : `tqredit`
-    * [x] Unikname : `uns`
-    * [x] Internet of People : `iop`
-    * [x] Solar : `tsxp`
+    * [x] Solar
       + [x] testnet : `tsxp`
       + [x] mainnet : `sxp`
   - Cardano
