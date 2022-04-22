@@ -30,7 +30,6 @@ kw = {
         "dposlib.ark",
         "dposlib.ark.cold",
         "dposlib.ada",
-        "dposlib.aslp",
         "dposlib.protokol"
     ],
     "install_requires": [
