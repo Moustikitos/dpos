@@ -181,7 +181,9 @@ def getSignatureFromBytes(data, privateKey):
     """
     secret0 = int(privateKey, base=16)
     if bytearray(data)[0] == 0xff:
-        return secp256k1.Bcrpt410(secret0).sign(data).raw().decode()
+        return (
+            secp256k1.Schnorr if cfg.bip340 else secp256k1.Bcrpt410
+        )(secret0).sign(data).raw().decode()
     else:
         return secp256k1.Ecdsa(secret0).sign(
             data, rfc6979=True, canonical=True
@@ -222,21 +224,20 @@ def verifySignatureFromBytes(data, publicKey, signature):
             signature if isinstance(signature, bytes) else
             signature.encode()
         )
-        return bool(
-            secp256k1._schnorr.bcrypto410_verify(
-                msg, puk.x, puk.y, hS.r, hS.s
+        if not cfg.bip340:
+            return bool(
+                secp256k1._schnorr.bcrypto410_verify(
+                    msg, puk.x, puk.y, hS.r, hS.s
+                )
             )
-        )
+        else:
+            return bool(secp256k1._schnorr.verify(msg, puk.x, hS.r, hS.s))
     else:
         hS = secp256k1.HexSig.from_der(
             signature if isinstance(signature, bytes) else
             signature.encode()
         )
-        return bool(
-            secp256k1._ecdsa.verify(
-                msg, puk.x, puk.y, hS.r, hS.s
-            )
-        )
+        return bool(secp256k1._ecdsa.verify(msg, puk.x, puk.y, hS.r, hS.s))
 
 
 def getId(tx):

@@ -253,6 +253,8 @@ def init(seed=None):
     setattr(cfg, "feestats", FEES["data"])
     # activate dynamic fees
     Transaction.useDynamicFee("avgFee")
+    # solar-network
+    cfg.bip340 = constants.get("bip340", False)
     # -- network connection management ----------------------------------------
     # change peers every 30 seconds
     if getattr(cfg, "hotmode", False):
