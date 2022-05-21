@@ -188,6 +188,7 @@ pip install ledgerblue
   - [x] added `solar` testnet
   - [x] added `solar` mainnet
   - [x] added `solar` burn transaction
+  - [x] added `bip340`
   - [ ] deserialization
 
 ### 0.3.5
