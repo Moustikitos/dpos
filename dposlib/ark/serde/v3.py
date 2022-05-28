@@ -3,7 +3,7 @@
 from dposlib.util.bin import unhexlify, hexlify, pack, pack_bytes
 
 
-# vote
+# solar vote transaction
 def _1_3(tx, buf):
     asset = tx.get("asset", {})
     usernames = asset.get("votes", False)
@@ -17,3 +17,9 @@ def _1_3(tx, buf):
             ))
     else:
         raise Exception("no up/down vote given")
+
+
+# solar-network burn transaction
+def _2_0(tx, buf):
+    dict.__setitem__(tx, "fee", 0)
+    pack("<Q", buf, (int(tx.get("amount", 0)), ))
