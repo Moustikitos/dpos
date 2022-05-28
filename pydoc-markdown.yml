@@ -11,9 +11,9 @@ hooks:
   pre-render:
   - python -c "import os;os.makedirs('./docs', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/ark', exist_ok=True)"
-  - python -c "import os;os.makedirs('./docs/ada', exist_ok=True)"
+  # - python -c "import os;os.makedirs('./docs/ada', exist_ok=True)"
   # - python -c "import os;os.makedirs('./docs/aslp', exist_ok=True)"
-  - python -c "import os;os.makedirs('./docs/protokol', exist_ok=True)"
+  # - python -c "import os;os.makedirs('./docs/protokol', exist_ok=True)"
   - python -c "import shutil;shutil.copy('./index.md', './docs/index.md')"
   - pydoc-markdown -m dposlib.rest              > ./docs/rest.md
   - pydoc-markdown -m dposlib.ark               > ./docs/ark/ark.md
@@ -22,9 +22,9 @@ hooks:
   - pydoc-markdown -m dposlib.ark.builders      > ./docs/ark/builders.md
   - pydoc-markdown -m dposlib.ark.crypto        > ./docs/ark/crypto.md
   - pydoc-markdown -m dposlib.ark.ldgr          > ./docs/ark/ldgr.md
-  - pydoc-markdown -m dposlib.ada               > ./docs/ada/blkfrst.md
-  - pydoc-markdown -m dposlib.protokol          > ./docs/protokol/prtkl.md
-  - pydoc-markdown -m dposlib.protokol.builders > ./docs/protokol/builders.md
+  # - pydoc-markdown -m dposlib.ada               > ./docs/ada/blkfrst.md
+  # - pydoc-markdown -m dposlib.protokol          > ./docs/protokol/prtkl.md
+  # - pydoc-markdown -m dposlib.protokol.builders > ./docs/protokol/builders.md
   # - pydoc-markdown -m dposlib.aslp              > ./docs/aslp/aslp.md
   # - pydoc-markdown -m dposlib.aslp.api          > ./docs/aslp/api.md
   # - pydoc-markdown -m dposlib.aslp.builders     > ./docs/aslp/builders.md
@@ -65,19 +65,19 @@ renderer:
   #   - title: Transaction builders
   #     name: builders
 
-  - title: Cardano blockchain
-    name: ada
-    children:
-    - title: Blockfrost.io
-      name: blkfrst
+  # - title: Cardano blockchain
+  #   name: ada
+  #   children:
+  #   - title: Blockfrost.io
+  #     name: blkfrst
 
-  - title: Protokol NFT
-    name: protokol
-    children:
-    - title: Protokol.com
-      name: prtkl
-    - title: Transaction builders
-      name: builders
+  # - title: Protokol NFT
+  #   name: protokol
+  #   children:
+  #   - title: Protokol.com
+  #     name: prtkl
+  #   - title: Transaction builders
+  #     name: builders
 
   mkdocs_config:
     site_name: The dposlib Project
