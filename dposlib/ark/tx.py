@@ -88,9 +88,7 @@ def setFees(cls, value=None):
             # compute dynamic fees
             # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
             else:
-                typ_ = cls.get("type", 0)
                 version = cls.get("version", 0x01)
-
                 vendorField = cls.get("vendorField", "")
                 lenVF = len(
                     vendorField if isinstance(vendorField, bytes) else
@@ -213,6 +211,18 @@ class Transaction(dict):
     FEESL = None
 
     # custom properties definitions
+    secret = property(
+        lambda cls: hasattr(cls, "_privateKey"),
+        lambda cls, passphrase: cls.link(passphrase, None),
+        None,
+        ""
+    )
+    secondSecret = property(
+        lambda cls: hasattr(cls, "_secondPrivateKey"),
+        lambda cls, passphrase: cls.link(None, passphrase),
+        None,
+        ""
+    )
     datetime = property(
         lambda cls: slots.getRealTime(cls["timestamp"]),
         None,
@@ -353,17 +363,12 @@ class Transaction(dict):
             self[key] = value
 
     def __setitem__(self, item, value):
-        if item == "secret":
-            self.link(value)
-        elif item == "secondSecret":
-            self.link(None, value)
+        try:
+            dict.__getattribute__(self, item)
+        except AttributeError:
+            self._setitem(item, value)
         else:
-            try:
-                dict.__getattribute__(self, item)
-            except AttributeError:
-                self._setitem(item, value)
-            else:
-                object.__setattr__(self, item, value)
+            object.__setattr__(self, item, value)
     __setattr__ = __setitem__
 
     def __getattr__(self, attr):
@@ -409,6 +414,8 @@ class Transaction(dict):
             pass
 
     def touch(self):
+        self.pop("nonce", False)
+        self.pop("timestamp", False)
         if hasattr(self, "_publicKey"):
             self.senderPublicKey = self._publicKey
 
