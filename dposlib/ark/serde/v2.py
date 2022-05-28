@@ -1,47 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import base58
-import hashlib
-import json
-from io import BytesIO
-
 from dposlib.util.bin import unhexlify, pack, pack_bytes
-
-CACHE = {}
-
-
-def serializePayload(tx):
-    asset = tx.get("asset", {})
-    md5_asset = hashlib.md5(
-        json.dumps(asset, sort_keys=True).encode("utf-8")
-    ).hexdigest()
-
-    # if hash already computed and nothing modified since
-    if len(asset) and md5_asset == getattr(tx, "_assetHash", ""):
-        return getattr(tx, "_serializedPayload")
-
-    name = "_%(typeGroup)d_%(type)d" % tx
-    func = CACHE.get(name, False)
-
-    if func is False:
-        try:
-            func = getattr(sys.modules[__name__], name)
-        except AttributeError:
-            raise Exception(
-                "Unknown transaction %(typeGroup)d:%(type)d" % tx
-            )
-        else:
-            CACHE[name] = func
-
-    buf = BytesIO()
-    func(tx, buf)
-    result = buf.getvalue()
-    buf.close()
-
-    setattr(tx, "_serializedPayload", result)
-    setattr(tx, "_assetHash", md5_asset)
-    return result
 
 
 # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-11.md
@@ -202,14 +162,12 @@ def _1_10(tx, buf):
 
 
 # solar-network burn transaction
-
 def _2_0(tx, buf):
     dict.__setitem__(tx, "fee", 0)
     pack("<Q", buf, (int(tx.get("amount", 0)), ))
 
 
 # https://ark.dev/docs/core/transactions/transaction-types/entity
-
 def _2_6(tx, buf):
     asset = tx.get("asset", {})
     data = asset.get("data", {})
