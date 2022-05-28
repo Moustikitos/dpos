@@ -560,6 +560,10 @@ class Transaction(dict):
             raise ValueError("public key %s not allowed here" % publicKey)
 
     def appendMultiSignature(self, publicKey, signature):
+        """
+        Manage the place of signature in signatures list for multisignature
+        wallet transaction or registration.
+        """
         # if type 4 find index in asset
         if self["type"] == 4:
             index = self.asset["multiSignature"]["publicKeys"].index(

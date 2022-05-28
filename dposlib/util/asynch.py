@@ -5,7 +5,7 @@ import threading
 
 def setInterval(interval):
     """
-    threaded decorator
+    Threaded decorator.
 
     ```python
     >>> @setInterval(10)

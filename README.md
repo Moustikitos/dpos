@@ -33,15 +33,17 @@ sudo apt-get install python-pip python3-pip
     * [x] devnet : `dark`
     * [x] mainet : `ark`
   - Ark forks
-    * [x] Protokol/nft : `protokol` (beta)
-    * [x] Compendia : `nos`
+    <!-- * [x] Protokol/nft : `protokol` (beta) -->
+    * [x] Compendia
+      + [x] devnet : `dnos`
+      + [x] mainnet : `nos`
     * [x] Solar
       + [x] testnet : `tsxp`
       + [x] mainnet : `sxp`
-  - Cardano
+  <!-- - Cardano
     * [x] Blockfrost gateway
       + [x] mainnet : `ada`
-      + [x] testnet : `shelley`
+      + [x] testnet : `shelley` -->
 
 ## Main features
 
@@ -185,8 +187,8 @@ pip install ledgerblue
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy
   - [x] ark package simplification
-  - [x] added `solar` testnet
-  - [x] added `solar` mainnet
+  - [x] `multiVote` moved to `switchVote`
+  - [x] added `solar` testnet and mainnet
   - [x] added `solar` burn transaction
   - [x] added `bip340`
   - [ ] deserialization

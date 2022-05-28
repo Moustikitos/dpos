@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-Binary data manipulation that perform samely on python 2.x and 3.x.
-"""
-
 import re
 import struct
 import binascii
@@ -22,7 +18,7 @@ def intasb(i):
 
 def basint(e):
     # byte as int conversion
-    return struct.pack("B", e)
+    return struct.unpack("B", e)[0]
 
 
 def unpack(fmt, fileobj):
