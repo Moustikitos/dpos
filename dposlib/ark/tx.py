@@ -312,7 +312,6 @@ class Transaction(dict):
     setDynamicFee = useDynamicFee
     useStaticFee = setStaticFee = lambda self: self.useDynamicFee(None)
 
-    # private definitions
     def _setitem(self, item, value):
         try:
             cast = dposlib.core.TYPING[item]
@@ -364,10 +363,13 @@ class Transaction(dict):
 
     def __setitem__(self, item, value):
         try:
+            # access item as property ?
             dict.__getattribute__(self, item)
         except AttributeError:
+            # set value using _setitem filter
             self._setitem(item, value)
         else:
+            # set property
             object.__setattr__(self, item, value)
     __setattr__ = __setitem__
 
@@ -385,7 +387,12 @@ class Transaction(dict):
         )
 
     def __repr__(self):
-        return "<Blockchain transaction type %(typeGroup)s:%(type)s>" % self
+        return (
+            "<Blockchain transaction type %(typeGroup)s:%(type)s" +
+            "\n  amount=%(amount)r" +
+            "\n  vendorField=%(vendorField)r" +
+            "\n  asset=%(asset)r\n>"
+        ) % self
 
     def link(self, secret=None, secondSecret=None):
         """
