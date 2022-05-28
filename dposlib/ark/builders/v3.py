@@ -68,22 +68,22 @@ def multiVote(tx, identifier=None):
         raise Exception("orphan vote transaction can not be set as multivote")
 
 
-def burn(amount, vendorField=None):
-    """
-    Build a burn transaction.
-    ```
+# def burn(amount, vendorField=None):
+#     """
+#     Build a burn transaction.
+#     ```
 
-    Args:
-        amount (float): transaction amount as human value.
+#     Args:
+#         amount (float): transaction amount as human value.
 
-    Returns:
-        dposlib.ark.tx.Transaction: orphan transaction.
-    """
-    return Transaction(
-        type=0,
-        fee=0,
-        typeGroup=2,
-        amount=amount*100000000,
-        vendorField=vendorField,
-        version=cfg.txversion,
-    )
+#     Returns:
+#         dposlib.ark.tx.Transaction: orphan transaction.
+#     """
+#     return Transaction(
+#         type=0,
+#         fee=0,
+#         typeGroup=2,
+#         amount=amount*100000000,
+#         vendorField=vendorField,
+#         version=cfg.txversion,
+#     )

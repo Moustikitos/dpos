@@ -76,14 +76,7 @@ from dposlib.util.bin import hexlify, unhexlify
 from dposlib.util.asynch import setInterval
 
 from dposlib.ark import builders
-from dposlib.ark.builders import (
-    broadcastTransactions, _getattr
-    # , transfer, registerSecondSecret,
-    # registerSecondPublicKey, registerAsDelegate, upVote, downVote,
-    # registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
-    # htlcSecret, htlcLock, htlcClaim, htlcRefund,
-    # entityRegister, entityUpdate, entityResign
-)
+from dposlib.ark.builders import broadcastTransactions, _getattr
 
 cfg.headers["API-Version"] = "3"
 
@@ -102,12 +95,24 @@ GETNAME = {
         10: lambda tx: "htlcRefund",
     },
     2: {
+        # solar
         0: lambda tx: "burn",
+        # ark
         6: lambda tx: (
             "entityRegistration" if tx["asset"]["action"] == 0 else
             "entityResignation" if tx["asset"]["action"] == 1 else
             "entityUpdate"
         )
+    },
+    # compendia
+    100: {
+        0: lambda tx: "stakeCreate",
+        1: lambda tx: "stakeRedeem",
+        2: lambda tx: "stakeCancel",
+        3: lambda tx: "stakeExtend"
+    },
+    101: {
+        0: lambda tx: "setFile"
     }
 }
 
@@ -120,6 +125,7 @@ TYPING = {
     "fee": int,
     "id": str,
     "MultiSignatureAddress": str,
+    "multiSignatureAddress": str,
     "network": int,
     "nonce": int,
     "recipientId": str,
@@ -149,12 +155,20 @@ def _load_builders():
     ])
 
     for name in [
+        # ark
         "transfer", "registerSecondSecret", "registerSecondPublicKey",
         "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
         "registerIpfs", "multiPayment", "delegateResignation",
         "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund",
         "entityRegister", "entityUpdate", "entityResign",
-        "burn", "multiVote"
+        "multiVote"
+
+        # solar
+        "burn",
+
+        # TODO: compendia...
+        "stakeCreate", "stakeCancel", "stakeExtend", "stakeRedeem",
+        "setFile",
     ]:
         try:
             func = _getattr(builders, name)
