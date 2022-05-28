@@ -30,20 +30,6 @@ from dposlib.ark.tx import Transaction
 from dposlib.util.bin import hexlify
 
 
-def broadcastTransactions(*transactions, **params):
-    chunk_size = params.pop("chunk_size", cfg.maxTransactions)
-    report = []
-    for chunk in [
-        transactions[i:i+chunk_size] for i in
-        range(0, len(transactions), chunk_size)
-    ]:
-        report.append(rest.POST.api.transactions(transactions=chunk))
-    return \
-        None if len(report) == 0 else \
-        report[0] if len(report) == 1 else \
-        report
-
-
 def transfer(amount, address, vendorField=None, expiration=0):
     """
     Build a transfer transaction. Emoji can be included in transaction
@@ -493,7 +479,7 @@ def entityResign(registrationId):
     )
 
 
-def multiVote(tx):
+def multiVote(tx, identifier=None):
     """
     Transform a [`dposlib.ark.builders.upVote`](
         builders.md#dposlib.ark.builders.upVote
@@ -506,15 +492,18 @@ def multiVote(tx):
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
     """
-    if hasattr(tx, "senderPublicKey"):
-        vote = rest.GET.api.wallets(tx["senderPublicKey"], returnKey="data")\
-            .get("attributes")\
+    identifier = identifier or tx["senderPublicKey"]
+    if identifier is not None:
+        vote = rest.GET.api.wallets(identifier, returnKey="data")\
+            .get("attributes", {})\
             .get("vote", None)
         if vote is None:
             pass
-        else:
+        elif "-" + vote not in tx["asset"]["votes"]:
             tx["asset"]["votes"].insert(0, "-" + vote)
-    return tx
+        return tx
+    else:
+        raise Exception("orphan vote transaction can not be set as multivote")
 
 
 def burn(amount, vendorField=None):
