@@ -6,26 +6,29 @@ import hashlib
 import json
 from io import BytesIO
 
+# all `v<x>.py` have to be imported here
 from . import v2, v3
 
 CACHE = {}
 
 
 def serializePayload(tx):
+    # compute a md5 hash over asset and amount
     asset = tx.get("asset", {})
+    asset["amount"] = tx.get("amount", 0)
+    asset["expiration"] = tx.get("expiration", 0)
     md5_asset = hashlib.md5(
         json.dumps(asset, sort_keys=True).encode("utf-8")
     ).hexdigest()
-
-    # if hash already computed and nothing modified since
+    # if hash already computed and nothing modified (asset or amount) since
     if len(asset) and md5_asset == getattr(tx, "_assetHash", ""):
         return getattr(tx, "_serializedPayload")
 
-    name = "_%(typeGroup)d_%(type)d" % tx
+    name = "_%(version)d_%(typeGroup)d_%(type)d" % tx
     func = CACHE.get(name, False)
 
     if func is False:
-        # search
+        # search decreasing versions
         for version in range(tx['version'], 1, -1):
             try:
                 func = getattr(sys.modules[f"{__name__}.v{version}"], name)
@@ -34,8 +37,11 @@ def serializePayload(tx):
             else:
                 CACHE[name] = func
                 break
+        # if nothing found:
         if name not in CACHE:
-            raise Exception("Unknown transaction %(typeGroup)d:%(type)d" % tx)
+            raise NotImplementedError(
+                "Unknown transaction %(typeGroup)d:%(type)d" % tx
+            )
 
     buf = BytesIO()
     func(tx, buf)
