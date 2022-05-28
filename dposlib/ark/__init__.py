@@ -70,17 +70,19 @@ from datetime import datetime
 from importlib import import_module
 
 from dposlib import rest, cfg, HOME, FROZEN
-from dposlib.ark import crypto, api
+from dposlib.ark import crypto, api, serde
 from dposlib.ark.tx import Transaction
 from dposlib.util.bin import hexlify, unhexlify
 from dposlib.util.asynch import setInterval
 
+from dposlib.ark import builders
 from dposlib.ark.builders import (
-    broadcastTransactions, transfer, registerSecondSecret,
-    registerSecondPublicKey, registerAsDelegate, upVote, downVote,
-    registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
-    htlcSecret, htlcLock, htlcClaim, htlcRefund,
-    entityRegister, entityUpdate, entityResign
+    broadcastTransactions, _getattr
+    # , transfer, registerSecondSecret,
+    # registerSecondPublicKey, registerAsDelegate, upVote, downVote,
+    # registerMultiSignature, registerIpfs, multiPayment, delegateResignation,
+    # htlcSecret, htlcLock, htlcClaim, htlcRefund,
+    # entityRegister, entityUpdate, entityResign
 )
 
 cfg.headers["API-Version"] = "3"
@@ -137,6 +139,30 @@ TYPING = {
 }
 
 DAEMON_PEERS = None
+
+
+def _load_builders():
+    __all__.clear()
+    __all__.extend([
+        api, cfg, rest, crypto,
+        hexlify, unhexlify, broadcastTransactions,
+    ])
+
+    for name in [
+        "transfer", "registerSecondSecret", "registerSecondPublicKey",
+        "registerAsDelegate", "upVote", "downVote", "registerMultiSignature",
+        "registerIpfs", "multiPayment", "delegateResignation",
+        "htlcSecret", "htlcLock", "htlcClaim", "htlcRefund",
+        "entityRegister", "entityUpdate", "entityResign",
+        "burn", "multiVote"
+    ]:
+        try:
+            func = _getattr(builders, name)
+            setattr(sys.modules[__name__], name, func)
+        except NotImplementedError:
+            pass
+        else:
+            __all__.append(func)
 
 
 def _write_module(path, configuration={}, fees={}):
@@ -254,11 +280,16 @@ def init(seed=None):
     # activate dynamic fees
     Transaction.useDynamicFee("avgFee")
     # solar-network
-    cfg.bip340 = constants.get("bip340", False)
+    cfg.bip340 = constants.get("bip340", False) or \
+        (cfg.token in ["tSXP", "SXP"] and cfg.txversion >= 3)
     # -- network connection management ----------------------------------------
     # change peers every 30 seconds
     if getattr(cfg, "hotmode", False):
         DAEMON_PEERS = setInterval(30)(_select_peers)()
+
+    serde.CACHE.clear()
+    builders.CACHE.clear()
+    _load_builders()
 
     return True
 
@@ -272,12 +303,4 @@ def stop():
         DAEMON_PEERS.set()
 
 
-__all__ = [
-    api, cfg, rest, crypto,
-    hexlify, unhexlify, broadcastTransactions,
-    transfer, registerSecondSecret, registerSecondPublicKey,
-    registerAsDelegate, upVote, downVote, registerMultiSignature,
-    registerIpfs, multiPayment, delegateResignation,
-    htlcSecret, htlcLock, htlcClaim, htlcRefund,
-    entityRegister, entityUpdate, entityResign
-]
+__all__ = [api, cfg, rest, crypto, hexlify, unhexlify, broadcastTransactions]
