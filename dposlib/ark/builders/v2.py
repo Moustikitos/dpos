@@ -479,7 +479,7 @@ def entityResign(registrationId):
     )
 
 
-def multiVote(tx, identifier=None):
+def switchVote(tx, identifier=None):
     """
     Transform a [`dposlib.ark.builders.upVote`](
         builders.md#dposlib.ark.builders.upVote
