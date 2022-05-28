@@ -179,8 +179,8 @@ pip install ledgerblue
 ## Version
 
 ### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added
-  - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added
+  <!-- - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added -->
+  <!-- - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added -->
   - [x] `ark.api.Webhook` improvement
   - [x] `pySecp256k1` replaced by `cSecp256k1`
   - [x] removed python 2.x compliancy
