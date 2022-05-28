@@ -24,14 +24,16 @@ True
 ```
 """
 
-from dposlib import rest, cfg
+import sys
 
+from dposlib import rest, cfg
 from . import v2, v3
 
 CACHE = {}
 
 
-def _getattr(mod, name):
+def _getbldr(name):
+    mod = sys.modules[__name__]
     func = CACHE.get(name, False)
     if func is False:
         for version in range(cfg.txversion, 1, -1):
