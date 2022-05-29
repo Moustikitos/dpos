@@ -14,18 +14,20 @@ CACHE = {}
 
 def serializePayload(tx):
     # compute a md5 hash over asset and amount
-    asset = tx.get("asset", {})
+    asset = dict(tx.get("asset", {}))
     asset["amount"] = tx.get("amount", 0)
     asset["expiration"] = tx.get("expiration", 0)
     md5_asset = hashlib.md5(
         json.dumps(asset, sort_keys=True).encode("utf-8")
     ).hexdigest()
-    # if hash already computed and nothing modified (asset or amount) since
+    # if hash already computed and nothing modified (asset or amount or
+    # expiration) since
     if len(asset) and md5_asset == getattr(tx, "_assetHash", ""):
         return getattr(tx, "_serializedPayload")
 
-    name = "_%(version)d_%(typeGroup)d_%(type)d" % tx
-    func = CACHE.get(name, False)
+    name = "_%(typeGroup)d_%(type)d" % tx
+    key_name = "_%d" % tx["version"] + name
+    func = CACHE.get(key_name, False)
 
     if func is False:
         # search decreasing versions
@@ -35,10 +37,10 @@ def serializePayload(tx):
             except AttributeError:
                 pass
             else:
-                CACHE[name] = func
+                CACHE[key_name] = func
                 break
         # if nothing found:
-        if name not in CACHE:
+        if key_name not in CACHE:
             raise NotImplementedError(
                 "Unknown transaction %(typeGroup)d:%(type)d" % tx
             )
