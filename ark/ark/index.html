@@ -1,157 +1,160 @@
 <!DOCTYPE html>
-
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-<meta charset="utf-8"/>
-<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="../../img/favicon.ico" rel="shortcut icon"/>
-<title>Ark.io - The dposlib Project</title>
-<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
-<link href="../../css/theme.css" rel="stylesheet"/>
-<link href="../../css/theme_extra.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
-<script>
-    // Current page data
-    var mkdocs_page_name = "Ark.io";
-    var mkdocs_page_input_path = "ark\\ark.md";
-    var mkdocs_page_url = null;
-  </script>
-<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
-<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-</link></head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Ark.io - The dposlib Project</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Ark.io";
+        var mkdocs_page_input_path = "ark\\ark.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
 <body class="wy-body-for-nav" role="document">
-<div class="wy-grid-for-nav">
-<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
-<div class="wy-side-scroll">
-<div class="wy-side-nav-search">
-<a class="icon icon-home" href="../.."> The dposlib Project</a>
-<div role="search">
-<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
-<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
-</form>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> The dposlib Project
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
 </div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Ark blockchain</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Ark.io</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#init">init</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stop">stop</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Transaction builders</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/builders/">builders</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/v2/">V2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/v3/">V3</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">The dposlib Project</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Ark blockchain &raquo;</li><li>Ark.io</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/ark.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
 </div>
-<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Ark blockchain</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal current" href="./">Ark.io</a>
-<ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="#init">init</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#stop">stop</a>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Protokol NFT</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
-</li>
-</ul>
-</div>
-</div>
-</nav>
-<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
-<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
-<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
-<a href="../..">The dposlib Project</a>
-</nav>
-<div class="wy-nav-content">
-<div class="rst-content">
-<div aria-label="breadcrumbs navigation" role="navigation">
-<ul class="wy-breadcrumbs">
-<li><a href="../..">Docs</a> »</li>
-<li>Ark blockchain »</li>
-<li>Ark.io</li>
-<li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/ark.md"> Edit on GitHub</a>
-</li>
-</ul>
-<hr/>
-</div>
-<div role="main">
-<div class="section">
-<p><a id="dposlib.ark"></a></p>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a id="dposlib.ark"></a></p>
 <h1 id="dposlibark">dposlib.ark</h1>
 <p>ARK.io specific package.</p>
 <p>See <a href="https://api.ark.dev/public-rest-api/getting-started">Ark API documentation</a> to see how to use http calls.</p>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib
 &gt;&gt;&gt; from dposlib import rest
-&gt;&gt;&gt; rest.use("ark")
+&gt;&gt;&gt; rest.use(&quot;ark&quot;)
 True
 &gt;&gt;&gt; # reach http://api.ark.io/api/delegates/arky endpoint using GET
 &gt;&gt;&gt; # HTTP request builder
-&gt;&gt;&gt; rest.GET.api.delegates.arky()["username"]
+&gt;&gt;&gt; rest.GET.api.delegates.arky()[&quot;username&quot;]
 'arky'
-&gt;&gt;&gt; dlgt = dposlib.core.api.Delegate("arky")
+&gt;&gt;&gt; dlgt = dposlib.core.api.Delegate(&quot;arky&quot;)
 &gt;&gt;&gt; dlgt.forged
 {u'rewards': 397594.0, u'total': 401908.71166083, u'fees': 4314.71166083}
-&gt;&gt;&gt; dposlib.core.crypto.getKeys("secret")["publicKey"]
+&gt;&gt;&gt; dposlib.core.crypto.getKeys(&quot;secret&quot;)[&quot;publicKey&quot;]
 '03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
 &gt;&gt;&gt; dposlib.core.transfer(
-...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
-...     u"\u2728 simple transfer vendorField"
+...     1, &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+...     u&quot;\u2728 simple transfer vendorField&quot;
 ... )
 {
-  "amount": 100000000,
-  "asset": {},
-  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
-  "type": 0,
-  "vendorField": "\u2728 simple transfer vendorField",
-  "version": 1
+  &quot;amount&quot;: 100000000,
+  &quot;asset&quot;: {},
+  &quot;recipientId&quot;: &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+  &quot;type&quot;: 0,
+  &quot;vendorField&quot;: &quot;\u2728 simple transfer vendorField&quot;,
+  &quot;version&quot;: 1
 }
 &gt;&gt;&gt; dposlib.core.htlcLock(
-...     1, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
-...     "my secret lock", expiration=12,
-...     vendorField=u"\u2728 simple htlcLock vendorField"
+...     1, &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+...     &quot;my secret lock&quot;, expiration=12,
+...     vendorField=u&quot;\u2728 simple htlcLock vendorField&quot;
 ... )
 {
-  "amount": 100000000,
-  "asset": {
-    "lock": {
-      "secretHash":
-        "dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb",
-      "expiration": {
-        "type": 1,
-        "value": 82567745
+  &quot;amount&quot;: 100000000,
+  &quot;asset&quot;: {
+    &quot;lock&quot;: {
+      &quot;secretHash&quot;:
+        &quot;dbaed2f2747c7aa5a834b082ccb2b648648758a98d1a415b2ed9a22fd29d47cb&quot;,
+      &quot;expiration&quot;: {
+        &quot;type&quot;: 1,
+        &quot;value&quot;: 82567745
       }
     }
   },
-  "network": 23,
-  "recipientId": "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE",
-  "type": 8,
-  "typeGroup": 1,
-  "vendorField": "\u2728 simple htlcLock vendorField",
-  "version": 2
+  &quot;network&quot;: 23,
+  &quot;recipientId&quot;: &quot;ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE&quot;,
+  &quot;type&quot;: 8,
+  &quot;typeGroup&quot;: 1,
+  &quot;vendorField&quot;: &quot;\u2728 simple htlcLock vendorField&quot;,
+  &quot;version&quot;: 2
 }
 </code></pre>
 <p><a id="dposlib.ark.init"></a></p>
@@ -164,42 +167,55 @@ True
 <pre><code class="language-python">def stop()
 </code></pre>
 <p>Stop daemon initialized by <code>init</code> call.</p>
-</div>
-</div>
-<footer>
-<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../api/" title="API">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../../rest/" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-</div>
-<hr/>
-<div role="contentinfo">
-<!-- Copyright etc -->
-<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
-</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../rest/" class="btn btn-neutral float-left" title="Network"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api/" class="btn btn-neutral float-right" title="API">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Moustikitos/dpos" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../rest/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
-</div>
-</section>
-</div>
-<div aria-label="versions" class="rst-versions" role="note">
-<span class="rst-current-version" data-toggle="rst-current-version">
-<span>
-<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
-</span>
-<span><a href="../../rest/" style="color: #fcfcfc">« Previous</a></span>
-<span><a href="../api/" style="color: #fcfcfc">Next »</a></span>
-</span>
-</div>
-<script>var base_url = '../..';</script>
-<script defer="" src="../../js/theme_extra.js"></script>
-<script defer="" src="../../js/theme.js"></script>
-<script defer="" src="../../search/main.js"></script>
-<script defer="">
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
         };
     </script>
+
 </body>
 </html>

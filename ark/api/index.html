@@ -1,172 +1,175 @@
 <!DOCTYPE html>
-
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-<meta charset="utf-8"/>
-<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="../../img/favicon.ico" rel="shortcut icon"/>
-<title>API - The dposlib Project</title>
-<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
-<link href="../../css/theme.css" rel="stylesheet"/>
-<link href="../../css/theme_extra.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" rel="stylesheet"/>
-<script>
-    // Current page data
-    var mkdocs_page_name = "API";
-    var mkdocs_page_input_path = "ark\\api.md";
-    var mkdocs_page_url = null;
-  </script>
-<script defer="" src="../../js/jquery-2.1.1.min.js"></script>
-<script defer="" src="../../js/modernizr-2.8.3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-</link></head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>API - The dposlib Project</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "API";
+        var mkdocs_page_input_path = "ark\\api.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
 <body class="wy-body-for-nav" role="document">
-<div class="wy-grid-for-nav">
-<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
-<div class="wy-side-scroll">
-<div class="wy-side-nav-search">
-<a class="icon icon-home" href="../.."> The dposlib Project</a>
-<div role="search">
-<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
-<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
-</form>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> The dposlib Project
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
 </div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Ark blockchain</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ark/">Ark.io</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#link">link</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#unlink">unlink</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#jsdict-objects">JSDict Objects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#filter">filter</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#wallet-objects">Wallet Objects</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#delegate">delegate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#username">username</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#secondpublickey">secondPublicKey</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#link_1">link</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unlink_1">unlink</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#send">send</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setsecondsecret">setSecondSecret</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setsecondpublickey">setSecondPublicKey</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setdelegate">setDelegate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#upvote">upVote</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sendipfs">sendIpfs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multisend">multiSend</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resignate">resignate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sendhtlc">sendHtlc</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#claimhtlc">claimHtlc</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#refundhtlc">refundHtlc</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#createentity">createEntity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#updateentity">updateEntity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resignentity">resignEntity</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ledger-objects">Ledger Objects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#webhook-objects">Webhook Objects</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#condition">condition</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Transaction builders</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/builders/">builders</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/v2/">V2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../builders/v3/">V3</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">The dposlib Project</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Ark blockchain &raquo;</li><li>API</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/api.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
 </div>
-<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-</li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../rest/">Network</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Ark blockchain</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../ark/">Ark.io</a>
-</li>
-<li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
-<ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="#islinked">isLinked</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#link">link</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#unlink">unlink</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#jsdict-objects">JSDict Objects</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#content-objects">Content Objects</a>
-<ul>
-<li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#filter">filter</a>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#wallet-objects">Wallet Objects</a>
-<ul>
-<li class="toctree-l3"><a class="reference internal" href="#delegate">delegate</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#username">username</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#secondpublickey">secondPublicKey</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#link_1">link</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#unlink_1">unlink</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#send">send</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#setsecondsecret">setSecondSecret</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#setsecondpublickey">setSecondPublicKey</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#setdelegate">setDelegate</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#upvote">upVote</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#downvote">downVote</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#sendipfs">sendIpfs</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#multisend">multiSend</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#resignate">resignate</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#sendhtlc">sendHtlc</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#claimhtlc">claimHtlc</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#refundhtlc">refundHtlc</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#createentity">createEntity</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#updateentity">updateEntity</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#resignentity">resignEntity</a>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#ledger-objects">Ledger Objects</a>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#webhook-objects">Webhook Objects</a>
-<ul>
-<li class="toctree-l3"><a class="reference internal" href="#condition">condition</a>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../tx/">Transaction</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../builders/">Transaction builders</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../ldgr/">Ledger Wallet</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Cardano blockchain</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ada/blkfrst/">Blockfrost.io</a>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Protokol NFT</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/prtkl/">Protokol.com</a>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../protokol/builders/">Transaction builders</a>
-</li>
-</ul>
-</div>
-</div>
-</nav>
-<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
-<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
-<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
-<a href="../..">The dposlib Project</a>
-</nav>
-<div class="wy-nav-content">
-<div class="rst-content">
-<div aria-label="breadcrumbs navigation" role="navigation">
-<ul class="wy-breadcrumbs">
-<li><a href="../..">Docs</a> »</li>
-<li>Ark blockchain »</li>
-<li>API</li>
-<li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/Moustikitos/dpos/edit/master/docs/ark/api.md"> Edit on GitHub</a>
-</li>
-</ul>
-<hr/>
-</div>
-<div role="main">
-<div class="section">
-<p><a id="dposlib.ark.api"></a></p>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a id="dposlib.ark.api"></a></p>
 <h1 id="dposlibarkapi">dposlib.ark.api</h1>
 <p><a id="dposlib.ark.api.isLinked"></a></p>
 <h4 id="islinked">isLinked</h4>
@@ -221,7 +224,7 @@ updated every 30s. Endpoint response can be a <code>dict</code> or a <code>list<
 a <code>list</code>, it is stored in <code>data</code> attribute else all fields are stored as
 instance attribute.</p>
 <pre><code class="language-python">&gt;&gt;&gt; txs = dposlib.ark.Content(rest.GET.api.transactions)
-&gt;&gt;&gt; txs.data[0]["timestamp"]
+&gt;&gt;&gt; txs.data[0][&quot;timestamp&quot;]
 {
     'epoch': 121912776,
     'unix': 1612013976,
@@ -229,7 +232,7 @@ instance attribute.</p>
 }
 &gt;&gt;&gt; tx = dposlib.ark.Content(
     rest.GET.api.transactions,
-    "d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9",
+    &quot;d36a164a54df9d1c7889521ece15318d6945e9971fecd0a96a9c18e74e0adbf9&quot;,
 )
 &gt;&gt;&gt; tx.timestamp
 {
@@ -311,96 +314,96 @@ possible.</p>
 def send(amount, address, vendorField=None, expiration=0)
 </code></pre>
 <p>Broadcast a transfer transaction to the ledger.
-See <a href="../builders/#dposlib.ark.builders.transfer"><code>dposlib.ark.builders.transfer</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.transfer"><code>dposlib.ark.builders.v2.transfer</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.setSecondSecret"></a></p>
 <h4 id="setsecondsecret">setSecondSecret</h4>
 <pre><code class="language-python">@isLinked
 def setSecondSecret(secondSecret)
 </code></pre>
 <p>Broadcast a second secret registration transaction to the ledger.
-See <a href="../builders/#dposlib.ark.builders.registerSecondSecret"><code>dposlib.ark.builders.registerSecondSecret</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.registerSecondSecret"><code>dposlib.ark.builders.v2.registerSecondSecret</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.setSecondPublicKey"></a></p>
 <h4 id="setsecondpublickey">setSecondPublicKey</h4>
 <pre><code class="language-python">@isLinked
 def setSecondPublicKey(secondPublicKey)
 </code></pre>
 <p>Broadcast a second secret registration transaction into the ledger.
-See <a href="../builders/#dposlib.ark.builders.registerSecondPublicKey"><code>dposlib.ark.builders.registerSecondPublicKey</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.registerSecondPublicKey"><code>dposlib.ark.builders.v2.registerSecondPublicKey</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.setDelegate"></a></p>
 <h4 id="setdelegate">setDelegate</h4>
 <pre><code class="language-python">@isLinked
 def setDelegate(username)
 </code></pre>
 <p>Broadcast a delegate registration transaction to the ledger.
-See <a href="../builders/#dposlib.ark.builders.registerAsDelegate"><code>dposlib.ark.builders.registerAsDelegate</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.registerAsDelegate"><code>dposlib.ark.builders.v2.registerAsDelegate</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.upVote"></a></p>
 <h4 id="upvote">upVote</h4>
 <pre><code class="language-python">@isLinked
 def upVote(*usernames)
 </code></pre>
 <p>Broadcast an up-vote transaction to the ledger.
-See <a href="../builders/#dposlib.ark.builders.multiVote"><code>dposlib.ark.builders.multiVote</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.multiVote"><code>dposlib.ark.builders.v2.multiVote</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.downVote"></a></p>
 <h4 id="downvote">downVote</h4>
 <pre><code class="language-python">@isLinked
 def downVote(*usernames)
 </code></pre>
 <p>Broadcast a down-vote transaction to the ledger.
-See <a href="../builders/#dposlib.ark.builders.downVote"><code>dposlib.ark.builders.downVote</code></a>.</p>
+See <a href="../builders/v2/#dposlib.ark.builders.v2.downVote"><code>dposlib.ark.builders.v2.downVote</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.sendIpfs"></a></p>
 <h4 id="sendipfs">sendIpfs</h4>
 <pre><code class="language-python">@isLinked
 def sendIpfs(ipfs)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.registerIpfs"><code>dposlib.ark.builders.registerIpfs</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.registerIpfs"><code>dposlib.ark.builders.v2.registerIpfs</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.multiSend"></a></p>
 <h4 id="multisend">multiSend</h4>
 <pre><code class="language-python">@isLinked
 def multiSend(*pairs, **kwargs)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.multiPayment"><code>dposlib.ark.builder.multiPayment</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.multiPayment"><code>dposlib.ark.builder.multiPayment</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.resignate"></a></p>
 <h4 id="resignate">resignate</h4>
 <pre><code class="language-python">@isLinked
 def resignate()
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.delegateResignation"><code>dposlib.ark.builders.delegateResignation</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.delegateResignation"><code>dposlib.ark.builders.v2.delegateResignation</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.sendHtlc"></a></p>
 <h4 id="sendhtlc">sendHtlc</h4>
 <pre><code class="language-python">@isLinked
 def sendHtlc(amount, address, secret, expiration=24, vendorField=None)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.htlcLock"><code>dposlib.ark.builders.htlcLock</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.htlcLock"><code>dposlib.ark.builders.v2.htlcLock</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.claimHtlc"></a></p>
 <h4 id="claimhtlc">claimHtlc</h4>
 <pre><code class="language-python">@isLinked
 def claimHtlc(txid, secret)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.htlcClaim"><code>dposlib.ark.builders.htlcClaim</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.htlcClaim"><code>dposlib.ark.builders.v2.htlcClaim</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.refundHtlc"></a></p>
 <h4 id="refundhtlc">refundHtlc</h4>
 <pre><code class="language-python">@isLinked
 def refundHtlc(txid)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.htlcRefund"><code>dposlib.ark.builders.htlcRefund</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.htlcRefund"><code>dposlib.ark.builders.v2.htlcRefund</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.createEntity"></a></p>
 <h4 id="createentity">createEntity</h4>
 <pre><code class="language-python">@isLinked
-def createEntity(name, type="business", subtype=0, ipfsData=None)
+def createEntity(name, type=&quot;business&quot;, subtype=0, ipfsData=None)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.entityRegister"><code>dposlib.ark.builders.entityRegister</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.entityRegister"><code>dposlib.ark.builders.v2.entityRegister</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.updateEntity"></a></p>
 <h4 id="updateentity">updateEntity</h4>
 <pre><code class="language-python">@isLinked
 def updateEntity(registrationId, ipfsData, name=None)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.entityUpdate"><code>dposlib.ark.builders.entityUpdate</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.entityUpdate"><code>dposlib.ark.builders.v2.entityUpdate</code></a>.</p>
 <p><a id="dposlib.ark.api.Wallet.resignEntity"></a></p>
 <h4 id="resignentity">resignEntity</h4>
 <pre><code class="language-python">@isLinked
 def resignEntity(registrationId)
 </code></pre>
-<p>See <a href="../builders/#dposlib.ark.builders.entityResign"><code>dposlib.ark.builders.entityResign</code></a>.</p>
+<p>See <a href="../builders/v2/#dposlib.ark.builders.v2.entityResign"><code>dposlib.ark.builders.v2.entityResign</code></a>.</p>
 <p><a id="dposlib.ark.api.Ledger"></a></p>
 <h2 id="ledger-objects">Ledger Objects</h2>
 <pre><code class="language-python">class Ledger(Wallet)
@@ -411,16 +414,16 @@ def resignEntity(registrationId)
 <pre><code class="language-python">class Webhook(Content)
 </code></pre>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib
-&gt;&gt;&gt; peer = "http:/127.0.0.1:4004"
-&gt;&gt;&gt; target = "http://127.0.0.1/targetted/endpoint"
+&gt;&gt;&gt; peer = &quot;http:/127.0.0.1:4004&quot;
+&gt;&gt;&gt; target = &quot;http://127.0.0.1/targetted/endpoint&quot;
 &gt;&gt;&gt; wh = dposlib.core.api.Webhook(
-...   peer, "transaction.applied", target, "amount&lt;1"
+...   peer, &quot;transaction.applied&quot;, target, &quot;amount&lt;1&quot;
 ... )
 security token: 9f86d081884c7d659a2feaa0c55ad015...2b0b822cd15d6c15b0f00a08
-&gt;&gt;&gt; dposlib.core.api.webhook.verify("9f86d081884c7d659a2feaa0c55ad015")
+&gt;&gt;&gt; dposlib.core.api.webhook.verify(&quot;9f86d081884c7d659a2feaa0c55ad015&quot;)
 True
 &gt;&gt;&gt; wh.delete()
-{"sucess": True, "status": 204}
+{&quot;sucess&quot;: True, &quot;status&quot;: 204}
 </code></pre>
 <p><a id="dposlib.ark.api.Webhook.condition"></a></p>
 <h4 id="condition">condition</h4>
@@ -465,9 +468,9 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 </tbody>
 </table>
 <pre><code class="language-python">&gt;&gt;&gt; import dposlib.ark.api as api
-&gt;&gt;&gt; api.Webhook.condition("vendorField\\^.*payroll.*$")
+&gt;&gt;&gt; api.Webhook.condition(&quot;vendorField\\^.*payroll.*$&quot;)
 {'value': '^.*payroll.*$', 'key': 'vendorField', 'condition': 'regexp'}
-&gt;&gt;&gt; api.Webhook.condition("amount&lt;&gt;2000000000000:4000000000000")
+&gt;&gt;&gt; api.Webhook.condition(&quot;amount&lt;&gt;2000000000000:4000000000000&quot;)
 {
     'value': {'min': '2000000000000', 'max': '4000000000000'},
     'condition': 'between',
@@ -482,42 +485,55 @@ by <a href="./#dposlib.ark.api.Webhook.create"><code>Webhook.create</code></a> m
 <ul>
 <li><code>dict</code> - webhook conditions</li>
 </ul>
-</div>
-</div>
-<footer>
-<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
-<a class="btn btn-neutral float-right" href="../tx/" title="Transaction">Next <span class="icon icon-circle-arrow-right"></span></a>
-<a class="btn btn-neutral" href="../ark/" title="Ark.io"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-</div>
-<hr/>
-<div role="contentinfo">
-<!-- Copyright etc -->
-<p>Copyright © 2016-2021 THOORENS Bruno - MIT licence</p>
-</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ark/" class="btn btn-neutral float-left" title="Ark.io"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tx/" class="btn btn-neutral float-right" title="Transaction">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2016-2021 THOORENS Bruno - MIT licence</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Moustikitos/dpos" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../ark/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../tx/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
-</div>
-</section>
-</div>
-<div aria-label="versions" class="rst-versions" role="note">
-<span class="rst-current-version" data-toggle="rst-current-version">
-<span>
-<a class="fa fa-github" href="https://github.com/Moustikitos/dpos/" style="color: #fcfcfc"> GitHub</a>
-</span>
-<span><a href="../ark/" style="color: #fcfcfc">« Previous</a></span>
-<span><a href="../tx/" style="color: #fcfcfc">Next »</a></span>
-</span>
-</div>
-<script>var base_url = '../..';</script>
-<script defer="" src="../../js/theme_extra.js"></script>
-<script defer="" src="../../js/theme.js"></script>
-<script defer="" src="../../search/main.js"></script>
-<script defer="">
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
         };
     </script>
+
 </body>
 </html>
