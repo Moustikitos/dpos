@@ -1,25 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# shelley = {
-#     "familly": "ada",
+dark = {
+    "familly": "ark",
+    "aip20": 1,
+    "txversion": 2,
 
-#     "seeds": ["https://cardano-testnet.blockfrost.io/api/v0"]
-# }
-
-# ada = {
-#     "familly": "ada",
-#     "slip44": 1815,
-
-#     "seeds": ["https://cardano-mainnet.blockfrost.io/api/v0"]
-# }
-
-# protokol = {
-#     "familly": "protokol",
-#     "aip20": 0,
-#     "txversion": 2,
-
-#     "seeds": ["https://dwallets.ark.io"]
-# }
+    "seeds": ["https://dwallets.ark.io"]
+}
 
 ark = {
     "familly": "ark",
@@ -27,14 +14,6 @@ ark = {
     "txversion": 2,
 
     "seeds": ["https://api.ark.io"]
-}
-
-dark = {
-    "familly": "ark",
-    "aip20": 1,
-    "txversion": 2,
-
-    "seeds": ["https://dwallets.ark.io"]
 }
 
 dnos = {
@@ -52,14 +31,6 @@ nos = {
 
     "seeds": ["https://api.compendia.org"]
 }
-
-# uns = {
-#     "familly": "ark",
-#     "aip20": 0,
-#     "txversion": 2,
-
-#     "seeds": ["https://api.uns.network"]
-# }
 
 tsxp = {
     "familly": "ark",
