@@ -67,6 +67,9 @@ def switchVote(tx, identifier=None):
 
     Arguments:
         tx (dposlib.ark.tx.Transaction): upVote transaction.
+        identifier (dposlib.ark.tx.Transaction): any identifier accepted by
+            /api/wallets API endpoint. it could be a username, a wallet address
+            or a publicKey.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.

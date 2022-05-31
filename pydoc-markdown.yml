@@ -11,6 +11,7 @@ hooks:
   pre-render:
   - python -c "import os;os.makedirs('./docs', exist_ok=True)"
   - python -c "import os;os.makedirs('./docs/ark', exist_ok=True)"
+  - python -c "import os;os.makedirs('./docs/ark/builders', exist_ok=True)"
   # - python -c "import os;os.makedirs('./docs/ada', exist_ok=True)"
   # - python -c "import os;os.makedirs('./docs/aslp', exist_ok=True)"
   # - python -c "import os;os.makedirs('./docs/protokol', exist_ok=True)"
@@ -19,7 +20,9 @@ hooks:
   - pydoc-markdown -m dposlib.ark               > ./docs/ark/ark.md
   - pydoc-markdown -m dposlib.ark.api           > ./docs/ark/api.md
   - pydoc-markdown -m dposlib.ark.tx            > ./docs/ark/tx.md
-  - pydoc-markdown -m dposlib.ark.builders      > ./docs/ark/builders.md
+  - pydoc-markdown -m dposlib.ark.builders      > ./docs/ark/builders/builders.md
+  - pydoc-markdown -m dposlib.ark.builders.v2   > ./docs/ark/builders/v2.md
+  - pydoc-markdown -m dposlib.ark.builders.v3   > ./docs/ark/builders/v3.md
   - pydoc-markdown -m dposlib.ark.crypto        > ./docs/ark/crypto.md
   - pydoc-markdown -m dposlib.ark.ldgr          > ./docs/ark/ldgr.md
   # - pydoc-markdown -m dposlib.ada               > ./docs/ada/blkfrst.md
@@ -48,8 +51,17 @@ renderer:
       name: api
     - title: Transaction
       name: tx
+
     - title: Transaction builders
       name: builders
+      children:
+      - title: builders
+        name: builders
+      - title: V2
+        name: v2
+      - title: V3
+        name: v3
+
     - title: Cryptography
       name: crypto
     - title: Ledger Wallet

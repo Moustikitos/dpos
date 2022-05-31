@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 # © Toons
 
-
 """
 [`dposlib.ark.builders`](builders.md#dposlib.ark.builders) package
-provides[ `dposlib.ark.tx.Transaction`](tx.md#dposlib.ark.tx.Transaction)
-class and its associated builders.
+provides[`dposlib.ark.tx.Transaction`](tx.md#dposlib.ark.tx.Transaction)
+class and its associated builders. Builders are automatically set into
+`dposlib.core` package according to network.
 
 ```python
+>>> import dposlib
 >>> from dposlib import rest
 >>> rest.use("dark")
 True
->>> from dposlib.ark.v2 import *
->>> tx = transfer(
+>>> tx = dposlib.core.transfer(
 ...   1,
 ...   "D7seWn8JLVwX4nHd9hh2Lf7gvZNiRJ7qLk",
 ...   u"simple message with sparkle \u2728",
@@ -22,6 +22,18 @@ True
 >>> broadcastTransactions(tx).get("data", {}).get("broadcast", [])
 [u'041ad1e3dd06d29ef59b2c7e19fea4ced0e7fcf9fdc22edcf26e5cc016e10f38']
 ```
+
+# Available builders according to network
+
+blockchain|builders
+-|-
+`*`|transfer, registerSecondSecret, registerSecondPublicKey, 
+   |registerAsDelegate, upVote, downVote, registerMultiSignature, registerIpfs
+   |delegateResignation, htlcSecret, htlcLock, htlcClaim, htlcRefund,
+   |switchVote
+`ark`, `dark`|entityRegister, entityUpdate, entityResign
+`sxp`, `tsxp`|burn
+`nos`, `dnos`|TODO
 """
 
 import sys
@@ -47,7 +59,9 @@ def _getbldr(name):
 
 
 def broadcastTransactions(*transactions, **params):
-    chunk_size = params.pop("chunk_size", cfg.maxTransactions)
+    chunk_size = min(
+        params.pop("chunk_size", cfg.maxTransactions), cfg.maxTransactions
+    )
     report = []
     for chunk in [
         transactions[i:i+chunk_size] for i in
