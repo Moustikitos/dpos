@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-`dposlib` is a package that provides simple API to interact with any
-blockchain. More interaction can be provided by specific blockchain packages.
+`dposlib` is a package that provides simple and unique API to interact with Ark
+blockchain and its forks.
 """
 
 import os
