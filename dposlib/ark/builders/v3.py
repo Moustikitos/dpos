@@ -152,6 +152,7 @@ def htlcClaim(txid, secret, hash_type=0):
     Args:
         txid (str): htlc lock transaction id.
         secret (str): passphrase used by htlc lock transaction.
+        hash_type (int): hash method used.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
