@@ -53,13 +53,13 @@ nos = {
     "seeds": ["https://api.compendia.org"]
 }
 
-uns = {
-    "familly": "ark",
-    "aip20": 0,
-    "txversion": 2,
+# uns = {
+#     "familly": "ark",
+#     "aip20": 0,
+#     "txversion": 2,
 
-    "seeds": ["https://api.uns.network"]
-}
+#     "seeds": ["https://api.uns.network"]
+# }
 
 tsxp = {
     "familly": "ark",
