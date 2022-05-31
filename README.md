@@ -27,13 +27,21 @@ sudo apt-get install python-setuptools python3-setuptools
 sudo apt-get install python-pip python3-pip
 ```
 
-## Available network
+## Available networks
+
+Network|Ark|Solar|Compendia
+-|-|-|-
+mainnet|`ark`|`sxp`|`nos`
+testnet|-|`tsxp`|-
+devnet|`dark`|-|`dnos`
+
+<!-- ## Available networks
 
   - Ark-core 3.0
     * [x] devnet : `dark`
     * [x] mainet : `ark`
   - Ark forks
-    <!-- * [x] Protokol/nft : `protokol` (beta) -->
+    <!-- * [x] Protokol/nft : `protokol` (beta)
     * [x] Compendia
       + [x] devnet : `dnos`
       + [x] mainnet : `nos`
@@ -191,7 +199,6 @@ pip install ledgerblue
   - [x] added `solar` testnet and mainnet
   - [x] added `solar` burn transaction
   - [x] added `bip340`
-  - [ ] deserialization
 
 ### 0.3.5
   - [x] Ark-core v 3.0.x compliancy

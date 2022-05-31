@@ -185,6 +185,17 @@ privateKey.
 
 - `privateKey` _str_ - private key as hex string.
 
+<a id="dposlib.ark.tx.Transaction.appendMultiSignature"></a>
+
+#### appendMultiSignature
+
+```python
+def appendMultiSignature(publicKey, signature)
+```
+
+Manage the place of signature in signatures list for multisignature
+wallet transaction or registration.
+
 <a id="dposlib.ark.tx.Transaction.identify"></a>
 
 #### identify
