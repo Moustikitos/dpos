@@ -28,6 +28,8 @@ kw = {
         "dposlib",
         "dposlib.util",
         "dposlib.ark",
+        "dposlib.ark.serde",
+        "dposlib.ark.builders",
         "dposlib.ark.cold",
         # "dposlib.ada",
         # "dposlib.protokol"
