@@ -10,11 +10,12 @@ import hashlib
 import getpass
 import dposlib
 
+import dposlib.ark
 from dposlib.ark import slots, crypto
 from dposlib.util.data import filter_dic, dumpJson, loadJson
 from dposlib.util.asynch import setInterval
 from dposlib.ark.mixin import loadPages, deltas
-from dposlib.ark.tx import serialize
+# from dposlib.ark.tx import serialize
 
 try:
     from dposlib.ark import ldgr
@@ -401,16 +402,16 @@ class Wallet(Content):
             tx.fee = self._fee
             tx.feeIncluded = self._fee_included
             tx["signature"] = crypto.getSignatureFromBytes(
-                serialize(tx), self._privateKey
+                dposlib.ark.tx.serialize(tx), self._privateKey
             )
             if hasattr(self, "_secondPrivateKey"):
                 tx["signSignature"] = \
                     crypto.getSignatureFromBytes(
-                        serialize(tx),
+                        dposlib.ark.tx.serialize(tx),
                         self._secondPrivateKey
                     )
             tx["id"] = crypto.getIdFromBytes(
-                serialize(tx, exclude_multi_sig=False)
+                dposlib.ark.tx.serialize(tx, exclude_multi_sig=False)
             )
         return tx
 
