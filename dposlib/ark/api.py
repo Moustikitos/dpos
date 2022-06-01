@@ -479,8 +479,8 @@ class Wallet(Content):
     def upVote(self, *usernames):
         """
         Broadcast an up-vote transaction to the ledger.
-        See [`dposlib.ark.builders.v2.multiVote`](
-            builders/v2.md#dposlib.ark.builders.v2.multiVote
+        See [`dposlib.ark.builders.v2.switchVote`](
+            builders/v2.md#dposlib.ark.builders.v2.switchVote
         )."""
         tx = dposlib.core.upVote(*usernames)
         if self.attributes.vote is not None:

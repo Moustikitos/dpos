@@ -60,9 +60,9 @@ def downVote(*usernames):
 
 def switchVote(tx, identifier=None):
     """
-    Transform a [`dposlib.ark.builders.upVote`](
-        builders.md#dposlib.ark.builders.upVote
-    ) transaction into a multivote one. It makes the transaction downvote
+    Transform a [`dposlib.ark.builders.v3.upVote`](
+        v3.md#dposlib.ark.builders.upVote
+    ) transaction into a switchVote. It makes the transaction downvote
     former delegate if any and then apply new vote.
 
     Arguments:
