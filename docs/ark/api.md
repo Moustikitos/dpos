@@ -218,8 +218,8 @@ def send(amount, address, vendorField=None, expiration=0)
 ```
 
 Broadcast a transfer transaction to the ledger.
-See [`dposlib.ark.builders.transfer`](
-    builders.md#dposlib.ark.builders.transfer
+See [`dposlib.ark.builders.v2.transfer`](
+    builders/v2.md#dposlib.ark.builders.v2.transfer
 ).
 
 <a id="dposlib.ark.api.Wallet.setSecondSecret"></a>
@@ -232,8 +232,8 @@ def setSecondSecret(secondSecret)
 ```
 
 Broadcast a second secret registration transaction to the ledger.
-See [`dposlib.ark.builders.registerSecondSecret`](
-    builders.md#dposlib.ark.builders.registerSecondSecret
+See [`dposlib.ark.builders.v2.registerSecondSecret`](
+    builders/v2.md#dposlib.ark.builders.v2.registerSecondSecret
 ).
 
 <a id="dposlib.ark.api.Wallet.setSecondPublicKey"></a>
@@ -246,8 +246,8 @@ def setSecondPublicKey(secondPublicKey)
 ```
 
 Broadcast a second secret registration transaction into the ledger.
-See [`dposlib.ark.builders.registerSecondPublicKey`](
-   builders.md#dposlib.ark.builders.registerSecondPublicKey
+See [`dposlib.ark.builders.v2.registerSecondPublicKey`](
+    builders/v2.md#dposlib.ark.builders.v2.registerSecondPublicKey
 ).
 
 <a id="dposlib.ark.api.Wallet.setDelegate"></a>
@@ -260,8 +260,8 @@ def setDelegate(username)
 ```
 
 Broadcast a delegate registration transaction to the ledger.
-See [`dposlib.ark.builders.registerAsDelegate`](
-    builders.md#dposlib.ark.builders.registerAsDelegate
+See [`dposlib.ark.builders.v2.registerAsDelegate`](
+    builders/v2.md#dposlib.ark.builders.v2.registerAsDelegate
 ).
 
 <a id="dposlib.ark.api.Wallet.upVote"></a>
@@ -274,8 +274,8 @@ def upVote(*usernames)
 ```
 
 Broadcast an up-vote transaction to the ledger.
-See [`dposlib.ark.builders.multiVote`](
-    builders.md#dposlib.ark.builders.multiVote
+See [`dposlib.ark.builders.v2.multiVote`](
+    builders/v2.md#dposlib.ark.builders.v2.multiVote
 ).
 
 <a id="dposlib.ark.api.Wallet.downVote"></a>
@@ -288,8 +288,8 @@ def downVote(*usernames)
 ```
 
 Broadcast a down-vote transaction to the ledger.
-See [`dposlib.ark.builders.downVote`](
-    builders.md#dposlib.ark.builders.downVote
+See [`dposlib.ark.builders.v2.downVote`](
+    builders/v2.md#dposlib.ark.builders.v2.downVote
 ).
 
 <a id="dposlib.ark.api.Wallet.sendIpfs"></a>
@@ -301,8 +301,8 @@ See [`dposlib.ark.builders.downVote`](
 def sendIpfs(ipfs)
 ```
 
-See [`dposlib.ark.builders.registerIpfs`](
-    builders.md#dposlib.ark.builders.registerIpfs
+See [`dposlib.ark.builders.v2.registerIpfs`](
+    builders/v2.md#dposlib.ark.builders.v2.registerIpfs
 ).
 
 <a id="dposlib.ark.api.Wallet.multiSend"></a>
@@ -315,7 +315,7 @@ def multiSend(*pairs, **kwargs)
 ```
 
 See [`dposlib.ark.builder.multiPayment`](
-    builders.md#dposlib.ark.builders.multiPayment
+    builders/v2.md#dposlib.ark.builders.v2.multiPayment
 ).
 
 <a id="dposlib.ark.api.Wallet.resignate"></a>
@@ -327,8 +327,8 @@ See [`dposlib.ark.builder.multiPayment`](
 def resignate()
 ```
 
-See [`dposlib.ark.builders.delegateResignation`](
-    builders.md#dposlib.ark.builders.delegateResignation
+See [`dposlib.ark.builders.v2.delegateResignation`](
+    builders/v2.md#dposlib.ark.builders.v2.delegateResignation
 ).
 
 <a id="dposlib.ark.api.Wallet.sendHtlc"></a>
@@ -340,8 +340,8 @@ See [`dposlib.ark.builders.delegateResignation`](
 def sendHtlc(amount, address, secret, expiration=24, vendorField=None)
 ```
 
-See [`dposlib.ark.builders.htlcLock`](
-    builders.md#dposlib.ark.builders.htlcLock
+See [`dposlib.ark.builders.v2.htlcLock`](
+    builders/v2.md#dposlib.ark.builders.v2.htlcLock
 ).
 
 <a id="dposlib.ark.api.Wallet.claimHtlc"></a>
@@ -353,8 +353,8 @@ See [`dposlib.ark.builders.htlcLock`](
 def claimHtlc(txid, secret)
 ```
 
-See [`dposlib.ark.builders.htlcClaim`](
-    builders.md#dposlib.ark.builders.htlcClaim
+See [`dposlib.ark.builders.v2.htlcClaim`](
+    builders/v2.md#dposlib.ark.builders.v2.htlcClaim
 ).
 
 <a id="dposlib.ark.api.Wallet.refundHtlc"></a>
@@ -366,8 +366,8 @@ See [`dposlib.ark.builders.htlcClaim`](
 def refundHtlc(txid)
 ```
 
-See [`dposlib.ark.builders.htlcRefund`](
-    builders.md#dposlib.ark.builders.htlcRefund
+See [`dposlib.ark.builders.v2.htlcRefund`](
+    builders/v2.md#dposlib.ark.builders.v2.htlcRefund
 ).
 
 <a id="dposlib.ark.api.Wallet.createEntity"></a>
@@ -379,8 +379,8 @@ See [`dposlib.ark.builders.htlcRefund`](
 def createEntity(name, type="business", subtype=0, ipfsData=None)
 ```
 
-See [`dposlib.ark.builders.entityRegister`](
-    builders.md#dposlib.ark.builders.entityRegister
+See [`dposlib.ark.builders.v2.entityRegister`](
+    builders/v2.md#dposlib.ark.builders.v2.entityRegister
 ).
 
 <a id="dposlib.ark.api.Wallet.updateEntity"></a>
@@ -392,8 +392,8 @@ See [`dposlib.ark.builders.entityRegister`](
 def updateEntity(registrationId, ipfsData, name=None)
 ```
 
-See [`dposlib.ark.builders.entityUpdate`](
-    builders.md#dposlib.ark.builders.entityUpdate
+See [`dposlib.ark.builders.v2.entityUpdate`](
+    builders/v2.md#dposlib.ark.builders.v2.entityUpdate
 ).
 
 <a id="dposlib.ark.api.Wallet.resignEntity"></a>
@@ -405,8 +405,8 @@ See [`dposlib.ark.builders.entityUpdate`](
 def resignEntity(registrationId)
 ```
 
-See [`dposlib.ark.builders.entityResign`](
-    builders.md#dposlib.ark.builders.entityResign
+See [`dposlib.ark.builders.v2.entityResign`](
+    builders/v2.md#dposlib.ark.builders.v2.entityResign
 ).
 
 <a id="dposlib.ark.api.Ledger"></a>
