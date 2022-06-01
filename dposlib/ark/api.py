@@ -401,16 +401,16 @@ class Wallet(Content):
             tx.fee = self._fee
             tx.feeIncluded = self._fee_included
             tx["signature"] = crypto.getSignatureFromBytes(
-                crypto.getBytes(tx), self._privateKey
+                serialize(tx), self._privateKey
             )
             if hasattr(self, "_secondPrivateKey"):
                 tx["signSignature"] = \
                     crypto.getSignatureFromBytes(
-                        crypto.getBytes(tx),
+                        serialize(tx),
                         self._secondPrivateKey
                     )
             tx["id"] = crypto.getIdFromBytes(
-                crypto.getBytes(tx, exclude_multi_sig=False)
+                serialize(tx, exclude_multi_sig=False)
             )
         return tx
 
@@ -434,8 +434,8 @@ class Wallet(Content):
     def send(self, amount, address, vendorField=None, expiration=0):
         """
         Broadcast a transfer transaction to the ledger.
-        See [`dposlib.ark.builders.transfer`](
-            builders.md#dposlib.ark.builders.transfer
+        See [`dposlib.ark.builders.v2.transfer`](
+            builders/v2.md#dposlib.ark.builders.v2.transfer
         ).
         """
         return self._broadcastTx(
@@ -446,8 +446,8 @@ class Wallet(Content):
     def setSecondSecret(self, secondSecret):
         """
         Broadcast a second secret registration transaction to the ledger.
-        See [`dposlib.ark.builders.registerSecondSecret`](
-            builders.md#dposlib.ark.builders.registerSecondSecret
+        See [`dposlib.ark.builders.v2.registerSecondSecret`](
+            builders/v2.md#dposlib.ark.builders.v2.registerSecondSecret
         ).
         """
         return self._broadcastTx(
@@ -458,8 +458,8 @@ class Wallet(Content):
     def setSecondPublicKey(self, secondPublicKey):
         """
         Broadcast a second secret registration transaction into the ledger.
-        See [`dposlib.ark.builders.registerSecondPublicKey`](
-           builders.md#dposlib.ark.builders.registerSecondPublicKey
+        See [`dposlib.ark.builders.v2.registerSecondPublicKey`](
+            builders/v2.md#dposlib.ark.builders.v2.registerSecondPublicKey
         ).
         """
         return self._broadcastTx(
@@ -470,8 +470,8 @@ class Wallet(Content):
     def setDelegate(self, username):
         """
         Broadcast a delegate registration transaction to the ledger.
-        See [`dposlib.ark.builders.registerAsDelegate`](
-            builders.md#dposlib.ark.builders.registerAsDelegate
+        See [`dposlib.ark.builders.v2.registerAsDelegate`](
+            builders/v2.md#dposlib.ark.builders.v2.registerAsDelegate
         ).
         """
         return self._broadcastTx(dposlib.core.registerAsDelegate(username))
@@ -480,8 +480,8 @@ class Wallet(Content):
     def upVote(self, *usernames):
         """
         Broadcast an up-vote transaction to the ledger.
-        See [`dposlib.ark.builders.multiVote`](
-            builders.md#dposlib.ark.builders.multiVote
+        See [`dposlib.ark.builders.v2.multiVote`](
+            builders/v2.md#dposlib.ark.builders.v2.multiVote
         )."""
         tx = dposlib.core.upVote(*usernames)
         if self.attributes.vote is not None:
@@ -492,8 +492,8 @@ class Wallet(Content):
     def downVote(self, *usernames):
         """
         Broadcast a down-vote transaction to the ledger.
-        See [`dposlib.ark.builders.downVote`](
-            builders.md#dposlib.ark.builders.downVote
+        See [`dposlib.ark.builders.v2.downVote`](
+            builders/v2.md#dposlib.ark.builders.v2.downVote
         ).
         """
         return self._broadcastTx(dposlib.core.downVote(*usernames))
@@ -501,8 +501,8 @@ class Wallet(Content):
     @isLinked
     def sendIpfs(self, ipfs):
         """
-        See [`dposlib.ark.builders.registerIpfs`](
-            builders.md#dposlib.ark.builders.registerIpfs
+        See [`dposlib.ark.builders.v2.registerIpfs`](
+            builders/v2.md#dposlib.ark.builders.v2.registerIpfs
         )."""
         tx = dposlib.core.registerIpfs(ipfs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
@@ -511,7 +511,7 @@ class Wallet(Content):
     def multiSend(self, *pairs, **kwargs):
         """
         See [`dposlib.ark.builder.multiPayment`](
-            builders.md#dposlib.ark.builders.multiPayment
+            builders/v2.md#dposlib.ark.builders.v2.multiPayment
         )."""
         tx = dposlib.core.multiPayment(*pairs, **kwargs)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
@@ -519,8 +519,8 @@ class Wallet(Content):
     @isLinked
     def resignate(self):
         """
-        See [`dposlib.ark.builders.delegateResignation`](
-            builders.md#dposlib.ark.builders.delegateResignation
+        See [`dposlib.ark.builders.v2.delegateResignation`](
+            builders/v2.md#dposlib.ark.builders.v2.delegateResignation
         ).
         """
         tx = dposlib.core.delegateResignation()
@@ -530,8 +530,8 @@ class Wallet(Content):
     def sendHtlc(self, amount, address, secret,
                  expiration=24, vendorField=None):
         """
-        See [`dposlib.ark.builders.htlcLock`](
-            builders.md#dposlib.ark.builders.htlcLock
+        See [`dposlib.ark.builders.v2.htlcLock`](
+            builders/v2.md#dposlib.ark.builders.v2.htlcLock
         ).
         """
         tx = dposlib.core.htlcLock(
@@ -543,8 +543,8 @@ class Wallet(Content):
     @isLinked
     def claimHtlc(self, txid, secret):
         """
-        See [`dposlib.ark.builders.htlcClaim`](
-            builders.md#dposlib.ark.builders.htlcClaim
+        See [`dposlib.ark.builders.v2.htlcClaim`](
+            builders/v2.md#dposlib.ark.builders.v2.htlcClaim
         ).
         """
         tx = dposlib.core.htlcClaim(txid, secret)
@@ -553,8 +553,8 @@ class Wallet(Content):
     @isLinked
     def refundHtlc(self, txid):
         """
-        See [`dposlib.ark.builders.htlcRefund`](
-            builders.md#dposlib.ark.builders.htlcRefund
+        See [`dposlib.ark.builders.v2.htlcRefund`](
+            builders/v2.md#dposlib.ark.builders.v2.htlcRefund
         ).
         """
         tx = dposlib.core.htlcRefund(txid)
@@ -563,8 +563,8 @@ class Wallet(Content):
     @isLinked
     def createEntity(self, name, type="business", subtype=0, ipfsData=None):
         """
-        See [`dposlib.ark.builders.entityRegister`](
-            builders.md#dposlib.ark.builders.entityRegister
+        See [`dposlib.ark.builders.v2.entityRegister`](
+            builders/v2.md#dposlib.ark.builders.v2.entityRegister
         ).
         """
         tx = dposlib.core.entityRegister(name, type, subtype, ipfsData)
@@ -573,8 +573,8 @@ class Wallet(Content):
     @isLinked
     def updateEntity(self, registrationId, ipfsData, name=None):
         """
-        See [`dposlib.ark.builders.entityUpdate`](
-            builders.md#dposlib.ark.builders.entityUpdate
+        See [`dposlib.ark.builders.v2.entityUpdate`](
+            builders/v2.md#dposlib.ark.builders.v2.entityUpdate
         ).
         """
         tx = dposlib.core.entityUpdate(registrationId, ipfsData, name)
@@ -583,8 +583,8 @@ class Wallet(Content):
     @isLinked
     def resignEntity(self, registrationId):
         """
-        See [`dposlib.ark.builders.entityResign`](
-            builders.md#dposlib.ark.builders.entityResign
+        See [`dposlib.ark.builders.v2.entityResign`](
+            builders/v2.md#dposlib.ark.builders.v2.entityResign
         ).
         """
         tx = dposlib.core.entityResign(registrationId)
