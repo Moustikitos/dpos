@@ -3,7 +3,7 @@
 
 """
 [`dposlib.ark.builders`](builders.md#dposlib.ark.builders) package
-provides[`dposlib.ark.tx.Transaction`](tx.md#dposlib.ark.tx.Transaction)
+provides[`dposlib.ark.tx.Transaction`](../tx.md#dposlib.ark.tx.Transaction)
 class and its associated builders. Builders are automatically set into
 `dposlib.core` package according to network.
 
