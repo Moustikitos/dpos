@@ -6,9 +6,8 @@ import dposlib
 from io import BytesIO
 from collections import OrderedDict
 
-import dposlib.ark.serde as serde
 from dposlib import cfg
-from dposlib.ark import slots
+from dposlib.ark import slots, serde
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 
 

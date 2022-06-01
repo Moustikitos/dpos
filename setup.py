@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 # created by Toons on 01/05/2017
+
 try:
     from setuptools import setup
 except ImportError:
@@ -31,8 +32,6 @@ kw = {
         "dposlib.ark.serde",
         "dposlib.ark.builders",
         "dposlib.ark.cold",
-        # "dposlib.ada",
-        # "dposlib.protokol"
     ],
     "install_requires": [
         "future",

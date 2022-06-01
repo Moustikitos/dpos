@@ -10,12 +10,10 @@ import hashlib
 import getpass
 import dposlib
 
-import dposlib.ark
 from dposlib.ark import slots, crypto
 from dposlib.util.data import filter_dic, dumpJson, loadJson
 from dposlib.util.asynch import setInterval
 from dposlib.ark.mixin import loadPages, deltas
-# from dposlib.ark.tx import serialize
 
 try:
     from dposlib.ark import ldgr
@@ -402,16 +400,16 @@ class Wallet(Content):
             tx.fee = self._fee
             tx.feeIncluded = self._fee_included
             tx["signature"] = crypto.getSignatureFromBytes(
-                dposlib.ark.tx.serialize(tx), self._privateKey
+                crypto.getBytes(tx), self._privateKey
             )
             if hasattr(self, "_secondPrivateKey"):
                 tx["signSignature"] = \
                     crypto.getSignatureFromBytes(
-                        dposlib.ark.tx.serialize(tx),
+                        crypto.getBytes(tx),
                         self._secondPrivateKey
                     )
             tx["id"] = crypto.getIdFromBytes(
-                dposlib.ark.tx.serialize(tx, exclude_multi_sig=False)
+                crypto.getBytes(tx, exclude_multi_sig=False)
             )
         return tx
 
@@ -637,7 +635,7 @@ class Ledger(Wallet):
         tx["senderPublicKey"] = self.publicKey
         tx["signature"] = ldgr.sendApdu(
             ldgr.buildSignatureApdu(
-                serialize(tx),
+                crypto.getBytes(tx),
                 self._dongle_path,
                 "tx",
                 self._schnorr

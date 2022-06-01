@@ -7,7 +7,7 @@ from collections import UserDict
 
 import cSecp256k1 as secp256k1
 from dposlib import cfg
-# from dposlib.ark.tx import serialize
+from dposlib.ark.tx import serialize
 from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, HEX, BHEX
 
 
@@ -266,147 +266,147 @@ def getIdFromBytes(data):
     return secp256k1.hash_sha256(data).decode()
 
 
-# # TO BE DEPRECATED WITH ARK CORE 3.0
-# def getBytes(tx, **options):
-#     """
-#     Hash transaction.
+# TO BE DEPRECATED WITH ARK CORE 3.0
+def getBytes(tx, **options):
+    """
+    Hash transaction.
 
-#     Args:
-#         tx (dict or Transaction): transaction object.
+    Args:
+        tx (dict or Transaction): transaction object.
 
-#     **Options**:
+    **Options**:
 
-#       * `exclude_sig` *bool* - exclude signature during tx serialization.
-#         Defalut to False.
-#       * `exclude_multi_sig` *bool* - exclude signatures during tx
-#         serialization. Defalut to False.
-#       * `exclude_second_sig` *bool* - exclude second signatures during tx
-#         serialization. Defalut to False.
+      * `exclude_sig` *bool* - exclude signature during tx serialization.
+        Defalut to False.
+      * `exclude_multi_sig` *bool* - exclude signatures during tx
+        serialization. Defalut to False.
+      * `exclude_second_sig` *bool* - exclude second signatures during tx
+        serialization. Defalut to False.
 
-#     Returns:
-#         bytes: transaction serial.
-#     """
-#     if tx.get("version", 0x01) >= 0x02:
-#         return serialize(tx, **options)
+    Returns:
+        bytes: transaction serial.
+    """
+    if tx.get("version", 0x01) >= 0x02:
+        return serialize(tx, **options)
 
-#     buf = BytesIO()
-#     # write type and timestamp
-#     pack("<BI", buf, (tx["type"], int(tx["timestamp"])))
-#     # write senderPublicKey as bytes in buffer
-#     if "senderPublicKey" in tx:
-#         pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
-#     # if there is a requesterPublicKey
-#     if "requesterPublicKey" in tx:
-#         pack_bytes(buf, unhexlify(tx["requesterPublicKey"]))
-#     # if there is a recipientId or tx not a second secret nor a multi
-#     # singature registration
-#     if tx.get("recipientId", False) and tx["type"] not in [1, 4]:
-#         recipientId = tx["recipientId"]
-#         recipientId = base58.b58decode_check(
-#             str(recipientId) if not isinstance(recipientId, bytes) else
-#             recipientId
-#         )
-#     else:
-#         recipientId = b"\x00" * 21
-#     pack_bytes(buf, recipientId)
-#     # deal with vendorField values
-#     if "vendorFieldHex" in tx:
-#         vendorField = unhexlify(tx["vendorFieldHex"])
-#     else:
-#         value = tx.get("vendorField", b"")
-#         if not isinstance(value, bytes):
-#             value = value.encode("utf-8")
-#         vendorField = value
-#     vendorField = vendorField[:64].ljust(64, b"\x00")
-#     pack_bytes(buf, vendorField)
-#     # write amount and fee value
-#     pack("<QQ", buf, (tx.get("amount", 0), tx["fee"]))
-#     # if there is asset data
-#     if tx.get("asset", False):
-#         asset, typ = tx["asset"], tx["type"]
-#         if typ == 1 and "signature" in asset:
-#             pack_bytes(buf, unhexlify(asset["signature"]["publicKey"]))
-#         elif typ == 2 and "delegate" in asset:
-#             pack_bytes(buf, asset["delegate"]["username"].encode("utf-8"))
-#         elif typ == 3 and "votes" in asset:
-#             pack_bytes(buf, "".join(asset["votes"]).encode("utf-8"))
-#         else:
-#             raise Exception("transaction type %s not implemented" % typ)
-#     # if there is a signature
-#     if "signature" in tx and not options.get("exclude_sig", False):
-#         pack_bytes(buf, unhexlify(tx["signature"]))
-#     # if there is a second signature
-#     if not options.get("exclude_second_sig", False):
-#         if tx.get("signSignature", False):
-#             pack_bytes(buf, unhexlify(tx["signSignature"]))
-#         elif tx.get("secondSignature", False):
-#             pack_bytes(buf, unhexlify(tx["secondSignature"]))
+    buf = BytesIO()
+    # write type and timestamp
+    pack("<BI", buf, (tx["type"], int(tx["timestamp"])))
+    # write senderPublicKey as bytes in buffer
+    if "senderPublicKey" in tx:
+        pack_bytes(buf, unhexlify(tx["senderPublicKey"]))
+    # if there is a requesterPublicKey
+    if "requesterPublicKey" in tx:
+        pack_bytes(buf, unhexlify(tx["requesterPublicKey"]))
+    # if there is a recipientId or tx not a second secret nor a multi
+    # singature registration
+    if tx.get("recipientId", False) and tx["type"] not in [1, 4]:
+        recipientId = tx["recipientId"]
+        recipientId = base58.b58decode_check(
+            str(recipientId) if not isinstance(recipientId, bytes) else
+            recipientId
+        )
+    else:
+        recipientId = b"\x00" * 21
+    pack_bytes(buf, recipientId)
+    # deal with vendorField values
+    if "vendorFieldHex" in tx:
+        vendorField = unhexlify(tx["vendorFieldHex"])
+    else:
+        value = tx.get("vendorField", b"")
+        if not isinstance(value, bytes):
+            value = value.encode("utf-8")
+        vendorField = value
+    vendorField = vendorField[:64].ljust(64, b"\x00")
+    pack_bytes(buf, vendorField)
+    # write amount and fee value
+    pack("<QQ", buf, (tx.get("amount", 0), tx["fee"]))
+    # if there is asset data
+    if tx.get("asset", False):
+        asset, typ = tx["asset"], tx["type"]
+        if typ == 1 and "signature" in asset:
+            pack_bytes(buf, unhexlify(asset["signature"]["publicKey"]))
+        elif typ == 2 and "delegate" in asset:
+            pack_bytes(buf, asset["delegate"]["username"].encode("utf-8"))
+        elif typ == 3 and "votes" in asset:
+            pack_bytes(buf, "".join(asset["votes"]).encode("utf-8"))
+        else:
+            raise Exception("transaction type %s not implemented" % typ)
+    # if there is a signature
+    if "signature" in tx and not options.get("exclude_sig", False):
+        pack_bytes(buf, unhexlify(tx["signature"]))
+    # if there is a second signature
+    if not options.get("exclude_second_sig", False):
+        if tx.get("signSignature", False):
+            pack_bytes(buf, unhexlify(tx["signSignature"]))
+        elif tx.get("secondSignature", False):
+            pack_bytes(buf, unhexlify(tx["secondSignature"]))
 
-#     result = buf.getvalue()
-#     buf.close()
-#     return result
+    result = buf.getvalue()
+    buf.close()
+    return result
 
 
-# def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
-#     """
-#     Verify transaction validity.
+def checkTransaction(tx, secondPublicKey=None, multiPublicKeys=[]):
+    """
+    Verify transaction validity.
 
-#     Args:
-#         tx (dict or Transaction): transaction object.
-#         secondPublicKey (str): second public key to use if needed.
-#         multiPublicKeys (list): owners public keys (sorted according to
-#             associated type-4-tx asset).
+    Args:
+        tx (dict or Transaction): transaction object.
+        secondPublicKey (str): second public key to use if needed.
+        multiPublicKeys (list): owners public keys (sorted according to
+            associated type-4-tx asset).
 
-#     Returns:
-#         bool: True if transaction is valid.
-#     """
-#     checks = []
-#     version = tx.get("version", 0x01)
-#     publicKey = tx["senderPublicKey"]
+    Returns:
+        bool: True if transaction is valid.
+    """
+    checks = []
+    version = tx.get("version", 0x01)
+    publicKey = tx["senderPublicKey"]
 
-#     if tx["type"] == 4:
-#         multiPublicKeys = tx["asset"]["multiSignature"]["publicKeys"]
+    if tx["type"] == 4:
+        multiPublicKeys = tx["asset"]["multiSignature"]["publicKeys"]
 
-#     # pure python dict serializer
-#     def _ser(t, v, **opt):
-#         return \
-#             serialize(t, version=v, **opt) if v >= 0x02 else \
-#             getBytes(t, **opt)
+    # pure python dict serializer
+    def _ser(t, v, **opt):
+        return \
+            serialize(t, version=v, **opt) if v >= 0x02 else \
+            getBytes(t, **opt)
 
-#     # create a local copy of tx
-#     tx = UserDict(**tx)
+    # create a local copy of tx
+    tx = UserDict(**tx)
 
-#     # id check
-#     # remove id from tx if any and then compare
-#     id_ = tx.pop("id", False)
-#     if id_:
-#         checks.append(getIdFromBytes(_ser(tx, version)) == id_)
+    # id check
+    # remove id from tx if any and then compare
+    id_ = tx.pop("id", False)
+    if id_:
+        checks.append(getIdFromBytes(_ser(tx, version)) == id_)
 
-#     signature = tx.pop("signature", False)
-#     signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
-#     signatures = tx.pop("signatures", [])
+    signature = tx.pop("signature", False)
+    signSignature = tx.pop("signSignature", tx.pop("secondSignature", False))
+    signatures = tx.pop("signatures", [])
 
-#     # multiple signature check
-#     if len(multiPublicKeys) and len(signatures):
-#         serialized = _ser(tx, version)
-#         for sig in signatures:
-#             idx, sig = int(sig[0:2], 16), sig[2:]
-#             checks.append(verifySignatureFromBytes(
-#                 serialized, multiPublicKeys[idx], sig
-#             ))
-#         tx["signatures"] = signatures
+    # multiple signature check
+    if len(multiPublicKeys) and len(signatures):
+        serialized = _ser(tx, version)
+        for sig in signatures:
+            idx, sig = int(sig[0:2], 16), sig[2:]
+            checks.append(verifySignatureFromBytes(
+                serialized, multiPublicKeys[idx], sig
+            ))
+        tx["signatures"] = signatures
 
-#     if signature:
-#         # sender signature check
-#         checks.append(verifySignatureFromBytes(
-#             _ser(tx, version), publicKey, signature
-#         ))
-#         # sender second signature check
-#         if signSignature and secondPublicKey:
-#             # add signature before check
-#             tx["signature"] = signature
-#             checks.append(verifySignatureFromBytes(
-#                 _ser(tx, version), secondPublicKey, signSignature
-#             ))
+    if signature:
+        # sender signature check
+        checks.append(verifySignatureFromBytes(
+            _ser(tx, version), publicKey, signature
+        ))
+        # sender second signature check
+        if signSignature and secondPublicKey:
+            # add signature before check
+            tx["signature"] = signature
+            checks.append(verifySignatureFromBytes(
+                _ser(tx, version), secondPublicKey, signSignature
+            ))
 
-#     return False not in checks
+    return False not in checks
