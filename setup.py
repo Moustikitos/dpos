@@ -29,8 +29,8 @@ kw = {
         "dposlib.util",
         "dposlib.ark",
         "dposlib.ark.cold",
-        "dposlib.ada",
-        "dposlib.protokol"
+        # "dposlib.ada",
+        # "dposlib.protokol"
     ],
     "install_requires": [
         "future",
