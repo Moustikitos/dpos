@@ -65,13 +65,12 @@ def loadPages(endpoint, pages=False, nb_tries=10, limit=False, **kw):
 
 
 def deltas():
+    blocks = rest.GET.api.blocks(returnKey="data")
     delegates = loadPages(rest.GET.api.delegates)
-    blocks = [d["blocks"] for d in delegates]
-    produced = sum(b["produced"] for b in blocks)
+    blocks_ = [d["blocks"] for d in delegates]
+    produced = sum(b["produced"] for b in blocks_)
+    last_block_timestamp = slots.getRealTime(blocks[0]["timestamp"]["epoch"])
 
-    last_block_timestamp = slots.getRealTime(
-        delegates[0]["blocks"]["last"]["timestamp"]["epoch"]
-    )
     total_elapsed_time = \
         (last_block_timestamp - rest.cfg.begintime).total_seconds()
 
