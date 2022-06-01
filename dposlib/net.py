@@ -43,7 +43,7 @@ tsxp = {
 sxp = {
     "familly": "ark",
     "aip20": 0,
-    "txversion": 2,
+    "txversion": 3,
 
     "seeds": ["https://sxp.mainnet.sh"]
 }
