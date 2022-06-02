@@ -14,7 +14,6 @@ from dposlib.util.bin import hexlify, unhexlify, pack, pack_bytes, checkAddress
 def setSenderPublicKey(cls, publicKey):
     # load information from blockchain
     address = dposlib.core.crypto.getAddress(publicKey)
-    # TODO: cache data ?
     data = dposlib.rest.GET.api.wallets(address).get("data", {})
     attributes = data.get("attributes", {})
     # keep original nonce
@@ -56,9 +55,6 @@ def deleteSenderPublicKey(cls):
 
 
 def setFees(cls, value=None):
-    # get a copy of Transactions object parameters
-    fmult = Transaction.FMULT
-    feesl = Transaction.FEESL
     # get name of the transaction according to typeGroup and type
     name = \
         dposlib.core.GETNAME.get(cls["typeGroup"], 1).get(cls["type"], 0)(cls)
@@ -67,11 +63,13 @@ def setFees(cls, value=None):
         getattr(cfg, "fees", {}).get("staticFees", {})
         .get(name, 10000000)
     )
-
     # manualy set fees if a scalar value is given
     if isinstance(value, (float, int)):
         value = int(value)
     else:
+        # get a copy of Transactions object parameters
+        fmult = Transaction.FMULT
+        feesl = Transaction.FEESL
         # try to use fee multiplier. Fee multiplier have to be given as integer
         # string ie: "1000"
         try:
@@ -97,7 +95,6 @@ def setFees(cls, value=None):
                     vendorField if isinstance(vendorField, bytes) else
                     vendorField.encode("utf-8")
                 )
-
                 value = int(
                     cfg.doffsets.get(name, 100) +
                     55 + (4 if version >= 0x02 else 0) +
@@ -339,7 +336,6 @@ class Transaction(dict):
         self.FMULT = kwargs.pop("FMULT", Transaction.FMULT)
         # initialize a void dict
         dict.__init__(self)
-        # if blockchain package loaded merge all elements else return void dict
         data = dict(*args, **kwargs)
         last_to_be_set = [
             (k, data.pop(k, None)) for k in [
@@ -360,9 +356,10 @@ class Transaction(dict):
             (k, v) for k, v in list(data.items()) + last_to_be_set
             if v is not None
         ]:
-            if key == "fee":
-                value = int(value)
-            self[key] = value
+            try:
+                self[key] = value
+            except Exception:
+                pass
 
     def __setitem__(self, item, value):
         try:
@@ -416,6 +413,9 @@ class Transaction(dict):
                 self._secondPrivateKey = keys["privateKey"]
 
     def unlink(self):
+        """
+        Remove all ownership parameters. The transaction return to orphan mode.
+        """
         try:
             deleteSenderPublicKey(self)
             del self._privateKey
@@ -424,6 +424,10 @@ class Transaction(dict):
             pass
 
     def touch(self):
+        """
+        Update inner parameters using blockchain connection.
+        """
+        self._reset()
         self.pop("nonce", False)
         self.pop("timestamp", False)
         if hasattr(self, "_publicKey"):
