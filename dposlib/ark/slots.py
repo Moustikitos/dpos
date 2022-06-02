@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from dposlib import cfg
-from datetime import datetime, timedelta
-
-import pytz
+from datetime import datetime, timedelta, timezone
 
 
 def getTimestamp(**kw):
@@ -16,11 +14,11 @@ def getTimestamp(**kw):
     ```
     """
     delta = timedelta(**kw)
-    return getTime(datetime.now(pytz.UTC) - delta)
+    return getTime(datetime.now(timezone.utc) - delta)
 
 
 def getTime(time=None):
-    delta = (datetime.now(pytz.UTC) if not time else time) - cfg.begintime
+    delta = (datetime.now(timezone.utc) if not time else time) - cfg.begintime
     return delta.total_seconds()
 
 
@@ -50,4 +48,4 @@ def getLastSlot(slot):
 
 
 def getEpochFromDatetimeTuple(*args):
-    return getEpoch(datetime.datetime(*args, tzinfo=pytz.UTC))
+    return getEpoch(datetime.datetime(*args, tzinfo=timezone.utc))

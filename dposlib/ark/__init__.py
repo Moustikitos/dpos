@@ -63,10 +63,9 @@ True
 import io
 import os
 import sys
-import pytz
 import pprint
 
-from datetime import datetime
+from datetime import datetime, timezone
 from importlib import import_module
 
 from dposlib import rest, cfg, HOME, FROZEN
@@ -277,9 +276,9 @@ def init(seed=None):
     cfg.activeDelegates = constants["activeDelegates"]
     cfg.maxTransactions = constants["block"]["maxTransactions"]
     cfg.blocktime = constants["blocktime"]
-    cfg.begintime = pytz.utc.localize(
-        datetime.strptime(constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z")
-    )
+    cfg.begintime = datetime.strptime(
+        constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"
+    ).replace(tzinfo=timezone.utc)
     cfg.blockreward = float(constants["reward"])/100000000
     # since ark v2.4 wif and slip44 are provided by network
     if "wif" in data:

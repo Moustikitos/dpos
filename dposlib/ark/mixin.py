@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, timezone
 from collections import OrderedDict
 
-import pytz
 from dposlib import rest
 from dposlib.ark import slots
 
@@ -75,7 +74,7 @@ def deltas():
         (last_block_timestamp - rest.cfg.begintime).total_seconds()
 
     theorical_height = int(
-        (datetime.datetime.now(pytz.UTC) - rest.cfg.begintime).total_seconds()
+        (datetime.now(timezone.utc) - rest.cfg.begintime).total_seconds()
         / rest.cfg.blocktime
     )
 

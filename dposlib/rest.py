@@ -12,14 +12,13 @@ definitions.
 
 import sys
 import random
-import datetime
 import traceback
 from importlib import import_module
 
-import pytz
 from usrv import req
 from dposlib import net, cfg
 from dposlib.util.data import filter_dic
+from datetime import datetime, timezone
 
 
 def _call(method="GET", *args, **kwargs):
@@ -127,7 +126,7 @@ def use(network, **kwargs):
     # clear data in cfg module
     [cfg.__dict__.pop(k) for k in list(cfg.__dict__) if not k.startswith("_")]
     # initialize minimum values
-    cfg.begintime = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
+    cfg.begintime = datetime(1970, 1, 1, tzinfo=timezone.utc)
     cfg.headers = {
         "Content-Type": "application/json",
         "User-Agent": "Python/dposlib"

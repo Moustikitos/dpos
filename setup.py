@@ -35,7 +35,6 @@ kw = {
     ],
     "install_requires": [
         "future",
-        "pytz",
         "base58"
     ],
     "dependency_links": [
