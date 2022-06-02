@@ -337,7 +337,12 @@ See [`dposlib.ark.builders.v2.delegateResignation`](
 
 ```python
 @isLinked
-def sendHtlc(amount, address, secret, expiration=24, vendorField=None)
+def sendHtlc(amount,
+             address,
+             secret,
+             expiration=24,
+             vendorField=None,
+             hash_type=0)
 ```
 
 See [`dposlib.ark.builders.v2.htlcLock`](
@@ -350,7 +355,7 @@ See [`dposlib.ark.builders.v2.htlcLock`](
 
 ```python
 @isLinked
-def claimHtlc(txid, secret)
+def claimHtlc(txid, secret, hash_type=0)
 ```
 
 See [`dposlib.ark.builders.v2.htlcClaim`](

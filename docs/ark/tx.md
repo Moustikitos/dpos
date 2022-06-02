@@ -72,6 +72,26 @@ to wallet login. it limits number of secret keyboard entries.
 - `secret` _str_ - passphrase.
 - `secondSecret` _str_ - second passphrase.
 
+<a id="dposlib.ark.tx.Transaction.unlink"></a>
+
+#### unlink
+
+```python
+def unlink()
+```
+
+Remove all ownership parameters. The transaction return to orphan mode.
+
+<a id="dposlib.ark.tx.Transaction.touch"></a>
+
+#### touch
+
+```python
+def touch()
+```
+
+Update inner parameters using blockchain connection.
+
 <a id="dposlib.ark.tx.Transaction.sign"></a>
 
 #### sign
