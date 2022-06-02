@@ -56,23 +56,29 @@ def deleteSenderPublicKey(cls):
 
 
 def setFees(cls, value=None):
+    # get a copy of Transactions object parameters
     fmult = Transaction.FMULT
     feesl = Transaction.FEESL
-    name = dposlib.core.GETNAME.get(
-        cls["typeGroup"], 1
-    ).get(cls["type"], 0)(cls)
+    # get name of the transaction according to typeGroup and type
+    name = \
+        dposlib.core.GETNAME.get(cls["typeGroup"], 1).get(cls["type"], 0)(cls)
+    # get static fee value
+    staticValue = int(
+        getattr(cfg, "fees", {}).get("staticFees", {})
+        .get(name, 10000000)
+    )
 
-    # manualy set fees
+    # manualy set fees if a scalar value is given
     if isinstance(value, (float, int)):
         value = int(value)
-
     else:
-        # try to use fee multiplier
+        # try to use fee multiplier. Fee multiplier have to be given as integer
+        # string ie: "1000"
         try:
             fmult = int(value)
-        # use fee statistics or static fees
+        # if excpetion, use fee statistics or static fees
         except (ValueError, TypeError):
-            fmult = Transaction.FMULT
+            # fmult = Transaction.FMULT
             if isinstance(value, str):
                 feesl = value if value[:3] in ["min", "avg", "max"] else feesl
         else:
@@ -81,10 +87,7 @@ def setFees(cls, value=None):
         if feesl is None:
             # use static fees
             if fmult is None:
-                value = int(
-                    getattr(cfg, "fees", {}).get("staticFees", {})
-                    .get(name, 10000000)
-                )
+                value = staticValue
             # compute dynamic fees
             # https://github.com/ArkEcosystem/AIPs/blob/master/AIPS/aip-16.md
             else:
@@ -105,7 +108,7 @@ def setFees(cls, value=None):
             value = int(cfg.feestats[str(cls["typeGroup"])][name][feesl[:3]])
 
     cls._reset()
-    dict.__setitem__(cls, "fee", value)
+    dict.__setitem__(cls, "fee", value or staticValue)
 
 
 def setFeeIncluded(cls):
