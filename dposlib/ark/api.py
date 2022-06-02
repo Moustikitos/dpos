@@ -8,6 +8,7 @@ import pickle
 import weakref
 import hashlib
 import getpass
+import inspect
 import dposlib
 
 from dposlib.ark import slots, crypto
@@ -527,26 +528,38 @@ class Wallet(Content):
 
     @isLinked
     def sendHtlc(self, amount, address, secret,
-                 expiration=24, vendorField=None):
+                 expiration=24, vendorField=None, hash_type=0):
         """
         See [`dposlib.ark.builders.v2.htlcLock`](
             builders/v2.md#dposlib.ark.builders.v2.htlcLock
         ).
         """
-        tx = dposlib.core.htlcLock(
-            amount, address, secret,
-            expiration=expiration, vendorField=vendorField
-        )
+        v3 = "hash_type" in inspect.getfullargspec(dposlib.core.htlcLock).args
+        if v3:
+            tx = dposlib.core.htlcLock(
+                amount, address, secret,
+                expiration=expiration, vendorField=vendorField,
+                hash_type=hash_type
+            )
+        else:
+            tx = dposlib.core.htlcLock(
+                amount, address, secret,
+                expiration=expiration, vendorField=vendorField
+            )
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
-    def claimHtlc(self, txid, secret):
+    def claimHtlc(self, txid, secret, hash_type=0):
         """
         See [`dposlib.ark.builders.v2.htlcClaim`](
             builders/v2.md#dposlib.ark.builders.v2.htlcClaim
         ).
         """
-        tx = dposlib.core.htlcClaim(txid, secret)
+        v3 = "hash_type" in inspect.getfullargspec(dposlib.core.htlcClaim).args
+        if v3:
+            tx = dposlib.core.htlcClaim(txid, secret, hash_type)
+        else:
+            tx = dposlib.core.htlcClaim(txid, secret)
         return dposlib.core.broadcastTransactions(self._finalizeTx(tx))
 
     @isLinked
