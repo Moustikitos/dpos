@@ -188,17 +188,18 @@ pip install ledgerblue
 
 ## Version
 
-### 1.0.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
-  <!-- - [x] [`Protokol/nft`](https://www.protokol.com/protokol-nft-platform) added -->
-  <!-- - [x] [`Blockfrost`](https://blockfrost.io) gateway to Cardano added -->
-  - [x] `ark.api.Webhook` improvement
-  - [x] `pySecp256k1` replaced by `cSecp256k1`
+### 1.1.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+
+### 1.0.0
   - [x] removed python 2.x compliancy
-  - [x] ark package simplification
-  - [x] `multiVote` moved to `switchVote`
+  - [x] removed `pytz` dependency
   - [x] added `solar` testnet and mainnet
-  - [x] added `solar` burn transaction
-  - [x] added `bip340`
+  - [x] `pySecp256k1` replaced by `cSecp256k1`
+  - [x] `bip340` schnorr signature implemented
+  - [x] `solar` transaction `v3` implemented
+  - [x] ark package simplification
+  - [x] `ark.api.Webhook` improvement
+  - [x] `multiVote` moved to `switchVote`
 
 ### 0.3.5
   - [x] Ark-core v 3.0.x compliancy
