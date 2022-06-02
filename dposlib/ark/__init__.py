@@ -202,12 +202,11 @@ def _select_peers():
         version=cfg.version, orderBy="height:desc"
     ).get("data", [])
     for candidate in candidates:
+        api_port = -1
         for key, value in candidate.get("ports", {}).items():
             if key.endswith("/core-api"):
                 api_port = value
                 break
-            else:
-                api_port = -1
         if api_port > 0:
             peers.append("http://%s:%s" % (candidate["ip"], api_port))
             if len(peers) >= cfg.broadcast:
