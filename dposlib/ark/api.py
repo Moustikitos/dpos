@@ -77,9 +77,8 @@ def link(cls, secret=None, secondSecret=None):
     Returns:
         bool: True if secret and second secret match.
     """
-    if not hasattr(cls, "address") \
-       or not hasattr(cls, "publicKey") \
-       or getattr(cls, "attributes", {}).get("multiSignature", False):
+    if not hasattr(cls, "address") and not hasattr(cls, "publicKey") \
+       and getattr(cls, "attributes", {}).get("multiSignature", False):
         raise AttributeError("%s seems not to be linkable" % cls)
     # clean up private attributes
     unlink(cls)
