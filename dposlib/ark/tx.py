@@ -252,13 +252,19 @@ class Transaction(dict):
     )
     recipientId = recipient = property(
         lambda cls: cls.get("recipientId", None),
-        lambda cls, value: cls._setitem("recipientId", checkAddress(value)),
+        lambda cls, value: cls._setitem(
+            "recipientId",
+            checkAddress(value, getattr(cfg, "pubkeyHash", None))
+        ),
         lambda cls: cls.pop("recipientId", None),
         "Receiver address checker and setter"
     )
     senderId = sender = property(
         lambda cls: cls.get("senderId", None),
-        lambda cls, value: cls._setitem("senderId", checkAddress(value)),
+        lambda cls, value: cls._setitem(
+            "senderId",
+            checkAddress(value, getattr(cfg, "pubkeyHash", None))
+        ),
         lambda cls: cls.pop("senderId", None),
         "Sender address checker and setter"
     )
@@ -356,10 +362,7 @@ class Transaction(dict):
             (k, v) for k, v in list(data.items()) + last_to_be_set
             if v is not None
         ]:
-            try:
-                self[key] = value
-            except Exception:
-                pass
+            self[key] = value
 
     def __setitem__(self, item, value):
         try:
@@ -388,11 +391,21 @@ class Transaction(dict):
 
     def __repr__(self):
         return (
-            "<Blockchain transaction type %(typeGroup)s:%(type)s" +
-            "\n  amount=%(amount)r" +
-            "\n  vendorField=%(vendorField)r" +
-            "\n  asset=%(asset)r\n>"
-        ) % self
+            "<Blockchain transaction type %(type)s:" +
+            "\n    amount=%(amount)r | fee=%(fee)r" +
+            "\n    receiver=%(recipientId)s"
+            "\n    vendor field=%(vendorField)s" +
+            "\n    asset=%(asset)r\n>"
+        ) % dict(
+            type=dposlib.core.GETNAME.get(
+                self.typeGroup, 1
+            ).get(self.type, 0)(self),
+            amount=self.amount/100000000.,
+            fee=self.fee/100000000.,
+            vendorField=self.vendorField,
+            recipientId=self.recipientId,
+            asset=self.asset,
+        )
 
     def link(self, secret=None, secondSecret=None):
         """

@@ -7,8 +7,8 @@ import base58
 
 # from dposlib import PY3
 
-HEX = re.compile("[0-9a-fA-F]")
-BHEX = re.compile(b"[0-9a-fA-F]")
+HEX = re.compile("^[0-9a-fA-F]*$")
+BHEX = re.compile(b"^[0-9a-fA-F]*$")
 
 
 def intasb(i):
@@ -63,6 +63,9 @@ def unhexlify(data):
     return result if isinstance(result, bytes) else result.encode()
 
 
-def checkAddress(address):
-    if base58.b58decode_check(address):
+def checkAddress(address, awaited_marker=None):
+    decoded = base58.b58decode_check(address)
+    if decoded:
+        if awaited_marker is not None:
+            assert decoded[0] == awaited_marker, "wrong network address"
         return address
