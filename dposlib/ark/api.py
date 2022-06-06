@@ -19,7 +19,9 @@ from dposlib.ark.mixin import loadPages, deltas
 try:
     from dposlib.ark import ldgr
     LEDGERBLUE = True
-except ImportError:
+except ImportError as error:
+    sys.stdout.write("error occured importing dposlib.ark.ldgr...\n")
+    sys.stdout.write("%r\n" % error)
     LEDGERBLUE = False
 
 deltas = deltas
