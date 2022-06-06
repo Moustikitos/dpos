@@ -1,3 +1,2 @@
-recursive-include test *.csv
 recursive-include test *.json
 include VERSION

@@ -1,11 +1,14 @@
 # -*- coding:utf-8 -*-
 # created by Toons on 01/05/2017
 
+import setuptools
+
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+from dposlib import net
 
 with open("VERSION") as f1, open("README.md") as f2:
     VERSION = f1.read().strip()
@@ -25,18 +28,7 @@ kw = {
     "description": "light api compatible with ARK blockchain and forks",
     "long_description": LONG_DESCRIPTION,
     "long_description_content_type": "text/markdown",
-    "packages": [
-        "dposlib",
-        "dposlib.util",
-        "dposlib.ark",
-        "dposlib.ark.serde",
-        "dposlib.ark.builders",
-        "dposlib.ark.cold",
-    ],
-    "install_requires": [
-        "future",
-        "base58"
-    ],
+    "install_requires": ["future", "base58"],
     "dependency_links": [
         "https://github.com/Moustikitos/fast-curve#egg=cSecp256k1",
         "https://github.com/Moustikitos/micro-server#egg=usrv"
@@ -53,6 +45,13 @@ kw = {
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
     ],
+    "package_dir": {"": "."},
+    "packages": setuptools.find_packages(),
+    "entry_points": {
+        "console_scripts": [
+            "send = dposlib.cmd.send:main"
+        ]
+    }
 }
 
 setup(**kw)
