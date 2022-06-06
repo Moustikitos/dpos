@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 
+import re
 import sys
 import argparse
 
 import dposlib
-from dposlib import rest
+from dposlib import rest, net
 from dposlib.ark import api
 
 builders = {
@@ -23,11 +24,13 @@ arg_types = {
     "burn": (float, str)
 }
 
-parser = argparse.ArgumentParser()
-parser.add_argument("net")
-parser.add_argument("action")
-parser.add_argument("args", nargs="*")
-parser.add_argument("-i", "--identity", required=True)
+networks = [n for n in dir(net) if n[0] != '_']
+parser = argparse.ArgumentParser(description="Command line wallet.")
+parser.add_argument("net", help=f"any of [{', '.join(networks)}]")
+parser.add_argument("action", help=f"any of [{', '.join(builders.keys())}]")
+parser.add_argument("args", nargs="*", help="arguments to be passed to transaction builder")
+parser.add_argument("-i", "--identity", help="public key, wallet address or delegate username", required=True)
+parser.add_argument("-f", "--fee", default="avg", help="transaction fee", dest="fee")
 parser.add_argument("--vendor-field", default=None, dest="vendorField")
 
 
@@ -35,16 +38,22 @@ def main():
     args = parser.parse_args(sys.argv[1:])
     rest.use(args.net, cold_start=True)
 
+    if args.action not in builders:
+        print("unknown action %s" % args.action)
+        return 1
+    elif builders[args.action] not in arg_types:
+        print("%s builder not implemented" % builders[args.action])
+        return 1
+
     builder_name = builders[args.action]
-    assert builder_name in arg_types, \
-        "%s builder not implemented" % builder_name
     builder_types = arg_types[builder_name]
     builder = getattr(dposlib.core, builder_name)
 
     # get identity info from bockchain if provided
     wallet = api.Wallet(args.identity)
-    assert hasattr(wallet, "address"), \
-        "identity %s not found in blockchain" % args.identity
+    if not hasattr(wallet, "address"):
+        print("identity %s not found in blockchain" % args.identity)
+        return 1
 
     # build the transaction ---------------------------------------------------
     params = []
@@ -56,32 +65,58 @@ def main():
         print("Error occured on transaction build... Check command line args.")
         print(builder.__doc__)
         print("%r" % error)
-        sys.exit(1)
+        return 1
+
+    # fee management
+    if args.fee in ["min", "avg", "max"]:
+        fee = args.fee
+    elif re.match("^[0-9]+.[0-9]+$", args.fee):
+        fee = int(float(args.fee) * 100000000)
+    elif re.match("^x[1-9][0-9]{3,6}$", args.fee):
+        if not (1000 <= int(args.fee[1:]) <= 1000000):
+            print("Fee multiplier shoud be >= 1000 and <= 1000000")
+            return 1
+        fee = args.fee[1:]
+    else:
+        print("Error occured on fee computation...")
+        return 1
+    tx.fee = fee
+
     # if vote transaction apply switch vote transformation
     if args.action == "vote":
         tx.senderPublicKey = wallet.publicKey
         dposlib.core.switchVote(tx)
+
     # update the vendor field f asked
     if args.vendorField is not None:
         tx.vendorField = args.vendorField
 
     # sign the transaction ----------------------------------------------------
+    print("Enter %s credentials:" % args.identity)
     wallet.link()
-    if wallet._isLinked and not hasattr(wallet, "publicKey"):
-        object.__setattr__(
-            wallet, "publicKey", dposlib.core.crypto.getKeys(
-                wallet._privateKey
-            )["publicKey"]
-        )
-    tx.signWithKeys(wallet.publicKey, wallet._privateKey)
-    if hasattr(wallet, "_secondPrivateKey"):
-        tx.signSignWithKey(wallet._secondPrivateKey)
-    tx.identify()
+    if getattr(wallet, "_isLinked", False):
+        # for uncreated wallet
+        if not hasattr(wallet, "publicKey"):
+            object.__setattr__(
+                wallet, "publicKey", dposlib.core.crypto.getKeys(
+                    wallet._privateKey
+                )["publicKey"]
+            )
+        tx.signWithKeys(wallet.publicKey, wallet._privateKey)
+        if hasattr(wallet, "_secondPrivateKey"):
+            tx.signSignWithKey(wallet._secondPrivateKey)
+        tx.identify()
 
-    # broadcast transaction ---------------------------------------------------
-    print("%r" % tx)
-    if input("Do you want to broadcast ? [y/n]> ").lower() == "y":
-        print(dposlib.core.broadcastTransactions(tx))
+        # broadcast transaction -----------------------------------------------
+        print("%r" % tx)
+        if input("Do you want to broadcast ? [y/n]> ").lower() == "y":
+            print(dposlib.core.broadcastTransactions(tx))
+        else:
+            print("Transaction canceled !")
+    else:
+        return 1
+
+    return 0
 
 
 if __name__ == "__main__":
