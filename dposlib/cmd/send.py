@@ -49,8 +49,32 @@ def main():
     builder_types = arg_types[builder_name]
     builder = getattr(dposlib.core, builder_name)
 
-    # get identity info from bockchain if provided
-    wallet = api.Wallet(args.identity)
+    # fee management
+    if args.fee in ["min", "avg", "max"]:
+        fee = args.fee
+    elif re.match("^[0-9]+.[0-9]+$", args.fee):
+        fee = int(float(args.fee) * 100000000)
+    elif re.match("^x[1-9][0-9]{3,6}$", args.fee):
+        if not (1000 <= int(args.fee[1:]) <= 1000000):
+            print("Fee multiplier shoud be >= 1000 and <= 1000000")
+            return 1
+        fee = args.fee[1:]
+    else:
+        print("Error occured on fee computation...")
+        return 1
+
+    if re.match("^ldgr:([0-9]);([0-9])$", args.identity):
+        accnt, idx = [int(e) for e in args.identity.split(":")[-1].split(";")]
+        try:
+            wallet = api.Ledger(account=accnt, index=idx, fee=fee)
+        except Exception:
+            return 1
+    else:
+        # get identity info from bockchain if provided
+        wallet = api.Wallet(args.identity, fee=args.fee)
+        print("Enter %s credentials:" % args.identity)
+        wallet.link()
+
     if not hasattr(wallet, "address"):
         print("identity %s not found in blockchain" % args.identity)
         return 1
@@ -67,21 +91,6 @@ def main():
         print("%r" % error)
         return 1
 
-    # fee management
-    if args.fee in ["min", "avg", "max"]:
-        fee = args.fee
-    elif re.match("^[0-9]+.[0-9]+$", args.fee):
-        fee = int(float(args.fee) * 100000000)
-    elif re.match("^x[1-9][0-9]{3,6}$", args.fee):
-        if not (1000 <= int(args.fee[1:]) <= 1000000):
-            print("Fee multiplier shoud be >= 1000 and <= 1000000")
-            return 1
-        fee = args.fee[1:]
-    else:
-        print("Error occured on fee computation...")
-        return 1
-    tx.fee = fee
-
     # if vote transaction apply switch vote transformation
     if args.action == "vote":
         tx.senderPublicKey = wallet.publicKey
@@ -92,8 +101,6 @@ def main():
         tx.vendorField = args.vendorField
 
     # sign the transaction ----------------------------------------------------
-    print("Enter %s credentials:" % args.identity)
-    wallet.link()
     if getattr(wallet, "_isLinked", False):
         # for uncreated wallet
         if not hasattr(wallet, "publicKey"):
@@ -102,21 +109,20 @@ def main():
                     wallet._privateKey
                 )["publicKey"]
             )
-        tx.signWithKeys(wallet.publicKey, wallet._privateKey)
-        if hasattr(wallet, "_secondPrivateKey"):
-            tx.signSignWithKey(wallet._secondPrivateKey)
-        tx.identify()
-
-        # broadcast transaction -----------------------------------------------
-        print("%r" % tx)
-        if input("Do you want to broadcast ? [y/n]> ").lower() == "y":
-            print(dposlib.core.broadcastTransactions(tx))
-        else:
-            print("Transaction canceled !")
+    elif isinstance(wallet, api.Ledger):
+        print("Validate the transaction with your ledger...")
     else:
         return 1
+    wallet._finalizeTx(tx)
 
-    return 0
+    # broadcast transaction ---------------------------------------------------
+    print("%r" % tx)
+    if input("Do you want to broadcast ? [y/n]> ").lower() == "y":
+        print(dposlib.core.broadcastTransactions(tx))
+        return 0
+    else:
+        print("Transaction canceled !")
+        return 1
 
 
 if __name__ == "__main__":

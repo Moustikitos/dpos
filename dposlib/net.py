@@ -34,7 +34,7 @@ nos = {
 
 tsxp = {
     "familly": "ark",
-    "aip20": 1,
+    "aip20": 0,
     "txversion": 3,
 
     "seeds": ["https://sxp.testnet.sh"]
