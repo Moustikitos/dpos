@@ -1,7 +1,6 @@
 
 import os
 import sys
-import Cryptodome
 from cx_Freeze import setup, Executable
 
 sys.argv.append("build_exe")
@@ -14,17 +13,17 @@ setup(
     executables=[Executable("dposlib/cmd/send.py", base="console")],
     options={
         "build_exe": {
+            "optimize": 2,
             "zip_include_packages": [
                 "encodings", "usrv", "base58", "collections",
                 "concurrent", "ctypes", "email", "future", "html", "http",
                 "json", "logging", "urllib", "xml", "importlib", "certifi",
                 "ecpy", "google", "charset_normalizer", "idna", "requests",
-                "websocket", "u2flib_host",
-                "ledgerblue"
+                "websocket", "u2flib_host", "ledgerblue", "urllib3"
             ],
             "excludes": ["test", "unittest", "pydoc_data"],
             "packages": [
-                "dposlib.ark.cold", "ledgerblue", "urllib3"
+                "dposlib.ark.cold", "ledgerblue", "urllib3", "queue"
             ]
         }
     }
