@@ -1,6 +1,5 @@
 > `dposlib` package aims to provide a simple API to any blockchain.
 
-[![Build Status](https://app.travis-ci.com/Moustikitos/dpos.svg?branch=master)](https://app.travis-ci.com/Moustikitos/dpos)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/dposlib.svg)](https://pypi.python.org/pypi/dposlib)
 [![GitHub release](https://img.shields.io/github/tag/Moustikitos/dpos.svg)](https://GitHub.com/Moustikitos/dpos/tags)
@@ -34,24 +33,6 @@ Network|Ark|Solar|Compendia
 mainnet|`ark`|`sxp`|`nos`
 testnet|-|`tsxp`|-
 devnet|`dark`|-|`dnos`
-
-<!-- ## Available networks
-
-  - Ark-core 3.0
-    * [x] devnet : `dark`
-    * [x] mainet : `ark`
-  - Ark forks
-    <!-- * [x] Protokol/nft : `protokol` (beta)
-    * [x] Compendia
-      + [x] devnet : `dnos`
-      + [x] mainnet : `nos`
-    * [x] Solar
-      + [x] testnet : `tsxp`
-      + [x] mainnet : `sxp`
-  <!-- - Cardano
-    * [x] Blockfrost gateway
-      + [x] mainnet : `ada`
-      + [x] testnet : `shelley` -->
 
 ## Main features
 
@@ -102,7 +83,6 @@ u'binance_staking'
 ```
 
 ### Network API
-
 ```python
 >>> import dposlib
 >>> rest.use("ark")
@@ -189,6 +169,9 @@ pip install ledgerblue
 ## Version
 
 ### 1.1.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
+  - [x] added `dposlib.cmd.send` script
+  - [x] added `dposlib-send` standalone package
+  - [x] minor fixes on `net`, `builders.v2` and `builder.v3` modules
 
 ### 1.0.0
   - [x] removed python 2.x compliancy
