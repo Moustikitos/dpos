@@ -4,7 +4,7 @@ import hashlib
 from dposlib import rest, cfg
 from dposlib.ark import slots
 from dposlib.ark.tx import Transaction
-from dposlib.util.bin import hexlify
+from dposlib.util.bin import hexlify, HEX
 
 
 HtlcSecretHashType = {
@@ -154,12 +154,14 @@ def htlcClaim(txid, secret, hash_type=0):
 
     Args:
         txid (str): htlc lock transaction id.
-        secret (str): passphrase used by htlc lock transaction.
+        secret (str): passphrase or hash used by htlc lock transaction.
         hash_type (int): hash method used.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
     """
+    if not HEX.match(secret):
+        secret = hexlify(htlcSecret(secret, hash_type))
     return Transaction(
         version=cfg.txversion,
         type=9,
@@ -167,7 +169,7 @@ def htlcClaim(txid, secret, hash_type=0):
             "claim": {
                 "hashType": hash_type,
                 "lockTransactionId": txid,
-                "unlockSecret": hexlify(htlcSecret(secret, hash_type))
+                "unlockSecret": secret
             }
         }
     )
