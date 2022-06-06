@@ -141,11 +141,15 @@ def use(network, **kwargs):
     # override some options if given
     data.update(**kwargs)
     # connect with first available seed
-    for seed in data.pop("seeds", []):
-        if req.connect(seed):
-            cfg.peers.append(seed)
-            cfg.hotmode = True
-            break
+    seeds = data.pop("seeds", [])
+    if not kwargs.pop("cold_start", False):
+        for seed in seeds:
+            if req.connect(seed):
+                cfg.peers.append(seed)
+                cfg.hotmode = True
+                break
+    else:
+        cfg.peers.extend(seeds)
     # update information on cfg module
     cfg.__dict__.update(data)
     req.EndPoint.timeout = cfg.timeout
