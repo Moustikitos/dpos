@@ -113,7 +113,13 @@ def main():
         print("Validate the transaction with your ledger...")
     else:
         return 1
-    wallet._finalizeTx(tx)
+
+    try:
+        wallet._finalizeTx(tx)
+    except Exception as error:
+        print("Error occured during transaction signature...")
+        print("%r" % error)
+        return 1
 
     # broadcast transaction ---------------------------------------------------
     print("%r" % tx)
