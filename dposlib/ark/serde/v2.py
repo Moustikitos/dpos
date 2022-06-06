@@ -149,7 +149,7 @@ def _1_9(tx, buf):
     if not claim:
         raise Exception("no claim data found")
     pack_bytes(buf, unhexlify(claim["lockTransactionId"]))
-    pack_bytes(buf, claim["unlockSecret"].encode("utf-8"))
+    pack_bytes(buf, unhexlify(claim["unlockSecret"]))
 
 
 # HTLC refund

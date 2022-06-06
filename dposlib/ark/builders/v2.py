@@ -260,10 +260,10 @@ def htlcSecret(secret):
     Returns:
         hex str: HTLC secret.
     """
-    return hexlify(hashlib.sha256(
+    return hashlib.sha256(
         secret if isinstance(secret, bytes) else
         secret.encode("utf-8")
-    ).digest()[:16])
+    ).digest()
 
 
 def htlcLock(amount, address, secret, expiration=24, vendorField=None):
@@ -294,7 +294,7 @@ def htlcLock(amount, address, secret, expiration=24, vendorField=None):
         asset={
             "lock": {
                 "secretHash": hexlify(
-                    hashlib.sha256(htlcSecret(secret).encode("utf-8")).digest()
+                    hashlib.sha256(htlcSecret(secret)).digest()
                 ),
                 "expiration": {
                     "type": 1,
@@ -322,7 +322,7 @@ def htlcClaim(txid, secret):
         asset={
             "claim": {
                 "lockTransactionId": txid,
-                "unlockSecret": htlcSecret(secret)
+                "unlockSecret": hexlify(htlcSecret(secret))
             }
         }
     )
