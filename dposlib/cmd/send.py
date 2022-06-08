@@ -9,7 +9,7 @@ from dposlib import rest, net
 from dposlib.ark import api
 
 builders = {
-    "send": "transfer",
+    "fund": "transfer",
     "vote": "upVote",
     "lock": "htlcLock",
     "claim": "htlcClaim",
