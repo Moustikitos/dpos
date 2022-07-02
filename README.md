@@ -186,12 +186,21 @@ options:
   --vendor-field VENDORFIELD
 ```
 
+**To use lite wallet with ledger:**
+
+```
+usage: send [-h] -i ldgr:<a>;<i> [-f FEE] [--vendor-field VENDORFIELD] net action [args ...]
+    where <a> is the account index [0..9]
+          <i> is the wallet index  [0..9]
+```
+
 ## Version
 
 ### 1.1.0 [current work](https://github.com/Moustikitos/dpos/archive/master.zip)
   - [x] added `dposlib.cmd.send` script
   - [x] added `dposlib-send` standalone package
   - [x] minor fixes on `net`, `builders.v2` and `builder.v3` modules
+  - [x] implemented `solar-core v3` new transactions
 
 ### 1.0.0
   - [x] removed python 2.x compliancy

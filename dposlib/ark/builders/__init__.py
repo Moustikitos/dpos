@@ -59,15 +59,23 @@ def _getbldr(name):
 
 
 def broadcastTransactions(*transactions, **params):
+    if "sxp" in rest.cfg.network:
+        # Solar-network renamed vendorField to memo since v3 transaction,
+        # __setitem__ is used to keep signatures and id.
+        for tx in [t for t in transactions if hasattr(t, "vendorField")]:
+            dict.__setitem__(tx, "memo", tx.vendorField)
+
     chunk_size = min(
         params.pop("chunk_size", cfg.maxTransactions), cfg.maxTransactions
     )
+
     report = []
     for chunk in [
         transactions[i:i+chunk_size] for i in
         range(0, len(transactions), chunk_size)
     ]:
         report.append(rest.POST.api.transactions(transactions=chunk))
+
     return \
         None if len(report) == 0 else \
         report[0] if len(report) == 1 else \

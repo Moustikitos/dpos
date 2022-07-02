@@ -82,13 +82,16 @@ cfg.headers["API-Version"] = "3"
 
 GETNAME = {
     1: {
-        0: lambda tx: "transfer",
+        0: lambda tx:
+            "legacyTransfer" if "sxp" in rest.cfg.network else "transfer",
         1: lambda tx: "secondSignature",
         2: lambda tx: "delegateRegistration",
-        3: lambda tx: "vote",
+        3: lambda tx:
+            "legacyVote" if "sxp" in rest.cfg.network else "vote",
         4: lambda tx: "multiSignature",
         5: lambda tx: "ipfs",
-        6: lambda tx: "multiPayment",
+        6: lambda tx:
+            "transfer" if "sxp" in rest.cfg.network else "multiPayment",
         7: lambda tx: "delegateResignation",
         8: lambda tx: "htlcLock",
         9: lambda tx: "htlcClaim",
@@ -97,6 +100,7 @@ GETNAME = {
     2: {
         # solar
         0: lambda tx: "burn",
+        2: lambda tx: "vote",
         # ark
         6: lambda tx: (
             "entityRegistration" if tx["asset"]["action"] == 0 else
@@ -124,6 +128,7 @@ TYPING = {
     "expiration": int,
     "fee": int,
     "id": str,
+    "memo": str,
     "MultiSignatureAddress": str,
     "multiSignatureAddress": str,
     "network": int,
@@ -157,16 +162,16 @@ def _load_builders():
     ])
 
     for name in [
-        # generic transaction builder names
+        # generic transaction builder names [implemented]
         "transfer", "registerSecondSecret", "registerSecondPublicKey",
         "registerAsDelegate", "upVote", "downVote", "switchVote",
         "registerMultiSignature", "registerIpfs", "multiPayment",
         "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim",
         "htlcRefund",
-        # ark specific transaction builder
+        # ark specific transaction builder [implemented]
         "entityRegister", "entityUpdate", "entityResign",
-        # solar specific transaction builder names
-        "burn",
+        # solar specific transaction builder names [implemented]
+        "burn", "multiTransfer",
         # TODO: compendia specific transaction names
         "stakeCreate", "stakeCancel", "stakeExtend", "stakeRedeem",
         "setFile",
@@ -275,7 +280,8 @@ def init(seed=None):
     )
     cfg.activeDelegates = constants["activeDelegates"]
     cfg.maxTransactions = constants["block"]["maxTransactions"]
-    cfg.blocktime = constants["blocktime"]
+    # on solar block time is blockTime
+    cfg.blocktime = constants.get("blockTime", constants.get("blocktime"))
     cfg.begintime = datetime.strptime(
         constants["epoch"], "%Y-%m-%dT%H:%M:%S.000Z"
     ).replace(tzinfo=timezone.utc)

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
-from dposlib import rest, cfg
+
+from functools import cmp_to_key
+from operator import xor
+from dposlib import cfg
 from dposlib.ark import slots
 from dposlib.ark.tx import Transaction
-from dposlib.util.bin import hexlify, HEX
+from dposlib.util.bin import hexlify, HEX, checkAddress
 
 
 HtlcSecretHashType = {
@@ -20,71 +23,107 @@ HtlcSecretHashType = {
 }
 
 
-def upVote(*usernames):
+def upVote(*usernames, **weights):
     """
     Build an upvote transaction.
 
     Args:
         usernames (iterable): delegate usernames as str iterable.
 
+    Kwargs:
+        weight (mapping): username with ponderation. Vote weight will be
+            computed in percent.
+
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
     """
+    assert xor(len(usernames), len(weights)), \
+        "give username list or a vote weight mapping"
+
+    remind = 10000  # 100.0 * 10
+    votes = {}
+
+    if len(weights):
+        usernames = list(weights.keys())
+        total = sum(weights.values())
+        weights = dict([u, w / total] for u, w in weights.items())
+    else:
+        usernames = [user for user in usernames if not user.startswith("-")]
+        nb = len(usernames)
+        weights = dict([user, remind / 100 // nb] for user in usernames)
+
+    remind -= sum([int(w * 100) for w in weights.values()])
+    while remind > 0:
+        weights[usernames[remind % nb]] += 0.01  # % nb not to necessary...
+        remind -= 1
+
+    sorter_fn = cmp_to_key(
+        lambda a, b:
+            -1 if a[1] > b[1] else 1 if b[1] > a[1] else
+            1 if a[0] > b[0] else -1
+    )
+    votes = dict(sorted(weights.items(), key=sorter_fn))
+
     return Transaction(
-        type=3,
+        typeGroup=2,
+        type=2,
         version=cfg.txversion,
         asset={
-            "votes": ["+" + username for username in usernames]
+            "votes": votes
         },
     )
 
 
 def downVote(*usernames):
-    """
-    Build a downvote transaction.
-
-    Args:
-        usernames (iterable): delegate usernames as str iterable.
-
-    Returns:
-        dposlib.ark.tx.Transaction: orphan transaction.
-    """
-    return Transaction(
-        type=3,
-        version=cfg.txversion,
-        asset={
-            "votes": ["-" + username for username in usernames]
-        },
+    raise NotImplementedError(
+        "downVote is not implemented for v3 transactions"
     )
 
 
 def switchVote(tx, identifier=None):
-    """
-    Transform a [`dposlib.ark.builders.v3.upVote`](
-        v3.md#dposlib.ark.builders.upVote
-    ) transaction into a switchVote. It makes the transaction downvote
-    former delegate if any and then apply new vote.
+    raise NotImplementedError(
+        "switchVote is not implemented for v3 transactions"
+    )
 
-    Arguments:
-        tx (dposlib.ark.tx.Transaction): upVote transaction.
-        identifier (dposlib.ark.tx.Transaction): any identifier accepted by
-            /api/wallets API endpoint. it could be a username, a wallet address
-            or a publicKey.
+
+def transfer(*pairs, **kwargs):
+    """
+    Build transfer transaction. Emoji can be included in transaction
+    vendorField using unicode formating.
+
+    ```python
+    >>> u"message with sparkles \u2728"
+    ```
+
+    Args:
+        pairs (iterable): recipient-amount pair iterable.
+        vendorField (str): vendor field message.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
     """
-    identifier = identifier or tx["senderPublicKey"]
-    if identifier is not None:
-        wallet = rest.GET.api.wallets(identifier, returnKey="data")
-        username = wallet.get("attributes", {}).get("vote", None)
-        if username is None:
+    if len(pairs) == 2:
+        try:
+            checkAddress(pairs[-1])
+        except Exception:
             pass
-        elif "-" + username not in tx["asset"]["votes"]:
-            tx["asset"]["votes"].insert(0, "-" + username)
-        return tx
-    else:
-        raise Exception("orphan vote transaction can not be set as multivote")
+        else:
+            pairs = (pairs, )
+
+    return Transaction(
+        version=cfg.txversion,
+        type=6,
+        vendorField=kwargs.get("vendorField", None),
+        asset={
+            "transfers": [
+                {"amount": int(a*100000000), "recipientId": r}
+                for a, r in pairs
+            ]
+        }
+    )
+
+
+multiPayment = multiTransfer = transfer
 
 
 def htlcSecret(secret, hash_type=0):

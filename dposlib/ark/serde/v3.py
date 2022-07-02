@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import base58
+import decimal
 from dposlib.util.bin import unhexlify, hexlify, pack, pack_bytes
 
 
-# solar vote transaction
+# solar legacy vote transaction
 def _1_3(tx, buf):
     asset = tx.get("asset", {})
     usernames = asset.get("votes", False)
@@ -18,6 +19,39 @@ def _1_3(tx, buf):
             ))
     else:
         raise Exception("no up/down vote given")
+
+
+# solar multivote transaction
+def _2_2(tx, buf):
+    asset = tx.get("asset", {})
+    usernames = asset.get("votes", False)
+    if usernames:
+        pack("<B", buf, (len(usernames), ))
+        for user, percent in usernames.items():
+            pack("<B", buf, (len(user), ))
+            pack_bytes(buf, user.encode("utf-8"))
+            pack("<H", buf, (int(decimal.Decimal(str(percent)) * 100), ))
+    else:
+        raise Exception("no up/down vote given")
+
+
+# solar transfer
+def _1_6(tx, buf):
+    asset = tx.get("asset", {})
+    try:
+        items = [
+            (p["amount"], base58.b58decode_check(
+                str(p["recipientId"]) if not isinstance(
+                    p["recipientId"], bytes
+                ) else p["recipientId"]
+            )) for p in asset.get("transfers", {})
+        ]
+    except Exception:
+        raise Exception("error in recipientId address list")
+    pack("<H", buf, (len(items), ))
+    for amount, address in items:
+        pack("<Q", buf, (amount, ))
+        pack_bytes(buf, address)
 
 
 # HTLC lock
