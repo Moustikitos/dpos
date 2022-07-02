@@ -168,6 +168,7 @@ def _load_builders():
         "registerMultiSignature", "registerIpfs", "multiPayment",
         "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim",
         "htlcRefund",
+        "legacyTransfer", "legacyVote"
         # ark specific transaction builder [implemented]
         "entityRegister", "entityUpdate", "entityResign",
         # solar specific transaction builder names [implemented]

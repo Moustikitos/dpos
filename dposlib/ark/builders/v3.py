@@ -23,6 +23,42 @@ HtlcSecretHashType = {
 }
 
 
+def legacyTransfer(amount, address, vendorField=None, expiration=0):
+    """
+    Build a transfer transaction. Emoji can be included in transaction
+    vendorField using unicode formating.
+
+    ```python
+    >>> vendorField = u"message with sparkles \u2728"
+    ```
+
+    Args:
+        amount (float): transaction amount in ark.
+        address (str): valid recipient address.
+        vendorField (str): vendor field message.
+        expiration (float): time of persistance in hour.
+
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
+    if cfg.txversion > 1 and expiration > 0:
+        block_remaining = expiration*60*60//rest.cfg.blocktime
+        expiration = int(
+            rest.GET.api.blockchain()
+            .get("data", {}).get("block", {}).get("height", -block_remaining) +
+            block_remaining
+        )
+
+    return Transaction(
+        type=0,
+        amount=amount*100000000,
+        recipientId=address,
+        vendorField=vendorField,
+        version=cfg.txversion,
+        expiration=None if cfg.txversion < 2 else expiration
+    )
+
+
 def upVote(*usernames, **weights):
     """
     Build an upvote transaction.
