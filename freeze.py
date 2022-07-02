@@ -29,7 +29,15 @@ setup(
     }
 )
 
-os.system("upx -9 build/exe.win-amd64-3.10/*.dll")
-os.system("upx -9 build/exe.win-amd64-3.10/lib/*.dll")
-os.system("upx -9 build/exe.win-amd64-3.10/lib/*.pyd")
-os.system("upx -9 build/exe.win-amd64-3.10/lib/cSecp256k1/*.dll")
+to_upxify = []
+
+for root, dirs, names in os.walk(os.path.dirname(__file__) + "/build"):
+    to_upxify.extend(
+        [
+            os.path.join(root, n) for n in names
+            if os.path.splitext(n)[-1] in [".dll", ".pyd"] and "exe." in root
+        ]
+    )
+
+for i in range(0, len(to_upxify), 10):
+    os.system("upx -9 " + " ".join(to_upxify[i:i+10]))
