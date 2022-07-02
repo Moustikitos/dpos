@@ -103,7 +103,8 @@ def registerAsDelegate(username):
 
 def upVote(*usernames):
     """
-    Build an upvote transaction.
+    Build an upvote transaction. Multiple usernames are allowed but not
+    necessary supported by targeted dpos blockchain.
 
     Args:
         usernames (iterable): delegate usernames as str iterable.
@@ -132,7 +133,8 @@ def upVote(*usernames):
 
 def downVote(*usernames):
     """
-    Build a downvote transaction.
+    Build a downvote transaction. Multiple usernames are allowed but not
+    necessary supported by targeted dpos blockchain.
 
     Args:
         usernames (iterable): delegate usernames as str iterable.
@@ -487,24 +489,3 @@ def switchVote(tx, identifier=None):
         return tx
     else:
         raise Exception("orphan vote transaction can not be set as multivote")
-
-
-def burn(amount, vendorField=None):
-    """
-    Build a burn transaction.
-    ```
-
-    Args:
-        amount (float): transaction amount as human value.
-
-    Returns:
-        dposlib.ark.tx.Transaction: orphan transaction.
-    """
-    return Transaction(
-        type=0,
-        fee=0,
-        typeGroup=2,
-        amount=amount*100000000,
-        vendorField=vendorField,
-        version=cfg.txversion,
-    )

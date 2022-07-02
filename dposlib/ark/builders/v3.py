@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import math
 import hashlib
+import collections
 
 from functools import cmp_to_key
 from operator import xor
-from dposlib import cfg
+from dposlib import cfg, rest
 from dposlib.ark import slots
 from dposlib.ark.tx import Transaction
 from dposlib.util.bin import hexlify, HEX, checkAddress
@@ -64,14 +66,21 @@ def upVote(*usernames, **weights):
     Build an upvote transaction.
 
     Args:
-        usernames (iterable): delegate usernames as str iterable.
-
-    Kwargs:
-        weight (mapping): username with ponderation. Vote weight will be
+        *usernames (iterable): delegate usernames as str iterable.
+        **weights (mapping): username with ponderation. Vote weight will be
             computed in percent.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
+
+    Raises:
+        AssertionError: if usernames and weights are mixed.
+
+    Exemples:
+        >>> dposlib.core.upVote("alpha", "bravo", "charlie").asset
+        ... {'votes': OrderedDict([('bravo', 33.34), ('alpha', 33.33), ('charlie', 33.33)])}
+        >>> dposlib.core.upVote(alpha=2, bravo=1, charlie=3).asset
+        ... {'votes': OrderedDict([('charlie', 50.0), ('alpha', 33.33), ('bravo', 16.67)])}
     """
     assert xor(len(usernames), len(weights)), \
         "give username list or a vote weight mapping"
@@ -82,15 +91,17 @@ def upVote(*usernames, **weights):
     if len(weights):
         usernames = list(weights.keys())
         total = sum(weights.values())
-        weights = dict([u, w / total] for u, w in weights.items())
+        weights = dict(
+            [u, (float(w) / total) * 10000] for u, w in weights.items()
+        )
     else:
         usernames = [user for user in usernames if not user.startswith("-")]
         nb = len(usernames)
-        weights = dict([user, remind / 100 // nb] for user in usernames)
+        weights = dict([user, remind // nb] for user in usernames)
 
-    remind -= sum([int(w * 100) for w in weights.values()])
+    remind -= sum([math.trunc(w) for w in weights.values()])
     while remind > 0:
-        weights[usernames[remind % nb]] += 0.01  # % nb not to necessary...
+        weights[usernames[remind]] += 1  # % nb not to necessary...
         remind -= 1
 
     sorter_fn = cmp_to_key(
@@ -98,7 +109,10 @@ def upVote(*usernames, **weights):
             -1 if a[1] > b[1] else 1 if b[1] > a[1] else
             1 if a[0] > b[0] else -1
     )
-    votes = dict(sorted(weights.items(), key=sorter_fn))
+    votes = collections.OrderedDict(
+        [u, math.trunc(w) / 100]
+        for u, w in sorted(weights.items(), key=sorter_fn)
+    )
 
     return Transaction(
         typeGroup=2,
