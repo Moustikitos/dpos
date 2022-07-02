@@ -135,7 +135,7 @@ pip install ledgerblue
 >>> from dposlb import rest
 >>> from dposlib.ark import api
 >>> rest.use("dark")
->>> ldg = dposlib.core.api.NanoS(0, 0, 0)
+>>> ldg = dposlib.core.api.Ledger(0, 0, 0)
 >>> ldg
 {
   "address": "DEVx3osw9Rj1wZhoUf2dMbPmmUN9P3XFpb",
@@ -157,7 +157,7 @@ pip install ledgerblue
 
 ```python
 {'data': {'accept': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'broadcast': ['c13791c8ca0cbcd8ef62a722a4a157fa6aa97a86770f988d9a6dc3234b562bc2'], 'excess': [], 'invalid': []}}
->>> dposlib.core.api.NanoS.fromDerivationPath("44'/1'/0'/0/0")
+>>> dposlib.core.api.Ledger.fromDerivationPath("44'/1'/0'/0/0")
 {
   "address": "DDC7kWToyvfKa8dvRTXitr7o5FHMVKtBve",
   "balance": 95.20477813,
