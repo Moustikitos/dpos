@@ -44,6 +44,9 @@ def transfer(amount, address, vendorField=None, expiration=0):
     )
 
 
+legacyTransfer = transfer
+
+
 def registerSecondSecret(secondSecret):
     """
     Build a second secret registration transaction.

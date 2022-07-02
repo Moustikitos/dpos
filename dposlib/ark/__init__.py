@@ -168,7 +168,7 @@ def _load_builders():
         "registerMultiSignature", "registerIpfs", "multiPayment",
         "delegateResignation", "htlcSecret", "htlcLock", "htlcClaim",
         "htlcRefund",
-        "legacyTransfer", "legacyVote"
+        "legacyTransfer", "legacyVote",
         # ark specific transaction builder [implemented]
         "entityRegister", "entityUpdate", "entityResign",
         # solar specific transaction builder names [implemented]
@@ -183,7 +183,8 @@ def _load_builders():
         except NotImplementedError:
             pass
         else:
-            __all__.append(func)
+            if func not in __all__:
+                __all__.append(func)
 
 
 def _write_module(path, configuration={}, fees={}):
