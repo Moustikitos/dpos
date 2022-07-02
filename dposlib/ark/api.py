@@ -621,7 +621,7 @@ class Ledger(Wallet):
         d_path = kw.pop("derivation_path", kw.pop("path", False))
         if d_path is not False:
             if Ledger.d_path.match(d_path) is not None:
-                self._derivationPath
+                self._derivationPath = d_path
             else:
                 raise Exception("%s not a valid derivation path" % d_path)
         else:
@@ -636,6 +636,8 @@ class Ledger(Wallet):
         puk = ldgr.sendApdu(
             [ldgr.buildPukApdu(self._dongle_path)], debug=self._debug
         )[2:]
+        if not puk:
+            raise Exception("Ledger app failed to issue publickey")
         object.__setattr__(self, "publicKey", puk)
         object.__setattr__(
             self, "address", crypto.getAddress(puk)
