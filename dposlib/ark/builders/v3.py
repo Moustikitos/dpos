@@ -38,13 +38,14 @@ def upVote(*usernames, **weights):
         dposlib.ark.tx.Transaction: orphan transaction.
 
     Raises:
-        AssertionError: if usernames and weights are mixed.
+        AssertionError: usernames and weights should not be mixed.
 
-    Exemples:
-        >>> dposlib.core.upVote("alpha", "bravo", "charlie").asset
-        ... {'votes': OrderedDict([('bravo', 33.34), ('alpha', 33.33), ('charlie', 33.33)])}
-        >>> dposlib.core.upVote(alpha=2, bravo=1, charlie=3).asset
-        ... {'votes': OrderedDict([('charlie', 50.0), ('alpha', 33.33), ('bravo', 16.67)])}
+    ```python
+    >>> dposlib.core.upVote("alpha", "bravo", "charlie").asset
+    ... {'votes': OrderedDict([('bravo', 33.34), ('alpha', 33.33), ('charlie', 33.33)])}
+    >>> dposlib.core.upVote(alpha=2, bravo=1, charlie=3).asset
+    ... {'votes': OrderedDict([('charlie', 50.0), ('alpha', 33.33), ('bravo', 16.67)])}
+    ```
     """
     assert xor(len(usernames), len(weights)), \
         "give username list or a vote weight mapping"
@@ -91,8 +92,10 @@ def upVote(*usernames, **weights):
 def legacyVote(*usernames):
     """
     Build an upvote transaction.
+
     Args:
         usernames (iterable): delegate usernames as str iterable.
+
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
     """
@@ -127,8 +130,9 @@ def transfer(*pairs, **kwargs):
     ```
 
     Args:
-        pairs (iterable): recipient-amount pair iterable.
         vendorField (str): vendor field message.
+        *pairs (iterable): recipient-amount pair iterable.
+        **kwargs: arbitrary transaction field values.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.

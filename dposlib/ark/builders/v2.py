@@ -223,8 +223,9 @@ def multiPayment(*pairs, **kwargs):
     ```
 
     Args:
-        pairs (iterable): recipient-amount pair iterable.
         vendorField (str): vendor field message.
+        *pairs (iterable): recipient-amount pair iterable.
+        **kwargs: arbitrary transaction field values.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
