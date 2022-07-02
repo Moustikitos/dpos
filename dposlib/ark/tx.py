@@ -401,7 +401,7 @@ class Transaction(dict):
                 self.typeGroup, 1
             ).get(self.type, 0)(self),
             amount=self.amount/100000000.,
-            fee=self.fee/100000000.,
+            fee=(self.fee or 0)/100000000.,
             vendorField=self.vendorField,
             recipientId=self.recipientId,
             asset=self.asset,
