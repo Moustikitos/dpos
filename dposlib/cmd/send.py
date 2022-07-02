@@ -116,6 +116,8 @@ def main():
 
     try:
         wallet._finalizeTx(tx)
+        assert tx.get("signature", None) not in ["", None], \
+            "Ledger App failed to issue signature"
     except Exception as error:
         print("Error occured during transaction signature...")
         print("%r" % error)
