@@ -217,7 +217,6 @@ def htlcClaim(txid, secret, hash_type=0):
 def burn(amount, vendorField=None):
     """
     Build a burn transaction.
-    ```
 
     Args:
         amount (float): transaction amount as human value.
