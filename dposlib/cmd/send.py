@@ -63,11 +63,12 @@ def main():
         print("Error occured on fee computation...")
         return 1
 
-    if re.match("^ldgr:([0-9]);([0-9])$", args.identity):
+    if re.match("^ldgr:([0-9]+);([0-9]+)$", args.identity):
         accnt, idx = [int(e) for e in args.identity.split(":")[-1].split(";")]
         try:
             wallet = api.Ledger(account=accnt, index=idx, fee=fee)
-        except Exception:
+        except Exception as error:
+            print("%r" % error)
             return 1
     else:
         # get identity info from bockchain if provided
@@ -116,11 +117,13 @@ def main():
 
     try:
         wallet._finalizeTx(tx)
-        assert tx.get("signature", None) not in ["", None], \
-            "Ledger App failed to issue signature"
     except Exception as error:
         print("Error occured during transaction signature...")
         print("%r" % error)
+        return 1
+
+    if tx.get("signature", None) in ["", None]:
+        print("Ledger app failed to issue signature")
         return 1
 
     # broadcast transaction ---------------------------------------------------
