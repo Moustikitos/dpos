@@ -226,18 +226,17 @@ def init(seed=None):
     global DAEMON_PEERS
     NETWORK = getattr(cfg, "network", "dark")
     # configure cold package path and fils according to installation
-    if ".zip" in __file__ or ".egg" in __file__:
-        # --> module loaded from zip or egg file
+    if FROZEN:
         path_module = os.path.join(HOME, NETWORK + ".py")
         package_path = NETWORK
     else:
-        # --> module loaded from python package
         path_module = os.path.join(
             os.path.join(__path__[0], "cold"), NETWORK + ".py"
         )
         package_path = __package__ + ".cold." + NETWORK
     path_module = os.path.normpath(path_module)
 
+    CONFIG = FEES = {}
     # if network connection available
     if getattr(cfg, "hotmode", True):
         CONFIG = rest.GET.api.node.configuration(peer=seed)
@@ -248,18 +247,21 @@ def init(seed=None):
         # write configuration in python module, overriding former one
         _write_module(path_module, CONFIG, FEES)
     else:
-        # remove cold package
-        if hasattr(sys.modules[__package__], "cold"):
-            del sys.modules[__package__].cold
-        # load cold package
         try:
-            sys.modules[__package__].cold = import_module(
-                package_path
-            )
+            new_pkg = import_module(package_path)
+            if hasattr(sys.modules[__package__], "cold"):
+                del sys.modules[__package__].cold
+            sys.modules[__package__].cold = new_pkg
+        except ImportError:
+            try:
+                sys.modules[__package__].cold = import_module(
+                    __package__ + ".cold." + NETWORK
+                )
+            except Exception:
+                raise Exception("cold start not possible")
+        finally:
             CONFIG = sys.modules[__package__].cold.configuration
             FEES = sys.modules[__package__].cold.fees
-        except Exception:
-            CONFIG = FEES = {}
 
     # no network connetcion neither local configuration files
     if "data" not in CONFIG:

@@ -12,7 +12,8 @@ import sys
 # dposlib can be embeded in a frozen app
 FROZEN = \
     hasattr(sys, "frozen") or hasattr(sys, "importers") \
-    or ".egg" in __path__ or ".whl" in __path__
+    or ".egg" in __path__ or ".whl" in __path__ \
+    or hasattr(sys.modules[__name__], '__compiled__')
 
 if FROZEN:
     # if frozen code, HOME and ROOT pathes are same
