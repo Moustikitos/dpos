@@ -71,7 +71,8 @@ def main():
     if re.match("^ldgr:([0-9]+);([0-9]+)$", args.identity):
         accnt, idx = [int(e) for e in args.identity.split(":")[-1].split(";")]
         try:
-            wallet = api.Ledger(account=accnt, index=idx, fee=fee)
+            assert "sxp" not in args.net, "Solar network not supported"
+            wallet = api.Ledger(account=accnt, index=idx, fee=fee, debug=True)
         except Exception as error:
             print("%r" % error)
             return 1
