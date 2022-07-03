@@ -140,7 +140,7 @@ def downVote(*usernames):
     necessary supported by targeted dpos blockchain.
 
     Args:
-        usernames (iterable): delegate usernames as str iterable.
+        *usernames (iterable): delegate usernames as str iterable.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.

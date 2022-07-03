@@ -47,6 +47,11 @@ def main():
 
     builder_name = builders[args.action]
     builder_types = arg_types[builder_name]
+    if args.net not in ["tsxp"]:
+        if builder_name == "transfer":
+            builder_name = "legacyTransfer"
+        if builder_name == "upVote":
+            builder_name = "legacyVote"
     builder = getattr(dposlib.core, builder_name)
 
     # fee management
@@ -85,17 +90,24 @@ def main():
     try:
         for i in range(len(args.args)):
             params.append(builder_types[i](args.args[i]))
-        tx = builder(*params)
+        if args.action == "vote" and args.net in ["tsxp"]:
+            if "=" in params[0]:
+                pairs = [elem.split("=") for elem in params[0].split(",")]
+                tx = builder(**dict([p[0], float(p[1])] for p in pairs))
+            else:
+                tx = builder(*params[0].split(","))
+        else:
+            tx = builder(*params)
     except Exception as error:
         print("Error occured on transaction build... Check command line args.")
         print(builder.__doc__)
         print("%r" % error)
         return 1
 
-    # if vote transaction apply switch vote transformation
-    if args.action == "vote":
+    # if legacyVote transaction apply switch vote transformation
+    if tx["type"] == 3 and tx["typeGroup"] == 1:
         tx.senderPublicKey = wallet.publicKey
-        dposlib.core.switchVote(tx)
+        tx = getattr(dposlib.core, "switchVote")(tx)
 
     # update the vendor field f asked
     if args.vendorField is not None:

@@ -66,7 +66,7 @@ def upVote(*usernames, **weights):
 
     remind -= sum([math.trunc(w) for w in weights.values()])
     while remind > 0:
-        weights[usernames[remind]] += 1  # % nb not to necessary...
+        weights[usernames[remind]] += 1
         remind -= 1
 
     sorter_fn = cmp_to_key(
@@ -91,10 +91,11 @@ def upVote(*usernames, **weights):
 
 def legacyVote(*usernames):
     """
-    Build an upvote transaction.
+    Build an upvote transaction. Multiple usernames are allowed but not
+    necessary supported by targeted dpos blockchain.
 
     Args:
-        usernames (iterable): delegate usernames as str iterable.
+        *usernames (iterable): delegate usernames as str iterable.
 
     Returns:
         dposlib.ark.tx.Transaction: orphan transaction.
@@ -115,9 +116,30 @@ def downVote(*usernames):
 
 
 def switchVote(tx, identifier=None):
-    raise NotImplementedError(
-        "switchVote is not implemented for v3 transactions"
-    )
+    """
+    Transform a [`dposlib.ark.builders.v3.legacyVote`](
+        v3.md#dposlib.ark.builders.legacyVote
+    ) transaction into a switchVote. It makes the transaction downvote
+    former delegate if any and then apply new vote.
+    Arguments:
+        tx (dposlib.ark.tx.Transaction): upVote transaction.
+        identifier (dposlib.ark.tx.Transaction): any identifier accepted by
+            /api/wallets API endpoint. it could be a username, a wallet address
+            or a publicKey.
+    Returns:
+        dposlib.ark.tx.Transaction: orphan transaction.
+    """
+    assert tx["typeGroup"] == 1, \
+        "switch vote only available for legacy vote transactions"
+    identifier = identifier or tx["senderPublicKey"]
+    if identifier is not None:
+        wallet = rest.GET.api.wallets(identifier, returnKey="data")
+        usernames = list(wallet.get("votingFor", {}).keys())
+        for user in [u for u in usernames if u not in tx["asset"]["votes"]]:
+            tx["asset"]["votes"].insert(0, "-" + user)
+        return tx
+    else:
+        raise Exception("orphan vote transaction can not be set as multivote")
 
 
 def transfer(*pairs, **kwargs):
