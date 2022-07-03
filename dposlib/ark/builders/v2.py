@@ -134,6 +134,9 @@ def upVote(*usernames):
     )
 
 
+legacyVote = upVote
+
+
 def downVote(*usernames):
     """
     Build a downvote transaction. Multiple usernames are allowed but not
